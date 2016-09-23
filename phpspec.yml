@@ -1,0 +1,6 @@
+suites:
+    giroapp_suite:
+        namespace: byrokrat\giroapp
+        psr4_prefix: byrokrat\giroapp
+
+bootstrap: temp-bootstrap.php
