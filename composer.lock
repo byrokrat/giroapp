@@ -1,0 +1,461 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "This file is @generated automatically"
+    ],
+    "hash": "ab39daf874f1e031d127dbb5da4543b8",
+    "content-hash": "b02731b7daa8a3b40f3595f1267b841b",
+    "packages": [
+        {
+            "name": "byrokrat/amount",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byrokrat/amount.git",
+                "reference": "9792a840ae97aebe26df111071857d49c0acf52f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byrokrat/amount/zipball/9792a840ae97aebe26df111071857d49c0acf52f",
+                "reference": "9792a840ae97aebe26df111071857d49c0acf52f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "php": ">=5.4"
+            },
+            "require-dev": {
+                "ext-intl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "byrokrat\\amount\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "WTFPL"
+            ],
+            "authors": [
+                {
+                    "name": "Hannes Forsgård",
+                    "email": "hannes.forsgard@fripost.org"
+                }
+            ],
+            "description": "Value objects for monetary amounts",
+            "homepage": "https://github.com/byrokrat/amount",
+            "keywords": [
+                "currency",
+                "economics",
+                "monetary amount",
+                "money"
+            ],
+            "time": "2016-08-18 20:56:38"
+        },
+        {
+            "name": "byrokrat/autogiro",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byrokrat/autogiro.git",
+                "reference": "e6fe6f3d9aae460c4a47b7b6f74667959cec0e3c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byrokrat/autogiro/zipball/e6fe6f3d9aae460c4a47b7b6f74667959cec0e3c",
+                "reference": "e6fe6f3d9aae460c4a47b7b6f74667959cec0e3c",
+                "shasum": ""
+            },
+            "require": {
+                "byrokrat/amount": "^1.0",
+                "byrokrat/banking": "^1.1",
+                "byrokrat/id": "^1.0",
+                "ext-mbstring": "*",
+                "php": "^7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "byrokrat\\autogiro\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Hannes Forsgård",
+                    "email": "hannes.forsgard@fripost.org"
+                }
+            ],
+            "description": "Read and write files for the swedish direct debit system autogirot",
+            "homepage": "https://github.com/byrokrat/autogiro",
+            "keywords": [
+                "autogiro"
+            ],
+            "time": "2016-08-18 21:17:31"
+        },
+        {
+            "name": "byrokrat/banking",
+            "version": "1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byrokrat/banking.git",
+                "reference": "d62272fb0c4e3cc69136c11ac7f68b0d0c544b60"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byrokrat/banking/zipball/d62272fb0c4e3cc69136c11ac7f68b0d0c544b60",
+                "reference": "d62272fb0c4e3cc69136c11ac7f68b0d0c544b60",
+                "shasum": ""
+            },
+            "require": {
+                "byrokrat/checkdigit": "~1.0",
+                "byrokrat/id": "~1.0",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "byrokrat\\banking\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "WTFPL"
+            ],
+            "authors": [
+                {
+                    "name": "Hannes Forsgård",
+                    "email": "hannes.forsgard@fripost.org"
+                }
+            ],
+            "description": "Data types for accounts in the swedish banking system",
+            "homepage": "https://github.com/byrokrat/banking",
+            "keywords": [
+                "Nordea",
+                "Swedbank",
+                "bankgiro",
+                "plusgiro",
+                "seb"
+            ],
+            "time": "2016-08-18 21:18:01"
+        },
+        {
+            "name": "byrokrat/checkdigit",
+            "version": "1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byrokrat/checkdigit.git",
+                "reference": "e5e855739853053f37f60fe1be94ff4b4baf86cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byrokrat/checkdigit/zipball/e5e855739853053f37f60fe1be94ff4b4baf86cf",
+                "reference": "e5e855739853053f37f60fe1be94ff4b4baf86cf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-bcmath": "*",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "byrokrat\\checkdigit\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "WTFPL"
+            ],
+            "authors": [
+                {
+                    "name": "Hannes Forsgård",
+                    "email": "hannes.forsgard@fripost.org"
+                }
+            ],
+            "description": "Helper classes to calculate and validate ckecksums",
+            "homepage": "https://github.com/byrokrat/checkdigit",
+            "keywords": [
+                "Check digit",
+                "luhn",
+                "modulo 10",
+                "modulo 11",
+                "modulo 97"
+            ],
+            "time": "2016-08-18 20:17:39"
+        },
+        {
+            "name": "byrokrat/id",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/byrokrat/id.git",
+                "reference": "662ca5f47d54a606687e14e6faf982555b28376f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/byrokrat/id/zipball/662ca5f47d54a606687e14e6faf982555b28376f",
+                "reference": "662ca5f47d54a606687e14e6faf982555b28376f",
+                "shasum": ""
+            },
+            "require": {
+                "byrokrat/checkdigit": "~1.0",
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "byrokrat\\id\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "WTFPL"
+            ],
+            "authors": [
+                {
+                    "name": "Hannes Forsgård",
+                    "email": "hannes.forsgard@fripost.org"
+                }
+            ],
+            "description": "Data types for swedish social security and corporation id numbers",
+            "homepage": "https://github.com/byrokrat/id",
+            "keywords": [
+                "Corporation id",
+                "Organisationsnummer",
+                "Personal id",
+                "Personnummer",
+                "Social security number",
+                "id"
+            ],
+            "time": "2016-08-18 21:04:10"
+        },
+        {
+            "name": "hanneskod/yaysondb",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hanneskod/yaysondb.git",
+                "reference": "c93d1ee441f4a21ba4c5c35f10280cdee6f7ac06"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hanneskod/yaysondb/zipball/c93d1ee441f4a21ba4c5c35f10280cdee6f7ac06",
+                "reference": "c93d1ee441f4a21ba4c5c35f10280cdee6f7ac06",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "hanneskod\\yaysondb\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "WTFPL"
+            ],
+            "authors": [
+                {
+                    "name": "Hannes Forsgård",
+                    "email": "hannes.forsgard@fripost.org"
+                }
+            ],
+            "description": "Flat file db storing data as json arrays",
+            "homepage": "https://github.com/hanneskod/yaysondb",
+            "keywords": [
+                "database",
+                "json",
+                "jsondb",
+                "nosql"
+            ],
+            "time": "2014-10-16 14:12:57"
+        },
+        {
+            "name": "psr/log",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/log.git",
+                "reference": "5277094ed527a1c4477177d102fe4c53551953e0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/log/zipball/5277094ed527a1c4477177d102fe4c53551953e0",
+                "reference": "5277094ed527a1c4477177d102fe4c53551953e0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Log\\": "Psr/Log/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for logging libraries",
+            "homepage": "https://github.com/php-fig/log",
+            "keywords": [
+                "log",
+                "psr",
+                "psr-3"
+            ],
+            "time": "2016-09-19 16:02:08"
+        },
+        {
+            "name": "symfony/console",
+            "version": "v3.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/console.git",
+                "reference": "8ea494c34f0f772c3954b5fbe00bffc5a435e563"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/console/zipball/8ea494c34f0f772c3954b5fbe00bffc5a435e563",
+                "reference": "8ea494c34f0f772c3954b5fbe00bffc5a435e563",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.5.9",
+                "symfony/polyfill-mbstring": "~1.0"
+            },
+            "require-dev": {
+                "psr/log": "~1.0",
+                "symfony/event-dispatcher": "~2.8|~3.0",
+                "symfony/process": "~2.8|~3.0"
+            },
+            "suggest": {
+                "psr/log": "For using the console logger",
+                "symfony/event-dispatcher": "",
+                "symfony/process": ""
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.1-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Console\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Console Component",
+            "homepage": "https://symfony.com",
+            "time": "2016-08-19 06:48:39"
+        },
+        {
+            "name": "symfony/polyfill-mbstring",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-mbstring.git",
+                "reference": "dff51f72b0706335131b00a7f49606168c582594"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/dff51f72b0706335131b00a7f49606168c582594",
+                "reference": "dff51f72b0706335131b00a7f49606168c582594",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "suggest": {
+                "ext-mbstring": "For best performance"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Polyfill\\Mbstring\\": ""
+                },
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill for the Mbstring extension",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "mbstring",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "time": "2016-05-18 14:26:46"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {
+        "byrokrat/autogiro": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": "^7.0",
+        "ext-mbstring": "*"
+    },
+    "platform-dev": []
+}

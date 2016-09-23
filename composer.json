@@ -1,0 +1,33 @@
+{
+    "name": "byrokrat/giroapp",
+    "description": "Command line app for managing autogiro donations",
+    "keywords": ["autogiro"],
+    "homepage": "https://github.com/byrokrat/giroapp",
+    "type": "project",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "Hannes Forsgård",
+            "email": "hannes.forsgard@fripost.org"
+        }
+    ],
+    "bin": [
+        "bin/giroapp"
+    ],
+    "autoload": {
+        "psr-4": {
+            "byrokrat\\giroapp\\": ["src/"]
+        }
+    },
+    "require": {
+        "php": "^7.0",
+        "ext-mbstring": "*",
+        "byrokrat/amount": "^1.0",
+        "byrokrat/autogiro": "dev-master",
+        "byrokrat/banking": "^1.1",
+        "byrokrat/id": "^1.0",
+        "hanneskod/yaysondb": "^1.0",
+        "psr/log": "^1.0",
+        "symfony/console": "^3.0"
+    }
+}
