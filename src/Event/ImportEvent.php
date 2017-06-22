@@ -20,40 +20,38 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp;
+namespace byrokrat\giroapp\Event;
 
-use Aura\Di\Container;
-use Aura\Di\ContainerConfig;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Dependency injection configurations
+ * Dispatched when a file is imported
  */
-class Config extends ContainerConfig
+class ImportEvent extends Event
 {
     /**
-     * @var string Path to configuration directory
+     * Event identifier
      */
-    private $configPath;
+    const NAME = 'import';
 
     /**
-     * @param string $configPath Path to configuration directory
+     * @var string
      */
-    public function __construct(string $configPath)
+    private $contents;
+
+    /**
+     * Load content to import
+     */
+    public function __construct(string $contents)
     {
-        $this->configPath = $configPath;
+        $this->contents = $contents;
     }
 
-    public function define(Container $di)
+    /**
+     * Get content to import
+     */
+    public function getContents(): string
     {
-        $di->set('event_dispatcher', $di->lazy(function () use ($di) {
-            $dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher;
-
-            $dispatcher->addListener(
-                Event\ImportEvent::NAME,
-                new Action\ImportAction((new \byrokrat\autogiro\Parser\ParserFactory)->createParser())
-            );
-
-            return $dispatcher;
-        }));
+        return $this->contents;
     }
 }

@@ -22,8 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use byrokrat\giroapp\Event\ImportEvent;
 
 class ImportCommand extends AbstractGiroappCommand
 {
@@ -33,10 +35,15 @@ class ImportCommand extends AbstractGiroappCommand
         $this->setName('import');
         $this->setDescription('Import a file from autogirot');
         $this->setHelp('Import a file with data from autogirot');
+        $this->addArgument('filename', InputArgument::REQUIRED, 'The name of the file to import');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // TODO implement...
+        if (!is_readable($input->getArgument('filename')) || !is_file($input->getArgument('filename'))) {
+            throw new \RuntimeException("Unable to read file {$input->getArgument('filename')}");
+        }
+
+        $this->dispatch(ImportEvent::NAME, new ImportEvent(file_get_contents($input->getArgument('filename'))));
     }
 }

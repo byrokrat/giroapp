@@ -29,6 +29,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Psr\Container\ContainerInterface;
 use Aura\Di\ContainerBuilder;
 use byrokrat\giroapp\Config;
+use Symfony\Component\EventDispatcher\Event;
 
 /**
  * A cli command that have access to the dependency injection container
@@ -77,5 +78,13 @@ abstract class AbstractGiroappCommand extends Command
         }
 
         return $this->container;
+    }
+
+    /**
+     * Heler to simplify the dispatching of events
+     */
+    protected function dispatch(string $name, Event $event)
+    {
+        $this->getContainer()->get('event_dispatcher')->dispatch($name, $event);
     }
 }
