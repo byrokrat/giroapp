@@ -2,20 +2,10 @@ sudo: false
 
 language: php
 
-matrix:
-    include:
-        - php: 7.1
-        - php: 7.0
-        - php: 7.0
-          env: COMPOSER_FLAGS='--prefer-lowest --prefer-stable'
-        - php: nightly
-    allow_failures:
-        - php: nightly
-    fast_finish: true
-
-install:
-    - composer require phpspec/phpspec behat/behat --dev $COMPOSER_FLAGS --no-interaction
+php:
+  - 7.0
+  - 7.1
 
 script:
     - vendor/bin/phpspec run --verbose
-    - vendor/bin/behat
+    - vendor/bin/phpcs

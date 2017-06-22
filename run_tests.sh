@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 set -e
 
-phpspec run
-#behat --stop-on-failure
-phpcs
+vendor/bin/phpspec run
+
+# vendor/bin/behat --stop-on-failure
+# TODO add behat to travis once we have a context...
+
+vendor/bin/phpcs

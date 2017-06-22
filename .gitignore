@@ -1,5 +1,4 @@
 /vendor
 /composer.phar
-/build
-/build.xml
+/composer.lock
 /.phpspec
