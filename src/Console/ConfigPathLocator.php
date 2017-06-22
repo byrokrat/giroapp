@@ -22,21 +22,23 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-
-class StatusCommand extends AbstractGiroappCommand
+/**
+ * Rules for locating the config directory
+ */
+class ConfigPathLocator
 {
-    protected function configure()
+    public function locateConfigPath(string $option, string $environment): string
     {
-        parent::configure();
-        $this->setName('status');
-        $this->setDescription('Inspect database status');
-        $this->setHelp('Display statistics for current database status');
-    }
+        if ($option) {
+            return $option;
+        }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        // TODO implemet...
+        if ($environment) {
+            return $environment;
+        }
+
+        $home = posix_getpwuid(posix_getuid())['dir'];
+
+        return $home . DIRECTORY_SEPARATOR . '.giroapp';
     }
 }

@@ -22,23 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class RevokeCommand extends Command
+class RevokeCommand extends AbstractGiroappCommand
 {
     protected function configure()
     {
-        $this
-            ->setName('revoke')
-            ->setDescription('Revoke a donor mandate')
-            ->setHelp('Revoke a mandate and stop receiving donations from donor')
-        ;
+        parent::configure();
+        $this->setName('revoke');
+        $this->setDescription('Revoke a donor mandate');
+        $this->setHelp('Revoke a mandate and stop receiving donations from donor');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // ...
+        // TODO implement...
     }
 }

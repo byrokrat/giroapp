@@ -20,23 +20,30 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console;
+namespace byrokrat\giroapp;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
+use Aura\Di\Container;
+use Aura\Di\ContainerConfig;
 
-class StatusCommand extends AbstractGiroappCommand
+/**
+ * Dependency injection configurations
+ */
+class Config extends ContainerConfig
 {
-    protected function configure()
+    /**
+     * @var string Path to configuration directory
+     */
+    private $configPath;
+
+    /**
+     * @param string $configPath Path to configuration directory
+     */
+    public function __construct(string $configPath)
     {
-        parent::configure();
-        $this->setName('status');
-        $this->setDescription('Inspect database status');
-        $this->setHelp('Display statistics for current database status');
+        $this->configPath = $configPath;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function define(Container $di)
     {
-        // TODO implemet...
     }
 }

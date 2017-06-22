@@ -22,23 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ExportCommand extends Command
+class ExportCommand extends AbstractGiroappCommand
 {
     protected function configure()
     {
-        $this
-            ->setName('export')
-            ->setDescription('Export a file to autogirot')
-            ->setHelp('Create a file with new set of autogiro actions')
-        ;
+        parent::configure();
+        $this->setName('export');
+        $this->setDescription('Export a file to autogirot');
+        $this->setHelp('Create a file with new set of autogiro actions');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // ...
+        // TODO implement..
     }
 }

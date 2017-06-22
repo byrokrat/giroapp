@@ -22,23 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class PurgeCommand extends Command
+class PurgeCommand extends AbstractGiroappCommand
 {
     protected function configure()
     {
-        $this
-            ->setName('purge')
-            ->setDescription('Purge inactive donors')
-            ->setHelp('Remove donors that have been marked as inactive from database')
-        ;
+        parent::configure();
+        $this->setName('purge');
+        $this->setDescription('Purge inactive donors');
+        $this->setHelp('Remove donors that have been marked as inactive from database');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // ...
+        // TODO implement...
     }
 }

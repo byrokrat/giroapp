@@ -22,23 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ImportCommand extends Command
+class ImportCommand extends AbstractGiroappCommand
 {
     protected function configure()
     {
-        $this
-            ->setName('import')
-            ->setDescription('Import a file from autogirot')
-            ->setHelp('Import a file with data from autogirot')
-        ;
+        parent::configure();
+        $this->setName('import');
+        $this->setDescription('Import a file from autogirot');
+        $this->setHelp('Import a file with data from autogirot');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // ...
+        // TODO implement...
     }
 }

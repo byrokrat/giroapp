@@ -22,23 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class AddCommand extends Command
+class AddCommand extends AbstractGiroappCommand
 {
     protected function configure()
     {
-        $this
-            ->setName('add')
-            ->setDescription('Add a new donor')
-            ->setHelp('Register a new traditional printed mandate in database')
-        ;
+        parent::configure();
+        $this->setName('add');
+        $this->setDescription('Add a new donor');
+        $this->setHelp('Register a new traditional printed mandate in database');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // ...
+        // TODO implement...
     }
 }
