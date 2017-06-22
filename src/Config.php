@@ -24,6 +24,10 @@ namespace byrokrat\giroapp;
 
 use Aura\Di\Container;
 use Aura\Di\ContainerConfig;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use byrokrat\autogiro\Parser\ParserFactory;
+use hanneskod\classtools\Iterator\ClassIterator;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Dependency injection configurations
@@ -46,11 +50,16 @@ class Config extends ContainerConfig
     public function define(Container $di)
     {
         $di->set('event_dispatcher', $di->lazy(function () use ($di) {
-            $dispatcher = new \Symfony\Component\EventDispatcher\EventDispatcher;
+            $dispatcher = new EventDispatcher;
 
             $dispatcher->addListener(
                 Event\ImportEvent::NAME,
-                new Action\ImportAction((new \byrokrat\autogiro\Parser\ParserFactory)->createParser())
+                new Action\ImportAction((new ParserFactory)->createParser())
+            );
+
+            (new Plugin\PluginLoader)->loadPlugins(
+                new ClassIterator((new Finder)->in($this->configPath . '/plugins')),
+                $dispatcher
             );
 
             return $dispatcher;

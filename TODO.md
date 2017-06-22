@@ -5,17 +5,15 @@ In ImportAction???
 
 Event model
 -----------
-Should `ApproveMandateEvent` (and others) extend `AbstractDonorEvent`?
-And wrap a `Donor` object instead of a `MandateResponseNode`
+`ApproveMandateEvent` ska vara `NodeEvent` och helt enkelt komma med en node. Det blir det enklaste..
 
-Add support for hooks
----------------------
-* Runner that scans filesystem and executes hooks..
-* Filenames like `.giroapp/hooks/approved-mandate/sendmail.php`
-* Implement using flysystem
-* `sendmail.php` should return a callable
-* Each hook should get appropriate payload
-* Hook callables should get the dispatcher for advanced hooking...
+Events::MANDATE_RESPONSE
+Events::MANDATE_APPROVED
+Events::MANDATE_REJECTED
+
+MandateResponseAction => reagerar på response, hämtar Donor. Uppdaterar. Skickar nytt event...
+
+Spara alla event typer i Events så att det blir tydligt för Plugins vilka som finns...
 
 Add a database
 --------------
@@ -27,3 +25,8 @@ Add a database
 Creating autogiro files
 -----------------------
 Implement the `export` command using `autogiro\Writer\Writer`
+
+Setup
+-----
+Needs a system to create default files and directories..
+bin/giroapp init ??

@@ -27,11 +27,13 @@
         "byrokrat/banking": "^1.1",
         "byrokrat/id": "^1.0",
         "hanneskod/yaysondb": "^1.0",
+        "hanneskod/classtools": "^1.1",
         "psr/log": "^1.0",
         "psr/container": "^1.0",
         "aura/di": "^3.0",
         "symfony/console": "^3.3",
-        "symfony/event-dispatcher": "^3.3"
+        "symfony/event-dispatcher": "^3.3",
+        "symfony/finder": "^3.3"
     },
     "require-dev": {
         "phpspec/phpspec": "^3.4",
