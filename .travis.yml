@@ -3,9 +3,12 @@ sudo: false
 language: php
 
 php:
-  - 7.0
   - 7.1
+  - 7.0
+
+install:
+  - composer install
 
 script:
-    - vendor/bin/phpspec run --verbose
-    - vendor/bin/phpcs
+  - vendor/bin/phpspec run --verbose
+  - vendor/bin/phpcs
