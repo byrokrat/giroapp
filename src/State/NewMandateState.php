@@ -21,7 +21,7 @@
 namespace byrokrat\giroapp\State;
 
 use byrokrat\giroapp\Donor;
-use byrokrat\autogiro\Writer;
+use byrokrat\autogiro\Writer\Writer;
 
 class NewMandateState extends AbstractState
 {

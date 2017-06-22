@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp;
 
 use byrokrat\giroapp\Donor;
 use byrokrat\giroapp\State\State;
-use byrokrat\autogiro\Writer;
+use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

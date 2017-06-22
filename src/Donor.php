@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp;
 
 use byrokrat\giroapp\State\State;
-use byrokrat\autogiro\Writer;
+use byrokrat\autogiro\Writer\Writer;
 
 /**
  * Models an individual donor
