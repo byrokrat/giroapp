@@ -18,31 +18,22 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\Plugin;
+declare(strict_types = 1);
+
+namespace byrokrat\giroapp;
 
 /**
- * Defines the interface for giroapp plugins
+ * List of giroapp event names
  */
-interface PluginInterface
+interface Events
 {
     /**
-     * Get a list of events this plugin listens to
-     *
-     * See Events for a list of available event names
-     *
-     * @return string[]
+     * A bank file is imported, will be called with a ImportEvent
      */
-    public function listensTo(): array;
+    const IMPORT = 'import';
 
     /**
-     * Setup plugin
-     *
-     * Use this method to pull in external dependencies
+     * A mandate response received from bank, will be called with a NodeEvent
      */
-    public function setup();
-
-    /**
-     * Execute plugin when a requested event has been fired
-     */
-    public function execute(Payload $payload);
+    const MANDATE_RESPONSE = 'mandate.response';
 }

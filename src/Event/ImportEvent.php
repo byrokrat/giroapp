@@ -30,11 +30,6 @@ use Symfony\Component\EventDispatcher\Event;
 class ImportEvent extends Event
 {
     /**
-     * Event identifier
-     */
-    const NAME = 'import';
-
-    /**
      * @var string
      */
     private $contents;

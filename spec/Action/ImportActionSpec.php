@@ -5,8 +5,9 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Action;
 
 use byrokrat\giroapp\Action\ImportAction;
+use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\ImportEvent;
-use byrokrat\giroapp\Event\ApproveMandateEvent;
+use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\autogiro\Parser\Parser;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Tree\FileNode;
@@ -52,7 +53,7 @@ class ImportActionSpec extends ObjectBehavior
             )
         );
 
-        $dispatcher->dispatch(ApproveMandateEvent::NAME, Argument::type(ApproveMandateEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::MANDATE_RESPONSE, Argument::type(NodeEvent::CLASS))->shouldBeCalled();
 
         $this->__invoke($event, '', $dispatcher);
     }

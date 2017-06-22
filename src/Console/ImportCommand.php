@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Console;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\ImportEvent;
 
 class ImportCommand extends AbstractGiroappCommand
@@ -44,6 +45,6 @@ class ImportCommand extends AbstractGiroappCommand
             throw new \RuntimeException("Unable to read file {$input->getArgument('filename')}");
         }
 
-        $this->dispatch(ImportEvent::NAME, new ImportEvent(file_get_contents($input->getArgument('filename'))));
+        $this->dispatch(Events::IMPORT, new ImportEvent(file_get_contents($input->getArgument('filename'))));
     }
 }

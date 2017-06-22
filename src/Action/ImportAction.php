@@ -22,8 +22,9 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Action;
 
+use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\ImportEvent;
-use byrokrat\giroapp\Event\ApproveMandateEvent;
+use byrokrat\giroapp\Event\NodeEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use byrokrat\autogiro\Parser\Parser;
 use byrokrat\autogiro\Enumerator;
@@ -49,10 +50,7 @@ class ImportAction
         $enum = new Enumerator;
 
         $enum->onMandateResponseNode(function (MandateResponseNode $node) use ($dispatcher) {
-
-            // TODO check if mandate is approved or not (helper on node?) dispatch accordingly..
-
-            $dispatcher->dispatch(ApproveMandateEvent::NAME, new ApproveMandateEvent($node));
+            $dispatcher->dispatch(Events::MANDATE_RESPONSE, new NodeEvent($node));
         });
 
         // TODO dispatch events on all response nodes

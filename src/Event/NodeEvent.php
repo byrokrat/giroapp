@@ -23,26 +23,21 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Event;
 
 use Symfony\Component\EventDispatcher\Event;
-use byrokrat\autogiro\Tree\Record\Response\MandateResponseNode;
+use byrokrat\autogiro\Tree\Node;
 
-class ApproveMandateEvent extends Event
+class NodeEvent extends Event
 {
     /**
-     * Event identifier
-     */
-    const NAME = 'mandate.approve';
-
-    /**
-     * @var MandateResponseNode
+     * @var Node
      */
     private $node;
 
-    public function __construct(MandateResponseNode $node)
+    public function __construct(Node $node)
     {
         $this->node = $node;
     }
 
-    public function getNode(): MandateResponseNode
+    public function getNode(): Node
     {
         return $this->node;
     }

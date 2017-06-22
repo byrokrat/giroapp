@@ -53,7 +53,7 @@ class Config extends ContainerConfig
             $dispatcher = new EventDispatcher;
 
             $dispatcher->addListener(
-                Event\ImportEvent::NAME,
+                Events::IMPORT,
                 new Action\ImportAction((new ParserFactory)->createParser())
             );
 
