@@ -22,20 +22,27 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\UserDirectoryLocator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Psr\Container\ContainerInterface;
-use Aura\Di\ContainerBuilder;
-use byrokrat\giroapp\Config;
 use Symfony\Component\EventDispatcher\Event;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Psr\Container\ContainerInterface;
 
 /**
  * A cli command that have access to the dependency injection container
  */
 abstract class AbstractGiroappCommand extends Command
 {
+    /**
+     * Path to app configuration directory
+     */
+    const CONFIG_DIR = __DIR__ . '/../../etc';
+
     /**
      * @var ContainerInterface
      */
@@ -60,12 +67,15 @@ abstract class AbstractGiroappCommand extends Command
             throw new \Exception('Command not constructed properly, did you call parent::configure()?');
         }
 
-        $configPath = (new ConfigPathLocator)->locateConfigPath(
+        $userDir = (new UserDirectoryLocator)->locateUserDirectory(
             (string)$input->getOption('config'),
             (string)getenv('GIROAPP_PATH')
         );
 
-        $this->container = (new ContainerBuilder)->newConfiguredInstance([new Config($configPath)]);
+        $this->container = new ContainerBuilder();
+        $this->container->setParameter('user.dir', $userDir);
+        $loader = new YamlFileLoader($this->container, new FileLocator(self::CONFIG_DIR));
+        $loader->load('container.yaml');
     }
 
     /**

@@ -6,35 +6,42 @@ namespace spec\byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Plugin\PluginLoader;
 use byrokrat\giroapp\Plugin\PluginInterface;
-use hanneskod\classtools\Iterator\ClassIterator;
+use byrokrat\giroapp\Plugin\Payload;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class PluginLoaderSpec extends ObjectBehavior
 {
+    function let()
+    {
+        $this->beConstructedWith(__DIR__);
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType(PluginLoader::CLASS);
     }
 
-    function it_loads_plugins(
-        ClassIterator $classIterator,
-        EventDispatcherInterface $dispatcher,
-        \ReflectionClass $reflectionClass,
-        PluginInterface $plugin
-    ) {
-        $classIterator->enableAutoloading()->shouldBeCalled();
-        $classIterator->type(PluginInterface::CLASS)->willReturn($classIterator)->shouldBeCalled();
-        $classIterator->where('isInstantiable')->willReturn($classIterator)->shouldBeCalled();
-        $classIterator->getIterator()->willReturn(new \ArrayIterator([$reflectionClass->getWrappedObject()]))->shouldBeCalled();
-
-        $reflectionClass->newInstance()->willReturn($plugin->getWrappedObject())->shouldBeCalled();
-
-        $plugin->listensTo()->willReturn(['foobar'])->shouldBeCalled();
-
+    function it_loads_plugins(EventDispatcherInterface $dispatcher)
+    {
         $dispatcher->addListener('foobar', Argument::any())->shouldBeCalled();
+        $this->loadPlugins($dispatcher);
+    }
+}
 
-        $this->loadPlugins($classIterator, $dispatcher);
+class DummyPlugin implements PluginInterface
+{
+    public function listensTo(): array
+    {
+        return ['foobar'];
+    }
+
+    public function setup()
+    {
+    }
+
+    public function execute(Payload $payload)
+    {
     }
 }

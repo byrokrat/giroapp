@@ -1,0 +1,43 @@
+parameters:
+    db.dir: '%user.dir%/data'
+    db.coll.settings: 'settings.json'
+    db.coll.donors: 'donors.json'
+    db.coll.transactions: 'transactions.json'
+
+services:
+    db:
+        class: hanneskod\yaysondb\Yaysondb
+        arguments:
+            -
+                settings: '@db_settings_collection'
+                donors: '@db_donors_collection'
+                transactions: '@db_transactions_collection'
+
+    db_migration:
+        class: byrokrat\giroapp\FilesystemConfigurator
+        arguments:
+            -
+                - '%db.coll.settings%'
+                - '%db.coll.donors%'
+                - '%db.coll.transactions%'
+
+    db_settings_collection:
+        class: hanneskod\yaysondb\Engine\FlysystemEngine
+        arguments: ['%db.coll.settings%', '@db_filesystem']
+
+    db_donors_collection:
+        class: hanneskod\yaysondb\Engine\FlysystemEngine
+        arguments: ['%db.coll.donors%', '@db_filesystem']
+
+    db_transactions_collection:
+        class: hanneskod\yaysondb\Engine\FlysystemEngine
+        arguments: ['%db.coll.transactions%', '@db_filesystem']
+
+    db_filesystem:
+        class: League\Flysystem\Filesystem
+        arguments: ['@db_filesystem_adapter']
+        configurator: 'db_migration:createFiles'
+
+    db_filesystem_adapter:
+        class: League\Flysystem\Adapter\Local
+        arguments: ['%db.dir%']

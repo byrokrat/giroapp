@@ -20,14 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console;
+namespace byrokrat\giroapp;
 
 /**
- * Rules for locating the config directory
+ * Rules for locating the current user config directory
  */
-class ConfigPathLocator
+class UserDirectoryLocator
 {
-    public function locateConfigPath(string $option, string $environment): string
+    public function locateUserDirectory(string $option, string $environment): string
     {
         if ($option) {
             return $option;

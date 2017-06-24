@@ -20,38 +20,37 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Plugin;
+namespace byrokrat\giroapp;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Finder\Finder;
-use hanneskod\classtools\Iterator\ClassIterator;
+use League\Flysystem\Filesystem;
 
 /**
- * Load plugins from filesystem
+ * Created required files in filesystem
  */
-class PluginLoader
+class FilesystemConfigurator
 {
     /**
-     * @var string
+     * @var string[]
      */
-    private $pluginDir;
+    private $requiredFiles;
 
     /**
-     * Set directory to scan for plugins
+     * @param string[] $requiredFiles List of required files
      */
-    public function __construct(string $pluginDir)
+    public function __construct(array $requiredFiles)
     {
-        $this->pluginDir = $pluginDir;
+        $this->requiredFiles = $requiredFiles;
     }
 
-    public function loadPlugins(EventDispatcherInterface $dispatcher)
+    /**
+     * Create required files if they dont exist
+     */
+    public function createFiles(Filesystem $filesystem)
     {
-        $classIterator = new ClassIterator((new Finder)->in($this->pluginDir));
-
-        $classIterator->enableAutoloading();
-
-        foreach ($classIterator->type(PluginInterface::CLASS)->where('isInstantiable') as $reflectionClass) {
-            (new PluginWrapper($reflectionClass->newInstance()))->register($dispatcher);
+        foreach ($this->requiredFiles as $filename) {
+            if (!$filesystem->has($filename)) {
+                $filesystem->write($filename, '');
+            }
         }
     }
 }
