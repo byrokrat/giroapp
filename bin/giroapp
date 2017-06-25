@@ -33,7 +33,6 @@ $application->add(new AddCommand);
 $application->add(new ExportCommand);
 $application->add(new ImportCommand);
 $application->add(new InitCommand);
-$application->add(new PurgeCommand);
 $application->add(new RevokeCommand);
 $application->add(new StatusCommand);
 
