@@ -2,10 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\State;
+namespace spec\byrokrat\giroapp\Model\DonorState;
 
-use byrokrat\giroapp\State;
-use byrokrat\giroapp\Donor;
+use byrokrat\giroapp\Model\DonorState;
+use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -14,17 +14,17 @@ class NewMandateStateSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(State\NewMandateState::CLASS);
+        $this->shouldHaveType(DonorState\NewMandateState::CLASS);
     }
 
     function it_implements_the_state_interface()
     {
-        $this->shouldHaveType(State\State::CLASS);
+        $this->shouldHaveType(DonorState\DonorState::CLASS);
     }
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(State\NewMandateState::CLASS);
+        $this->getId()->shouldEqual(DonorState\NewMandateState::CLASS);
     }
 
     function it_contains_a_description()
@@ -38,6 +38,6 @@ class NewMandateStateSpec extends ObjectBehavior
 
         $this->export($donor, $writer);
 
-        $donor->setState(Argument::type(State\MandateSentState::CLASS))->shouldHaveBeenCalled();
+        $donor->setState(Argument::type(DonorState\MandateSentState::CLASS))->shouldHaveBeenCalled();
     }
 }

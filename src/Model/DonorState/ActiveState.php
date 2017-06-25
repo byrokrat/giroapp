@@ -18,12 +18,14 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\State;
+declare(strict_types = 1);
 
-class MandateSentState extends AbstractState
+namespace byrokrat\giroapp\Model\DonorState;
+
+class ActiveState extends AbstractState
 {
     public function getDescription(): string
     {
-        return 'Mandate has been sent to the bank and is awaiting approval';
+        return 'Donor is active';
     }
 }

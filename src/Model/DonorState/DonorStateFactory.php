@@ -20,17 +20,17 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\State;
+namespace byrokrat\giroapp\Model\DonorState;
 
 /**
  * Handles the creation of state objects
  */
-class StateFactory
+class DonorStateFactory
 {
     /**
      * @throws \RuntimeException If state id is unknown
      */
-    public function createState(string $stateId): State
+    public function createDonorState(string $stateId): DonorState
     {
         if (!class_exists($stateId)) {
             throw new \RuntimeException("Unknown state id $stateId");
@@ -38,7 +38,7 @@ class StateFactory
 
         $state = new $stateId;
 
-        if (!$state instanceof State) {
+        if (!$state instanceof DonorState) {
             throw new \RuntimeException("Unvalid state id $stateId");
         }
 

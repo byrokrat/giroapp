@@ -1,14 +1,3 @@
-src/ContainerFactory
-
-DataMapper
-----------
-* DonorMapper (+ add fields to Model/Donor)
-* TransactionMapper (+ define a Model)
-
-Fixa skal för detta. Enkla klasser med rätt dependencies...
-
-Döp om State till Model/DonorState ...
-
 Event model
 -----------
 MandateResponseAction => respond to MANDATE_RESPONSE events. Fetch Donor from db.

@@ -18,12 +18,28 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\State;
+declare(strict_types = 1);
 
-class InactiveState extends AbstractState
+namespace byrokrat\giroapp\Model\DonorState;
+
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\autogiro\Writer\Writer;
+
+class MandateApprovedState extends AbstractState
 {
     public function getDescription(): string
     {
-        return 'Donor is inactive (has been revoked/rejected)';
+        return 'Mandate has been approved by the bank';
+    }
+
+    public function isExportable(): bool
+    {
+        return true;
+    }
+
+    public function export(Donor $donor, Writer $writer)
+    {
+        // TODO export payments to $writer
+        $donor->setState(new ActiveState);
     }
 }

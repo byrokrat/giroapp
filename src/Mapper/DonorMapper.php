@@ -18,35 +18,25 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\State;
+declare(strict_types = 1);
 
-use byrokrat\giroapp\Donor;
-use byrokrat\autogiro\Writer\Writer;
+namespace byrokrat\giroapp\Mapper;
+
+use hanneskod\yaysondb\CollectionInterface;
+use hanneskod\yaysondb\Operators as y;
 
 /**
- * Defines a donor state in relation to bgc
+ * Mapps donor objects to database collection
  */
-interface State
+class DonorMapper
 {
     /**
-     * Get state identifier
+     * @var CollectionInterface
      */
-    public function getId(): string;
+    private $collection;
 
-    /**
-     * Get free text state description
-     */
-    public function getDescription(): string;
-
-    /**
-     * Check if this state is exportable to autogirot
-     */
-    public function isExportable(): bool;
-
-    /**
-     * Export to autogiro and possibly perform state transition
-     *
-     * @return void
-     */
-    public function export(Donor $donor, Writer $writer);
+    public function __construct(CollectionInterface $collection)
+    {
+        $this->collection = $collection;
+    }
 }

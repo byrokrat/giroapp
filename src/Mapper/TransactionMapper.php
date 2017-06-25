@@ -18,12 +18,25 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\State;
+declare(strict_types = 1);
 
-class ActiveState extends AbstractState
+namespace byrokrat\giroapp\Mapper;
+
+use hanneskod\yaysondb\CollectionInterface;
+use hanneskod\yaysondb\Operators as y;
+
+/**
+ * Mapps transaction objects to database collection
+ */
+class TransactionMapper
 {
-    public function getDescription(): string
+    /**
+     * @var CollectionInterface
+     */
+    private $collection;
+
+    public function __construct(CollectionInterface $collection)
     {
-        return 'Donor is active';
+        $this->collection = $collection;
     }
 }

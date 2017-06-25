@@ -18,24 +18,28 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\State;
+declare(strict_types = 1);
 
-use byrokrat\giroapp\Donor;
+namespace byrokrat\giroapp\Model\DonorState;
+
+use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 
-abstract class AbstractState implements State
+class RevokeMandateState extends AbstractState
 {
-    public function getId(): string
+    public function getDescription(): string
     {
-        return get_class($this);
+        return 'Mandate is awaiting revocation';
     }
 
     public function isExportable(): bool
     {
-        return false;
+        return true;
     }
 
     public function export(Donor $donor, Writer $writer)
     {
+        // TODO export revocation to $writer
+        $donor->setState(new RevocationSentState);
     }
 }

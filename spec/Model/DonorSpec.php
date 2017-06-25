@@ -2,22 +2,19 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp;
+namespace spec\byrokrat\giroapp\Model;
 
-use byrokrat\giroapp\Donor;
-use byrokrat\giroapp\State\State;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\DonorState\DonorState;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class DonorSpec extends ObjectBehavior
 {
-    function let(State $state)
+    function let(DonorState $state)
     {
-        $this->beConstructedWith(
-            $state,
-            Donor::MANDATE_SOURCE_PAPER
-        );
+        $this->beConstructedWith($state, Donor::MANDATE_SOURCE_PAPER);
     }
 
     function it_is_initializable()
@@ -30,7 +27,7 @@ class DonorSpec extends ObjectBehavior
         $this->getState()->shouldEqual($state);
     }
 
-    function it_can_change_state(State $newState)
+    function it_can_change_state(DonorState $newState)
     {
         $this->getState()->shouldNotEqual($newState);
         $this->setState($newState);

@@ -20,9 +20,9 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp;
+namespace byrokrat\giroapp\Model;
 
-use byrokrat\giroapp\State\State;
+use byrokrat\giroapp\Model\DonorState\DonorState;
 use byrokrat\autogiro\Writer\Writer;
 
 /**
@@ -41,7 +41,7 @@ class Donor
     const MANDATE_SOURCE_DIGITAL = 'MANDATE_SOURCE_DIGITAL';
 
     /**
-     * @var State
+     * @var DonorState
      */
     private $state;
 
@@ -50,18 +50,18 @@ class Donor
      */
     private $mandateSource;
 
-    public function __construct(State $state, string $mandateSource)
+    public function __construct(DonorState $state, string $mandateSource)
     {
         $this->setState($state);
         $this->mandateSource = $mandateSource;
     }
 
-    public function getState(): State
+    public function getState(): DonorState
     {
         return $this->state;
     }
 
-    public function setState(State $state)
+    public function setState(DonorState $state)
     {
         $this->state = $state;
     }

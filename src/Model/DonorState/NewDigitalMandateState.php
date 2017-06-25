@@ -18,16 +18,18 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\State;
+declare(strict_types = 1);
 
-use byrokrat\giroapp\Donor;
+namespace byrokrat\giroapp\Model\DonorState;
+
+use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 
-class MandateApprovedState extends AbstractState
+class NewDigitalMandateState extends AbstractState
 {
     public function getDescription(): string
     {
-        return 'Mandate has been approved by the bank';
+        return 'A digital mandate has been received from the bank';
     }
 
     public function isExportable(): bool
@@ -37,7 +39,7 @@ class MandateApprovedState extends AbstractState
 
     public function export(Donor $donor, Writer $writer)
     {
-        // TODO export payments to $writer
-        $donor->setState(new ActiveState);
+        // TODO export mandate to $writer
+        $donor->setState(new MandateSentState);
     }
 }

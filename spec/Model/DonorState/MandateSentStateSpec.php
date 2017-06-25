@@ -2,29 +2,29 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\State;
+namespace spec\byrokrat\giroapp\Model\DonorState;
 
-use byrokrat\giroapp\State;
-use byrokrat\giroapp\Donor;
+use byrokrat\giroapp\Model\DonorState;
+use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class RevocationSentStateSpec extends ObjectBehavior
+class MandateSentStateSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(State\RevocationSentState::CLASS);
+        $this->shouldHaveType(DonorState\MandateSentState::CLASS);
     }
 
     function it_implements_the_state_interface()
     {
-        $this->shouldHaveType(State\State::CLASS);
+        $this->shouldHaveType(DonorState\DonorState::CLASS);
     }
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(State\RevocationSentState::CLASS);
+        $this->getId()->shouldEqual(DonorState\MandateSentState::CLASS);
     }
 
     function it_contains_a_description()
