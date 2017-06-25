@@ -35,11 +35,18 @@ class FilesystemConfigurator
     private $requiredFiles;
 
     /**
-     * @param string[] $requiredFiles List of required files
+     * @var string[]
      */
-    public function __construct(array $requiredFiles)
+    private $requiredDirs;
+
+    /**
+     * @param string[] $requiredFiles List of required files
+     * @param string[] $requiredDirs List of required directories
+     */
+    public function __construct(array $requiredFiles, array $requiredDirs)
     {
         $this->requiredFiles = $requiredFiles;
+        $this->requiredDirs = $requiredDirs;
     }
 
     /**
@@ -51,6 +58,10 @@ class FilesystemConfigurator
             if (!$filesystem->has($filename)) {
                 $filesystem->write($filename, '');
             }
+        }
+
+        foreach ($this->requiredDirs as $dirname) {
+            $filesystem->createDir($dirname);
         }
     }
 }

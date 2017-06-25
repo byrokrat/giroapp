@@ -1,0 +1,20 @@
+services:
+    filesystem:
+        class: League\Flysystem\Filesystem
+        arguments: ['@filesystem_adapter']
+        configurator: 'filesystem_configurator:createFiles'
+
+    filesystem_adapter:
+        class: League\Flysystem\Adapter\Local
+        arguments: ['%user.dir%']
+
+    filesystem_configurator:
+        class: byrokrat\giroapp\FilesystemConfigurator
+        arguments:
+            -
+                - '%db.settings%'
+                - '%db.donors%'
+                - '%db.transactions%'
+                - '%db.log%'
+            -
+                - '%plugins.dir%'

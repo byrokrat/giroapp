@@ -11,21 +11,25 @@ use Prophecy\Argument;
 
 class FilesystemConfiguratorSpec extends ObjectBehavior
 {
-    function let()
-    {
-        $this->beConstructedWith(['foo', 'bar']);
-    }
-
     function it_is_initializable()
     {
+        $this->beConstructedWith([], []);
         $this->shouldHaveType(FilesystemConfigurator::CLASS);
     }
 
     function it_creates_files(Filesystem $filesystem)
     {
+        $this->beConstructedWith(['foo', 'bar'], []);
         $filesystem->has('foo')->willReturn(false)->shouldBeCalled();
         $filesystem->has('bar')->willReturn(true)->shouldBeCalled();
         $filesystem->write('foo', '')->shouldBeCalled();
+        $this->createFiles($filesystem);
+    }
+
+    function it_creates_directories(Filesystem $filesystem)
+    {
+        $this->beConstructedWith([], ['baz']);
+        $filesystem->createDir('baz')->shouldBeCalled();
         $this->createFiles($filesystem);
     }
 }

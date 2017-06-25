@@ -24,7 +24,7 @@
         "ext-mbstring": "*",
         "byrokrat/amount": "^1.0",
         "byrokrat/autogiro": "dev-master",
-        "byrokrat/banking": "^1.1",
+        "byrokrat/banking": "^1.4",
         "byrokrat/id": "^1.0",
         "hanneskod/yaysondb": "^2.0",
         "hanneskod/classtools": "^1.1",

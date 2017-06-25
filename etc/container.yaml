@@ -1,23 +1,36 @@
 parameters:
-    plugins.dir: '%user.dir%/plugins'
+    plugins.dir: 'plugins'
 
 imports:
     - { resource: db.yaml }
+    - { resource: filesystem.yaml }
 
 services:
     event_dispatcher:
         class: Symfony\Component\EventDispatcher\EventDispatcher
         calls:
             - [addListener, [!php/const:byrokrat\giroapp\Events::IMPORT, '@import_action']]
+            - [addListener, [!php/const:byrokrat\giroapp\Events::MANDATE_RESPONSE, '@node_filter_action']]
         configurator: 'plugin_loader:loadPlugins'
+
+    plugin_loader:
+        class: byrokrat\giroapp\Plugin\PluginLoader
+        arguments: ['%user.dir%/%plugins.dir%', '@filesystem']
 
     import_action:
         class: byrokrat\giroapp\Action\ImportAction
         arguments: ["@=service('autogiro_parser_factory').createParser()"]
 
+    node_filter_action:
+        class: byrokrat\giroapp\Action\NodeFilterAction
+        arguments: ['@bankgiro_factory', '@settings_mapper']
+
     autogiro_parser_factory:
         class: byrokrat\autogiro\Parser\ParserFactory
 
-    plugin_loader:
-        class: byrokrat\giroapp\Plugin\PluginLoader
-        arguments: ['%plugins.dir%']
+    bankgiro_factory:
+        class: byrokrat\banking\BankgiroFactory
+
+    settings_mapper:
+        class: byrokrat\giroapp\Mapper\SettingsMapper
+        arguments: ['@db_settings_collection']
