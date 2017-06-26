@@ -20,9 +20,6 @@ services:
 
     event_dispatcher:
         class: Symfony\Component\EventDispatcher\EventDispatcher
-        calls:
-            - [addListener, [!php/const:byrokrat\giroapp\Events::IMPORT, '@import_listener']]
-            - [addListener, [!php/const:byrokrat\giroapp\Events::MANDATE_RESPONSE, '@node_filter_listener']]
         configurator: 'plugin_loader:loadPlugins'
 
     plugin_loader:
@@ -32,10 +29,14 @@ services:
     import_listener:
         class: byrokrat\giroapp\Listener\ImportListener
         arguments: ["@=service('autogiro_parser_factory').createParser()"]
+        tags:
+            - { name: event_listener, event: IMPORT, priority: 10 }
 
     node_filter_listener:
         class: byrokrat\giroapp\Listener\NodeFilterListener
         arguments: ['@bankgiro_factory', '@settings_mapper']
+        tags:
+            - { name: event_listener, event: MANDATE_RESPONSE, priority: 10 }
 
     autogiro_parser_factory:
         class: byrokrat\autogiro\Parser\ParserFactory

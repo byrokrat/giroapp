@@ -36,4 +36,14 @@ interface Events
      * A mandate response received from bank, will be called with a NodeEvent
      */
     const MANDATE_RESPONSE = 'mandate.response';
+
+    /**
+     * Log something important, will be called with a LogEvent
+     */
+    const LOG = 'log';
+
+    /**
+     * An error occured, will be called with a LogEvent
+     */
+    const ERROR = 'log.error';
 }

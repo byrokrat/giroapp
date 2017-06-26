@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp;
+namespace spec\byrokrat\giroapp\DI;
 
-use byrokrat\giroapp\UserDirectoryLocator;
+use byrokrat\giroapp\DI\UserDirectoryLocator;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

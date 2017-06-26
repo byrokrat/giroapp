@@ -9,7 +9,7 @@ services:
         arguments: ['%user.dir%']
 
     filesystem_configurator:
-        class: byrokrat\giroapp\FilesystemConfigurator
+        class: byrokrat\giroapp\DI\FilesystemConfigurator
         arguments:
             -
                 - '%db.settings%'

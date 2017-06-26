@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp;
+namespace byrokrat\giroapp\DI;
 
 /**
  * Rules for locating the current user config directory

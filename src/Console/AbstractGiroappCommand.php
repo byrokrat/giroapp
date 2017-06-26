@@ -22,16 +22,13 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\UserDirectoryLocator;
+use byrokrat\giroapp\DI\ContainerFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A cli command that have access to the dependency injection container
@@ -39,21 +36,16 @@ use Psr\Container\ContainerInterface;
 abstract class AbstractGiroappCommand extends Command
 {
     /**
-     * Path to app configuration directory
-     */
-    const CONFIG_DIR = __DIR__ . '/../../etc';
-
-    /**
      * @var ContainerInterface
      */
     private $container;
 
     /**
-     * Configure the config option
+     * Configure the path option
      */
     protected function configure()
     {
-        $this->addOption('config', 'c', InputOption::VALUE_REQUIRED, 'Path to configuration directory');
+        $this->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to configuration directory');
     }
 
     /**
@@ -63,19 +55,14 @@ abstract class AbstractGiroappCommand extends Command
      */
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        if (!$input->hasOption('config')) {
+        if (!$input->hasOption('path')) {
             throw new \Exception('Command not constructed properly, did you call parent::configure()?');
         }
 
-        $userDir = (new UserDirectoryLocator)->locateUserDirectory(
-            (string)$input->getOption('config'),
+        $this->container = (new ContainerFactory)->createContainer(
+            (string)$input->getOption('path'),
             (string)getenv('GIROAPP_PATH')
         );
-
-        $this->container = new ContainerBuilder();
-        $this->container->setParameter('user.dir', $userDir);
-        $loader = new YamlFileLoader($this->container, new FileLocator(self::CONFIG_DIR));
-        $loader->load('container.yaml');
     }
 
     /**

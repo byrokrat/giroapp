@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp;
+namespace spec\byrokrat\giroapp\DI;
 
-use byrokrat\giroapp\FilesystemConfigurator;
+use byrokrat\giroapp\DI\FilesystemConfigurator;
 use League\Flysystem\Filesystem;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;

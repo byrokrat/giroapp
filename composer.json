@@ -28,8 +28,6 @@
         "byrokrat/id": "^1.0",
         "hanneskod/yaysondb": "^2.0",
         "hanneskod/classtools": "^1.1",
-        "psr/log": "^1.0",
-        "psr/container": "^1.0",
         "symfony/dependency-injection": "^3.3",
         "symfony/config": "^3.3",
         "symfony/yaml": "^3.3",
