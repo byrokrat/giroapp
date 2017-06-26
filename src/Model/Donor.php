@@ -50,6 +50,57 @@ class Donor
      */
     private $mandateSource;
 
+    /**
+     * @var string
+     */
+    private $payerNumber;
+
+    /**
+     * @var \byrokrat\banking\AccountNumber
+     */
+    private $account;
+
+    /**
+     * @var \byrokrat\id\Id
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $comment;
+
+    /**
+     * @var string
+     */
+    private $namn;
+
+    /**
+     * @var string
+     */
+    private $adress1;
+
+    /**
+     * @var string
+     */
+    private $adress2;
+
+    /**
+     * @var string
+     */
+    private $adress3;
+
+    /**
+     * @var string
+     */
+    private $postNummer;
+
+    /**
+     * @var string
+     */
+    private $postAdress;
+
+
     public function __construct(DonorState $state, string $mandateSource)
     {
         $this->setState($state);
