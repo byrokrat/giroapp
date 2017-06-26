@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Action;
+namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\ImportEvent;
@@ -33,7 +33,7 @@ use byrokrat\autogiro\Tree\Record\Response\MandateResponseNode;
 /**
  * Parse an autogiro file and fire events based on content
  */
-class ImportAction
+class ImportListener
 {
     /**
      * @var Parser

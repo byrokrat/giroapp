@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Action;
+namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
@@ -32,7 +32,7 @@ use byrokrat\banking\BankgiroFactory;
 /**
  * Filter NodeEvents where payee information does not match local registry
  */
-class NodeFilterAction
+class NodeFilterListener
 {
     /**
      * @var BankgiroFactory

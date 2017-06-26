@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Action;
+namespace spec\byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Action\NodeFilterAction;
+use byrokrat\giroapp\Listener\NodeFilterListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Mapper\SettingsMapper;
@@ -17,7 +17,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class NodeFilterActionSpec extends ObjectBehavior
+class NodeFilterListenerSpec extends ObjectBehavior
 {
     function let(BankgiroFactory $bankgiroFactory, SettingsMapper $settingsMapper)
     {
@@ -26,7 +26,7 @@ class NodeFilterActionSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(NodeFilterAction::CLASS);
+        $this->shouldHaveType(NodeFilterListener::CLASS);
     }
 
     function it_ignores_valid_nodes(

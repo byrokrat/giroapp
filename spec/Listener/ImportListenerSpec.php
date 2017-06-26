@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Action;
+namespace spec\byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Action\ImportAction;
+use byrokrat\giroapp\Listener\ImportListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\ImportEvent;
 use byrokrat\giroapp\Event\NodeEvent;
@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class ImportActionSpec extends ObjectBehavior
+class ImportListenerSpec extends ObjectBehavior
 {
     function let(Parser $parser)
     {
@@ -25,7 +25,7 @@ class ImportActionSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ImportAction::CLASS);
+        $this->shouldHaveType(ImportListener::CLASS);
     }
 
     function a_tree(Node $node, $type = '', ...$children)
