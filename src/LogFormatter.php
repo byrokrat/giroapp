@@ -18,35 +18,30 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
+declare(strict_types = 1);
+
 namespace byrokrat\giroapp;
 
+use hanneskod\yaysondb\Engine\DecoderInterface;
+
 /**
- * List of giroapp event names
+ * Formats log messages
  */
-interface Events
+class LogFormatter implements DecoderInterface
 {
-    /**
-     * A bank file imported, expects an ImportEvent
-     */
-    const IMPORT_EVENT = 'file.import';
+    public function encode(array $docs): string
+    {
+        return sprintf(
+            '[%s] %s: %s %s',
+            date(DATE_RFC2822),
+            $docs['severity'],
+            $docs['message'],
+            json_encode((object)$docs['context'])
+        );
+    }
 
-    /**
-     * A mandate response received from bank, expects a NodeEvent
-     */
-    const MANDATE_RESPONSE_EVENT = 'mandate.response';
-
-    /**
-     * Present information to user, expects a LogEvent
-     */
-    const INFO_EVENT = 'INFO';
-
-    /**
-     * A ecoverable but unexpected situation, expects a LogEvent
-     */
-    const NOTICE_EVENT = 'NOTICE';
-
-    /**
-     * A serious error, expects a LogEvent
-     */
-    const ERROR_EVENT = 'ERROR';
+    public function decode(string $source): array
+    {
+        return [];
+    }
 }

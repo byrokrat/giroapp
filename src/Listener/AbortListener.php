@@ -18,35 +18,19 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp;
+declare(strict_types = 1);
+
+namespace byrokrat\giroapp\Listener;
+
+use byrokrat\giroapp\Event\LogEvent;
 
 /**
- * List of giroapp event names
+ * Throw exception on log event
  */
-interface Events
+class AbortListener
 {
-    /**
-     * A bank file imported, expects an ImportEvent
-     */
-    const IMPORT_EVENT = 'file.import';
-
-    /**
-     * A mandate response received from bank, expects a NodeEvent
-     */
-    const MANDATE_RESPONSE_EVENT = 'mandate.response';
-
-    /**
-     * Present information to user, expects a LogEvent
-     */
-    const INFO_EVENT = 'INFO';
-
-    /**
-     * A ecoverable but unexpected situation, expects a LogEvent
-     */
-    const NOTICE_EVENT = 'NOTICE';
-
-    /**
-     * A serious error, expects a LogEvent
-     */
-    const ERROR_EVENT = 'ERROR';
+    public function __invoke(LogEvent $event)
+    {
+        throw new \Exception($event->getMessage());
+    }
 }

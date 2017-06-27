@@ -24,6 +24,7 @@ namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Mapper\SettingsMapper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use byrokrat\autogiro\Tree\Node;
@@ -56,16 +57,15 @@ class NodeFilterListener
         $nodeBg = $event->getNode()->getChild('payee_bankgiro')->getAttribute('account');
 
         if (!$nodeBg->equals($appBg)) {
-            $event->stopPropagation();
-            // TODO log/present error to instead of exception..
-            throw new \RuntimeException("File contains payee bg $nodeBg, expecting $appBg.");
-
-            /*
             $dispatcher->dispatch(
                 Events::ERROR_EVENT,
-                new LogEvent("File contains payee bg $nodeBg, expecting $appBg.")
+                new LogEvent(
+                    'File contains invalid payee bankgiro account number',
+                    ['bankgiro' => (string)$nodeBg]
+                )
             );
-            */
+
+            $event->stopPropagation();
         }
     }
 }

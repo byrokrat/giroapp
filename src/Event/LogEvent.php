@@ -18,35 +18,37 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp;
+declare(strict_types = 1);
 
-/**
- * List of giroapp event names
- */
-interface Events
+namespace byrokrat\giroapp\Event;
+
+use Symfony\Component\EventDispatcher\Event;
+
+class LogEvent extends Event
 {
     /**
-     * A bank file imported, expects an ImportEvent
+     * @var string
      */
-    const IMPORT_EVENT = 'file.import';
+    private $message;
 
     /**
-     * A mandate response received from bank, expects a NodeEvent
+     * @var string[]
      */
-    const MANDATE_RESPONSE_EVENT = 'mandate.response';
+    private $context;
 
-    /**
-     * Present information to user, expects a LogEvent
-     */
-    const INFO_EVENT = 'INFO';
+    public function __construct(string $message, array $context = [])
+    {
+        $this->message = $message;
+        $this->context = $context;
+    }
 
-    /**
-     * A ecoverable but unexpected situation, expects a LogEvent
-     */
-    const NOTICE_EVENT = 'NOTICE';
+    public function getMessage(): string
+    {
+        return $this->message;
+    }
 
-    /**
-     * A serious error, expects a LogEvent
-     */
-    const ERROR_EVENT = 'ERROR';
+    public function getContext(): array
+    {
+        return $this->context;
+    }
 }

@@ -50,7 +50,7 @@ class ImportListener
         $enum = new Enumerator;
 
         $enum->onMandateResponseNode(function (MandateResponseNode $node) use ($dispatcher) {
-            $dispatcher->dispatch(Events::MANDATE_RESPONSE, new NodeEvent($node));
+            $dispatcher->dispatch(Events::MANDATE_RESPONSE_EVENT, new NodeEvent($node));
         });
 
         // TODO dispatch events on all response nodes

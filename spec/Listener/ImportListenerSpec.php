@@ -53,7 +53,7 @@ class ImportListenerSpec extends ObjectBehavior
             )
         );
 
-        $dispatcher->dispatch(Events::MANDATE_RESPONSE, Argument::type(NodeEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::MANDATE_RESPONSE_EVENT, Argument::type(NodeEvent::CLASS))->shouldBeCalled();
 
         $this->__invoke($event, '', $dispatcher);
     }

@@ -18,35 +18,36 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp;
+declare(strict_types = 1);
+
+namespace byrokrat\giroapp\Listener;
+
+use byrokrat\giroapp\Event\LogEvent;
+use hanneskod\yaysondb\Collection;
 
 /**
- * List of giroapp event names
+ * Log log events
  */
-interface Events
+class LogListener
 {
     /**
-     * A bank file imported, expects an ImportEvent
+     * @var Collection
      */
-    const IMPORT_EVENT = 'file.import';
+    private $log;
 
-    /**
-     * A mandate response received from bank, expects a NodeEvent
-     */
-    const MANDATE_RESPONSE_EVENT = 'mandate.response';
+    public function __construct(Collection $log)
+    {
+        $this->log = $log;
+    }
 
-    /**
-     * Present information to user, expects a LogEvent
-     */
-    const INFO_EVENT = 'INFO';
+    public function __invoke(LogEvent $event, string $eventName)
+    {
+        $this->log->insert([
+            'message' => $event->getMessage(),
+            'severity' => $eventName,
+            'context' => $event->getContext()
+        ]);
 
-    /**
-     * A ecoverable but unexpected situation, expects a LogEvent
-     */
-    const NOTICE_EVENT = 'NOTICE';
-
-    /**
-     * A serious error, expects a LogEvent
-     */
-    const ERROR_EVENT = 'ERROR';
+        $this->log->commit();
+    }
 }

@@ -35,4 +35,7 @@ services:
 
     db_log_engine:
         class: hanneskod\yaysondb\Engine\LogEngine
-        arguments: ['%db.log%', '@filesystem']
+        arguments: ['%user.dir%/%db.log%', '@db_log_formatter']
+
+    db_log_formatter:
+        class: byrokrat\giroapp\LogFormatter

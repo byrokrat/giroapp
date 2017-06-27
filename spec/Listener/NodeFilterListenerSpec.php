@@ -7,6 +7,7 @@ namespace spec\byrokrat\giroapp\Listener;
 use byrokrat\giroapp\Listener\NodeFilterListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Mapper\SettingsMapper;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Tree\FileNode;
@@ -72,6 +73,9 @@ class NodeFilterListenerSpec extends ObjectBehavior
         $event->stopPropagation()->shouldBeCalled();
 
         $bankgiro->__toString()->willReturn('');
-        $this->shouldThrow('\RuntimeException')->during('__invoke', [$event, '', $dispatcher]);
+
+        $dispatcher->dispatch(Events::ERROR_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+
+        $this->__invoke($event, '', $dispatcher);
     }
 }

@@ -45,6 +45,6 @@ class ImportCommand extends AbstractGiroappCommand
             throw new \RuntimeException("Unable to read file {$input->getArgument('filename')}");
         }
 
-        $this->dispatch(Events::IMPORT, new ImportEvent(file_get_contents($input->getArgument('filename'))));
+        $this->dispatch(Events::IMPORT_EVENT, new ImportEvent(file_get_contents($input->getArgument('filename'))));
     }
 }

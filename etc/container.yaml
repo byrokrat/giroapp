@@ -26,17 +26,30 @@ services:
         class: byrokrat\giroapp\DI\PluginLoader
         arguments: ['%user.dir%/%plugins.dir%', '@filesystem']
 
+    log_listener:
+        class: byrokrat\giroapp\Listener\LogListener
+        arguments: ['@db_log_collection']
+        tags:
+            - { name: event_listener, event: INFO_EVENT, priority: 10 }
+            - { name: event_listener, event: NOTICE_EVENT, priority: 10 }
+            - { name: event_listener, event: ERROR_EVENT, priority: 10 }
+
+    abort_listener:
+        class: byrokrat\giroapp\Listener\AbortListener
+        tags:
+            - { name: event_listener, event: ERROR_EVENT, priority: 1 }
+
     import_listener:
         class: byrokrat\giroapp\Listener\ImportListener
         arguments: ["@=service('autogiro_parser_factory').createParser()"]
         tags:
-            - { name: event_listener, event: IMPORT, priority: 10 }
+            - { name: event_listener, event: IMPORT_EVENT, priority: 10 }
 
     node_filter_listener:
         class: byrokrat\giroapp\Listener\NodeFilterListener
         arguments: ['@bankgiro_factory', '@settings_mapper']
         tags:
-            - { name: event_listener, event: MANDATE_RESPONSE, priority: 10 }
+            - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 10 }
 
     autogiro_parser_factory:
         class: byrokrat\autogiro\Parser\ParserFactory
