@@ -14,7 +14,15 @@ class DonorSpec extends ObjectBehavior
 {
     function let(DonorState $state)
     {
-        $this->beConstructedWith($state, Donor::MANDATE_SOURCE_PAPER);
+
+        $mandateSource = Donor::MANDATE_SOURCE_PAPER;
+        $payerNumber = "00001";
+        $accountFactory = new \byrokrat\banking\AccountFactory;
+        $account = $accountFactory->createAccount('50001111116');
+        $id = new PersonalId('820323-2775');
+        $name = "Namely Name";
+
+        $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $id, $name);
     }
 
     function it_is_initializable()
