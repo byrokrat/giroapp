@@ -101,10 +101,20 @@ class Donor
     private $postalCity;
 
 
-    public function __construct(DonorState $state, string $mandateSource)
+    public function __construct(DonorState $state, string $mandateSource, string $payerNumber, \byrokrat\banking\AccountNumber $account, \byrokrat\id\Id $id, string $comment, string $name, string $coAddress, string $address1, string $address2, string $postalCode, string $postalCity)
     {
         $this->setState($state);
         $this->mandateSource = $mandateSource;
+        $this->payerNumber = $payerNumber;
+        $this->account = $account;
+        $this->id = $id;
+        $this->comment = $comment;
+        $this->name = $name;
+        $this->coAddress = $coAddress;
+        $this->address1 = $address1;
+        $this->address2 = $address2;
+        $this->postalCode = $postalCode;
+        $this->postalCity = $postalCity;
     }
 
     public function getState(): DonorState
@@ -124,103 +134,103 @@ class Donor
 
     public function getPayerNumber(): string
     {
-        return this->payerNumber;
+        return $this->payerNumber;
     }
 
     public function setPayerNumber(string $payerNumber)
     {
-        this->payerNumber = $payerNumber;
+        $this->payerNumber = $payerNumber;
     }
 
     /*
-     * Don't think this is needed. Likely a new autogiro mantade will be issued
+     * Don't think $this is needed. Likely a new autogiro mantade will be issued
      * if the account is changed. However, it might be interesting in our
      * system to link mandates for the same person, but different accounts. But
      * that will probably not be done here.
     public function setAccount(\byrokrat\banking\AccountNumber $account)
     {
-        this->account = $account;
+        $this->account = $account;
     }
      */
 
     public function getAccount(): \byrokrat\banking\AccountNumber
     {
-        return this->account;
+        return $this->account;
     }
 
     public function getId(): \byrokrat\id\Id
     {
-        return this->id;
+        return $this->id;
     }
 
     public function setComment(string $comment)
     {
-        this->comment = $comment;
+        $this->comment = $comment;
     }
 
     public function getComment(): string
     {
-        return this->comment;
+        return $this->comment;
     }
 
     public function setName(string $name)
     {
-        this->name = $name;
+        $this->name = $name;
     }
 
     public function getName(): string
     {
-        return this->name;
+        return $this->name;
     }
 
     public function setCoAddress(string $coAddress)
     {
-        this->coAddress = $coAddress;
+        $this->coAddress = $coAddress;
     }
 
     public function getCoAddress(): string
     {
-        return this->coAddress;
+        return $this->coAddress;
     }
 
     public function setAddress1(string $address1)
     {
-        this->address1 = $address1;
+        $this->address1 = $address1;
     }
 
     public function getAddress1(): string
     {
-        return this->address1;
+        return $this->address1;
     }
 
     public function setAddress2(string $address2)
     {
-        this->address2 = $address2;
+        $this->address2 = $address2;
     }
 
     public function getAddress2(): string
     {
-        return this->address2;
+        return $this->address2;
     }
 
     public function setPostalCode(string $postalCode)
     {
-        this->postalCode = $postalCode;
+        $this->postalCode = $postalCode;
     }
 
     public function getPostalCode(): string
     {
-        return this->postalCode;
+        return $this->postalCode;
     }
 
     public function setPostalCity(string $postalCity)
     {
-        this->postalCity = $postalCity;
+        $this->postalCity = $postalCity;
     }
 
     public function getPostalCity(): string
     {
-        return this->postalCity;
+        return $this->postalCity;
     }
 
     public function exportToAutogiro(Writer $writer)
