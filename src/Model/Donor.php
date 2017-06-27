@@ -122,6 +122,107 @@ class Donor
         return $this->mandateSource;
     }
 
+    public function getPayerNumber(): string
+    {
+        return this->payerNumber;
+    }
+
+    public function setPayerNumber(string $payerNumber)
+    {
+        this->payerNumber = $payerNumber;
+    }
+
+    /*
+     * Don't think this is needed. Likely a new autogiro mantade will be issued
+     * if the account is changed. However, it might be interesting in our
+     * system to link mandates for the same person, but different accounts. But
+     * that will probably not be done here.
+    public function setAccount(\byrokrat\banking\AccountNumber $account)
+    {
+        this->account = $account;
+    }
+     */
+
+    public function getAccount(): \byrokrat\banking\AccountNumber
+    {
+        return this->account;
+    }
+
+    public function getId(): \byrokrat\id\Id
+    {
+        return this->id;
+    }
+
+    public function setComment(string $comment)
+    {
+        this->comment = $comment;
+    }
+
+    public function getComment(): string
+    {
+        return this->comment;
+    }
+
+    public function setName(string $name)
+    {
+        this->name = $name;
+    }
+
+    public function getName(): string
+    {
+        return this->name;
+    }
+
+    public function setCoAddress(string $coAddress)
+    {
+        this->coAddress = $coAddress;
+    }
+
+    public function getCoAddress(): string
+    {
+        return this->coAddress;
+    }
+
+    public function setAddress1(string $address1)
+    {
+        this->address1 = $address1;
+    }
+
+    public function getAddress1(): string
+    {
+        return this->address1;
+    }
+
+    public function setAddress2(string $address2)
+    {
+        this->address2 = $address2;
+    }
+
+    public function getAddress2(): string
+    {
+        return this->address2;
+    }
+
+    public function setPostalCode(string $postalCode)
+    {
+        this->postalCode = $postalCode;
+    }
+
+    public function getPostalCode(): string
+    {
+        return this->postalCode;
+    }
+
+    public function setPostalCity(string $postalCity)
+    {
+        this->postalCity = $postalCity;
+    }
+
+    public function getPostalCity(): string
+    {
+        return this->postalCity;
+    }
+
     public function exportToAutogiro(Writer $writer)
     {
         $this->getState()->export($this, $writer);
