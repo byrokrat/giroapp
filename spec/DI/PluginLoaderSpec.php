@@ -2,12 +2,11 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Plugin;
+namespace spec\byrokrat\giroapp\DI;
 
-use byrokrat\giroapp\Plugin\PluginLoader;
-use byrokrat\giroapp\Plugin\PluginInterface;
-use byrokrat\giroapp\Plugin\Payload;
+use byrokrat\giroapp\DI\PluginLoader;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -25,23 +24,19 @@ class PluginLoaderSpec extends ObjectBehavior
 
     function it_loads_plugins(EventDispatcherInterface $dispatcher)
     {
-        $dispatcher->addListener('foobar', Argument::any())->shouldBeCalled();
+        $dispatcher->addSubscriber(new DummyPlugin)->shouldBeCalled();
         $this->loadPlugins($dispatcher);
     }
 }
 
-class DummyPlugin implements PluginInterface
+class DummyPlugin implements EventSubscriberInterface
 {
-    public function listensTo(): array
+    public static function getSubscribedEvents()
     {
-        return ['foobar'];
+        return [];
     }
+}
 
-    public function setup()
-    {
-    }
-
-    public function execute(Payload $payload)
-    {
-    }
+abstract class AbstractPluginNotCreated implements EventSubscriberInterface
+{
 }

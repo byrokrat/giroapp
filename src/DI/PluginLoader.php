@@ -20,50 +20,39 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Plugin;
+namespace byrokrat\giroapp\DI;
 
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Finder\Finder;
+use hanneskod\classtools\Iterator\ClassIterator;
 
 /**
- * Payload passed to plugins on execution
+ * Load plugins from filesystem
  */
-class Payload
+class PluginLoader
 {
-    /**
-     * @var Event
-     */
-    private $event;
-
     /**
      * @var string
      */
-    private $eventName;
+    private $pluginDir;
 
     /**
-     * @var EventDispatcherInterface
+     * Set directory to scan for plugins
      */
-    private $dispatcher;
-
-    public function __construct(Event $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function __construct(string $pluginDir)
     {
-        $this->event = $event;
-        $this->eventName = $eventName;
-        $this->dispatcher = $dispatcher;
+        $this->pluginDir = $pluginDir;
     }
 
-    public function getEvent(): Event
+    public function loadPlugins(EventDispatcherInterface $dispatcher)
     {
-        return $this->event;
-    }
+        $classIterator = new ClassIterator((new Finder)->in($this->pluginDir));
 
-    public function getEventName(): string
-    {
-        return $this->eventName;
-    }
+        $classIterator->enableAutoloading();
 
-    public function getDispatcher(): EventDispatcherInterface
-    {
-        return $this->dispatcher;
+        foreach ($classIterator->type(EventSubscriberInterface::CLASS)->where('isInstantiable') as $reflectionClass) {
+            $dispatcher->addSubscriber($reflectionClass->newInstance());
+        }
     }
 }

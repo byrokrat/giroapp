@@ -23,7 +23,7 @@ services:
         configurator: 'plugin_loader:loadPlugins'
 
     plugin_loader:
-        class: byrokrat\giroapp\Plugin\PluginLoader
+        class: byrokrat\giroapp\DI\PluginLoader
         arguments: ['%user.dir%/%plugins.dir%', '@filesystem']
 
     import_listener:
