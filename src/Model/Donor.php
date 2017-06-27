@@ -73,32 +73,32 @@ class Donor
     /**
      * @var string
      */
-    private $namn;
+    private $name;
 
     /**
      * @var string
      */
-    private $adress1;
+    private $coAddress;
 
     /**
      * @var string
      */
-    private $adress2;
+    private $address1;
 
     /**
      * @var string
      */
-    private $adress3;
+    private $address2;
 
     /**
      * @var string
      */
-    private $postNummer;
+    private $postalCode;
 
     /**
      * @var string
      */
-    private $postAdress;
+    private $postalCity;
 
 
     public function __construct(DonorState $state, string $mandateSource)
