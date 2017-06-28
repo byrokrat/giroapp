@@ -153,7 +153,7 @@ class Donor
 
         $this->email = "";
         $this->phone = "";
-        $this->donationAmount = new Amount('0');
+        $this->donationAmount = new byrokrat\amount\Currency\SEK('0');
     }
 
     public function getState(): DonorState
@@ -292,12 +292,12 @@ class Donor
         $this->phone = $phone;
     }
 
-    public function getDonationAmount(): \byrokrat\Amount\Currency
+    public function getDonationAmount(): \byrokrat\amount\Currency
     {
         return $this->donationAmount;
     }
 
-    public function setDonationAmount(\byrokrat\Amount\Currency $donationAmount)
+    public function setDonationAmount(\byrokrat\amount\Currency $donationAmount)
     {
         $this->donationAmount = $donationAmount;
     }
