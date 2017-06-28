@@ -60,19 +60,19 @@ class DonorSpec extends ObjectBehavior
 
     function it_can_set_phone(string $newPhone)
     {
-        this->setPhone($newPhone);
-        this->getPhone()->shouldEqual($newPhone);
+        $this->setPhone($newPhone);
+        $this->getPhone()->shouldEqual($newPhone);
     }
 
     function it_can_set_email(string $newEmail)
     {
-        this->setEmail($newEmail);
-        this->getEmail()->shouldEqual($newEmail);
+        $this->setEmail($newEmail);
+        $this->getEmail()->shouldEqual($newEmail);
     }
 
     function it_can_set_donationAmount(Amount $newAmount)
     {
-        this->setDonationAmount($newAmount);
-        this->getDonationAmount()->shouldEqual($newAmount);
+        $this->setDonationAmount($newAmount);
+        $this->getDonationAmount()->shouldEqual($newAmount);
     }
 }
