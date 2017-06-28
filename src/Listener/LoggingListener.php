@@ -23,14 +23,31 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Event\LogEvent;
+use hanneskod\yaysondb\Collection;
 
 /**
- * Throw exception on log event
+ * Log log events
  */
-class AbortListener
+class LoggingListener
 {
-    public function __invoke(LogEvent $event)
+    /**
+     * @var Collection
+     */
+    private $log;
+
+    public function __construct(Collection $log)
     {
-        throw new \Exception($event->getMessage());
+        $this->log = $log;
+    }
+
+    public function __invoke(LogEvent $event, string $eventName)
+    {
+        $this->log->insert([
+            'message' => $event->getMessage(),
+            'severity' => $eventName,
+            'context' => $event->getContext()
+        ]);
+
+        $this->log->commit();
     }
 }

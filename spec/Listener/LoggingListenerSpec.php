@@ -4,13 +4,13 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Listener\LogListener;
+use byrokrat\giroapp\Listener\LoggingListener;
 use hanneskod\yaysondb\Collection;
 use byrokrat\giroapp\Event\LogEvent;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class LogListenerSpec extends ObjectBehavior
+class LoggingListenerSpec extends ObjectBehavior
 {
     function let(Collection $collection)
     {
@@ -19,7 +19,7 @@ class LogListenerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(LogListener::CLASS);
+        $this->shouldHaveType(LoggingListener::CLASS);
     }
 
     function it_logs_log_events(LogEvent $event, $collection)

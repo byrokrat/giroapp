@@ -33,7 +33,7 @@ use byrokrat\banking\BankgiroFactory;
 /**
  * Filter NodeEvents where payee information does not match local registry
  */
-class NodeFilterListener
+class InvalidNodeFilteringListener
 {
     /**
      * @var BankgiroFactory
