@@ -100,9 +100,20 @@ class Donor
      */
     private $postalCity;
 
-
-    public function __construct(DonorState $state, string $mandateSource, string $payerNumber, \byrokrat\banking\AccountNumber $account, \byrokrat\id\Id $id, string $name, string $comment = "", string $coAddress = "", string $address1 = "", string $address2 = "", string $postalCode = "", string $postalCity = "")
-    {
+    public function __construct(
+        DonorState $state,
+        string $mandateSource,
+        string $payerNumber,
+        \byrokrat\banking\AccountNumber $account,
+        \byrokrat\id\Id $id,
+        string $name,
+        string $comment = "",
+        string $coAddress = "",
+        string $address1 = "",
+        string $address2 = "",
+        string $postalCode = "",
+        string $postalCity = ""
+    ) {
         $this->setState($state);
         $this->mandateSource = $mandateSource;
         $this->payerNumber = $payerNumber;
