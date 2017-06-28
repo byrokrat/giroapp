@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\DonorState\DonorState;
+use byrokrat\amount\Amount;
 use byrokrat\autogiro\Writer\Writer;
 
 /**
@@ -100,6 +101,29 @@ class Donor
      */
     private $postalCity;
 
+    /**
+     * TODO:
+     * Contact information should be moved to a separate object, ContactPerson.
+     * It should be clear in the end application that this contact information,
+     * if added, should only be used to contact the donor on autogiro subjects.
+     * This to conform with Data protection regulations.
+     */
+
+    /**
+     * @var string
+     */
+    private $email;
+
+    /**
+     * @var string
+     */
+    private $phone;
+
+    /**
+     * @var \byrokrat\Amount\Currency
+     */
+    private $donationAmount;
+
     public function __construct(
         DonorState $state,
         string $mandateSource,
@@ -126,6 +150,10 @@ class Donor
         $this->address2 = $address2;
         $this->postalCode = $postalCode;
         $this->postalCity = $postalCity;
+
+        $this->email = "";
+        $this->phone = "";
+        $this->donationAmount = new Amount('0');
     }
 
     public function getState(): DonorState
@@ -242,6 +270,36 @@ class Donor
     public function getPostalCity(): string
     {
         return $this->postalCity;
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email)
+    {
+        $this->email = $email;
+    }
+
+    public function getPhone(): string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(string $phone)
+    {
+        $this->phone = $phone;
+    }
+
+    public function getDonationAmount(): \byrokrat\Amount\Currency
+    {
+        return $this->getDonationAmount;
+    }
+
+    public function setDonationAmount(\byrokrat\Amount\Currency $donationAmount)
+    {
+        $this->donationAmount = $donationAmount;
     }
 
     public function exportToAutogiro(Writer $writer)
