@@ -5,6 +5,10 @@ parameters:
     db.log: 'var/log'
 
 services:
+    settings_mapper:
+        class: byrokrat\giroapp\Mapper\SettingsMapper
+        arguments: ['@db_settings_collection']
+
     db_settings_collection:
         class: hanneskod\yaysondb\Collection
         arguments: ['@db_settings_engine']
@@ -13,6 +17,10 @@ services:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.settings%', '@filesystem']
 
+    donor_mapper:
+        class: byrokrat\giroapp\Mapper\DonorMapper
+        arguments: ['@db_donors_collection']
+
     db_donors_collection:
         class: hanneskod\yaysondb\Collection
         arguments: ['@db_donors_engine']
@@ -20,6 +28,10 @@ services:
     db_donors_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.donors%', '@filesystem']
+
+    transaction_mapper:
+        class: byrokrat\giroapp\Mapper\TransactionMapper
+        arguments: ['@db_transactions_collection']
 
     db_transactions_collection:
         class: hanneskod\yaysondb\Collection

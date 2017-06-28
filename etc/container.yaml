@@ -3,21 +3,9 @@ parameters:
 
 imports:
     - { resource: db.yaml }
-    - { resource: filesystem.yaml }
+    - { resource: fs.yaml }
 
 services:
-    settings_mapper:
-        class: byrokrat\giroapp\Mapper\SettingsMapper
-        arguments: ['@db_settings_collection']
-
-    donor_mapper:
-        class: byrokrat\giroapp\Mapper\DonorMapper
-        arguments: ['@db_donors_collection']
-
-    transaction_mapper:
-        class: byrokrat\giroapp\Mapper\TransactionMapper
-        arguments: ['@db_transactions_collection']
-
     event_dispatcher:
         class: Symfony\Component\EventDispatcher\EventDispatcher
         configurator: 'plugin_loader:loadPlugins'
