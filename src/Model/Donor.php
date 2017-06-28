@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\DonorState\DonorState;
-use byrokrat\amount\Amount;
+use byrokrat\amount\Currency;
 use byrokrat\autogiro\Writer\Writer;
 
 /**
@@ -153,7 +153,7 @@ class Donor
 
         $this->email = "";
         $this->phone = "";
-        $this->donationAmount = new byrokrat\amount\Currency\SEK('0');
+        $this->donationAmount = new \byrokrat\amount\Currency\SEK('0');
     }
 
     public function getState(): DonorState
@@ -292,12 +292,12 @@ class Donor
         $this->phone = $phone;
     }
 
-    public function getDonationAmount(): \byrokrat\amount\Currency
+    public function getDonationAmount(): Currency
     {
         return $this->donationAmount;
     }
 
-    public function setDonationAmount(\byrokrat\amount\Currency $donationAmount)
+    public function setDonationAmount(Currency $donationAmount)
     {
         $this->donationAmount = $donationAmount;
     }
