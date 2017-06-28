@@ -294,7 +294,7 @@ class Donor
 
     public function getDonationAmount(): \byrokrat\Amount\Currency
     {
-        return $this->getDonationAmount;
+        return $this->donationAmount;
     }
 
     public function setDonationAmount(\byrokrat\Amount\Currency $donationAmount)

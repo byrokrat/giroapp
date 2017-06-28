@@ -58,14 +58,16 @@ class DonorSpec extends ObjectBehavior
         $this->getId()->shouldEqual($id);
     }
 
-    function it_can_set_phone(string $newPhone)
+    function it_can_set_phone()
     {
+        $newPhone = '+4670111111';
         $this->setPhone($newPhone);
         $this->getPhone()->shouldEqual($newPhone);
     }
 
-    function it_can_set_email(string $newEmail)
+    function it_can_set_email()
     {
+        $newEmail = 'this@that.tld';
         $this->setEmail($newEmail);
         $this->getEmail()->shouldEqual($newEmail);
     }
