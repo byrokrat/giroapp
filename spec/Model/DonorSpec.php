@@ -9,17 +9,16 @@ use byrokrat\giroapp\Model\DonorState\DonorState;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use byrokrat\id\PersonalId;
+use byrokrat\banking\AccountNumber;
 
 class DonorSpec extends ObjectBehavior
 {
-    function let(DonorState $state)
+    function let(DonorState $state, AccountNumber $account, PersonalId $id)
     {
 
         $mandateSource = Donor::MANDATE_SOURCE_PAPER;
         $payerNumber = "00001";
-        $accountFactory = new \byrokrat\banking\AccountFactory;
-        $account = $accountFactory->createAccount('50001111116');
-        $id = new PersonalId('820323-2775');
         $name = "Namely Name";
 
         $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $id, $name);
@@ -51,5 +50,10 @@ class DonorSpec extends ObjectBehavior
     {
         $this->exportToAutogiro($writer);
         $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
+    }
+    
+    function it_contains_an_id($id)
+    {
+        $this->getId()->shouldEqual($id);
     }
 }
