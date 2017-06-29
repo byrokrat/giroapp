@@ -38,6 +38,7 @@ class RevokeMandateStateSpec extends ObjectBehavior
 
         $this->export($donor, $writer);
 
+        $writer->deleteMandate('')->shouldHaveBeenCalled();
         $donor->setState(Argument::type(DonorState\RevocationSentState::CLASS))->shouldHaveBeenCalled();
     }
 }

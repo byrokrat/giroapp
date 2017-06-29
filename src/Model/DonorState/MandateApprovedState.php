@@ -39,7 +39,9 @@ class MandateApprovedState extends AbstractState
 
     public function export(Donor $donor, Writer $writer)
     {
-        // TODO export payments to $writer
-        $donor->setState(new ActiveState);
+        // TODO if ($donor->getDonationAmount()->isPositive()) {
+            // TODO $writer->addTransaction(...);
+            $donor->setState(new ActiveState);
+        // }
     }
 }

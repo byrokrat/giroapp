@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Mapper;
 
+use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
 
@@ -38,5 +39,18 @@ class DonorMapper
     public function __construct(CollectionInterface $collection)
     {
         $this->collection = $collection;
+    }
+
+    public function findAll(): \Generator
+    {
+        // TODO implement. Used on ExportCommand...
+        if (false) {
+            yield '';
+        }
+    }
+
+    public function save(Donor $donor)
+    {
+        // TODO implement. Used on ExportCommand...
     }
 }
