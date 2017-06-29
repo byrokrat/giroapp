@@ -11,7 +11,7 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use byrokrat\id\PersonalId;
 use byrokrat\banking\AccountNumber;
-use byrokrat\amount\Currency;
+use byrokrat\amount\Currency\SEK;
 
 class DonorSpec extends ObjectBehavior
 {
@@ -72,7 +72,7 @@ class DonorSpec extends ObjectBehavior
         $this->getEmail()->shouldEqual($newEmail);
     }
 
-    function it_can_set_donationAmount(Currency $newAmount)
+    function it_can_set_donationAmount(SEK $newAmount)
     {
         $this->setDonationAmount($newAmount);
         $this->getDonationAmount()->shouldEqual($newAmount);
