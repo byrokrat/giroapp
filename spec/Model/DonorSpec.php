@@ -60,7 +60,7 @@ class DonorSpec extends ObjectBehavior
 
     function it_contains_an_uid()
     {
-        $this->getUid()->shouldEqual(hash('sha256',$this->getId().$this->getAccount());
+        $this->getUid()->shouldEqual(hash('sha256',$this->getId().$this->getAccount()));
     }
 
     function it_can_set_phone()

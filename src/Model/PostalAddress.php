@@ -54,10 +54,10 @@ class PostalAddress
 
     public function __construct(
         string $postalCode = "",
-        string $postalCity = ""
+        string $postalCity = "",
         string $address1 = "",
         string $address2 = "",
-        string $coAddress = "",
+        string $coAddress = ""
     )
     {
         this->$coAddress = coAddress;

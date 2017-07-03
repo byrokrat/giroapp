@@ -118,8 +118,8 @@ class Donor
         \byrokrat\id\Id $id,
         string $name,
         PostalAddress $address = null,
-        SEK $donationAmount = null
-        string $comment = "",
+        SEK $donationAmount = null,
+        string $comment = ""
     ) {
         $this->setState($state);
         $this->mandateSource = $mandateSource;
