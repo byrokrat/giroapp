@@ -133,7 +133,7 @@ class Donor
         $this->phone = "";
         $this->address = $address ?: new PostalAddress();
         $this->donationAmount =  $donationAmount ?: new SEK('0');
-        $this->uid = hash(sha256, $this->id.$this->account);
+        $this->uid = hash('sha256', $this->id.$this->account);
     }
 
     public function getState(): DonorState
