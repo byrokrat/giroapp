@@ -21,6 +21,7 @@ class DonorSpec extends ObjectBehavior
 
         $mandateSource = Donor::MANDATE_SOURCE_PAPER;
         $payerNumber = "00001";
+        $name = "namely name";
 
         $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $id, $name, $address);
     }
