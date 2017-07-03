@@ -12,17 +12,17 @@ use Prophecy\Argument;
 use byrokrat\id\PersonalId;
 use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
+use byrokrat\giroapp\Model\PostalAddress;
 
 class DonorSpec extends ObjectBehavior
 {
-    function let(DonorState $state, AccountNumber $account, PersonalId $id)
+    function let(DonorState $state, AccountNumber $account, PersonalId $id, PostalAddress $address)
     {
 
         $mandateSource = Donor::MANDATE_SOURCE_PAPER;
         $payerNumber = "00001";
-        $name = "Namely Name";
 
-        $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $id, $name);
+        $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $id, $name, $address);
     }
 
     function it_is_initializable()
@@ -58,6 +58,11 @@ class DonorSpec extends ObjectBehavior
         $this->getId()->shouldEqual($id);
     }
 
+    function it_contains_an_uid()
+    {
+        $this->getUid()->shouldEqual(hash('sha256',$this->getId().$this->getAccount());
+    }
+
     function it_can_set_phone()
     {
         $newPhone = '+4670111111';
@@ -76,5 +81,10 @@ class DonorSpec extends ObjectBehavior
     {
         $this->setDonationAmount($newAmount);
         $this->getDonationAmount()->shouldEqual($newAmount);
+    }
+
+    function it_has_an_address($address)
+    {
+        $this->getAddress()->shouldEqual($address);
     }
 }

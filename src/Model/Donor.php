@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\DonorState\DonorState;
+use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\autogiro\Writer\Writer;
 
@@ -77,29 +78,9 @@ class Donor
     private $name;
 
     /**
-     * @var string
+     * @var \byrokrat\giroapp\Model\PostalAddress
      */
-    private $coAddress;
-
-    /**
-     * @var string
-     */
-    private $address1;
-
-    /**
-     * @var string
-     */
-    private $address2;
-
-    /**
-     * @var string
-     */
-    private $postalCode;
-
-    /**
-     * @var string
-     */
-    private $postalCity;
+    private $address;
 
     /**
      * TODO:
@@ -124,6 +105,11 @@ class Donor
      */
     private $donationAmount;
 
+    /**
+     * $var string
+     */
+    private $uid;
+
     public function __construct(
         DonorState $state,
         string $mandateSource,
@@ -131,13 +117,9 @@ class Donor
         \byrokrat\banking\AccountNumber $account,
         \byrokrat\id\Id $id,
         string $name,
-        string $comment = "",
-        string $coAddress = "",
-        string $address1 = "",
-        string $address2 = "",
-        string $postalCode = "",
-        string $postalCity = "",
+        PostalAddress $address = null,
         SEK $donationAmount = null
+        string $comment = "",
     ) {
         $this->setState($state);
         $this->mandateSource = $mandateSource;
@@ -146,15 +128,12 @@ class Donor
         $this->id = $id;
         $this->comment = $comment;
         $this->name = $name;
-        $this->coAddress = $coAddress;
-        $this->address1 = $address1;
-        $this->address2 = $address2;
-        $this->postalCode = $postalCode;
-        $this->postalCity = $postalCity;
 
         $this->email = "";
         $this->phone = "";
+        $this->address = $address ?: new PostalAddress();
         $this->donationAmount =  $donationAmount ?: new SEK('0');
+        $this->uid = hash(sha256, $this->id.$this->account);
     }
 
     public function getState(): DonorState
@@ -181,17 +160,6 @@ class Donor
     {
         $this->payerNumber = $payerNumber;
     }
-
-    /*
-     * Don't think $this is needed. Likely a new autogiro mantade will be issued
-     * if the account is changed. However, it might be interesting in our
-     * system to link mandates for the same person, but different accounts. But
-     * that will probably not be done here.
-    public function setAccount(\byrokrat\banking\AccountNumber $account)
-    {
-        $this->account = $account;
-    }
-     */
 
     public function getAccount(): \byrokrat\banking\AccountNumber
     {
@@ -223,54 +191,14 @@ class Donor
         return $this->name;
     }
 
-    public function setCoAddress(string $coAddress)
+    public function setAddress(PostalAddress $address)
     {
-        $this->coAddress = $coAddress;
+        $this->address = $address;
     }
 
-    public function getCoAddress(): string
+    public function getAddress(): PostalAddress
     {
-        return $this->coAddress;
-    }
-
-    public function setAddress1(string $address1)
-    {
-        $this->address1 = $address1;
-    }
-
-    public function getAddress1(): string
-    {
-        return $this->address1;
-    }
-
-    public function setAddress2(string $address2)
-    {
-        $this->address2 = $address2;
-    }
-
-    public function getAddress2(): string
-    {
-        return $this->address2;
-    }
-
-    public function setPostalCode(string $postalCode)
-    {
-        $this->postalCode = $postalCode;
-    }
-
-    public function getPostalCode(): string
-    {
-        return $this->postalCode;
-    }
-
-    public function setPostalCity(string $postalCity)
-    {
-        $this->postalCity = $postalCity;
-    }
-
-    public function getPostalCity(): string
-    {
-        return $this->postalCity;
+        return $this->address;
     }
 
     public function getEmail(): string
@@ -301,6 +229,11 @@ class Donor
     public function setDonationAmount(SEK $donationAmount)
     {
         $this->donationAmount = $donationAmount;
+    }
+
+    public function getUid(): string
+    {
+        return $this->uid;
     }
 
     public function exportToAutogiro(Writer $writer)
