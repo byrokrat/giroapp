@@ -58,8 +58,7 @@ class PostalAddress
         string $address1 = "",
         string $address2 = "",
         string $coAddress = ""
-    )
-    {
+    ) {
         $this->coAddress = $coAddress;
         $this->address1 = $address1;
         $this->address2 = $address2;
