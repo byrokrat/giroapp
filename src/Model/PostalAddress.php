@@ -60,11 +60,11 @@ class PostalAddress
         string $coAddress = ""
     )
     {
-        this->$coAddress = coAddress;
-        this->$address1 = address1;
-        this->$address2 = address2;
-        this->$postalCode = postalCode;
-        this->$postalCity = postalCity;
+        $this->coAddress = $coAddress;
+        $this->address1 = $address1;
+        $this->address2 = $address2;
+        $this->postalCode = $postalCode;
+        $this->postalCity = $postalCity;
     }
     public function getCoAddress(): string
     {
