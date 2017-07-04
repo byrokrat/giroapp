@@ -23,9 +23,10 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\DonorState\DonorState;
-use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\autogiro\Writer\Writer;
+use byrokrat\banking\AccountNumber;
+use byrokrat\id\Id;
 
 /**
  * Models an individual donor
@@ -58,14 +59,14 @@ class Donor
     private $payerNumber;
 
     /**
-     * @var \byrokrat\banking\AccountNumber
+     * @var AccountNumber
      */
     private $account;
 
     /**
-     * @var \byrokrat\id\Id
+     * @var Id
      */
-    private $id;
+    private $donorId;
 
     /**
      * @var string
@@ -78,17 +79,9 @@ class Donor
     private $name;
 
     /**
-     * @var \byrokrat\giroapp\Model\PostalAddress
+     * @var PostalAddress
      */
     private $address;
-
-    /**
-     * TODO:
-     * Contact information should be moved to a separate object, ContactPerson.
-     * It should be clear in the end application that this contact information,
-     * if added, should only be used to contact the donor on autogiro subjects.
-     * This to conform with Data protection regulations.
-     */
 
     /**
      * @var string
@@ -108,14 +101,14 @@ class Donor
     /**
      * $var string
      */
-    private $uid;
+    private $mandateKey;
 
     public function __construct(
         DonorState $state,
         string $mandateSource,
         string $payerNumber,
-        \byrokrat\banking\AccountNumber $account,
-        \byrokrat\id\Id $id,
+        AccountNumber $account,
+        Id $donorId,
         string $name,
         PostalAddress $address = null,
         SEK $donationAmount = null,
@@ -125,7 +118,7 @@ class Donor
         $this->mandateSource = $mandateSource;
         $this->payerNumber = $payerNumber;
         $this->account = $account;
-        $this->id = $id;
+        $this->donorId = $donorId;
         $this->comment = $comment;
         $this->name = $name;
 
@@ -133,7 +126,7 @@ class Donor
         $this->phone = "";
         $this->address = $address ?: new PostalAddress();
         $this->donationAmount =  $donationAmount ?: new SEK('0');
-        $this->uid = hash('sha256', $this->id->format('S-sk').$this->account->getNumber());
+        $this->mandateKey = hash('sha256', $this->donorId->format('S-sk').$this->account->get16());
     }
 
     public function getState(): DonorState
@@ -161,14 +154,14 @@ class Donor
         $this->payerNumber = $payerNumber;
     }
 
-    public function getAccount(): \byrokrat\banking\AccountNumber
+    public function getAccount(): AccountNumber
     {
         return $this->account;
     }
 
-    public function getId(): \byrokrat\id\Id
+    public function getDonorId(): Id
     {
-        return $this->id;
+        return $this->donorId;
     }
 
     public function setComment(string $comment)
@@ -231,9 +224,9 @@ class Donor
         $this->donationAmount = $donationAmount;
     }
 
-    public function getUid(): string
+    public function getMandateKey(): string
     {
-        return $this->uid;
+        return $this->mandateKey;
     }
 
     public function exportToAutogiro(Writer $writer)

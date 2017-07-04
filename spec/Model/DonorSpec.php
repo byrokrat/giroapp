@@ -16,14 +16,14 @@ use byrokrat\giroapp\Model\PostalAddress;
 
 class DonorSpec extends ObjectBehavior
 {
-    function let(DonorState $state, AccountNumber $account, PersonalId $id, PostalAddress $address)
+    function let(DonorState $state, AccountNumber $account, PersonalId $donorId, PostalAddress $address)
     {
 
         $mandateSource = Donor::MANDATE_SOURCE_PAPER;
         $payerNumber = "00001";
         $name = "namely name";
 
-        $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $id, $name, $address);
+        $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $donorId, $name, $address);
     }
 
     function it_is_initializable()
@@ -54,14 +54,14 @@ class DonorSpec extends ObjectBehavior
         $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
     }
     
-    function it_contains_an_id($id)
+    function it_contains_a_donor_id($donorId)
     {
-        $this->getId()->shouldEqual($id);
+        $this->getDonorId()->shouldEqual($donorId);
     }
 
-    function it_contains_an_uid($hash)
+    function it_contains_a_mandate_key($hash)
     {
-        $this->getUid()->shouldBeString();
+        $this->getMandateKey()->shouldBeString();
     }
 
     function it_can_set_phone()
