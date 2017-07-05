@@ -59,9 +59,11 @@ class DonorSpec extends ObjectBehavior
         $this->getDonorId()->shouldEqual($donorId);
     }
 
-    function it_contains_a_mandate_key($hash)
+    function it_contains_a_mandate_key($account, $donorId)
     {
-        $this->getMandateKey()->shouldBeString();
+        $donorId->format('S-sk')->willReturn('foo');
+        $account->get16()->willReturn('bar');
+        $this->getMandateKey()->shouldEqual(hash('sha256', 'foobar'));
     }
 
     function it_can_set_phone()
