@@ -23,7 +23,6 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Mapper;
 
 use hanneskod\yaysondb\CollectionInterface;
-use hanneskod\yaysondb\Operators as y;
 
 /**
  * Mapps key-value pairs to a db collection
@@ -45,26 +44,24 @@ class SettingsMapper
      */
     public function read(string $key): string
     {
-        return $this->collection->findOne(y::doc(['key' => y::equals($key)]))['value'] ?? '';
+        return $this->collection->has($key) ? $this->collection->read($key)['value'] : '';
     }
 
     /**
-     * Setting key-value pair
+     * Write setting key-value pair
      */
     public function write(string $key, string $value)
     {
-        $nrOfUpdates = $this->collection->update(
-            y::doc(['key' => y::equals($key)]),
-            ['value' => $value]
-        );
+        $this->collection->insert(['value' => $value], $key);
+    }
 
-        if (0 == $nrOfUpdates) {
-            $this->collection->insert([
-                'key' => $key,
-                'value' => $value
-            ]);
+    /**
+     * Commit changes to storage
+     */
+    public function commit()
+    {
+        if ($this->collection->inTransaction()) {
+            $this->collection->commit();
         }
-
-        $this->collection->commit();
     }
 }

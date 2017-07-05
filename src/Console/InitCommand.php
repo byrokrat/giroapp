@@ -67,5 +67,7 @@ class InitCommand extends AbstractGiroappCommand
             $settingsMapper->write($key, $newValue);
             $output->writeln("$desc set to: <info>$newValue</info>");
         }
+
+        $settingsMapper->commit();
     }
 }
