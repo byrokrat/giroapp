@@ -9,12 +9,21 @@ use byrokrat\giroapp\Model\DonorState\DonorState;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
+use byrokrat\id\PersonalId;
+use byrokrat\banking\AccountNumber;
+use byrokrat\amount\Currency\SEK;
+use byrokrat\giroapp\Model\PostalAddress;
 
 class DonorSpec extends ObjectBehavior
 {
-    function let(DonorState $state)
+    function let(DonorState $state, AccountNumber $account, PersonalId $donorId, PostalAddress $address)
     {
-        $this->beConstructedWith($state, Donor::MANDATE_SOURCE_PAPER);
+
+        $mandateSource = Donor::MANDATE_SOURCE_PAPER;
+        $payerNumber = "00001";
+        $name = "namely name";
+
+        $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $donorId, $name, $address);
     }
 
     function it_is_initializable()
@@ -43,5 +52,42 @@ class DonorSpec extends ObjectBehavior
     {
         $this->exportToAutogiro($writer);
         $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
+    }
+    
+    function it_contains_a_donor_id($donorId)
+    {
+        $this->getDonorId()->shouldEqual($donorId);
+    }
+
+    function it_contains_a_mandate_key($account, $donorId)
+    {
+        $donorId->format('S-sk')->willReturn('foo');
+        $account->get16()->willReturn('bar');
+        $this->getMandateKey()->shouldEqual(hash('sha256', 'foobar'));
+    }
+
+    function it_can_set_phone()
+    {
+        $newPhone = '+4670111111';
+        $this->setPhone($newPhone);
+        $this->getPhone()->shouldEqual($newPhone);
+    }
+
+    function it_can_set_email()
+    {
+        $newEmail = 'this@that.tld';
+        $this->setEmail($newEmail);
+        $this->getEmail()->shouldEqual($newEmail);
+    }
+
+    function it_can_set_donationAmount(SEK $newAmount)
+    {
+        $this->setDonationAmount($newAmount);
+        $this->getDonationAmount()->shouldEqual($newAmount);
+    }
+
+    function it_has_an_address($address)
+    {
+        $this->getAddress()->shouldEqual($address);
     }
 }
