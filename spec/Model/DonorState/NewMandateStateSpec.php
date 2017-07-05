@@ -7,6 +7,8 @@ namespace spec\byrokrat\giroapp\Model\DonorState;
 use byrokrat\giroapp\Model\DonorState;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
+use byrokrat\banking\AccountNumber;
+use byrokrat\id\Id;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -32,12 +34,21 @@ class NewMandateStateSpec extends ObjectBehavior
         $this->getDescription()->shouldBeString();
     }
 
-    function it_is_exportable_to_autogiro(Donor $donor, Writer $writer)
+    function it_is_exportable()
     {
         $this->isExportable()->shouldBe(true);
+    }
+
+    function it_can_be_exported(Donor $donor, Writer $writer, AccountNumber $account, Id $id)
+    {
+        $donor->getPayerNumber()->willReturn('foobar');
+        $donor->getAccount()->willReturn($account);
+        $donor->getDonorId()->willReturn($id);
+
+        $donor->setState(Argument::type(DonorState\MandateSentState::CLASS))->shouldBeCalled();
 
         $this->export($donor, $writer);
 
-        $donor->setState(Argument::type(DonorState\MandateSentState::CLASS))->shouldHaveBeenCalled();
+        $writer->addNewMandate('foobar', $account, $id)->shouldHaveBeenCalled();
     }
 }

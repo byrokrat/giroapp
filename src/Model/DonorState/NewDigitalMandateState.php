@@ -39,7 +39,7 @@ class NewDigitalMandateState extends AbstractState
 
     public function export(Donor $donor, Writer $writer)
     {
-        // TODO $writer->approveMandate(...);
+        $writer->acceptDigitalMandate($donor->getPayerNumber());
         $donor->setState(new MandateSentState);
     }
 }

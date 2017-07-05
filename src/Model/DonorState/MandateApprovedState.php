@@ -39,9 +39,17 @@ class MandateApprovedState extends AbstractState
 
     public function export(Donor $donor, Writer $writer)
     {
-        // TODO if ($donor->getDonationAmount()->isPositive()) {
-            // TODO $writer->addTransaction(...);
+        if ($donor->getDonationAmount()->isPositive()) {
+            // TODO how do we compute date??
+            // should probably be a setting. How do we read it here??
+            $date = new \DateTime;
+
+            // TODO should we keep a reference to this transaction??
+            // would be cool to use $donor->getMandateKey(), but refs can be only 16 chars...
+            $ref = '';
+
+            $writer->addMonthlyTransaction($donor->getPayerNumber(), $donor->getDonationAmount(), $date, $ref);
             $donor->setState(new ActiveState);
-        // }
+        }
     }
 }

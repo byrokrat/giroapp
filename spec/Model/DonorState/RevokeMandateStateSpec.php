@@ -32,13 +32,18 @@ class RevokeMandateStateSpec extends ObjectBehavior
         $this->getDescription()->shouldBeString();
     }
 
-    function it_is_exportable_to_autogiro(Donor $donor, Writer $writer)
+    function it_is_exportable()
     {
         $this->isExportable()->shouldBe(true);
+    }
+
+    function it_can_be_exported(Donor $donor, Writer $writer)
+    {
+        $donor->getPayerNumber()->willReturn('foobar');
+        $donor->setState(Argument::type(DonorState\RevocationSentState::CLASS))->shouldBeCalled();
 
         $this->export($donor, $writer);
 
-        $writer->deleteMandate('')->shouldHaveBeenCalled();
-        $donor->setState(Argument::type(DonorState\RevocationSentState::CLASS))->shouldHaveBeenCalled();
+        $writer->deleteMandate('foobar')->shouldHaveBeenCalled();
     }
 }

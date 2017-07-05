@@ -39,7 +39,7 @@ class NewMandateState extends AbstractState
 
     public function export(Donor $donor, Writer $writer)
     {
-        // TODO $writer->addNewMandate(...);
+        $writer->addNewMandate($donor->getPayerNumber(), $donor->getAccount(), $donor->getDonorId());
         $donor->setState(new MandateSentState);
     }
 }
