@@ -21,30 +21,36 @@ class SettingsMapperSpec extends ObjectBehavior
         $this->shouldHaveType(SettingsMapper::CLASS);
     }
 
-    function it_can_read_value($collection)
+    function it_can_commit($collection)
     {
-        $collection->findOne(Argument::any())->willReturn(['value' => 'bar']);
-        $this->read('foo')->shouldBeLike('bar');
+        $collection->inTransaction()->willReturn(true);
+        $collection->commit()->shouldBeCalled();
+        $this->commit();
     }
 
-    function it_defaults_to_empty_setting($collection)
+    function it_ignores_commit_if_not_in_transaction($collection)
     {
-        $collection->findOne(Argument::any())->willReturn([]);
+        $collection->inTransaction()->willReturn(false);
+        $collection->commit()->shouldNotBeCalled();
+        $this->commit();
+    }
+
+    function it_can_read_value($collection)
+    {
+        $collection->has('foo')->willReturn(true);
+        $collection->read('foo')->willReturn(['value' => 'bar']);
+        $this->read('foo')->shouldEqual('bar');
+    }
+
+    function it_defaults_to_empty_setting_on_read($collection)
+    {
+        $collection->has('foo')->willReturn(false);
         $this->read('foo')->shouldBeLike('');
     }
 
-    function it_can_update($collection)
+    function it_can_write($collection)
     {
-        $collection->update(Argument::cetera())->willReturn(1);
-        $collection->commit()->shouldBeCalled();
-        $this->write('foo', 'bar');
-    }
-
-    function it_can_insert($collection)
-    {
-        $collection->update(Argument::cetera())->willReturn(0);
-        $collection->insert(['key' => 'foo', 'value' => 'bar'])->shouldBeCalled();
-        $collection->commit()->shouldBeCalled();
+        $collection->insert(['value' => 'bar'], 'foo')->willReturn('')->shouldBeCalled();
         $this->write('foo', 'bar');
     }
 }
