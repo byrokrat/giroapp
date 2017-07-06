@@ -63,7 +63,7 @@ class DonorSpec extends ObjectBehavior
     {
         $donorId->format('S-sk')->willReturn('foo');
         $account->get16()->willReturn('bar');
-        $this->getMandateKey()->shouldEqual(hash('sha256', 'foobar'));
+        $this->getMandateKey()->shouldEqual(substr(hash('sha256', 'foobar'),0,15).'0');
     }
 
     function it_can_set_phone()
