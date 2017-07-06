@@ -30,7 +30,7 @@ use byrokrat\giroapp\Model\Address;
 
 class AddressArrayizer
 {
-    public function getArray(PostalAddress $address) : array
+    public static function getArray(PostalAddress $address) : array
     {
         $addressArray = array();
         $addressArray['coAddress'] = $address->getCoAddress();

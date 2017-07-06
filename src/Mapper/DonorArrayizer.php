@@ -30,7 +30,7 @@ use byrokrat\giroapp\Model\Donor;
 
 class DonorArrayizer
 {
-    public function getArray(Donor $donor) : array
+    public static function getArray(Donor $donor) : array
     {
         $donorArray = array();
 
@@ -46,7 +46,7 @@ class DonorArrayizer
         $donorArray['donationAmount'] = $donor->getDonationAmount();
         $donorArray['mandateKey'] = $donor->getMandateKey();
 
-        $mergedArray = array_merge($donorArray, $AddressArrayizer->getArray($donor->getAddress));
+        $mergedArray = array_merge($donorArray, AddressArrayizer::getArray($donor->getAddress));
 
         return $mergedArray;
     }
