@@ -18,53 +18,36 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-//declare(strict_types = 1);
+declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Mapper;
+namespace byrokrat\giroapp\Mapper\Arrayizer;
 
 use byrokrat\giroapp\Model\Donor;
 
 /**
- * Takes a Donor donorObject and transforms it to an donorArray
+ * Takes a Donor object and transforms it to an array
  */
 
 class DonorArrayizer
 {
-    /**
-     * $var Donor
-     */
-    private $donorObject;
-
-    /**
-     * $var array
-     */
-    private $donorArray;
-
-    public function __construct(Donor $donorObject)
-    {
-        $this->donorObject = $donorObject;
-    }
-
-    public function getArray() : array
+    public function getArray(Donor $donor) : array
     {
         $donorArray = array();
 
-        $donorArray['state'] = $this->donorObject->getState();
-        $donorArray['mandateSource'] = $this->donorObject->getMandateSource();
-        $donorArray['payerNumber'] = $this->donorObject->getPayerNumber();
-        $donorArray['account'] = $this->donorObject->getAccount();
-        $donorArray['donorId'] = $this->donorObject->getDonorId();
-        $donorArray['comment'] = $this->donorObject->getComment();
-        $donorArray['name'] = $this->donorObject->getName();
-        $donorArray['email'] = $this->donorObject->getEmail();
-        $donorArray['phone'] = $this->donorObject->getPhone();
-        $donorArray['donationAmount'] = $this->donorObject->getDonationAmount();
-        $donorArray['mandateKey'] = $this->donorObject->getMandateKey();
+        $donorArray['state'] = $donor->getState();
+        $donorArray['mandateSource'] = $donor->getMandateSource();
+        $donorArray['payerNumber'] = $donor->getPayerNumber();
+        $donorArray['account'] = $donor->getAccount();
+        $donorArray['donorId'] = $donor->getDonorId();
+        $donorArray['comment'] = $donor->getComment();
+        $donorArray['name'] = $donor->getName();
+        $donorArray['email'] = $donor->getEmail();
+        $donorArray['phone'] = $donor->getPhone();
+        $donorArray['donationAmount'] = $donor->getDonationAmount();
+        $donorArray['mandateKey'] = $donor->getMandateKey();
 
-        $donorAddressArrayizer = new AddressArrayizer($this->donorObject->getAddress());
-        $mergedArray = array_merge($donorArray, $donorAddressArrayizer->getArray());
+        $mergedArray = array_merge($donorArray, $AddressArrayizer->getArray($donor->getAddress));
 
         return $mergedArray;
     }
 }
-

@@ -24,9 +24,11 @@ namespace byrokrat\giroapp\Mapper;
 
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Mapper\Arrayizer;
 
 /**
- * Mapps donor objects to database collection
+ * Maps donor objects to database collection
  */
 class DonorMapper
 {
@@ -38,5 +40,32 @@ class DonorMapper
     public function __construct(CollectionInterface $collection)
     {
         $this->collection = $collection;
+    }
+
+    /**
+     * Lookup donor identified by key
+     */
+    public function read(string $key): string
+    {
+        return $this->collection->has($key) ? $this->collection->read($key)['value'] : '';
+    }
+
+    /**
+     * Write donor key-value array
+     */
+    public function write(Donor $donor)
+    {
+        $donorArray = DonorArrayizer($donor);
+        $this->collection->insert($donorArray, $donorArray['mandateKey']);
+    }
+
+    /**
+     * Commit changes to storage
+     */
+    public function commit()
+    {
+        if ($this->collection->inTransaction()) {
+            $this->collection->commit();
+        }
     }
 }
