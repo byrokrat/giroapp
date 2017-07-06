@@ -103,6 +103,11 @@ class Donor
      */
     private $mandateKey;
 
+    /**
+     * $var string
+     */
+    private $transactionDay;
+
     public function __construct(
         DonorState $state,
         string $mandateSource,
@@ -112,7 +117,8 @@ class Donor
         string $name,
         PostalAddress $address = null,
         SEK $donationAmount = null,
-        string $comment = ""
+        string $comment = "",
+        string $transactionDay = "28"
     ) {
         $this->setState($state);
         $this->mandateSource = $mandateSource;
@@ -126,7 +132,10 @@ class Donor
         $this->phone = "";
         $this->address = $address ?: new PostalAddress();
         $this->donationAmount =  $donationAmount ?: new SEK('0');
-        $this->mandateKey = hash('sha256', $this->donorId->format('S-sk').$this->account->get16());
+        $this->transactionDay = $transactionDay;
+
+        $this->mandateKey = substr(hash('sha256', $this->donorId->format('S-sk').$this->account->get16()), 0, 15);
+        $this->mandateKey .= '0';
     }
 
     public function getState(): DonorState
@@ -227,6 +236,16 @@ class Donor
     public function getMandateKey(): string
     {
         return $this->mandateKey;
+    }
+
+    public function setTransactionDay(string $transactionDay)
+    {
+        $this->transactionDay = transactionDay;
+    }
+
+    public function getTransactionDay(): string
+    {
+        return $this->transactionDay;
     }
 
     public function exportToAutogiro(Writer $writer)
