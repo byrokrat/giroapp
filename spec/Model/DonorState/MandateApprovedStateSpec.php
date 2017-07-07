@@ -6,6 +6,7 @@ namespace spec\byrokrat\giroapp\Model\DonorState;
 
 use byrokrat\giroapp\Model\DonorState;
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Builder\DateBuilder;
 use byrokrat\autogiro\Writer\Writer;
 use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
@@ -48,17 +49,22 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $this->export($donor, $writer);
     }
 
-    function it_can_be_exported(Donor $donor, Writer $writer, SEK $amount)
+    function it_can_be_exported(DateBuilder $dateBuilder, Donor $donor, Writer $writer, SEK $amount, \DateTime $date)
     {
+        $this->beConstructedWith($dateBuilder);
+
         $amount->isPositive()->willReturn(true);
 
         $donor->getDonationAmount()->willReturn($amount);
-        $donor->getPayerNumber()->willReturn('foobar');
+        $donor->getPayerNumber()->willReturn('payer_number');
+        $donor->getMandateKey()->willReturn('mandate_key');
+
+        $dateBuilder->buildDate()->willReturn($date);
 
         $donor->setState(Argument::type(DonorState\ActiveState::CLASS))->shouldBeCalled();
 
         $this->export($donor, $writer);
 
-        $writer->addMonthlyTransaction('foobar', $amount, Argument::type('DateTime'), '')->shouldHaveBeenCalled();
+        $writer->addMonthlyTransaction('payer_number', $amount, $date, 'mandate_key')->shouldHaveBeenCalled();
     }
 }

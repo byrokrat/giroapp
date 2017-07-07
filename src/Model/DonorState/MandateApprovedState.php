@@ -22,11 +22,22 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Model\DonorState;
 
+use byrokrat\giroapp\Builder\DateBuilder;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 
 class MandateApprovedState extends AbstractState
 {
+    /**
+     * @var DateBuilder
+     */
+    private $dateBuilder;
+
+    public function __construct(DateBuilder $dateBuilder = null)
+    {
+        $this->dateBuilder = $dateBuilder ?: new DateBuilder;
+    }
+
     public function getDescription(): string
     {
         return 'Mandate has been approved by the bank';
@@ -40,15 +51,13 @@ class MandateApprovedState extends AbstractState
     public function export(Donor $donor, Writer $writer)
     {
         if ($donor->getDonationAmount()->isPositive()) {
-            // TODO how do we compute date??
-            // should probably be a setting. How do we read it here??
-            $date = new \DateTime;
+            $writer->addMonthlyTransaction(
+                $donor->getPayerNumber(),
+                $donor->getDonationAmount(),
+                $this->dateBuilder->buildDate(),
+                $donor->getMandateKey()
+            );
 
-            // TODO should we keep a reference to this transaction??
-            // would be cool to use $donor->getMandateKey(), but refs can be only 16 chars...
-            $ref = '';
-
-            $writer->addMonthlyTransaction($donor->getPayerNumber(), $donor->getDonationAmount(), $date, $ref);
             $donor->setState(new ActiveState);
         }
     }
