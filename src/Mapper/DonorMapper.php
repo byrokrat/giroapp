@@ -55,8 +55,9 @@ class DonorMapper
      */
     public function write(Donor $donor)
     {
-        $donorArray = DonorArrayizer($donor);
-        $this->collection->insert($donorArray, $donorArray['mandateKey']);
+        $addressArrayizer = new AddressArrayizer($donor->address);
+        $donorArrayizer = new DonorArrayizer($donor);
+        $this->collection->insert($donorArrayizer->getArray(), $donor->getMandateKey());
     }
 
     /**
