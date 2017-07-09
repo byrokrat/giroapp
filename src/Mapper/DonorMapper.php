@@ -68,7 +68,11 @@ class DonorMapper
                 )
             );
         } else {
-            $this->collection->insert($donorArrayizer->getArray($donor, $donor->getAddress()), $donor->getMandateKey());
+            $this->collection->insert(
+                $donorArrayizer->getArray($donor,
+                $donor->getAddress()),
+                $donor->getMandateKey()
+            );
         }
     }
 
