@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Mapper\Arrayizer;
+namespace byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
 
 use byrokrat\giroapp\Model\Donor;
 
@@ -31,7 +31,7 @@ class DonorArrayizer
 {
     public function __construct()
     {
-        $this->addressArrayizer = new AddressArrayizer();
+        $this->addressArrayizer = new PostalAddressArrayizer();
     }
 
     public function toArray(Donor $donor) : array
