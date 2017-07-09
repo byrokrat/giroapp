@@ -27,17 +27,21 @@ use byrokrat\giroapp\Model\PostalAddress;
 /**
  * Takes a Address object and transforms it to an array
  */
-class AddressArrayizer
+
+class PostalAddressArrayizer
 {
     /**
-     * @var PostalAddress
+     * Databyse object type & version
      */
-    private $address;
+    const TYPE_VERSION = 'giroapp/postaladdress:0.1';
 
     public function __construct()
     {
     }
 
+    /**
+     * @Return string[] Returns PostalAddress as string array
+     */
     public function toArray(PostalAddress $address) : array
     {
         return [
@@ -45,7 +49,8 @@ class AddressArrayizer
             'address1' => $address->getAddress1(),
             'address2' => $address->getAddress2(),
             'postalCode' => $address->getPostalCode(),
-            'postalCity' => $address->getPostalCity()
+            'postalCity' => $address->getPostalCity(),
+            'type' => self::TYPE_VERSION
         ];
     }
 }

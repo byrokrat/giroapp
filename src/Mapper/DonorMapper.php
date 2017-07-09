@@ -25,9 +25,8 @@ namespace byrokrat\giroapp\Mapper;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Mapper\Arrayizer\AddressArrayizer;
 use byrokrat\giroapp\Mapper\Arrayizer\DonorArrayizer;
-
+use byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
 /**
  * Maps donor objects to database collection
  */
@@ -38,11 +37,21 @@ class DonorMapper
      */
     private $collection;
 
+    /**
+     * @var DonorArrayizer
+     */
+    private $donorArrayizer;
+
+    /**
+     * @var PostalAddressArrayizer
+     */
+    private $addressArrayizer;
+
     public function __construct(CollectionInterface $collection)
     {
         $this->collection = $collection;
-        $this->donorArrayizer = new DonorArrayizer();
-        $this->addressArrayizer = new AddressArrayizer();
+        $this->addressArrayizer = new PostalAddressArrayizer();
+        $this->donorArrayizer = new DonorArrayizer($this->addressArrayizer);
     }
 
     /**
@@ -60,19 +69,17 @@ class DonorMapper
     {
         if ($this->collection->has($donor->getMandateKey())) {
             $this->collection->update(
-                y::doc(['mandateKey',
-                y::equals($donor->getMandateKey())]),
-                $donorArrayizer->getArray(
-                    $donor,
-                    $addressArrayizer->getArray($donor->getAddress())
-                )
+                y::doc(
+                    ['mandateKey',
+                    y::equals($donor->getMandateKey())]
+                ),
+                $this->donorArrayizer->toArray($donor)
             );
         } else {
             $this->collection->insert(
-                $donorArrayizer->getArray($donor,
-                $donor->getAddress()),
+                $this->donorArrayizer->toArray($donor),
                 $donor->getMandateKey()
-            );
+            ) ;
         }
     }
 
