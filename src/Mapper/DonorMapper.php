@@ -25,7 +25,8 @@ namespace byrokrat\giroapp\Mapper;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Mapper\Arrayizer;
+use byrokrat\giroapp\Mapper\Arrayizer\AddressArrayizer;
+use byrokrat\giroapp\Mapper\Arrayizer\DonorArrayizer;
 
 /**
  * Maps donor objects to database collection
@@ -58,7 +59,14 @@ class DonorMapper
     public function write(Donor $donor)
     {
         if ($this->collection->has($donor->getMandateKey())) {
-            $this->collection->update(y::doc(['mandateKey', y::equals($donor->getMandateKey())]), $donorArrayizer->getArray($donor, $addressArrayizer->getArray($donor->getAddress())));
+            $this->collection->update(
+                y::doc(['mandateKey',
+                y::equals($donor->getMandateKey())]),
+                $donorArrayizer->getArray(
+                    $donor,
+                    $addressArrayizer->getArray($donor->getAddress())
+                )
+            );
         } else {
             $this->collection->insert($donorArrayizer->getArray($donor, $donor->getAddress()), $donor->getMandateKey());
         }
