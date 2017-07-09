@@ -69,4 +69,16 @@ class DonorMapper
             $this->collection->commit();
         }
     }
+
+    public function findAll(): \Generator
+    {
+        // TODO implement. Used on ExportCommand...
+        if (false) {
+            yield '';
+        }
+    }
+
+    public function save(Donor $donor)
+    {
+        // TODO implement. Used on ExportCommand...
 }
