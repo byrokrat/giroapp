@@ -40,12 +40,14 @@ class DonorMapper
     public function __construct(CollectionInterface $collection)
     {
         $this->collection = $collection;
+        $this->donorArrayizer = new DonorArrayizer();
+        $this->addressArrayizer = new AddressArrayizer();
     }
 
     /**
      * Lookup donor identified by key
      */
-    public function read(string $key): string
+    public function read(string $key): Donor
     {
         return $this->collection->has($key) ? $this->collection->read($key)['value'] : '';
     }
@@ -55,9 +57,11 @@ class DonorMapper
      */
     public function write(Donor $donor)
     {
-        $addressArrayizer = new AddressArrayizer($donor->address);
-        $donorArrayizer = new DonorArrayizer($donor);
-        $this->collection->insert($donorArrayizer->getArray(), $donor->getMandateKey());
+        if ($this->collection->has($donor->getMandateKey())) {
+            $this->collection->update(y::doc(['mandateKey', y::equals($donor->getMandateKey())]), $donorArrayizer->getArray($donor, $addressArrayizer->getArray($donor->getAddress())));
+        } else {
+            $this->collection->insert($donorArrayizer->getArray($donor, $donor->getAddress()), $donor->getMandateKey());
+        }
     }
 
     /**
