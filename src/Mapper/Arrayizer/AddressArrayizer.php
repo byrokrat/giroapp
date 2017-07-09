@@ -27,7 +27,6 @@ use byrokrat\giroapp\Model\PostalAddress;
 /**
  * Takes a Address object and transforms it to an array
  */
-
 class AddressArrayizer
 {
     /**
@@ -35,19 +34,18 @@ class AddressArrayizer
      */
     private $address;
 
-    public function __construct(PostalAddress $address)
+    public function __construct()
     {
-        $this->address = $address;
     }
 
-    public function getArray() : array
+    public function toArray(PostalAddress $address) : array
     {
         return [
-            'coAddress' => $this->address->getCoAddress(),
-            'address1' => $this->address->getAddress1(),
-            'address2' => $this->address->getAddress2(),
-            'postalCode' => $this->address->getPostalCode(),
-            'postalCity' => $this->address->getPostalCity()
+            'coAddress' => $address->getCoAddress(),
+            'address1' => $address->getAddress1(),
+            'address2' => $address->getAddress2(),
+            'postalCode' => $address->getPostalCode(),
+            'postalCity' => $address->getPostalCity()
         ];
     }
 }

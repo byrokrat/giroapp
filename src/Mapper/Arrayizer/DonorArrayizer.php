@@ -27,29 +27,27 @@ use byrokrat\giroapp\Model\Donor;
 /**
  * Takes a Donor object and transforms it to an array
  */
-
 class DonorArrayizer
 {
-    public function __construct(AddressArrayizer $addressArrayizer, Donor $donor)
+    public function __construct()
     {
-        $this->addressArrayizer = $address;
-        $this->donor = $donor;
+        $this->addressArrayizer = new AddressArrayizer();
     }
 
-    public function getArray(Donor $donor) : array
+    public function toArray(Donor $donor) : array
     {
         return [
-            'state' => $this->donor->getState(),
+            'state' => $this->donor->getState()->getId(),
             'mandateSource' => $this->donor->getMandateSource(),
             'payerNumber' => $this->donor->getPayerNumber(),
-            'account' => $this->donor->getAccount(),
-            'donorId' => $this->donor->getDonorId(),
+            'account' => $this->donor->getAccount()->get16(),
+            'donorId' => $this->donor->getDonorId()->format('S-sk'),
             'comment' => $this->donor->getComment(),
             'name' => $this->donor->getName(),
-            'address' => $this->addressArrayizer->getArray(),
+            'address' => $this->addressArrayizer->toArray($donor->address),
             'email' => $this->donor->getEmail(),
             'phone' => $this->donor->getPhone(),
-            'donationAmount' => $this->donor->getDonationAmount(),
+            'donationAmount' => $this->donor->getDonationAmount()->getAmount(),
             'mandateKey' => $this->donor->getMandateKey()
         ];
     }
