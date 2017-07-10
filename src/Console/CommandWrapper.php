@@ -22,23 +22,28 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Events;
 use byrokrat\giroapp\DI\ContainerFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\Event;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * A cli command that have access to the dependency injection container
+ * Wrapper of giroapp console commands
  */
-abstract class AbstractGiroappCommand extends Command
+class CommandWrapper extends Command
 {
     /**
-     * @var ContainerInterface
+     * @var CommandInterface
      */
-    private $container;
+    private $command;
+
+    public function __construct(CommandInterface $command)
+    {
+        $this->command = $command;
+        parent::__construct();
+    }
 
     /**
      * Configure the path option
@@ -46,42 +51,23 @@ abstract class AbstractGiroappCommand extends Command
     protected function configure()
     {
         $this->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to configuration directory');
+        $this->command->configure($this);
     }
 
     /**
-     * Setup the dependency injection container
-     *
-     * @throws \Exception If configure() has not been called
+     * Dispatch events and call wrapped command
      */
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!$input->hasOption('path')) {
-            throw new \Exception('Command not constructed properly, did you call parent::configure()?');
-        }
-
-        $this->container = (new ContainerFactory)->createContainer(
+        $container = (new ContainerFactory)->createContainer(
             (string)$input->getOption('path'),
             (string)getenv('GIROAPP_PATH')
         );
-    }
 
-    /**
-     * @throws \Exception If initialize() has not been called
-     */
-    protected function getContainer(): ContainerInterface
-    {
-        if (!isset($this->container)) {
-            throw new \Exception('Command not constructed properly, did you call parent::initialize()?');
-        }
+        $container->get('event_dispatcher')->dispatch(Events::EXECUTION_START_EVENT);
 
-        return $this->container;
-    }
+        $this->command->execute($input, $output, $container);
 
-    /**
-     * Heler to simplify the dispatching of events
-     */
-    protected function dispatch(string $name, Event $event)
-    {
-        $this->getContainer()->get('event_dispatcher')->dispatch($name, $event);
+        $container->get('event_dispatcher')->dispatch(Events::EXECUTION_END_EVENT);
     }
 }

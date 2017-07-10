@@ -22,20 +22,24 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class StatusCommand extends AbstractGiroappCommand
+/**
+ * Command to show stats on the current donor database
+ */
+class StatusCommand implements CommandInterface
 {
-    protected function configure()
+    public function configure(Command $command)
     {
-        parent::configure();
-        $this->setName('status');
-        $this->setDescription('Inspect database status');
-        $this->setHelp('Display statistics for current database status');
+        $command->setName('status');
+        $command->setDescription('Inspect database status');
+        $command->setHelp('Display statistics for current database status');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
         // TODO implemet...
     }

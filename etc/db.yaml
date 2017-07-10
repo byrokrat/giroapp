@@ -5,6 +5,15 @@ parameters:
     db.log: 'var/log'
 
 services:
+    db_handle:
+        class: hanneskod\yaysondb\Yaysondb
+        arguments:
+            -
+                settings: '@db_settings_engine'
+                donors: '@db_donors_engine'
+                transactions: '@db_transactions_engine'
+                log: '@db_log_engine'
+
     settings_mapper:
         class: byrokrat\giroapp\Mapper\SettingsMapper
         arguments: ['@db_settings_collection']

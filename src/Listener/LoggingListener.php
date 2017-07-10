@@ -47,7 +47,5 @@ class LoggingListener
             'severity' => $eventName,
             'context' => $event->getContext()
         ]);
-
-        $this->log->commit();
     }
 }

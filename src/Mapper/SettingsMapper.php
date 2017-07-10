@@ -54,14 +54,4 @@ class SettingsMapper
     {
         $this->collection->insert(['value' => $value], $key);
     }
-
-    /**
-     * Commit changes to storage
-     */
-    public function commit()
-    {
-        if ($this->collection->inTransaction()) {
-            $this->collection->commit();
-        }
-    }
 }

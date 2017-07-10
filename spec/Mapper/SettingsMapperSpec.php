@@ -21,20 +21,6 @@ class SettingsMapperSpec extends ObjectBehavior
         $this->shouldHaveType(SettingsMapper::CLASS);
     }
 
-    function it_can_commit($collection)
-    {
-        $collection->inTransaction()->willReturn(true);
-        $collection->commit()->shouldBeCalled();
-        $this->commit();
-    }
-
-    function it_ignores_commit_if_not_in_transaction($collection)
-    {
-        $collection->inTransaction()->willReturn(false);
-        $collection->commit()->shouldNotBeCalled();
-        $this->commit();
-    }
-
     function it_can_read_value($collection)
     {
         $collection->has('foo')->willReturn(true);
