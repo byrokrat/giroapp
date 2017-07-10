@@ -25,9 +25,9 @@ namespace byrokrat\giroapp\Mapper;
 use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
-use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Mapper\Arrayizer\DonorArrayizer;
 use byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
+
 /**
  * Maps donor objects to database collection
  */
@@ -58,15 +58,15 @@ class DonorMapper
     /**
      * Lookup donor identified by key
      */
-    public function read(string $key): Donor
+    public function findByKey(string $key): Donor
     {
         return $this->collection->has($key) ? $this->collection->read($key)['value'] : '';
     }
 
     /**
-     * Write donor key-value array
+     * Save donor (insert or update)
      */
-    public function write(Donor $donor)
+    public function save(Donor $donor)
     {
         if ($this->collection->has($donor->getMandateKey())) {
             $this->collection->update(
@@ -84,39 +84,20 @@ class DonorMapper
         }
     }
 
-    /**
-     * Commit changes to storage
-     */
-    public function commit()
-    {
-        if ($this->collection->inTransaction()) {
-            $this->collection->commit();
-        }
-    }
-
     public function findAll(): \Generator
     {
+        $result = $this->collection->find(
+            y::doc([
+                'mandateKey' => ''
+            ])
+        );
+
+        foreach ($result as $id => $doc) {
+        }
+
         // TODO implement. Used on ExportCommand...
         if (false) {
             yield '';
         }
-    }
-
-    public function save(Donor $donor)
-    {
-        // TODO implement. Used on ExportCommand...
-    }
-
-    public function findAll(): \Generator
-    {
-        // TODO implement. Used on ExportCommand...
-        if (false) {
-            yield '';
-        }
-    }
-
-    public function save(Donor $donor)
-    {
-        // TODO implement. Used on ExportCommand...
     }
 }

@@ -20,9 +20,10 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
+namespace byrokrat\giroapp\Mapper\Arrayizer;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
 
 /**
  * Takes a Donor object and transforms it to an array
