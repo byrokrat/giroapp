@@ -60,7 +60,7 @@ class DonorMapper
     }
 
     /**
-     * Find active mandate identified by payer number
+     * Find active donor mandate identified by payer number
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
@@ -68,9 +68,9 @@ class DonorMapper
     }
 
     /**
-     * Find mandates with payer number
+     * Find donor mandates identified by payer number
      *
-     * This may include older deleted mandates.
+     * NOTE: This may include older deleted mandates.
      *
      * @return Donor[] Returns an array of Donor objects
      */
@@ -80,7 +80,7 @@ class DonorMapper
     }
 
     /**
-     * Save donor (insert or update)
+     * Save donor to storage
      */
     public function save(Donor $donor)
     {
@@ -88,12 +88,10 @@ class DonorMapper
     }
 
     /**
-     * Commit changes to persistent storage
+     * Delete donor from storage
      */
-    public function commit()
+    public function delete(Donor $donor)
     {
-        if ($this->collection->inTransaction()) {
-            $this->collection->commit();
-        }
+        throw new \Exception("PENDING IMPLEMENTATION");
     }
 }
