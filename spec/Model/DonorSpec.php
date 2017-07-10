@@ -22,8 +22,9 @@ class DonorSpec extends ObjectBehavior
         $mandateSource = Donor::MANDATE_SOURCE_PAPER;
         $payerNumber = "00001";
         $name = "namely name";
+        $mandateKey = "0000000000000001";
 
-        $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $donorId, $name, $address);
+        $this->beConstructedWith($mandateKey, $state, $mandateSource, $payerNumber, $account, $donorId, $name, $address);
     }
 
     function it_is_initializable()
@@ -61,9 +62,7 @@ class DonorSpec extends ObjectBehavior
 
     function it_contains_a_mandate_key($account, $donorId)
     {
-        $donorId->format('S-sk')->willReturn('foo');
-        $account->get16()->willReturn('bar');
-        $this->getMandateKey()->shouldEqual(substr(hash('sha256', 'foobar'),0,15).'0');
+        $this->getMandateKey()->shouldEqual($mandateKey);
     }
 
     function it_can_set_phone()
