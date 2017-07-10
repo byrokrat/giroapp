@@ -33,9 +33,13 @@ class DonorArrayizer
      * @var PostalAddressArrayizer
      */
     private $addressArrayizer;
-    public function __construct()
-    {
-        $this->addressArrayizer = new PostalAddressArrayizer();
+
+    const TYPE_VERSION = 'giroapp/donor:0.1';
+
+    public function __construct(
+        PostalAddressArrayizer $postalAddressArrayizer = null
+    ) {
+        $this->addressArrayizer = $postalAddressArrayizer ?: new PostalAddressArrayizer();
     }
 
     public function toArray(Donor $donor) : array
@@ -52,7 +56,8 @@ class DonorArrayizer
             'email' => $this->donor->getEmail(),
             'phone' => $this->donor->getPhone(),
             'donationAmount' => $this->donor->getDonationAmount()->getAmount(),
-            'mandateKey' => $this->donor->getMandateKey()
+            'mandateKey' => $this->donor->getMandateKey(),
+            'type' => self::TYPE_VERSION
         ];
     }
 }
