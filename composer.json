@@ -22,6 +22,7 @@
     "require": {
         "php": "^7.0",
         "ext-mbstring": "*",
+        "ext-bcmath": "*",
         "byrokrat/amount": "^1.0",
         "byrokrat/autogiro": "dev-master",
         "byrokrat/banking": "^1.4",
@@ -34,7 +35,8 @@
         "symfony/expression-language": "^3.3",
         "symfony/console": "^3.3",
         "symfony/event-dispatcher": "^3.3",
-        "symfony/finder": "^3.3"
+        "symfony/finder": "^3.3",
+        "hashids/hashids": "^2"
     },
     "require-dev": {
         "phpspec/phpspec": "^3.4",

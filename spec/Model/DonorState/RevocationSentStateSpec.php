@@ -32,9 +32,13 @@ class RevocationSentStateSpec extends ObjectBehavior
         $this->getDescription()->shouldBeString();
     }
 
-    function it_is_not_exportable_to_autogiro(Donor $donor, Writer $writer)
+    function it_is_not_exportable()
     {
         $this->isExportable()->shouldBe(false);
+    }
+
+    function it_can_be_exported(Donor $donor, Writer $writer)
+    {
         $this->export($donor, $writer);
     }
 }
