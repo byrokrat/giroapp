@@ -109,6 +109,7 @@ class Donor
     private $transactionDay;
 
     public function __construct(
+        string $mandateKey,
         DonorState $state,
         string $mandateSource,
         string $payerNumber,
@@ -120,6 +121,7 @@ class Donor
         string $comment = "",
         string $transactionDay = "28"
     ) {
+        $this->mandateKey = $mandateKey;
         $this->setState($state);
         $this->mandateSource = $mandateSource;
         $this->payerNumber = $payerNumber;
@@ -133,9 +135,6 @@ class Donor
         $this->address = $address ?: new PostalAddress();
         $this->donationAmount =  $donationAmount ?: new SEK('0');
         $this->transactionDay = $transactionDay;
-
-        $this->mandateKey = substr(hash('sha256', $this->donorId->format('S-sk').$this->account->get16()), 0, 15);
-        $this->mandateKey .= '0';
     }
 
     public function getState(): DonorState
