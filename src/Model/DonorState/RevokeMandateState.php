@@ -39,7 +39,7 @@ class RevokeMandateState extends AbstractState
 
     public function export(Donor $donor, Writer $writer)
     {
-        // TODO export revocation to $writer
+        $writer->deleteMandate($donor->getPayerNumber());
         $donor->setState(new RevocationSentState);
     }
 }
