@@ -29,6 +29,10 @@ use byrokrat\giroapp\Model\Donor;
  */
 class DonorArrayizer
 {
+    /**
+     * @var PostalAddressArrayizer
+     */
+    private $addressArrayizer;
     public function __construct()
     {
         $this->addressArrayizer = new PostalAddressArrayizer();
