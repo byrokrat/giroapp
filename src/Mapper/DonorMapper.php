@@ -41,16 +41,57 @@ class DonorMapper
         $this->collection = $collection;
     }
 
-    public function findAll(): \Generator
+    /**
+     * Find all donors in storage
+     *
+     * @return Donor[] Returns an array of Donor objects
+     */
+    public function findAll(): array
     {
-        // TODO implement. Used on ExportCommand...
-        if (false) {
-            yield '';
-        }
+        throw new \Exception("PENDING IMPLEMENTATION");
     }
 
+    /**
+     * Get a unique donor identified by key
+     */
+    public function findByKey(string $key): Donor
+    {
+        throw new \Exception("PENDING IMPLEMENTATION");
+    }
+
+    /**
+     * Find active donor mandate identified by payer number
+     */
+    public function findByActivePayerNumber(string $payerNumber): Donor
+    {
+        throw new \Exception("PENDING IMPLEMENTATION");
+    }
+
+    /**
+     * Find donor mandates identified by payer number
+     *
+     * NOTE: This may include older deleted mandates.
+     *
+     * @return Donor[] Returns an array of Donor objects
+     */
+    public function findByPayerNumber(string $payerNumber): array
+    {
+        throw new \Exception("PENDING IMPLEMENTATION");
+    }
+
+    /**
+     * Save donor to storage
+     */
     public function save(Donor $donor)
     {
-        // TODO implement. Used on ExportCommand...
+        throw new \Exception("PENDING IMPLEMENTATION");
+    }
+
+    /**
+     * Delete donor from storage
+     */
+    public function delete(Donor $donor)
+    {
+        throw new \Exception("PENDING IMPLEMENTATION");
     }
 }
