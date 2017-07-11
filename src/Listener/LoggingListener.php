@@ -26,7 +26,7 @@ use byrokrat\giroapp\Event\LogEvent;
 use hanneskod\yaysondb\Collection;
 
 /**
- * Log log events
+ * Write events to log
  */
 class LoggingListener
 {
@@ -47,5 +47,7 @@ class LoggingListener
             'severity' => $eventName,
             'context' => $event->getContext()
         ]);
+
+        $this->log->commit();
     }
 }
