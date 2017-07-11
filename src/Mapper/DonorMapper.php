@@ -27,6 +27,11 @@ use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
 use byrokrat\giroapp\Mapper\Arrayizer\DonorArrayizer;
 use byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
+use byrokrat\giroapp\Builder\DonorBuilder;
+use byrokrat\giroapp\Model\DonorState;
+use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\banking\AccountFactory;
+use byrokrat\id\PersonalId;
 
 /**
  * Maps donor objects to database collection
@@ -53,6 +58,8 @@ class DonorMapper
         $this->collection = $collection;
         $this->addressArrayizer = new PostalAddressArrayizer();
         $this->donorArrayizer = new DonorArrayizer($this->addressArrayizer);
+        $this->donorBuilder = new DonorBuilder();
+        $this->accountFactory = new AccountFactory();
     }
 
     /**
@@ -91,19 +98,17 @@ class DonorMapper
      */
     public function findAll(): array
     {
+        $donorArray = array();
         $result = $this->collection->find(
             y::doc([
-                'mandateKey' => ''
+                'mandateKey' => y::regexp('/\A[a-z0-9]{16}\Z/i')
             ])
         );
 
         foreach ($result as $id => $doc) {
+            $donorArray[$id] = $this->buildDonor($doc);
         }
-
-        // TODO implement. Used on ExportCommand...
-        if (false) {
-            yield '';
-        }
+        return $donorArray;
     }
 
     /**
@@ -132,5 +137,27 @@ class DonorMapper
     public function delete(Donor $donor)
     {
         throw new \Exception("PENDING IMPLEMENTATION");
+    }
+
+    /**
+     * take an array read from doc, and build donor object
+     */
+    private function buildDonor(string $doc): Donor
+    {
+        return $this->donorBuilder->buildDonor(
+
+            new Donorstate($doc['state']),
+            $doc['mandateSource'],
+            $doc['payerNumber'],
+            $this->accountFactory->createAccount($doc['account']),
+            //TODO: check if personal or organization ID
+            new PersonalId($doc['donorId']),
+            $doc['name'],
+            new PostalAddress($doc['address']),
+            new SEK($doc['donationAmount']),
+            $doc['comment'],
+            intval($doc['dayOfMonth']),
+            intval($doc['minDaysInFuture'])
+        );
     }
 }
