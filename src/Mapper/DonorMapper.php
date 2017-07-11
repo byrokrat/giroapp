@@ -98,17 +98,12 @@ class DonorMapper
      */
     public function findAll(): array
     {
-        $donorArray = array();
         $result = $this->collection->find(
             y::doc([
                 'mandateKey' => y::regexp('/\A[a-z0-9]{16}\Z/i')
             ])
         );
-
-        foreach ($result as $id => $doc) {
-            $donorArray[$id] = $this->buildDonor($doc);
-        }
-        return $donorArray;
+        return $this->buildDonorArray($result);
     }
 
     /**
@@ -128,7 +123,12 @@ class DonorMapper
      */
     public function findByPayerNumber(string $payerNumber): array
     {
-        throw new \Exception("PENDING IMPLEMENTATION");
+        $result = $this->collection->find(
+            y::doc([
+                'payerNumber' => y::equals($payerNumber)
+            ])
+        );
+        return $this->buildDonorArray($result);
     }
 
     /**
@@ -136,7 +136,25 @@ class DonorMapper
      */
     public function delete(Donor $donor)
     {
-        throw new \Exception("PENDING IMPLEMENTATION");
+        $this->collection->delete(
+            y::doc([
+                'mandateKey' => $donor->getMandateKey()
+            ])
+        );
+    }
+
+    /**
+     * take an array of donors read from doc, and return an array of donors
+     *
+     * @return Donor[] Returns an array of Donor objects
+     */
+    private function buildDonorArray(array $doc): array
+    {
+        $donorArray = array();
+        foreach ($result as $id => $doc) {
+            $donorArray[$id] = $this->buildDonor($doc);
+        }
+        return $donorArray;
     }
 
     /**
@@ -145,15 +163,20 @@ class DonorMapper
     private function buildDonor(string $doc): Donor
     {
         return $this->donorBuilder->buildDonor(
-
-            new Donorstate($doc['state']),
+            new DonorState($doc['state']),
             $doc['mandateSource'],
             $doc['payerNumber'],
             $this->accountFactory->createAccount($doc['account']),
             //TODO: check if personal or organization ID
             new PersonalId($doc['donorId']),
             $doc['name'],
-            new PostalAddress($doc['address']),
+            new PostalAddress(
+                $doc['address']['postalCode'],
+                $doc['address']['postalCity'],
+                $doc['address']['address1'],
+                $doc['address']['address2'],
+                $doc['address']['coAddress']
+            ),
             new SEK($doc['donationAmount']),
             $doc['comment'],
             intval($doc['dayOfMonth']),
