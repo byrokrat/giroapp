@@ -22,41 +22,56 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Mapper\SettingsMapper;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Console\Question\Question;
 
-class InitCommand extends AbstractGiroappCommand
+/**
+ * Command to initialize settings in database
+ */
+class InitCommand implements CommandInterface
 {
-    protected function configure()
+    /**
+     * @var Command
+     */
+    private $command;
+
+    public function configure(Command $command)
     {
-        parent::configure();
-        $this->setName('init');
-        $this->setDescription('Initialize the database');
-        $this->setHelp('Initialize giroapp installation');
-        $this->addOption('org-name', null, InputOption::VALUE_REQUIRED, 'Name of organization');
-        $this->addOption('bgc-customer-number', null, InputOption::VALUE_REQUIRED, 'BGC customer number');
-        $this->addOption('bankgiro', null, InputOption::VALUE_REQUIRED, 'Bankgiro account number');
+        $this->command = $command;
+        $command->setName('init');
+        $command->setDescription('Initialize the database');
+        $command->setHelp('Initialize giroapp installation');
+        $command->addOption('org-name', null, InputOption::VALUE_REQUIRED, 'Name of organization');
+        $command->addOption('bgc-customer-number', null, InputOption::VALUE_REQUIRED, 'BGC customer number');
+        $command->addOption('bankgiro', null, InputOption::VALUE_REQUIRED, 'Bankgiro account number');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $this->updateSetting('org_name', 'Name of organization', $input, $output);
-        $this->updateSetting('bgc_customer_number', 'BGC customer number', $input, $output);
-        $this->updateSetting('bankgiro', 'Bankgiro account number', $input, $output);
+        $settingsMapper = $container->get('settings_mapper');
+        $this->updateSetting('org_name', 'Name of organization', $input, $output, $settingsMapper);
+        $this->updateSetting('bgc_customer_number', 'BGC customer number', $input, $output, $settingsMapper);
+        $this->updateSetting('bankgiro', 'Bankgiro account number', $input, $output, $settingsMapper);
     }
 
-    private function updateSetting(string $key, string $desc, InputInterface $input, OutputInterface $output)
-    {
-        $settingsMapper = $this->getContainer()->get('settings_mapper');
-
+    private function updateSetting(
+        string $key,
+        string $desc,
+        InputInterface $input,
+        OutputInterface $output,
+        SettingsMapper $settingsMapper
+    ) {
         $currentValue = $settingsMapper->read($key);
 
         $newValue = $input->getOption(str_replace('_', '-', $key));
 
         if (!$newValue) {
-            $newValue = $this->getHelper('question')->ask(
+            $newValue = $this->command->getHelper('question')->ask(
                 $input,
                 $output,
                 new Question("$desc [<info>$currentValue</info>]: ", $currentValue)
@@ -67,7 +82,5 @@ class InitCommand extends AbstractGiroappCommand
             $settingsMapper->write($key, $newValue);
             $output->writeln("$desc set to: <info>$newValue</info>");
         }
-
-        $settingsMapper->commit();
     }
 }

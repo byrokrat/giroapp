@@ -26,7 +26,7 @@ use byrokrat\giroapp\Event\LogEvent;
 use hanneskod\yaysondb\Collection;
 
 /**
- * Log log events
+ * Write events to log
  */
 class LoggingListener
 {

@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * This file is part of byrokrat\giroapp.
@@ -21,19 +20,27 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console;
+namespace byrokrat\giroapp\Listener;
 
-require __DIR__.'/../vendor/autoload.php';
+use hanneskod\yaysondb\Yaysondb;
 
-use Symfony\Component\Console\Application;
+/**
+ * Commits changes in database
+ */
+class CommittingListener
+{
+    /**
+     * @var Yaysondb
+     */
+    private $db;
 
-$application = new Application();
+    public function __construct(Yaysondb $db)
+    {
+        $this->db = $db;
+    }
 
-$application->add(new CommandWrapper(new AddCommand));
-$application->add(new CommandWrapper(new ExportCommand));
-$application->add(new CommandWrapper(new ImportCommand));
-$application->add(new CommandWrapper(new InitCommand));
-$application->add(new CommandWrapper(new RevokeCommand));
-$application->add(new CommandWrapper(new StatusCommand));
-
-$application->run();
+    public function __invoke()
+    {
+        $this->db->commit();
+    }
+}
