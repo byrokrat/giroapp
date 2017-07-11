@@ -39,7 +39,7 @@ class InvalidNodeFilteringListenerSpec extends ObjectBehavior
         $bankgiroFactory,
         $settingsMapper
     ) {
-        $settingsMapper->read('bankgiro')->willReturn('baz');
+        $settingsMapper->findByKey('bankgiro')->willReturn('baz');
         $bankgiroFactory->createAccount('baz')->willReturn($bankgiro);
 
         $parentNode->getChild('payee_bankgiro')->willReturn($payeeBankgiroNode);
@@ -61,7 +61,7 @@ class InvalidNodeFilteringListenerSpec extends ObjectBehavior
         $bankgiroFactory,
         $settingsMapper
     ) {
-        $settingsMapper->read('bankgiro')->willReturn('baz');
+        $settingsMapper->findByKey('bankgiro')->willReturn('baz');
         $bankgiroFactory->createAccount('baz')->willReturn($bankgiro);
 
         $parentNode->getChild('payee_bankgiro')->willReturn($payeeBankgiroNode);
