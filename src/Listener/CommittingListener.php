@@ -41,8 +41,6 @@ class CommittingListener
 
     public function __invoke()
     {
-        if ($this->db->inTransaction()) {
-            $this->db->commit();
-        }
+        $this->db->commit();
     }
 }

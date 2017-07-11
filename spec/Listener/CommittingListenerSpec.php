@@ -23,15 +23,7 @@ class CommittingListenerSpec extends ObjectBehavior
 
     function it_commits_database($db)
     {
-        $db->inTransaction()->willReturn(true);
         $db->commit()->shouldBeCalled();
-        $this->__invoke();
-    }
-
-    function it_does_not_commit_if_not_in_transaction($db)
-    {
-        $db->inTransaction()->willReturn(false);
-        $db->commit()->shouldNotBeCalled();
         $this->__invoke();
     }
 }
