@@ -98,6 +98,8 @@ class DonorArrayizer
             $this->idFactory->create($doc['id']),
             $doc['name'],
             $this->addressArrayizer->fromArray($doc['address']),
+            $doc['email'],
+            $doc['phone'],
             new SEK($doc['donationAmount']),
             $doc['comment']
         );
