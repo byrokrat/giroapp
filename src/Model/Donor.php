@@ -49,11 +49,6 @@ class Donor
     private $mandateKey;
 
     /**
-     * $var \DateTimeInterface
-     */
-    private $transactionDay;
-
-    /**
      * @var DonorState
      */
     private $state;

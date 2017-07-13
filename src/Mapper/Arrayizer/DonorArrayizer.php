@@ -34,12 +34,27 @@ use byrokrat\amount\Currency\SEK;
  */
 class DonorArrayizer
 {
+    const TYPE_VERSION = 'giroapp/donor:0.1';
+
     /**
      * @var PostalAddressArrayizer
      */
     private $addressArrayizer;
 
-    const TYPE_VERSION = 'giroapp/donor:0.1';
+    /**
+     * @var DonorStateFactory
+     */
+    private $donorStateFactory;
+
+    /**
+     * @var AccountFactory
+     */
+    private $accountFactory;
+
+    /**
+     * @var IdFactory
+     */
+    private $idFactory;
 
     public function __construct(
         PostalAddressArrayizer $postalAddressArrayizer,
@@ -53,7 +68,7 @@ class DonorArrayizer
         $this->idFactory = $idFactory;
     }
 
-    public function toArray(Donor $donor) : array
+    public function toArray(Donor $donor): array
     {
         return [
             'mandateKey' => $this->donor->getMandateKey(),
@@ -72,7 +87,7 @@ class DonorArrayizer
         ];
     }
 
-    public function fromArray(array $doc) : Donor
+    public function fromArray(array $doc): Donor
     {
         return new Donor(
             $doc['mandateKey'],
