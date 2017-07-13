@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Mapper;
 use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
-use byrokrat\giroapp\Mapper\Arrayizer\DonorArrayizer;
+use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 
 /**
  * Maps donor objects to database collection
@@ -38,14 +38,14 @@ class DonorMapper
     private $collection;
 
     /**
-     * @var DonorArrayizer
+     * @var DonorSchema
      */
-    private $donorArrayizer;
+    private $donorSchema;
 
-    public function __construct(CollectionInterface $collection, DonorArrayizer $donorArrayizer)
+    public function __construct(CollectionInterface $collection, DonorSchema $donorSchema)
     {
         $this->collection = $collection;
-        $this->donorArrayizer = $donorArrayizer;
+        $this->donorSchema = $donorSchema;
     }
 
     /**
@@ -54,8 +54,9 @@ class DonorMapper
     public function findByKey(string $key): Donor
     {
         if ($this->collection->has($key)) {
-            return $this->donorArrayizer->fromArray($this->collection->read($key));
+            return $this->donorSchema->fromArray($this->collection->read($key));
         }
+        throw new \RuntimeException("unknown donor key: $key");
     }
 
     /**
@@ -64,7 +65,7 @@ class DonorMapper
     public function save(Donor $donor)
     {
         $this->collection->insert(
-            $this->donorArrayizer->toArray($donor),
+            $this->donorSchema->toArray($donor),
             $donor->getMandateKey()
         );
     }
@@ -78,7 +79,7 @@ class DonorMapper
     {
         $donors = [];
         foreach ($this->collection as $doc) {
-            $donors[] = $this->donorArrayizer->fromArray($doc);
+            $donors[] = $this->donorSchema->fromArray($doc);
         }
         return $donors;
     }
@@ -88,7 +89,7 @@ class DonorMapper
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
-        return $this->donorArrayizer->fromArray(
+        return $this->donorSchema->fromArray(
             $this->collection->first(
                 y::doc([
                     'payerNumber' => y::equals($payerNumber)
@@ -112,7 +113,7 @@ class DonorMapper
                 'payerNumber' => y::equals($payerNumber)
             ])
         ) as $doc) {
-            $donors[] = $this->donorArrayizer->fromArray($doc);
+            $donors[] = $this->donorSchema->fromArray($doc);
         }
         return $donors;
     }
@@ -124,7 +125,7 @@ class DonorMapper
     {
         $this->collection->delete(
             y::doc([
-                'mandateKey' => $donor->getMandateKey()
+                'mandateKey' => y::equals($donor->getMandateKey())
             ])
         );
     }
