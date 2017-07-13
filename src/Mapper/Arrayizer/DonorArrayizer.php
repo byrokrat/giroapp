@@ -71,18 +71,18 @@ class DonorArrayizer
     public function toArray(Donor $donor): array
     {
         return [
-            'mandateKey' => $this->donor->getMandateKey(),
-            'state' => $this->donor->getState()->getId(),
-            'mandateSource' => $this->donor->getMandateSource(),
-            'payerNumber' => $this->donor->getPayerNumber(),
-            'account' => $this->donor->getAccount()->getNumber(),
-            'donorId' => $this->donor->getDonorId()->format('S-sk'),
-            'comment' => $this->donor->getComment(),
-            'name' => $this->donor->getName(),
-            'address' => $this->addressArrayizer->toArray($donor->address),
-            'email' => $this->donor->getEmail(),
-            'phone' => $this->donor->getPhone(),
-            'donationAmount' => $this->donor->getDonationAmount()->getAmount(),
+            'mandateKey' => $donor->getMandateKey(),
+            'state' => $donor->getState()->getId(),
+            'mandateSource' => $donor->getMandateSource(),
+            'payerNumber' => $donor->getPayerNumber(),
+            'account' => $donor->getAccount()->getNumber(),
+            'donorId' => $donor->getDonorId()->format('S-sk'),
+            'name' => $donor->getName(),
+            'address' => $this->addressArrayizer->toArray($donor->getAddress()),
+            'email' => $donor->getEmail(),
+            'phone' => $donor->getPhone(),
+            'donationAmount' => $donor->getDonationAmount()->getAmount(),
+            'comment' => $donor->getComment(),
             'type' => self::TYPE_VERSION
         ];
     }
