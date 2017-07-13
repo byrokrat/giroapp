@@ -44,6 +44,16 @@ class Donor
     const MANDATE_SOURCE_DIGITAL = 'MANDATE_SOURCE_DIGITAL';
 
     /**
+     * $var string
+     */
+    private $mandateKey;
+
+    /**
+     * $var \DateTimeInterface
+     */
+    private $transactionDay;
+
+    /**
      * @var DonorState
      */
     private $state;
@@ -98,12 +108,8 @@ class Donor
      */
     private $donationAmount;
 
-    /**
-     * $var string
-     */
-    private $mandateKey;
-
     public function __construct(
+        string $mandateKey,
         DonorState $state,
         string $mandateSource,
         string $payerNumber,
@@ -114,6 +120,7 @@ class Donor
         SEK $donationAmount = null,
         string $comment = ""
     ) {
+        $this->mandateKey = $mandateKey;
         $this->setState($state);
         $this->mandateSource = $mandateSource;
         $this->payerNumber = $payerNumber;
@@ -126,7 +133,6 @@ class Donor
         $this->phone = "";
         $this->address = $address ?: new PostalAddress();
         $this->donationAmount =  $donationAmount ?: new SEK('0');
-        $this->mandateKey = hash('sha256', $this->donorId->format('S-sk').$this->account->get16());
     }
 
     public function getState(): DonorState

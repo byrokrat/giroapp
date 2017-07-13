@@ -35,10 +35,6 @@ class PostalAddressArrayizer
      */
     const TYPE_VERSION = 'giroapp/postaladdress:0.1';
 
-    public function __construct()
-    {
-    }
-
     /**
      * @Return string[] Returns PostalAddress as string array
      */
@@ -52,5 +48,16 @@ class PostalAddressArrayizer
             'postalCity' => $address->getPostalCity(),
             'type' => self::TYPE_VERSION
         ];
+    }
+
+    public function fromArray(array $doc) : PostalAddress
+    {
+        return new PostalAddress(
+            $doc['postalCode'],
+            $doc['postalCity'],
+            $doc['address1'],
+            $doc['address2'],
+            $doc['coAddress']
+        );
     }
 }

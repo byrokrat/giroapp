@@ -26,12 +26,6 @@ use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
 use byrokrat\giroapp\Mapper\Arrayizer\DonorArrayizer;
-use byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
-use byrokrat\giroapp\Builder\DonorBuilder;
-use byrokrat\giroapp\Model\DonorState;
-use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\banking\AccountFactory;
-use byrokrat\id\PersonalId;
 
 /**
  * Maps donor objects to database collection
@@ -48,18 +42,10 @@ class DonorMapper
      */
     private $donorArrayizer;
 
-    /**
-     * @var PostalAddressArrayizer
-     */
-    private $addressArrayizer;
-
-    public function __construct(CollectionInterface $collection)
+    public function __construct(CollectionInterface $collection, DonorArrayizer $donorArrayizer)
     {
         $this->collection = $collection;
-        $this->addressArrayizer = new PostalAddressArrayizer();
-        $this->donorArrayizer = new DonorArrayizer($this->addressArrayizer);
-        $this->donorBuilder = new DonorBuilder();
-        $this->accountFactory = new AccountFactory();
+        $this->donorArrayizer = $donorArrayizer;
     }
 
     /**
@@ -67,7 +53,9 @@ class DonorMapper
      */
     public function findByKey(string $key): Donor
     {
-        return $this->collection->has($key) ? $this->collection->read($key)['value'] : '';
+        if ($this->collection->has($key)) {
+            return $this->donorArrayizer->fromArray($this->collection->read($key));
+        }
     }
 
     /**
@@ -75,20 +63,10 @@ class DonorMapper
      */
     public function save(Donor $donor)
     {
-        if ($this->collection->has($donor->getMandateKey())) {
-            $this->collection->update(
-                y::doc(
-                    ['mandateKey',
-                    y::equals($donor->getMandateKey())]
-                ),
-                $this->donorArrayizer->toArray($donor)
-            );
-        } else {
-            $this->collection->insert(
-                $this->donorArrayizer->toArray($donor),
-                $donor->getMandateKey()
-            ) ;
-        }
+        $this->collection->insert(
+            $this->donorArrayizer->toArray($donor),
+            $donor->getMandateKey()
+        );
     }
 
     /**
@@ -98,12 +76,11 @@ class DonorMapper
      */
     public function findAll(): array
     {
-        $result = $this->collection->find(
-            y::doc([
-                'mandateKey' => y::regexp('/\A[a-z0-9]{16}\Z/i')
-            ])
-        );
-        return $this->buildDonorArray($result);
+        $donors = [];
+        foreach ($this->collection as $doc) {
+            $donors[] = $this->donorArrayizer->fromArray($doc);
+        }
+        return $donors;
     }
 
     /**
@@ -111,7 +88,13 @@ class DonorMapper
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
-        throw new \Exception("PENDING IMPLEMENTATION");
+        return $this->donorArrayizer->fromArray(
+            $this->collection->first(
+                y::doc([
+                    'payerNumber' => y::equals($payerNumber)
+                ])
+            )
+        );
     }
 
     /**
@@ -123,12 +106,15 @@ class DonorMapper
      */
     public function findByPayerNumber(string $payerNumber): array
     {
-        $result = $this->collection->find(
+        $donors = [];
+        foreach ($this->collection->find(
             y::doc([
                 'payerNumber' => y::equals($payerNumber)
             ])
-        );
-        return $this->buildDonorArray($result);
+        ) as $doc) {
+            $donors[] = $this->donorArrayizer->fromArray($doc);
+        }
+        return $donors;
     }
 
     /**
@@ -140,47 +126,6 @@ class DonorMapper
             y::doc([
                 'mandateKey' => $donor->getMandateKey()
             ])
-        );
-    }
-
-    /**
-     * take an array of donors read from doc, and return an array of donors
-     *
-     * @return Donor[] Returns an array of Donor objects
-     */
-    private function buildDonorArray(array $doc): array
-    {
-        $donorArray = array();
-        foreach ($result as $id => $doc) {
-            $donorArray[$id] = $this->buildDonor($doc);
-        }
-        return $donorArray;
-    }
-
-    /**
-     * take an array read from doc, and build donor object
-     */
-    private function buildDonor(string $doc): Donor
-    {
-        return $this->donorBuilder->buildDonor(
-            new DonorState($doc['state']),
-            $doc['mandateSource'],
-            $doc['payerNumber'],
-            $this->accountFactory->createAccount($doc['account']),
-            //TODO: check if personal or organization ID
-            new PersonalId($doc['donorId']),
-            $doc['name'],
-            new PostalAddress(
-                $doc['address']['postalCode'],
-                $doc['address']['postalCity'],
-                $doc['address']['address1'],
-                $doc['address']['address2'],
-                $doc['address']['coAddress']
-            ),
-            new SEK($doc['donationAmount']),
-            $doc['comment'],
-            intval($doc['dayOfMonth']),
-            intval($doc['minDaysInFuture'])
         );
     }
 }

@@ -24,6 +24,10 @@ namespace byrokrat\giroapp\Mapper\Arrayizer;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
+use byrokrat\giroapp\Model\DonorState\DonorStateFactory;
+use byrokrat\banking\AccountFactory;
+use byrokrat\id\IdFactory;
+use byrokrat\amount\Currency\SEK;
 
 /**
  * Takes a Donor object and transforms it to an array
@@ -38,18 +42,25 @@ class DonorArrayizer
     const TYPE_VERSION = 'giroapp/donor:0.1';
 
     public function __construct(
-        PostalAddressArrayizer $postalAddressArrayizer = null
+        PostalAddressArrayizer $postalAddressArrayizer,
+        DonorStateFactory $donorStateFactory,
+        AccountFactory $accountFactory,
+        IdFactory $idFactory
     ) {
-        $this->addressArrayizer = $postalAddressArrayizer ?: new PostalAddressArrayizer();
+        $this->addressArrayizer = $postalAddressArrayizer;
+        $this->donorStateFactory = $donorStateFactory;
+        $this->accountFactory = $accountFactory;
+        $this->idFactory = $idFactory;
     }
 
     public function toArray(Donor $donor) : array
     {
         return [
+            'mandateKey' => $this->donor->getMandateKey(),
             'state' => $this->donor->getState()->getId(),
             'mandateSource' => $this->donor->getMandateSource(),
             'payerNumber' => $this->donor->getPayerNumber(),
-            'account' => $this->donor->getAccount()->get16(),
+            'account' => $this->donor->getAccount()->getNumber(),
             'donorId' => $this->donor->getDonorId()->format('S-sk'),
             'comment' => $this->donor->getComment(),
             'name' => $this->donor->getName(),
@@ -57,8 +68,23 @@ class DonorArrayizer
             'email' => $this->donor->getEmail(),
             'phone' => $this->donor->getPhone(),
             'donationAmount' => $this->donor->getDonationAmount()->getAmount(),
-            'mandateKey' => $this->donor->getMandateKey(),
             'type' => self::TYPE_VERSION
         ];
+    }
+
+    public function fromArray(array $doc) : Donor
+    {
+        return new Donor(
+            $doc['mandateKey'],
+            $this->donorStateFactory->createDonorState($doc['state']),
+            $doc['mandateSource'],
+            $doc['payerNumber'],
+            $this->accountFactory->createAccount($doc['account']),
+            $this->idFactory->create($doc['id']),
+            $doc['name'],
+            $this->addressArrayizer->fromArray($doc['address']),
+            new SEK($doc['donationAmount']),
+            $doc['comment']
+        );
     }
 }
