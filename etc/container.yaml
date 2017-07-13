@@ -56,3 +56,16 @@ services:
 
     bankgiro_factory:
         class: byrokrat\banking\BankgiroFactory
+
+    account_factory:
+        class: byrokrat\banking\AccountFactory
+
+    id_factory:
+        class: byrokrat\id\PersonalIdFactory
+
+    donor_builder:
+        class: byrokrat\giroapp\Builder\DonorBuilder
+        arguments: ['@mandate_key_builder']
+
+    mandate_key_builder:
+        class: byrokrat\giroapp\Builder\MandateKeyBuilder

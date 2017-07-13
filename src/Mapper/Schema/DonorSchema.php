@@ -95,7 +95,7 @@ class DonorSchema
             $doc['mandateSource'],
             $doc['payerNumber'],
             $this->accountFactory->createAccount($doc['account']),
-            $this->idFactory->create($doc['id']),
+            $this->idFactory->create($doc['donorId']),
             $doc['name'],
             $this->addressSchema->fromArray($doc['address']),
             $doc['email'],
