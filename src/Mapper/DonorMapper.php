@@ -56,6 +56,7 @@ class DonorMapper
         if ($this->collection->has($key)) {
             return $this->donorArrayizer->fromArray($this->collection->read($key));
         }
+        throw new \RuntimeException("unknown donor key: $key");
     }
 
     /**
@@ -124,7 +125,7 @@ class DonorMapper
     {
         $this->collection->delete(
             y::doc([
-                'mandateKey' => $donor->getMandateKey()
+                'mandateKey' => y::equals($donor->getMandateKey())
             ])
         );
     }
