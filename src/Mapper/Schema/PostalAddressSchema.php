@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Mapper\Arrayizer;
+namespace byrokrat\giroapp\Mapper\Schema;
 
 use byrokrat\giroapp\Model\PostalAddress;
 
@@ -28,7 +28,7 @@ use byrokrat\giroapp\Model\PostalAddress;
  * Takes a Address object and transforms it to an array
  */
 
-class PostalAddressArrayizer
+class PostalAddressSchema
 {
     /**
      * Databyse object type & version

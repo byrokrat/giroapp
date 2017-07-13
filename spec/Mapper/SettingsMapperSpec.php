@@ -25,18 +25,18 @@ class SettingsMapperSpec extends ObjectBehavior
     {
         $collection->has('foo')->willReturn(true);
         $collection->read('foo')->willReturn(['value' => 'bar']);
-        $this->read('foo')->shouldEqual('bar');
+        $this->findByKey('foo')->shouldEqual('bar');
     }
 
     function it_defaults_to_empty_setting_on_read($collection)
     {
         $collection->has('foo')->willReturn(false);
-        $this->read('foo')->shouldBeLike('');
+        $this->findByKey('foo')->shouldBeLike('');
     }
 
-    function it_can_write($collection)
+    function it_can_save($collection)
     {
         $collection->insert(['value' => 'bar'], 'foo')->willReturn('')->shouldBeCalled();
-        $this->write('foo', 'bar');
+        $this->save('foo', 'bar');
     }
 }

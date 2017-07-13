@@ -2,10 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Mapper\Arrayizer;
+namespace spec\byrokrat\giroapp\Mapper\Schema;
 
-use byrokrat\giroapp\Mapper\Arrayizer\DonorArrayizer;
-use byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
+use byrokrat\giroapp\Mapper\Schema\DonorSchema;
+use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
 use byrokrat\giroapp\Model\DonorState\DonorStateFactory;
 use byrokrat\giroapp\Model\DonorState\DonorState;
 use byrokrat\giroapp\Model\DonorState\ActiveState;
@@ -19,17 +19,17 @@ use byrokrat\id\PersonalId;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class DonorArrayizerSpec extends ObjectBehavior
+class DonorSchemaSpec extends ObjectBehavior
 {
     function let(
-        PostalAddressArrayizer $postalAddressArrayizer,
+        PostalAddressSchema $postalAddressSchema,
         DonorStateFactory $donorStateFactory,
         AccountFactory $accountFactory,
         IdFactory $idFactory
     ) {
 
         $this->beConstructedWith(
-            $postalAddressArrayizer,
+            $postalAddressSchema,
             $donorStateFactory,
             $accountFactory,
             $idFactory
@@ -37,11 +37,11 @@ class DonorArrayizerSpec extends ObjectBehavior
     }  
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorArrayizer::CLASS);
+        $this->shouldHaveType(DonorSchema::CLASS);
     }
 
     function it_can_create_donor(
-        $postalAddressArrayizer,
+        $postalAddressSchema,
         $donorStateFactory,
         $accountFactory,
         $idFactory,
@@ -63,7 +63,7 @@ class DonorArrayizerSpec extends ObjectBehavior
         'comment' => 'foobar'
         ];
 
-        $postalAddressArrayizer->fromArray(['foobar'])->willReturn($address);
+        $postalAddressSchema->fromArray(['foobar'])->willReturn($address);
         $donorStateFactory->createDonorState('foobar')->willReturn($donorState);
         $accountFactory->createAccount('foobar')->willReturn($account);
         $idFactory->create('foobar')->willReturn($id);
@@ -85,14 +85,14 @@ class DonorArrayizerSpec extends ObjectBehavior
     }
 
     function it_can_create_array(
-        $postalAddressArrayizer,
+        $postalAddressSchema,
         AccountNumber $account,
         PersonalId $id,
         PostalAddress $address,
         DonorState $donorState,
         SEK $amount
     ) {
-        $postalAddressArrayizer->toArray($address)->willReturn(['foobar']);
+        $postalAddressSchema->toArray($address)->willReturn(['foobar']);
         $donorState->getId()->willReturn('ActiveState');
         $account->getNumber()->willReturn('foobar');
         $id->format('S-sk')->willReturn('foobar');
@@ -124,7 +124,7 @@ class DonorArrayizerSpec extends ObjectBehavior
             'phone' => '',
             'donationAmount' => '1',
             'comment' => 'foobar',
-            'type' => DonorArrayizer::TYPE_VERSION
+            'type' => DonorSchema::TYPE_VERSION
         ]);
     }
 }

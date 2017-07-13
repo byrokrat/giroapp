@@ -46,8 +46,8 @@ class ExportCommand implements CommandInterface
         $settings = $container->get('settings_mapper');
 
         $writer = (new WriterFactory)->createWriter(
-            $settings->read('bgc_customer_number'),
-            (new BankgiroFactory)->createAccount($settings->read('bankgiro'))
+            $settings->findByKey('bgc_customer_number'),
+            (new BankgiroFactory)->createAccount($settings->findByKey('bankgiro'))
         );
 
         $donorMapper = $container->get('donor_mapper');

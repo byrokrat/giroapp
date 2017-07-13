@@ -20,10 +20,10 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Mapper\Arrayizer;
+namespace byrokrat\giroapp\Mapper\Schema;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
+use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
 use byrokrat\giroapp\Model\DonorState\DonorStateFactory;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\IdFactory;
@@ -32,14 +32,14 @@ use byrokrat\amount\Currency\SEK;
 /**
  * Takes a Donor object and transforms it to an array
  */
-class DonorArrayizer
+class DonorSchema
 {
     const TYPE_VERSION = 'giroapp/donor:0.1';
 
     /**
-     * @var PostalAddressArrayizer
+     * @var PostalAddressSchema
      */
-    private $addressArrayizer;
+    private $addressSchema;
 
     /**
      * @var DonorStateFactory
@@ -57,12 +57,12 @@ class DonorArrayizer
     private $idFactory;
 
     public function __construct(
-        PostalAddressArrayizer $postalAddressArrayizer,
+        PostalAddressSchema $postalAddressSchema,
         DonorStateFactory $donorStateFactory,
         AccountFactory $accountFactory,
         IdFactory $idFactory
     ) {
-        $this->addressArrayizer = $postalAddressArrayizer;
+        $this->addressSchema = $postalAddressSchema;
         $this->donorStateFactory = $donorStateFactory;
         $this->accountFactory = $accountFactory;
         $this->idFactory = $idFactory;
@@ -78,7 +78,7 @@ class DonorArrayizer
             'account' => $donor->getAccount()->getNumber(),
             'donorId' => $donor->getDonorId()->format('S-sk'),
             'name' => $donor->getName(),
-            'address' => $this->addressArrayizer->toArray($donor->getAddress()),
+            'address' => $this->addressSchema->toArray($donor->getAddress()),
             'email' => $donor->getEmail(),
             'phone' => $donor->getPhone(),
             'donationAmount' => $donor->getDonationAmount()->getAmount(),
@@ -97,7 +97,7 @@ class DonorArrayizer
             $this->accountFactory->createAccount($doc['account']),
             $this->idFactory->create($doc['id']),
             $doc['name'],
-            $this->addressArrayizer->fromArray($doc['address']),
+            $this->addressSchema->fromArray($doc['address']),
             new SEK($doc['donationAmount']),
             $doc['comment']
         );
