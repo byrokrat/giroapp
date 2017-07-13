@@ -42,15 +42,15 @@ class SettingsMapper
     /**
      * Lookup setting identified by key
      */
-    public function read(string $key): string
+    public function findByKey(string $key): string
     {
         return $this->collection->has($key) ? $this->collection->read($key)['value'] : '';
     }
 
     /**
-     * Write setting key-value pair
+     * Save setting key-value pair
      */
-    public function write(string $key, string $value)
+    public function save(string $key, string $value)
     {
         $this->collection->insert(['value' => $value], $key);
     }
