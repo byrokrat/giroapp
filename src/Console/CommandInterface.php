@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * This file is part of byrokrat\giroapp.
@@ -23,17 +22,23 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-require __DIR__.'/../vendor/autoload.php';
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Symfony\Component\Console\Application;
+/**
+ * Interface for giroapp console commands
+ */
+interface CommandInterface
+{
+    /**
+     * Configure the symfony command
+     */
+    public function configure(Command $command);
 
-$application = new Application();
-
-$application->add(new CommandWrapper(new AddCommand));
-$application->add(new CommandWrapper(new ExportCommand));
-$application->add(new CommandWrapper(new ImportCommand));
-$application->add(new CommandWrapper(new InitCommand));
-$application->add(new CommandWrapper(new RevokeCommand));
-$application->add(new CommandWrapper(new StatusCommand));
-
-$application->run();
+    /**
+     * Execute command
+     */
+    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container);
+}

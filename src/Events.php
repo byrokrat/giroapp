@@ -26,6 +26,16 @@ namespace byrokrat\giroapp;
 interface Events
 {
     /**
+     * Execution about to start
+     */
+    const EXECUTION_START_EVENT = 'execution.start';
+
+    /**
+     * Execution about to end
+     */
+    const EXECUTION_END_EVENT = 'execution.end';
+
+    /**
      * A bank file imported, expects an ImportEvent
      */
     const IMPORT_EVENT = 'file.import';
