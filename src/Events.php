@@ -46,6 +46,21 @@ interface Events
     const MANDATE_RESPONSE_EVENT = 'mandate.response';
 
     /**
+     * A mandate has been approved by the bank, expects a DonorEvent
+     */
+    const MANDATE_APPROVED_EVENT = 'mandate.approved';
+
+    /**
+     * A mandate has been revoked, expects a DonorEvent
+     */
+    const MANDATE_REVOKED_EVENT = 'mandate.revoked';
+
+    /**
+     * A mandate is invalid and could not be approved, expects a DonorEvent
+     */
+    const MANDATE_INVALID_EVENT = 'mandate.invalid';
+
+    /**
      * Present information to user, expects a LogEvent
      */
     const INFO_EVENT = 'INFO';

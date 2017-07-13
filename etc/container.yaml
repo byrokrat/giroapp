@@ -45,6 +45,12 @@ services:
         tags:
             - { name: event_listener, event: EXECUTION_END_EVENT, priority: 1 }
 
+    mandate_response_listener:
+        class: byrokrat\giroapp\Listener\MandateResponseListener
+        arguments: ['@donor_mapper']
+        tags:
+            - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 1 }
+
     autogiro_parser_factory:
         class: byrokrat\autogiro\Parser\ParserFactory
 
