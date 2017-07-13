@@ -25,9 +25,10 @@ namespace byrokrat\giroapp\Mapper;
 use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
+use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 
 /**
- * Mapps donor objects to database collection
+ * Maps donor objects to database collection
  */
 class DonorMapper
 {
@@ -36,9 +37,37 @@ class DonorMapper
      */
     private $collection;
 
-    public function __construct(CollectionInterface $collection)
+    /**
+     * @var DonorSchema
+     */
+    private $donorSchema;
+
+    public function __construct(CollectionInterface $collection, DonorSchema $donorSchema)
     {
         $this->collection = $collection;
+        $this->donorSchema = $donorSchema;
+    }
+
+    /**
+     * Get a unique donor identified by key
+     */
+    public function findByKey(string $key): Donor
+    {
+        if ($this->collection->has($key)) {
+            return $this->donorSchema->fromArray($this->collection->read($key));
+        }
+        throw new \RuntimeException("unknown donor key: $key");
+    }
+
+    /**
+     * Save donor (insert or update)
+     */
+    public function save(Donor $donor)
+    {
+        $this->collection->insert(
+            $this->donorSchema->toArray($donor),
+            $donor->getMandateKey()
+        );
     }
 
     /**
@@ -48,15 +77,11 @@ class DonorMapper
      */
     public function findAll(): array
     {
-        throw new \Exception("PENDING IMPLEMENTATION");
-    }
-
-    /**
-     * Get a unique donor identified by key
-     */
-    public function findByKey(string $key): Donor
-    {
-        throw new \Exception("PENDING IMPLEMENTATION");
+        $donors = [];
+        foreach ($this->collection as $doc) {
+            $donors[] = $this->donorSchema->fromArray($doc);
+        }
+        return $donors;
     }
 
     /**
@@ -64,7 +89,13 @@ class DonorMapper
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
-        throw new \Exception("PENDING IMPLEMENTATION");
+        return $this->donorSchema->fromArray(
+            $this->collection->first(
+                y::doc([
+                    'payerNumber' => y::equals($payerNumber)
+                ])
+            )
+        );
     }
 
     /**
@@ -76,15 +107,15 @@ class DonorMapper
      */
     public function findByPayerNumber(string $payerNumber): array
     {
-        throw new \Exception("PENDING IMPLEMENTATION");
-    }
-
-    /**
-     * Save donor to storage
-     */
-    public function save(Donor $donor)
-    {
-        throw new \Exception("PENDING IMPLEMENTATION");
+        $donors = [];
+        foreach ($this->collection->find(
+            y::doc([
+                'payerNumber' => y::equals($payerNumber)
+            ])
+        ) as $doc) {
+            $donors[] = $this->donorSchema->fromArray($doc);
+        }
+        return $donors;
     }
 
     /**
@@ -92,6 +123,10 @@ class DonorMapper
      */
     public function delete(Donor $donor)
     {
-        throw new \Exception("PENDING IMPLEMENTATION");
+        $this->collection->delete(
+            y::doc([
+                'mandateKey' => y::equals($donor->getMandateKey())
+            ])
+        );
     }
 }

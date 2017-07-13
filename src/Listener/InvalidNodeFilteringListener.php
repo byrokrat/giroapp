@@ -53,7 +53,7 @@ class InvalidNodeFilteringListener
 
     public function __invoke(NodeEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
     {
-        $appBg = $this->bankgiroFactory->createAccount($this->settingsMapper->read('bankgiro'));
+        $appBg = $this->bankgiroFactory->createAccount($this->settingsMapper->findByKey('bankgiro'));
         $nodeBg = $event->getNode()->getChild('payee_bankgiro')->getAttribute('account');
 
         if (!$nodeBg->equals($appBg)) {

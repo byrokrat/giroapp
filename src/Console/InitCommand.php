@@ -66,7 +66,7 @@ class InitCommand implements CommandInterface
         OutputInterface $output,
         SettingsMapper $settingsMapper
     ) {
-        $currentValue = $settingsMapper->read($key);
+        $currentValue = $settingsMapper->findByKey($key);
 
         $newValue = $input->getOption(str_replace('_', '-', $key));
 
@@ -79,7 +79,7 @@ class InitCommand implements CommandInterface
         }
 
         if ($newValue != $currentValue) {
-            $settingsMapper->write($key, $newValue);
+            $settingsMapper->save($key, $newValue);
             $output->writeln("$desc set to: <info>$newValue</info>");
         }
     }

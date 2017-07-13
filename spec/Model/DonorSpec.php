@@ -16,14 +16,36 @@ use byrokrat\giroapp\Model\PostalAddress;
 
 class DonorSpec extends ObjectBehavior
 {
-    function let(DonorState $state, AccountNumber $account, PersonalId $donorId, PostalAddress $address)
-    {
+    const TESTKEY = 'aaaa';
 
+    function let(
+        DonorState $state,
+        AccountNumber $account,
+        PersonalId $donorId,
+        PostalAddress $address,
+        SEK $donationAmount
+    ) {
         $mandateSource = Donor::MANDATE_SOURCE_PAPER;
         $payerNumber = "00001";
         $name = "namely name";
+        $email = 'mail';
+        $phone = 'phone';
+        $comment = 'comment';
 
-        $this->beConstructedWith($state, $mandateSource, $payerNumber, $account, $donorId, $name, $address);
+        $this->beConstructedWith(
+            self::TESTKEY,
+            $state,
+            $mandateSource,
+            $payerNumber,
+            $account,
+            $donorId,
+            $name,
+            $address,
+            $email,
+            $phone,
+            $donationAmount,
+            $comment
+        );
     }
 
     function it_is_initializable()
@@ -53,17 +75,15 @@ class DonorSpec extends ObjectBehavior
         $this->exportToAutogiro($writer);
         $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
     }
-    
+
     function it_contains_a_donor_id($donorId)
     {
         $this->getDonorId()->shouldEqual($donorId);
     }
 
-    function it_contains_a_mandate_key($account, $donorId)
+    function it_contains_a_mandate_key()
     {
-        $donorId->format('S-sk')->willReturn('foo');
-        $account->get16()->willReturn('bar');
-        $this->getMandateKey()->shouldEqual(hash('sha256', 'foobar'));
+        $this->getMandateKey()->shouldEqual(self::TESTKEY);
     }
 
     function it_can_set_phone()
