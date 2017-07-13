@@ -56,7 +56,7 @@ class DonorSchemaSpec extends ObjectBehavior
             'mandateSource' => 'mandate-source',
             'payerNumber' => 'payer-number',
             'account' => 'account',
-            'id' => 'id',
+            'donorId' => 'id',
             'name' => 'name',
             'address' => ['foobar'],
             'email' => 'email',
