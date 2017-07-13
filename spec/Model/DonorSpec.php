@@ -18,13 +18,34 @@ class DonorSpec extends ObjectBehavior
 {
     const TESTKEY = 'aaaa';
 
-    function let(DonorState $state, AccountNumber $account, PersonalId $donorId, PostalAddress $address)
-    {
+    function let(
+        DonorState $state,
+        AccountNumber $account,
+        PersonalId $donorId,
+        PostalAddress $address,
+        SEK $donationAmount
+    ) {
         $mandateSource = Donor::MANDATE_SOURCE_PAPER;
         $payerNumber = "00001";
         $name = "namely name";
+        $email = 'mail';
+        $phone = 'phone';
+        $comment = 'comment';
 
-        $this->beConstructedWith(self::TESTKEY, $state, $mandateSource, $payerNumber, $account, $donorId, $name, $address);
+        $this->beConstructedWith(
+            self::TESTKEY,
+            $state,
+            $mandateSource,
+            $payerNumber,
+            $account,
+            $donorId,
+            $name,
+            $address,
+            $email,
+            $phone,
+            $donationAmount,
+            $comment
+        );
     }
 
     function it_is_initializable()
@@ -54,7 +75,7 @@ class DonorSpec extends ObjectBehavior
         $this->exportToAutogiro($writer);
         $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
     }
-    
+
     function it_contains_a_donor_id($donorId)
     {
         $this->getDonorId()->shouldEqual($donorId);

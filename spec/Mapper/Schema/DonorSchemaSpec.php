@@ -27,14 +27,14 @@ class DonorSchemaSpec extends ObjectBehavior
         AccountFactory $accountFactory,
         IdFactory $idFactory
     ) {
-
         $this->beConstructedWith(
             $postalAddressSchema,
             $donorStateFactory,
             $accountFactory,
             $idFactory
         );
-    }  
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType(DonorSchema::CLASS);
@@ -51,35 +51,39 @@ class DonorSchemaSpec extends ObjectBehavior
         PostalAddress $address
     ) {
         $doc = [
-        'mandateKey' => 'foobar',
-        'state' => 'foobar',
-        'mandateSource' => 'foobar',
-        'payerNumber' => 'foobar',
-        'account' => 'foobar',
-        'id' => 'foobar',
-        'name' => 'foobar',
-        'address' => ['foobar'],
-        'donationAmount' => '1',
-        'comment' => 'foobar'
+            'mandateKey' => 'mandate-key',
+            'state' => 'state',
+            'mandateSource' => 'mandate-source',
+            'payerNumber' => 'payer-number',
+            'account' => 'account',
+            'id' => 'id',
+            'name' => 'name',
+            'address' => ['foobar'],
+            'email' => 'email',
+            'phone' => 'phone',
+            'donationAmount' => '1',
+            'comment' => 'comment'
         ];
 
         $postalAddressSchema->fromArray(['foobar'])->willReturn($address);
-        $donorStateFactory->createDonorState('foobar')->willReturn($donorState);
-        $accountFactory->createAccount('foobar')->willReturn($account);
-        $idFactory->create('foobar')->willReturn($id);
+        $donorStateFactory->createDonorState('state')->willReturn($donorState);
+        $accountFactory->createAccount('account')->willReturn($account);
+        $idFactory->create('id')->willReturn($id);
 
         $this->fromArray($doc)->shouldBeLike(
             new Donor(
-                'foobar',
+                'mandate-key',
                 $donorState->getWrappedObject(),
-                'foobar',
-                'foobar',
+                'mandate-source',
+                'payer-number',
                 $account->getWrappedObject(),
                 $id->getWrappedObject(),
-                'foobar',
+                'name',
                 $address->getWrappedObject(),
+                'email',
+                'phone',
                 new SEK('1'),
-                'foobar'
+                'comment'
             )
         );
     }
@@ -94,36 +98,38 @@ class DonorSchemaSpec extends ObjectBehavior
     ) {
         $postalAddressSchema->toArray($address)->willReturn(['foobar']);
         $donorState->getId()->willReturn('ActiveState');
-        $account->getNumber()->willReturn('foobar');
-        $id->format('S-sk')->willReturn('foobar');
+        $account->getNumber()->willReturn('account');
+        $id->format('S-sk')->willReturn('id');
         $amount->getAmount()->willReturn('1');
 
         $donor = new Donor(
-            'foobar',
+            'mandate-key',
             $donorState->getWrappedObject(),
-            'foobar',
-            'foobar',
+            'mandate-source',
+            'payer-number',
             $account->getWrappedObject(),
             $id->getWrappedObject(),
-            'foobar',
+            'name',
             $address->getWrappedObject(),
-            new SEK('1'),
-            'foobar'
+            'email',
+            'phone',
+            $amount->getWrappedObject(),
+            'comment'
         );
 
         $this->toArray($donor)->shouldBeLike([
-            'mandateKey' => 'foobar',
+            'mandateKey' => 'mandate-key',
             'state' => 'ActiveState',
-            'mandateSource' => 'foobar',
-            'payerNumber' => 'foobar',
-            'account' => 'foobar',
-            'donorId' => 'foobar',
-            'name' => 'foobar',
+            'mandateSource' => 'mandate-source',
+            'payerNumber' => 'payer-number',
+            'account' => 'account',
+            'donorId' => 'id',
+            'name' => 'name',
             'address' => ['foobar'],
-            'email' => '',
-            'phone' => '',
+            'email' => 'email',
+            'phone' => 'phone',
             'donationAmount' => '1',
-            'comment' => 'foobar',
+            'comment' => 'comment',
             'type' => DonorSchema::TYPE_VERSION
         ]);
     }
