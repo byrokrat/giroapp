@@ -28,7 +28,11 @@ services:
 
     donor_mapper:
         class: byrokrat\giroapp\Mapper\DonorMapper
-        arguments: ['@db_donors_collection']
+        arguments: ['@db_donors_collection', '@donor_schema']
+
+    donor_schema:
+        class: byrokrat\giroapp\Mapper\Schema\DonorSchema
+        arguments: ['@postal_address_schema', '@donor_state_factory', '@account_factory', '@id_factory']
 
     db_donors_collection:
         class: hanneskod\yaysondb\Collection
@@ -60,3 +64,9 @@ services:
 
     db_log_formatter:
         class: byrokrat\giroapp\LogFormatter
+
+    postal_address_schema:
+        class: byrokrat\giroapp\Mapper\Schema\PostalAddressSchema
+
+    donor_state_factory:
+        class: byrokrat\giroapp\Model\DonorState\DonorStateFactory

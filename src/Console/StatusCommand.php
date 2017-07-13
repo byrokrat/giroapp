@@ -26,6 +26,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Console\Helper\Table;
 
 /**
  * Command to show stats on the current donor database
@@ -41,6 +42,30 @@ class StatusCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        // TODO implemet...
+        $table = new Table($output);
+
+        $table->setHeaders([
+            'mandate_key',
+            'name',
+            'payer_number',
+            'account',
+            'amount',
+            'comment',
+            'status'
+        ]);
+
+        foreach ($container->get('donor_mapper')->findAll() as $donor) {
+            $table->addRow([
+                $donor->getMandateKey(),
+                $donor->getName(),
+                $donor->getPayerNumber(),
+                $donor->getAccount(),
+                $donor->getDonationAmount()->getString(0),
+                $donor->getComment(),
+                $donor->getState()->getDescription()
+            ]);
+        }
+
+        $table->render();
     }
 }
