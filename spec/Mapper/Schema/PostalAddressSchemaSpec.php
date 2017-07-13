@@ -2,18 +2,18 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Mapper\Arrayizer;
+namespace spec\byrokrat\giroapp\Mapper\Schema;
 
-use byrokrat\giroapp\Mapper\Arrayizer\PostalAddressArrayizer;
+use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
 use byrokrat\giroapp\Model\PostalAddress;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class PostalAddressArrayizerSpec extends ObjectBehavior
+class PostalAddressSchemaSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(PostalAddressArrayizer::CLASS);
+        $this->shouldHaveType(PostalAddressSchema::CLASS);
     }
 
     function it_can_create_postaladdress()
@@ -49,7 +49,7 @@ class PostalAddressArrayizerSpec extends ObjectBehavior
             'address1' => 'bbbb',
             'address2' => 'cccc',
             'coAddress' => 'dddd',
-            'type' => PostalAddressArrayizer::TYPE_VERSION
+            'type' => PostalAddressSchema::TYPE_VERSION
         ]);
     }
 }
