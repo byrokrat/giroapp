@@ -61,17 +61,22 @@ interface Events
     const MANDATE_INVALID_EVENT = 'mandate.invalid';
 
     /**
+     * An unexpected and unrecoverable error, expects a LogEvent
+     */
+    const ERROR_EVENT = 'ERROR';
+
+    /**
+     * An unexpected but recoverable situation, expects a LogEvent
+     */
+    const WARNING_EVENT = 'WARNING';
+
+    /**
      * Present information to user, expects a LogEvent
      */
     const INFO_EVENT = 'INFO';
 
     /**
-     * A ecoverable but unexpected situation, expects a LogEvent
+     * Present debug information to user, expects a LogEvent
      */
-    const NOTICE_EVENT = 'NOTICE';
-
-    /**
-     * A serious error, expects a LogEvent
-     */
-    const ERROR_EVENT = 'ERROR';
+    const DEBUG_EVENT = 'DEBUG';
 }

@@ -18,9 +18,9 @@ services:
         class: byrokrat\giroapp\Listener\LoggingListener
         arguments: ['@db_log_collection']
         tags:
-            - { name: event_listener, event: INFO_EVENT, priority: 10 }
-            - { name: event_listener, event: NOTICE_EVENT, priority: 10 }
             - { name: event_listener, event: ERROR_EVENT, priority: 10 }
+            - { name: event_listener, event: WARNING_EVENT, priority: 10 }
+            - { name: event_listener, event: INFO_EVENT, priority: 10 }
 
     abort_listener:
         class: byrokrat\giroapp\Listener\AbortingListener
