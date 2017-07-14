@@ -26,9 +26,28 @@ services:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.settings%', '@filesystem']
 
+    donor_builder:
+        class: byrokrat\giroapp\Builder\DonorBuilder
+
     donor_mapper:
         class: byrokrat\giroapp\Mapper\DonorMapper
-        arguments: ['@db_donors_collection']
+        arguments: ['@db_donors_collection', '@donor_schema']
+
+    donor_schema:
+        class: byrokrat\giroapp\Mapper\Schema\DonorSchema
+        arguments: ['@donor_address_schema', '@donor_state_factory', '@account_factory', '@id_factory']
+
+    donor_address_schema:
+        class: byrokrat\giroapp\Mapper\Schema\PostalAddressSchema
+
+    donor_state_factory:
+        class: byrokrat\giroapp\Model\DonorState\DonorStateFactory
+
+    account_factory:
+        class: byrokrat\banking\AccountFactory
+
+    id_factory:
+        class: byrokrat\id\IdFactory
 
     db_donors_collection:
         class: hanneskod\yaysondb\Collection

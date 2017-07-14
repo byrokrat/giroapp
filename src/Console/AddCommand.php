@@ -36,8 +36,14 @@ use Symfony\Component\Console\Question\Question;
  */
 class AddCommand implements CommandInterface
 {
+    /**
+     * @var Command
+     */
+    private $command;
+
     public function configure(Command $command)
     {
+        $this->command = $command;
         $command->setName('add');
         $command->setDescription('Add a new donor');
         $command->setHelp('Register a new traditional printed mandate in database');
@@ -62,19 +68,19 @@ class AddCommand implements CommandInterface
         $donorBuilder = $container->get('donor_builder');
         $this->addDonor(
             [
-                $this->getProperty('payerNumber', 'Unique ID number for donor', $input, $output),
-                $this->getProperty('accountNumber', 'Donor account number', $input, $output),
-                $this->getProperty('donorId', 'Donor personal id number or organisation number', $input, $output),
-                $this->getProperty('name', 'Donor name', $input, $output),
-                $this->getProperty('address1', 'Address field 1', $input, $output),
-                $this->getProperty('address2', 'Address field 2', $input, $output),
-                $this->getProperty('postalCode', 'Postal code', $input, $output),
-                $this->getProperty('postalCity', 'Postal city', $input, $output),
-                $this->getProperty('coAddress', 'C/o address', $input, $output),
-                $this->getProperty('email', 'Contact email address', $input, $output),
-                $this->getProperty('phone', 'Contact phone number', $input, $output),
-                $this->getProperty('donationAmount', 'Monthly donation amount', $input, $output),
-                $this->getProperty('comment', 'Comment', $input, $output)
+                'payerNumber' => $this->getProperty('payerNumber', 'Unique ID number for donor', $input, $output),
+                'accountNumber' => $this->getProperty('accountNumber', 'Donor account number', $input, $output),
+                'donorId' => $this->getProperty('donorId', 'Donor personal id number or organisation number', $input, $output),
+                'name' => $this->getProperty('name', 'Donor name', $input, $output),
+                'address1' => $this->getProperty('address1', 'Address field 1', $input, $output),
+                'address2' => $this->getProperty('address2', 'Address field 2', $input, $output),
+                'postalCode' => $this->getProperty('postalCode', 'Postal code', $input, $output),
+                'postalCity' => $this->getProperty('postalCity', 'Postal city', $input, $output),
+                'coAddress' => $this->getProperty('coAddress', 'C/o address', $input, $output),
+                'email' => $this->getProperty('email', 'Contact email address', $input, $output),
+                'phone' => $this->getProperty('phone', 'Contact phone number', $input, $output),
+                'donationAmount' => $this->getProperty('donationAmount', 'Monthly donation amount', $input, $output),
+                'comment' => $this->getProperty('comment', 'Comment', $input, $output)
             ],
             $input,
             $output
@@ -89,7 +95,17 @@ class AddCommand implements CommandInterface
         InputInterface $input,
         OutputInterface $output
     ) {
-        return $input->getOption(str_replace('_', '-', $key));
+        $newValue = $input->getOption(str_replace('_', '-', $key));
+
+        if (!$newValue) {
+            $newValue = $this->command->getHelper('question')->ask(
+                    $input,
+                    $output,
+                    new Question("$desc: ", '')
+                );
+        }
+
+        return ['desc' => $desc, 'value' => $newValue];
     }
 
     private function addDonor(
@@ -103,38 +119,30 @@ class AddCommand implements CommandInterface
          * Waiting on the DonorBuilder interface
         $donorMapper->save(
             $donorBuilder->buildDonor(
-                $donor['payerNumber'],
-                $donor['accountNumber'],
-                $donor['donorId'],
-                $donor['name'],
+                $donor['payerNumber']['value'],
+                $donor['accountNumber']['value'],
+                $donor['donorId']['value'],
+                $donor['name']['value'],
                 [
-                    $donor['address1'],
-                    $donor['address2'],
-                    $donor['postalCode'],
-                    $donor['postalCity'],
-                    $donor['coAddress']
+                    $donor['address1']['value'],
+                    $donor['address2']['value'],
+                    $donor['postalCode']['value'],
+                    $donor['postalCity']['value'],
+                    $donor['coAddress']['value']
                 ],
-                $donor['email'],
-                $donor['phone'],
-                $donor['donationAmount'],
-                $donor['comment']
+                $donor['email']['value'],
+                $donor['phone']['value'],
+                $donor['donationAmount']['value'],
+                $donor['comment']['value']
             )
         );
          */
 
-        $output->writeln("Added donor:");
-        $output->writeln("Name <info>{$donor['name']}</info>");
-        $output->writeln("Payer number <info>{$donor['payerNumber']}</info>");
-        $output->writeln("Account number <info>{$donor['accountNumber']}</info>");
-        $output->writeln("Donor Id number <info>{$donor['donorId']}</info>");
-        $output->writeln("Address:");
-        $output->writeln("<info>{$donor['Address1']}</info>");
-        $output->writeln("<info>{$donor['Address2']}</info>");
-        $output->writeln("<info>{$donor['postalCode']}</info> <info>{$donor['postalCity']}");
-        $output->writeln("c/o <info>{$donor['coAddress']}</info>");
-        $output->writeln("Contact email address: <info>{$donor['email']}</info>");
-        $output->writeln("Contact phone number: <info>{$donor['phone']}</info>");
-        $output->writeln("Monthly donation amout: <info>{$donor['donationAmount']}</info>");
-        $output->writeln("Comment: <info>{$donor['comment']}</info>");
+        $output->writeln("\nAdded donor:\n");
+        foreach ($donor as $key => $value) {
+            if ($value['value']) {
+                $output->writeln("{$value['desc']} <info>{$value['value']}</info>");
+            }
+        }
     }
 }
