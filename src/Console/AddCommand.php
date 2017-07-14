@@ -68,6 +68,7 @@ class AddCommand implements CommandInterface
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
         $donorBuilder = $container->get('donor_builder');
+        $donorMapper = $container->get('donor_mapper');
 
         $this->setProperty('payerNumber', 'Unique ID number for donor', $input, $output, $donorBuilder);
         $this->setProperty('account', 'Donor account number', $input, $output, $donorBuilder);
@@ -86,7 +87,8 @@ class AddCommand implements CommandInterface
         $this->setProperty('comment', 'Comment', $input, $output, $donorBuilder);
 
         $this->setAddress('address', 'Donor Address', $input, $output, $donorBuilder);
-        $output->writeln($donorBuilder->buildDonor()->getComment());
+        $donorMapper->save($donorBuilder->buildDonor());
+        $output->writeln('donor saved');
     }
 
     private function setProperty(
