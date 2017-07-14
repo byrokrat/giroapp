@@ -76,11 +76,6 @@ class Donor
     /**
      * @var string
      */
-    private $comment;
-
-    /**
-     * @var string
-     */
     private $name;
 
     /**
@@ -103,6 +98,11 @@ class Donor
      */
     private $donationAmount;
 
+    /**
+     * @var string
+     */
+    private $comment;
+
     public function __construct(
         string $mandateKey,
         DonorState $state,
@@ -111,23 +111,29 @@ class Donor
         AccountNumber $account,
         Id $donorId,
         string $name,
-        PostalAddress $address = null,
-        SEK $donationAmount = null,
-        string $comment = ""
+        PostalAddress $address,
+        string $email,
+        string $phone,
+        SEK $donationAmount,
+        string $comment
     ) {
         $this->mandateKey = $mandateKey;
         $this->setState($state);
         $this->mandateSource = $mandateSource;
-        $this->payerNumber = $payerNumber;
+        $this->setPayerNumber($payerNumber);
         $this->account = $account;
         $this->donorId = $donorId;
-        $this->comment = $comment;
-        $this->name = $name;
+        $this->setName($name);
+        $this->setAddress($address);
+        $this->setEmail($email);
+        $this->setPhone($phone);
+        $this->setDonationAmount($donationAmount);
+        $this->setComment($comment);
+    }
 
-        $this->email = "";
-        $this->phone = "";
-        $this->address = $address ?: new PostalAddress();
-        $this->donationAmount =  $donationAmount ?: new SEK('0');
+    public function getMandateKey(): string
+    {
+        return $this->mandateKey;
     }
 
     public function getState(): DonorState
@@ -163,16 +169,6 @@ class Donor
     public function getDonorId(): Id
     {
         return $this->donorId;
-    }
-
-    public function setComment(string $comment)
-    {
-        $this->comment = $comment;
-    }
-
-    public function getComment(): string
-    {
-        return $this->comment;
     }
 
     public function setName(string $name)
@@ -225,9 +221,14 @@ class Donor
         $this->donationAmount = $donationAmount;
     }
 
-    public function getMandateKey(): string
+    public function setComment(string $comment)
     {
-        return $this->mandateKey;
+        $this->comment = $comment;
+    }
+
+    public function getComment(): string
+    {
+        return $this->comment;
     }
 
     public function exportToAutogiro(Writer $writer)
