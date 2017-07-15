@@ -62,6 +62,11 @@ class DonorBuilder
     private $account;
 
     /**
+     * @var DonorState
+     */
+    private $state;
+
+    /**
      * @var string
      */
     private $name;
