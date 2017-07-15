@@ -46,17 +46,37 @@ interface Events
     const MANDATE_RESPONSE_EVENT = 'mandate.response';
 
     /**
+     * A mandate has been approved by the bank, expects a DonorEvent
+     */
+    const MANDATE_APPROVED_EVENT = 'mandate.approved';
+
+    /**
+     * A mandate has been revoked, expects a DonorEvent
+     */
+    const MANDATE_REVOKED_EVENT = 'mandate.revoked';
+
+    /**
+     * A mandate is invalid and could not be approved, expects a DonorEvent
+     */
+    const MANDATE_INVALID_EVENT = 'mandate.invalid';
+
+    /**
+     * An unexpected and unrecoverable error, expects a LogEvent
+     */
+    const ERROR_EVENT = 'ERROR';
+
+    /**
+     * An unexpected but recoverable situation, expects a LogEvent
+     */
+    const WARNING_EVENT = 'WARNING';
+
+    /**
      * Present information to user, expects a LogEvent
      */
     const INFO_EVENT = 'INFO';
 
     /**
-     * A ecoverable but unexpected situation, expects a LogEvent
+     * Present debug information to user, expects a LogEvent
      */
-    const NOTICE_EVENT = 'NOTICE';
-
-    /**
-     * A serious error, expects a LogEvent
-     */
-    const ERROR_EVENT = 'ERROR';
+    const DEBUG_EVENT = 'DEBUG';
 }
