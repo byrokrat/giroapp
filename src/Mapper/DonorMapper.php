@@ -90,7 +90,7 @@ class DonorMapper
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
         return $this->donorSchema->fromArray(
-            $this->collection->first(
+            $this->collection->findOne(
                 y::doc([
                     'payerNumber' => y::equals($payerNumber)
                 ])

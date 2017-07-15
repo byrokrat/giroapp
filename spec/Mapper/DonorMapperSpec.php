@@ -10,6 +10,7 @@ use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\FilterableInterface;
 use hanneskod\yaysondb\Operators as y;
+use hanneskod\yaysondb\Expression\ExpressionInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -31,7 +32,7 @@ class DonorMapperSpec extends ObjectBehavior
         $collection->read('foobar')->willReturn(['foobar']);
 
         $donorSchema->fromArray(['foobar'])->willReturn($donor);
-        
+
         $this->findByKey('foobar')->shouldEqual($donor);
     }
 
@@ -65,11 +66,7 @@ class DonorMapperSpec extends ObjectBehavior
 
     function it_can_find_active_donor($collection, $donorSchema, Donor $donor)
     {
-        $collection->first(
-            Argument::type(
-                \hanneskod\yaysondb\Expression\ExpressionInterface::CLASS
-            )
-        )->willReturn(['foobar']);
+        $collection->findOne(Argument::type(ExpressionInterface::CLASS))->willReturn(['foobar']);
 
         $donorSchema->fromArray(['foobar'])->willReturn($donor);
 
@@ -78,11 +75,7 @@ class DonorMapperSpec extends ObjectBehavior
 
     function it_can_find_by_payernumber($collection, $donorSchema, Donor $donor1, Donor $donor2, FilterableInterface $filterableInterface)
     {
-        $collection->find(
-            Argument::type(
-                \hanneskod\yaysondb\Expression\ExpressionInterface::CLASS
-            )
-        )->willReturn($filterableInterface);
+        $collection->find(Argument::type(ExpressionInterface::CLASS))->willReturn($filterableInterface);
 
         $filterableInterface->getIterator()->willReturn(
             new \ArrayIterator([['foo'], ['bar']])
@@ -98,11 +91,7 @@ class DonorMapperSpec extends ObjectBehavior
     {
         $donor->getMandateKey()->willReturn('foobar');
 
-        $collection->delete(
-            Argument::type(
-                \hanneskod\yaysondb\Expression\ExpressionInterface::CLASS
-            )
-        )->shouldBeCalled();
+        $collection->delete(Argument::type(ExpressionInterface::CLASS))->shouldBeCalled();
 
         $this->delete($donor);
     }
