@@ -10,13 +10,9 @@ Installation
 ------------
 1. Download the [composer](https://getcomposer.org/) dependency manager.
 
-2. `cd` to the desired installation directory, for example:
+2. `cd` to the desired installation directory (for example `cd ~/bin`).
 
-```shell
-cd ~/bin
-```
-
-3. Install using:
+3. Install using composer
 
 ```shell
 composer create-project byrokrat/giroapp:1.0.0-alpha --repository '{"type":"vcs","url":"https://github.com/byrokrat/giroapp"}' --no-interaction --no-dev
@@ -24,11 +20,7 @@ composer create-project byrokrat/giroapp:1.0.0-alpha --repository '{"type":"vcs"
 
 4. Add `giroapp/bin` to your environment `PATH`.
 
-5. Setup your local installation using:
-
-```shell
-giroapp init
-```
+5. Setup your local installation using `giroapp init`.
 
 Changing the user directory path
 --------------------------------
@@ -40,7 +32,7 @@ directory named `~/.giroapp`. Change this behaviour by using any one of:
 
 Writing plugins
 ---------------
-Giroapp plugins are Symfony event subscribers in the user directory under `plugins`.
+Giroapp plugins are Symfony event subscribers in the user directory under `plugins/`.
 
 Here is an example plugin that notifies someone on application error
 
@@ -95,20 +87,16 @@ class DonorMailingPlugin implements EventSubscriberInterface
 ```
 
 You can put multiple plugin classes in the same file if desired. Just make sure
-that the plugin files are postfixed `.php`.
+that the plugin files are postfixed `.php`
 
-For a list of possible event names [Events](src/Events.php).
+For a list of possible event names see [Events](src/Events.php).
 
 ### On event listener priorities
 
 When subscribing to events you may optionally set a priority to manage the call
 order of registered listeners. The higher the priority, the earlier a listener
-is executed.
-
-Internally giroapp event listeners use priorities from `-10` to `10`. This means
-that if you set a plugin priority to a value higher than `10` it will be executed
-before the event is handled internally (and you may stop event propagation if
-needed).
-
-If you set a plugin priority lower than `-10` the plugin will be executed after
-the event has been handled internally.
+is executed. Internally giroapp event listeners use priorities ranging from `-10`
+to `10`. This means that if you set a plugin priority to a value higher than `10`
+it will be executed before the event is handled internally (and you may stop
+event propagation if needed). If you set a plugin priority to a value lower than
+`-10` the plugin will be executed after the event has been handled internally.
