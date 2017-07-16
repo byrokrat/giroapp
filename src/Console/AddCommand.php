@@ -33,6 +33,7 @@ use Symfony\Component\Console\Question\Question;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\PersonalId;
 use byrokrat\amount\Currency\SEK;
+use byrokrat\giroapp\Model\PostalAddress;
 
 /**
  * Command to add a new mandate
@@ -70,65 +71,147 @@ class AddCommand implements CommandInterface
         $donorBuilder = $container->get('donor_builder');
         $donorMapper = $container->get('donor_mapper');
 
-        $this->setProperty('payerNumber', 'Unique ID number for donor', $input, $output, $donorBuilder);
-        $this->setProperty('account', 'Donor account number', $input, $output, $donorBuilder);
-        $this->setProperty('id', 'Donor personal id number or organisation number', $input, $output, $donorBuilder);
-        $this->setProperty('name', 'Donor name', $input, $output, $donorBuilder);
-        /**
-        $this->setProperty('address1', 'Address field 1', $input, $output, $donorBuilder);
-        $this->setProperty('address2', 'Address field 2', $input, $output, $donorBuilder);
-        $this->setProperty('postalCode', 'Postal code', $input, $output, $donorBuilder);
-        $this->setProperty('postalCity', 'Postal city', $input, $output, $donorBuilder);
-        $this->setProperty('coAddress', 'C/o address', $input, $output, $donorBuilder);
-         */
-        $this->setProperty('email', 'Contact email address', $input, $output, $donorBuilder);
-        $this->setProperty('phone', 'Contact phone number', $input, $output, $donorBuilder);
-        $this->setProperty('donationAmount', 'Monthly donation amount', $input, $output, $donorBuilder);
-        $this->setProperty('comment', 'Comment', $input, $output, $donorBuilder);
+        $this->setPayerNumber(
+            $this->getProperty('payerNumber', 'Unique ID number for donor', $input, $output),
+            $donorBuilder
+        );
+        $this->setAccount(
+            $this->getProperty('account', 'Donor account number', $input, $output),
+            $donorBuilder
+        );
+        $this->setId(
+            $this->getProperty('id', 'Donor personal id number or organisation number', $input, $output),
+            $donorBuilder
+        );
+        $this->setName(
+            $this->getProperty('name', 'Donor name', $input, $output),
+            $donorBuilder
+        );
+        $this->setPostalAddress(
+            [
+                'address1' => $this->getProperty('address1', 'Donor Address line 1', $input, $output),
+                'address2' => $this->getProperty('address2', 'Donor Address line 2', $input, $output),
+                'postalCode' => $this->getProperty('postalCode', 'Donor Postal code', $input, $output),
+                'postalCity' => $this-> getProperty('postalCity', 'Donor Address city', $input, $output),
+                'coAddress' => $this->getProperty('coAddress', 'C/o Address', $input, $output),
+            ],
+            $donorBuilder
+        );
+        $this->setEmail(
+            $this->getProperty('email', 'Contact email address', $input, $output),
+            $donorBuilder
+        );
+        $this->setPhone(
+            $this->getProperty('phone', 'Contact phone number', $input, $output),
+            $donorBuilder
+        );
+        $this->setDonationAmount(
+            $this->getProperty('donationAmount', 'Monthly donation amount', $input, $output),
+            $donorBuilder
+        );
+        $this->setComment(
+            $this->getProperty('comment', 'Comment', $input, $output),
+            $donorBuilder
+        );
 
-        $this->setAddress('address', 'Donor Address', $input, $output, $donorBuilder);
         $donorMapper->save($donorBuilder->buildDonor());
         $output->writeln('donor saved');
     }
 
-    private function setProperty(
+    private function getProperty(
         string $key,
         string $desc,
         InputInterface $input,
-        OutputInterface $output,
-        DonorBuilder $donorBuilder
+        OutputInterface $output
     ) {
         $value = $input->getOption(str_replace('_', '-', $key));
 
         if (!$value) {
             $value = $this->command->getHelper('question')->ask(
-                    $input,
-                    $output,
-                    new Question("$desc: ", '')
-                );
+                $input,
+                $output,
+                new Question("$desc: ", '')
+            );
         }
-        switch ($key) {
-            case 'id':
-                $value = new PersonalId($value);
-                break;
-            case 'account':
-                $accountFactory = new AccountFactory();
-                $value = $accountFactory->createAccount($value);
-                break;
-            case 'donationAmount':
-                $value = new SEK($value);
-                break;
-        }
-        call_user_func([$donorBuilder,'set'.$key], $value);
+        //$value = $value ?: "";
+        return $value;
     }
 
-    private function setAddress(
-        string $key,
-        string $desc,
-        InputInterface $input,
-        OutputInterface $output,
+    private function setPayerNumber(
+        string $value,
         DonorBuilder $donorBuilder
     ) {
-        $output->writeln('address fetcher not implement yet, so bang rocks together instead');
+        $donorBuilder->setPayerNumber($value);
+    }
+
+    private function setAccount(
+        $value,
+        DonorBuilder $donorBuilder
+    ) {
+        // TODO: This factory should probably go in the execute() function, and
+        // prehaps be gotten through the DI?
+        $accountFactory = new AccountFactory();
+        $newAccount = $accountFactory->createAccount($value);
+        $donorBuilder->setAccount($newAccount);
+    }
+
+    private function setId(
+        string $value,
+        DonorBuilder $donorBuilder
+    ) {
+        //TODO: get a factory, with the desired ID types
+        $newId = new PersonalId($value);
+        $donorBuilder->setId($newId);
+    }
+
+    private function setName(
+        string $value,
+        DonorBuilder $donorBuilder
+    ) {
+        $donorBuilder->setName($value);
+    }
+
+    private function setPostalAddress(
+        array $values,
+        DonorBuilder $donorBuilder
+    ) {
+        $newPostalAddress = new PostalAddress(
+            $values['postalCode'],
+            $values['postalCity'],
+            $values['address1'],
+            $values['address2'],
+            $values['coAddress']
+        );
+
+        $donorBuilder->setPostalAddress($newPostalAddress);
+    }
+
+    private function setEmail(
+        string $value,
+        DonorBuilder $donorBuilder
+    ) {
+        $donorBuilder->setEmail($value);
+    }
+
+    private function setPhone(
+        string $value,
+        DonorBuilder $donorBuilder
+    ) {
+        $donorBuilder->setPhone($value);
+    }
+
+    private function setDonationAmount(
+        string $value,
+        DonorBuilder $donorBuilder
+    ) {
+        $newDonationAmount = new SEK($value);
+        $donorBuilder->setDonationAmount($newDonationAmount);
+    }
+
+    private function setComment(
+        string $value,
+        DonorBuilder $donorBuilder
+    ) {
+        $donorBuilder->setComment($value);
     }
 }
