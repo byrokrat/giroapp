@@ -22,8 +22,8 @@ composer create-project byrokrat/giroapp:1.0.0-alpha --repository '{"type":"vcs"
 
 5. Setup your local installation using `giroapp init`.
 
-Changing the user directory path
---------------------------------
+### Changing the user directory path
+
 By default giroapp keeps database and other installation specific files in a
 directory named `~/.giroapp`. Change this behaviour by using any one of:
 
@@ -34,7 +34,7 @@ Writing plugins
 ---------------
 Giroapp plugins are Symfony event subscribers in the user directory under `plugins/`.
 
-Here is an example plugin that notifies someone on application error
+Here is an example plugin that notifies someone on application error:
 
 ```php
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
