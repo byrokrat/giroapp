@@ -6,17 +6,22 @@ namespace spec\byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\DonorState\DonorState;
+use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\banking\AccountNumber;
+use byrokrat\id\PersonalId;
+use byrokrat\amount\Currency\SEK;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
-use byrokrat\id\PersonalId;
-use byrokrat\banking\AccountNumber;
-use byrokrat\amount\Currency\SEK;
-use byrokrat\giroapp\Model\PostalAddress;
 
 class DonorSpec extends ObjectBehavior
 {
-    const TESTKEY = 'aaaa';
+    const MANDATE_KEY = 'mandate-key';
+    const PAYER_NUMBER = 'payer-number';
+    const NAME = 'name';
+    const EMAIL = 'email';
+    const PHONE = 'phone';
+    const COMMENT = 'comment';
 
     function let(
         DonorState $state,
@@ -25,26 +30,19 @@ class DonorSpec extends ObjectBehavior
         PostalAddress $address,
         SEK $donationAmount
     ) {
-        $mandateSource = Donor::MANDATE_SOURCE_PAPER;
-        $payerNumber = "00001";
-        $name = "namely name";
-        $email = 'mail';
-        $phone = 'phone';
-        $comment = 'comment';
-
         $this->beConstructedWith(
-            self::TESTKEY,
+            self::MANDATE_KEY,
             $state,
-            $mandateSource,
-            $payerNumber,
+            Donor::MANDATE_SOURCE_PAPER,
+            self::PAYER_NUMBER,
             $account,
             $donorId,
-            $name,
+            self::NAME,
             $address,
-            $email,
-            $phone,
+            self::EMAIL,
+            self::PHONE,
             $donationAmount,
-            $comment
+            self::COMMENT
         );
     }
 
@@ -53,12 +51,17 @@ class DonorSpec extends ObjectBehavior
         $this->shouldHaveType(Donor::CLASS);
     }
 
-    function it_contains_state($state)
+    function it_contains_a_mandate_key()
+    {
+        $this->getMandateKey()->shouldEqual(self::MANDATE_KEY);
+    }
+
+    function it_contains_a_state($state)
     {
         $this->getState()->shouldEqual($state);
     }
 
-    function it_can_change_state(DonorState $newState)
+    function it_can_set_state(DonorState $newState)
     {
         $this->getState()->shouldNotEqual($newState);
         $this->setState($newState);
@@ -70,10 +73,21 @@ class DonorSpec extends ObjectBehavior
         $this->getMandateSource()->shouldEqual(Donor::MANDATE_SOURCE_PAPER);
     }
 
-    function it_is_exportable_to_autogiro($state, Writer $writer)
+    function it_contains_a_payer_number()
     {
-        $this->exportToAutogiro($writer);
-        $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
+        $this->getPayerNumber()->shouldEqual(self::PAYER_NUMBER);
+    }
+
+    function it_can_set_payer_number()
+    {
+        $payerNumber = 'some-new-payer-number';
+        $this->setPayerNumber($payerNumber);
+        $this->getPayerNumber()->shouldEqual($payerNumber);
+    }
+
+    function it_contains_an_account($account)
+    {
+        $this->getAccount()->shouldEqual($account);
     }
 
     function it_contains_a_donor_id($donorId)
@@ -81,16 +95,33 @@ class DonorSpec extends ObjectBehavior
         $this->getDonorId()->shouldEqual($donorId);
     }
 
-    function it_contains_a_mandate_key()
+    function it_contains_a_name()
     {
-        $this->getMandateKey()->shouldEqual(self::TESTKEY);
+        $this->getName()->shouldEqual(self::NAME);
     }
 
-    function it_can_set_phone()
+    function it_can_set_name()
     {
-        $newPhone = '+4670111111';
-        $this->setPhone($newPhone);
-        $this->getPhone()->shouldEqual($newPhone);
+        $name = 'some-new-name';
+        $this->setName($name);
+        $this->getName()->shouldEqual($name);
+    }
+
+    function it_contains_an_address($address)
+    {
+        $this->getAddress()->shouldEqual($address);
+    }
+
+    function it_can_set_address(PostalAddress $newAddress)
+    {
+        $this->getAddress()->shouldNotEqual($newAddress);
+        $this->setAddress($newAddress);
+        $this->getAddress()->shouldEqual($newAddress);
+    }
+
+    function it_contains_an_email()
+    {
+        $this->getEmail()->shouldEqual(self::EMAIL);
     }
 
     function it_can_set_email()
@@ -100,14 +131,45 @@ class DonorSpec extends ObjectBehavior
         $this->getEmail()->shouldEqual($newEmail);
     }
 
-    function it_can_set_donationAmount(SEK $newAmount)
+    function it_contains_a_phone_number()
     {
+        $this->getPhone()->shouldEqual(self::PHONE);
+    }
+
+    function it_can_set_phone()
+    {
+        $newPhone = '+4670111111';
+        $this->setPhone($newPhone);
+        $this->getPhone()->shouldEqual($newPhone);
+    }
+
+    function it_contains_an_amount($donationAmount)
+    {
+        $this->getDonationAmount()->shouldEqual($donationAmount);
+    }
+
+    function it_can_set_amount(SEK $newAmount)
+    {
+        $this->getDonationAmount()->shouldNotEqual($newAmount);
         $this->setDonationAmount($newAmount);
         $this->getDonationAmount()->shouldEqual($newAmount);
     }
 
-    function it_has_an_address($address)
+    function it_contains_a_comment()
     {
-        $this->getAddress()->shouldEqual($address);
+        $this->getComment()->shouldEqual(self::COMMENT);
+    }
+
+    function it_can_set_comment()
+    {
+        $newComment = 'some comment...';
+        $this->setComment($newComment);
+        $this->getComment()->shouldEqual($newComment);
+    }
+
+    function it_is_exportable_to_autogiro($state, Writer $writer)
+    {
+        $this->exportToAutogiro($writer);
+        $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
     }
 }
