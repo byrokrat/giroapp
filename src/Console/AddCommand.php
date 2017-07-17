@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Console\Question\Question;
 use byrokrat\banking\AccountFactory;
-use byrokrat\id\PersonalId;
+use byrokrat\id\IdFactory;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\giroapp\Model\PostalAddress;
 
@@ -70,47 +70,51 @@ class AddCommand implements CommandInterface
     {
         $donorBuilder = $container->get('donor_builder');
         $donorMapper = $container->get('donor_mapper');
+        $accountFactory = $container->get('account_factory');
+        $idFactory = $container->get('id_factory');
 
         $this->setPayerNumber(
-            $this->getProperty('payerNumber', 'Unique ID number for donor', $input, $output),
+            $this->getProperty('payerNumber', 'Unique ID number for donor', '', $input, $output),
             $donorBuilder
         );
         $this->setAccount(
-            $this->getProperty('account', 'Donor account number', $input, $output),
-            $donorBuilder
+            $this->getProperty('account', 'Donor account number', '', $input, $output),
+            $donorBuilder,
+            $accountFactory
         );
         $this->setId(
-            $this->getProperty('id', 'Donor personal id number or organisation number', $input, $output),
-            $donorBuilder
+            $this->getProperty('id', 'Donor personal id number or organisation number', '', $input, $output),
+            $donorBuilder,
+            $idFactory
         );
         $this->setName(
-            $this->getProperty('name', 'Donor name', $input, $output),
+            $this->getProperty('name', 'Donor name', '', $input, $output),
             $donorBuilder
         );
         $this->setPostalAddress(
             [
-                'address1' => $this->getProperty('address1', 'Donor Address line 1', $input, $output),
-                'address2' => $this->getProperty('address2', 'Donor Address line 2', $input, $output),
-                'postalCode' => $this->getProperty('postalCode', 'Donor Postal code', $input, $output),
-                'postalCity' => $this-> getProperty('postalCity', 'Donor Address city', $input, $output),
-                'coAddress' => $this->getProperty('coAddress', 'C/o Address', $input, $output),
+                'address1' => $this->getProperty('address1', 'Donor Address line 1', '', $input, $output),
+                'address2' => $this->getProperty('address2', 'Donor Address line 2', '', $input, $output),
+                'postalCode' => $this->getProperty('postalCode', 'Donor Postal code', '', $input, $output),
+                'postalCity' => $this-> getProperty('postalCity', 'Donor Address city', '', $input, $output),
+                'coAddress' => $this->getProperty('coAddress', 'C/o Address', '', $input, $output),
             ],
             $donorBuilder
         );
         $this->setEmail(
-            $this->getProperty('email', 'Contact email address', $input, $output),
+            $this->getProperty('email', 'Contact email address', '', $input, $output),
             $donorBuilder
         );
         $this->setPhone(
-            $this->getProperty('phone', 'Contact phone number', $input, $output),
+            $this->getProperty('phone', 'Contact phone number', '', $input, $output),
             $donorBuilder
         );
         $this->setDonationAmount(
-            $this->getProperty('donationAmount', 'Monthly donation amount', $input, $output),
+            $this->getProperty('donationAmount', 'Monthly donation amount', '0', $input, $output),
             $donorBuilder
         );
         $this->setComment(
-            $this->getProperty('comment', 'Comment', $input, $output),
+            $this->getProperty('comment', 'Comment', '', $input, $output),
             $donorBuilder
         );
 
@@ -121,6 +125,7 @@ class AddCommand implements CommandInterface
     private function getProperty(
         string $key,
         string $desc,
+        string $default,
         InputInterface $input,
         OutputInterface $output
     ) {
@@ -130,7 +135,7 @@ class AddCommand implements CommandInterface
             $value = $this->command->getHelper('question')->ask(
                 $input,
                 $output,
-                new Question("$desc: ", '')
+                new Question("$desc: ", $default)
             );
         }
         //$value = $value ?: "";
@@ -146,21 +151,19 @@ class AddCommand implements CommandInterface
 
     private function setAccount(
         $value,
-        DonorBuilder $donorBuilder
+        DonorBuilder $donorBuilder,
+        AccountFactory $accountFactory
     ) {
-        // TODO: This factory should probably go in the execute() function, and
-        // prehaps be gotten through the DI?
-        $accountFactory = new AccountFactory();
         $newAccount = $accountFactory->createAccount($value);
         $donorBuilder->setAccount($newAccount);
     }
 
     private function setId(
         string $value,
-        DonorBuilder $donorBuilder
+        DonorBuilder $donorBuilder,
+        IdFactory $idFactory
     ) {
-        //TODO: get a factory, with the desired ID types
-        $newId = new PersonalId($value);
+        $newId = $idFactory->create($value);
         $donorBuilder->setId($newId);
     }
 
