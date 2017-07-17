@@ -18,9 +18,9 @@ services:
         class: byrokrat\giroapp\Listener\LoggingListener
         arguments: ['@db_log_collection']
         tags:
-            - { name: event_listener, event: INFO_EVENT, priority: 10 }
-            - { name: event_listener, event: NOTICE_EVENT, priority: 10 }
             - { name: event_listener, event: ERROR_EVENT, priority: 10 }
+            - { name: event_listener, event: WARNING_EVENT, priority: 10 }
+            - { name: event_listener, event: INFO_EVENT, priority: 10 }
 
     abort_listener:
         class: byrokrat\giroapp\Listener\AbortingListener
@@ -44,6 +44,12 @@ services:
         arguments: ['@db_handle']
         tags:
             - { name: event_listener, event: EXECUTION_END_EVENT, priority: 1 }
+
+    mandate_response_listener:
+        class: byrokrat\giroapp\Listener\MandateResponseListener
+        arguments: ['@donor_mapper']
+        tags:
+            - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 1 }
 
     autogiro_parser_factory:
         class: byrokrat\autogiro\Parser\ParserFactory
