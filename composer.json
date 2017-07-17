@@ -23,6 +23,7 @@
         "php": "^7.0",
         "ext-mbstring": "*",
         "ext-bcmath": "*",
+        "ext-posix": "*",
         "byrokrat/amount": "^1.0",
         "byrokrat/autogiro": "dev-master",
         "byrokrat/banking": "^1.4",
