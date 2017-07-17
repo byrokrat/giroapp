@@ -65,22 +65,27 @@ class PostalAddress
         $this->postalCode = $postalCode;
         $this->postalCity = $postalCity;
     }
+
     public function getCoAddress(): string
     {
         return $this->coAddress;
     }
+
     public function getAddress1(): string
     {
         return $this->address1;
     }
+
     public function getAddress2(): string
     {
         return $this->address2;
     }
+
     public function getPostalCode(): string
     {
         return $this->postalCode;
     }
+
     public function getPostalCity(): string
     {
         return $this->postalCity;
