@@ -119,7 +119,7 @@ class AddCommand implements CommandInterface
         );
 
         $donorMapper->save($donorBuilder->buildDonor());
-        $output->writeln('donor saved');
+        $output->writeln('New donor saved');
     }
 
     private function getProperty(
@@ -128,7 +128,7 @@ class AddCommand implements CommandInterface
         string $default,
         InputInterface $input,
         OutputInterface $output
-    ) {
+    ): string {
         $value = $input->getOption(str_replace('_', '-', $key));
 
         if (!$value) {
@@ -138,7 +138,6 @@ class AddCommand implements CommandInterface
                 new Question("$desc: ", $default)
             );
         }
-        //$value = $value ?: "";
         return $value;
     }
 
@@ -146,7 +145,11 @@ class AddCommand implements CommandInterface
         string $value,
         DonorBuilder $donorBuilder
     ) {
-        $donorBuilder->setPayerNumber($value);
+        if (is_numeric($value) && strlen($value) <= 16) {
+            $donorBuilder->setPayerNumber($value);
+        } else {
+            throw new \Exception('Payer number must be numerical, and max 16 digits');
+        }
     }
 
     private function setAccount(
@@ -154,8 +157,14 @@ class AddCommand implements CommandInterface
         DonorBuilder $donorBuilder,
         AccountFactory $accountFactory
     ) {
-        $newAccount = $accountFactory->createAccount($value);
-        $donorBuilder->setAccount($newAccount);
+        //TODO: the accountFactory seems quite liberal in what values it
+        //accepts. Perhaps we should have more rigid checks here.
+        if ($value) {
+            $newAccount = $accountFactory->createAccount($value);
+            $donorBuilder->setAccount($newAccount);
+        } else {
+            throw new \Exception('Donor needs an account number');
+        }
     }
 
     private function setId(
@@ -171,50 +180,64 @@ class AddCommand implements CommandInterface
         string $value,
         DonorBuilder $donorBuilder
     ) {
-        $donorBuilder->setName($value);
+        if ($value) {
+            $donorBuilder->setName($value);
+        } else {
+            throw new \Exception('Donor needs a name');
+        }
     }
 
     private function setPostalAddress(
         array $values,
         DonorBuilder $donorBuilder
     ) {
-        $newPostalAddress = new PostalAddress(
-            $values['postalCode'],
-            $values['postalCity'],
-            $values['address1'],
-            $values['address2'],
-            $values['coAddress']
-        );
+        if ($values) {
+            $newPostalAddress = new PostalAddress(
+                $values['postalCode'],
+                $values['postalCity'],
+                $values['address1'],
+                $values['address2'],
+                $values['coAddress']
+            );
 
-        $donorBuilder->setPostalAddress($newPostalAddress);
+            $donorBuilder->setPostalAddress($newPostalAddress);
+        }
     }
 
     private function setEmail(
         string $value,
         DonorBuilder $donorBuilder
     ) {
-        $donorBuilder->setEmail($value);
+        if ($value) {
+            $donorBuilder->setEmail($value);
+        }
     }
 
     private function setPhone(
         string $value,
         DonorBuilder $donorBuilder
     ) {
-        $donorBuilder->setPhone($value);
+        if ($value) {
+            $donorBuilder->setPhone($value);
+        }
     }
 
     private function setDonationAmount(
         string $value,
         DonorBuilder $donorBuilder
     ) {
-        $newDonationAmount = new SEK($value);
-        $donorBuilder->setDonationAmount($newDonationAmount);
+        if ($value) {
+            $newDonationAmount = new SEK($value);
+            $donorBuilder->setDonationAmount($newDonationAmount);
+        }
     }
 
     private function setComment(
         string $value,
         DonorBuilder $donorBuilder
     ) {
-        $donorBuilder->setComment($value);
+        if ($value) {
+            $donorBuilder->setComment($value);
+        }
     }
 }
