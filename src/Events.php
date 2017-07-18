@@ -46,6 +46,11 @@ interface Events
     const MANDATE_RESPONSE_EVENT = 'mandate.response';
 
     /**
+     * A mandate has been added, expects a DonorEvent
+     */
+    const MANDATE_ADDED_EVENT = 'mandate.added';
+
+    /**
      * A mandate has been approved by the bank, expects a DonorEvent
      */
     const MANDATE_APPROVED_EVENT = 'mandate.approved';

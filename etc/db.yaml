@@ -22,9 +22,6 @@ services:
         class: hanneskod\yaysondb\Collection
         arguments: ['@db_settings_engine']
 
-    donor_builder:
-        class: byrokrat\giroapp\Builder\DonorBuilder
-
     donor_mapper:
         class: byrokrat\giroapp\Mapper\DonorMapper
         arguments: ['@db_donors_collection', '@donor_schema']

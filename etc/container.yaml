@@ -69,7 +69,3 @@ services:
 
     mandate_key_builder:
         class: byrokrat\giroapp\Builder\MandateKeyBuilder
-
-    db_settings_engine:
-        class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.settings%', '@filesystem']

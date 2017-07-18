@@ -30,10 +30,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Console\Question\Question;
+use byrokrat\giroapp\Events;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\IdFactory;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\Event\DonorEvent;
 
 /**
  * Command to add a new mandate
@@ -118,7 +120,9 @@ class AddCommand implements CommandInterface
             $donorBuilder
         );
 
-        $donorMapper->save($donorBuilder->buildDonor());
+        $donor = $donorBuilder->buildDonor();
+        $donorMapper->save($donor);
+        $container->get('event_dispatcher')->dispatch(Events::MANDATE_ADDED_EVENT, new DonorEvent("Created new donor", $donor));
         $output->writeln('New donor saved');
     }
 
