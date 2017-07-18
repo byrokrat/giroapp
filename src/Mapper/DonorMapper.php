@@ -22,10 +22,9 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Mapper;
 
+use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
-use hanneskod\yaysondb\Operators as y;
-use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 
 /**
  * Maps donor objects to database collection
@@ -56,6 +55,7 @@ class DonorMapper
         if ($this->collection->has($key)) {
             return $this->donorSchema->fromArray($this->collection->read($key));
         }
+
         throw new \RuntimeException("unknown donor key: $key");
     }
 
@@ -78,9 +78,11 @@ class DonorMapper
     public function findAll(): array
     {
         $donors = [];
+
         foreach ($this->collection as $doc) {
             $donors[] = $this->donorSchema->fromArray($doc);
         }
+
         return $donors;
     }
 
@@ -91,9 +93,7 @@ class DonorMapper
     {
         return $this->donorSchema->fromArray(
             $this->collection->findOne(
-                y::doc([
-                    'payerNumber' => y::equals($payerNumber)
-                ])
+                $this->donorSchema->getPayerNumberSearchExpression($payerNumber)
             )
         );
     }
@@ -108,13 +108,11 @@ class DonorMapper
     public function findByPayerNumber(string $payerNumber): array
     {
         $donors = [];
-        foreach ($this->collection->find(
-            y::doc([
-                'payerNumber' => y::equals($payerNumber)
-            ])
-        ) as $doc) {
+
+        foreach ($this->collection->find($this->donorSchema->getPayerNumberSearchExpression($payerNumber)) as $doc) {
             $donors[] = $this->donorSchema->fromArray($doc);
         }
+
         return $donors;
     }
 
@@ -124,9 +122,7 @@ class DonorMapper
     public function delete(Donor $donor)
     {
         $this->collection->delete(
-            y::doc([
-                'mandateKey' => y::equals($donor->getMandateKey())
-            ])
+            $this->donorSchema->getMandateKeySearchExpression($donor->getMandateKey())
         );
     }
 }

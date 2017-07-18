@@ -9,7 +9,6 @@ use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\FilterableInterface;
-use hanneskod\yaysondb\Operators as y;
 use hanneskod\yaysondb\Expression\ExpressionInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -30,7 +29,6 @@ class DonorMapperSpec extends ObjectBehavior
     {
         $collection->has('foobar')->willReturn(true);
         $collection->read('foobar')->willReturn(['foobar']);
-
         $donorSchema->fromArray(['foobar'])->willReturn($donor);
 
         $this->findByKey('foobar')->shouldEqual($donor);
@@ -46,9 +44,7 @@ class DonorMapperSpec extends ObjectBehavior
     function it_can_save_donor($collection, $donorSchema, Donor $donor)
     {
         $donor->getMandateKey()->willReturn('foobar');
-
         $donorSchema->toArray($donor)->willReturn(['asdf']);
-
         $collection->insert(['asdf'], 'foobar')->shouldBeCalled();
 
         $this->save($donor);
@@ -57,41 +53,43 @@ class DonorMapperSpec extends ObjectBehavior
     function it_can_find_all($collection, $donorSchema, Donor $donor1, Donor $donor2)
     {
         $collection->getIterator()->willReturn(new \ArrayIterator([['foo'], ['bar']]));
-
         $donorSchema->fromArray(['foo'])->willReturn($donor1);
         $donorSchema->fromArray(['bar'])->willReturn($donor2);
 
         $this->findAll()->shouldReturn([$donor1, $donor2]);
     }
 
-    function it_can_find_active_donor($collection, $donorSchema, Donor $donor)
+    function it_can_find_active_donor($collection, $donorSchema, Donor $donor, ExpressionInterface $expr)
     {
-        $collection->findOne(Argument::type(ExpressionInterface::CLASS))->willReturn(['foobar']);
+        $donorSchema->getPayerNumberSearchExpression('payer-number')->willReturn($expr);
+        $collection->findOne($expr)->willReturn(['SCHEMA_DOCUMENT']);
+        $donorSchema->fromArray(['SCHEMA_DOCUMENT'])->willReturn($donor);
 
-        $donorSchema->fromArray(['foobar'])->willReturn($donor);
-
-        $this->findByActivePayerNumber('foobar')->shouldEqual($donor);
+        $this->findByActivePayerNumber('payer-number')->shouldEqual($donor);
     }
 
-    function it_can_find_by_payernumber($collection, $donorSchema, Donor $donor1, Donor $donor2, FilterableInterface $filterableInterface)
-    {
-        $collection->find(Argument::type(ExpressionInterface::CLASS))->willReturn($filterableInterface);
-
-        $filterableInterface->getIterator()->willReturn(
-            new \ArrayIterator([['foo'], ['bar']])
-        );
-
+    function it_can_find_by_payer_number(
+        $collection,
+        $donorSchema,
+        Donor $donor1,
+        Donor $donor2,
+        FilterableInterface $documents,
+        ExpressionInterface $expr
+    ) {
+        $donorSchema->getPayerNumberSearchExpression('payer-number')->willReturn($expr);
+        $collection->find($expr)->willReturn($documents);
+        $documents->getIterator()->willReturn(new \ArrayIterator([['foo'], ['bar']]));
         $donorSchema->fromArray(['foo'])->willReturn($donor1);
         $donorSchema->fromArray(['bar'])->willReturn($donor2);
 
-        $this->findByPayerNumber('foobar')->shouldReturn([$donor1, $donor2]);
+        $this->findByPayerNumber('payer-number')->shouldReturn([$donor1, $donor2]);
     }
 
-    function it_can_delete_donor($collection, Donor $donor)
+    function it_can_delete_donor($collection, $donorSchema, Donor $donor, ExpressionInterface $expr)
     {
-        $donor->getMandateKey()->willReturn('foobar');
-
-        $collection->delete(Argument::type(ExpressionInterface::CLASS))->shouldBeCalled();
+        $donor->getMandateKey()->willReturn('mandate-key');
+        $donorSchema->getMandateKeySearchExpression('mandate-key')->willReturn($expr);
+        $collection->delete($expr)->shouldBeCalled();
 
         $this->delete($donor);
     }
