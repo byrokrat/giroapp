@@ -28,6 +28,8 @@ use byrokrat\giroapp\Model\DonorState\DonorStateFactory;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\IdFactory;
 use byrokrat\amount\Currency\SEK;
+use hanneskod\yaysondb\Expression\ExpressionInterface;
+use hanneskod\yaysondb\Operators as y;
 
 /**
  * Takes a Donor object and transforms it to an array
@@ -71,6 +73,7 @@ class DonorSchema
     public function toArray(Donor $donor): array
     {
         return [
+            'type' => self::TYPE_VERSION,
             'mandateKey' => $donor->getMandateKey(),
             'state' => $donor->getState()->getId(),
             'mandateSource' => $donor->getMandateSource(),
@@ -82,8 +85,7 @@ class DonorSchema
             'email' => $donor->getEmail(),
             'phone' => $donor->getPhone(),
             'donationAmount' => $donor->getDonationAmount()->getAmount(),
-            'comment' => $donor->getComment(),
-            'type' => self::TYPE_VERSION
+            'comment' => $donor->getComment()
         ];
     }
 
@@ -103,5 +105,15 @@ class DonorSchema
             new SEK($doc['donationAmount']),
             $doc['comment']
         );
+    }
+
+    public function getPayerNumberSearchExpression(string $payerNumber): ExpressionInterface
+    {
+        return y::doc(['payerNumber' => y::equals($payerNumber)]);
+    }
+
+    public function getMandateKeySearchExpression(string $mandateKey): ExpressionInterface
+    {
+        return y::doc(['mandateKey' => y::equals($mandateKey)]);
     }
 }

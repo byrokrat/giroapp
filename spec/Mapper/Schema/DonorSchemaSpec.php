@@ -16,11 +16,31 @@ use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\id\IdFactory;
 use byrokrat\id\PersonalId;
+use hanneskod\yaysondb\Expression\ExpressionInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class DonorSchemaSpec extends ObjectBehavior
 {
+    /**
+     * @var array A schema formatted document to test against
+     */
+    private $schemaDocument = [
+        'type' => DonorSchema::TYPE_VERSION,
+        'mandateKey' => 'mandate-key',
+        'state' => 'state',
+        'mandateSource' => 'mandate-source',
+        'payerNumber' => 'payer-number',
+        'account' => 'account',
+        'donorId' => 'id',
+        'name' => 'name',
+        'address' => ['foobar'],
+        'email' => 'email',
+        'phone' => 'phone',
+        'donationAmount' => '1',
+        'comment' => 'comment'
+    ];
+
     function let(
         PostalAddressSchema $postalAddressSchema,
         DonorStateFactory $donorStateFactory,
@@ -50,27 +70,12 @@ class DonorSchemaSpec extends ObjectBehavior
         PersonalId $id,
         PostalAddress $address
     ) {
-        $doc = [
-            'mandateKey' => 'mandate-key',
-            'state' => 'state',
-            'mandateSource' => 'mandate-source',
-            'payerNumber' => 'payer-number',
-            'account' => 'account',
-            'donorId' => 'id',
-            'name' => 'name',
-            'address' => ['foobar'],
-            'email' => 'email',
-            'phone' => 'phone',
-            'donationAmount' => '1',
-            'comment' => 'comment'
-        ];
-
         $postalAddressSchema->fromArray(['foobar'])->willReturn($address);
         $donorStateFactory->createDonorState('state')->willReturn($donorState);
         $accountFactory->createAccount('account')->willReturn($account);
         $idFactory->create('id')->willReturn($id);
 
-        $this->fromArray($doc)->shouldBeLike(
+        $this->fromArray($this->schemaDocument)->shouldBeLike(
             new Donor(
                 'mandate-key',
                 $donorState->getWrappedObject(),
@@ -97,7 +102,7 @@ class DonorSchemaSpec extends ObjectBehavior
         SEK $amount
     ) {
         $postalAddressSchema->toArray($address)->willReturn(['foobar']);
-        $donorState->getId()->willReturn('ActiveState');
+        $donorState->getId()->willReturn('state');
         $account->getNumber()->willReturn('account');
         $id->format('S-sk')->willReturn('id');
         $amount->getAmount()->willReturn('1');
@@ -117,20 +122,48 @@ class DonorSchemaSpec extends ObjectBehavior
             'comment'
         );
 
-        $this->toArray($donor)->shouldBeLike([
-            'mandateKey' => 'mandate-key',
-            'state' => 'ActiveState',
-            'mandateSource' => 'mandate-source',
-            'payerNumber' => 'payer-number',
-            'account' => 'account',
-            'donorId' => 'id',
-            'name' => 'name',
-            'address' => ['foobar'],
-            'email' => 'email',
-            'phone' => 'phone',
-            'donationAmount' => '1',
-            'comment' => 'comment',
-            'type' => DonorSchema::TYPE_VERSION
+        $this->toArray($donor)->shouldBeLike($this->schemaDocument);
+    }
+
+    function it_can_create_payer_number_search_expressions()
+    {
+        $this->getPayerNumberSearchExpression('1234')->shouldMatchDocument([
+            'payerNumber' => '1234'
         ]);
+
+        $this->getPayerNumberSearchExpression('1234')->shouldNotMatchDocument([
+            'payerNumber' => 'not-1234'
+        ]);
+
+        $this->getPayerNumberSearchExpression('1234')->shouldNotMatchDocument([
+            'not-payer-number' => '1234'
+        ]);
+    }
+
+    function it_can_create_mandate_key_search_expressions()
+    {
+        $this->getMandateKeySearchExpression('1234')->shouldMatchDocument([
+            'mandateKey' => '1234'
+        ]);
+
+        $this->getMandateKeySearchExpression('1234')->shouldNotMatchDocument([
+            'mandateKey' => 'not-1234'
+        ]);
+
+        $this->getMandateKeySearchExpression('1234')->shouldNotMatchDocument([
+            'not-mandate-key' => '1234'
+        ]);
+    }
+
+    function getMatchers()
+    {
+        return [
+            'matchDocument' => function (ExpressionInterface $expression, $doc) {
+                return $expression->evaluate($doc);
+            },
+            'notMatchDocument' => function (ExpressionInterface $expression, $doc) {
+                return !$expression->evaluate($doc);
+            }
+        ];
     }
 }

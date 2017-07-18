@@ -23,10 +23,10 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\DonorState\DonorState;
-use byrokrat\amount\Currency\SEK;
-use byrokrat\autogiro\Writer\Writer;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\Id;
+use byrokrat\amount\Currency\SEK;
+use byrokrat\autogiro\Writer\Writer;
 
 /**
  * Models an individual donor
@@ -171,24 +171,24 @@ class Donor
         return $this->donorId;
     }
 
-    public function setName(string $name)
-    {
-        $this->name = $name;
-    }
-
     public function getName(): string
     {
         return $this->name;
     }
 
-    public function setAddress(PostalAddress $address)
+    public function setName(string $name)
     {
-        $this->address = $address;
+        $this->name = $name;
     }
 
     public function getAddress(): PostalAddress
     {
         return $this->address;
+    }
+
+    public function setAddress(PostalAddress $address)
+    {
+        $this->address = $address;
     }
 
     public function getEmail(): string
@@ -221,14 +221,14 @@ class Donor
         $this->donationAmount = $donationAmount;
     }
 
-    public function setComment(string $comment)
-    {
-        $this->comment = $comment;
-    }
-
     public function getComment(): string
     {
         return $this->comment;
+    }
+
+    public function setComment(string $comment)
+    {
+        $this->comment = $comment;
     }
 
     public function exportToAutogiro(Writer $writer)
