@@ -22,10 +22,6 @@ services:
         class: hanneskod\yaysondb\Collection
         arguments: ['@db_settings_engine']
 
-    db_settings_engine:
-        class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.settings%', '@filesystem']
-
     donor_builder:
         class: byrokrat\giroapp\Builder\DonorBuilder
 
