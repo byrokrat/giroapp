@@ -122,7 +122,10 @@ class AddCommand implements CommandInterface
 
         $donor = $donorBuilder->buildDonor();
         $donorMapper->save($donor);
-        $container->get('event_dispatcher')->dispatch(Events::MANDATE_ADDED_EVENT, new DonorEvent("Created new donor", $donor));
+        $container->get('event_dispatcher')->dispatch(
+            Events::MANDATE_ADDED_EVENT,
+            new DonorEvent("Created new donor", $donor)
+        );
         $output->writeln('New donor saved');
     }
 
