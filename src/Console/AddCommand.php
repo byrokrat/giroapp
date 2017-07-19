@@ -164,8 +164,6 @@ class AddCommand implements CommandInterface
         DonorBuilder $donorBuilder,
         AccountFactory $accountFactory
     ) {
-        //TODO: the accountFactory seems quite liberal in what values it
-        //accepts. Perhaps we should have more rigid checks here.
         if ($value) {
             $newAccount = $accountFactory->createAccount($value);
             $donorBuilder->setAccount($newAccount);
