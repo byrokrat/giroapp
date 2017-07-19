@@ -53,7 +53,7 @@ class AddCommand implements CommandInterface
         $command->setName('add');
         $command->setDescription('Add a new donor');
         $command->setHelp('Register a new traditional printed mandate in database');
-        $command->addOption('payer-number', null, InputOption::VALUE_REQUIRED, 'Unique identifier number for the donor');
+        $command->addOption('payer-number', null, InputOption::VALUE_REQUIRED, 'Unique payer identifier');
         $command->addOption('account', null, InputOption::VALUE_REQUIRED, 'Payer account number');
         $command->addOption('id', null, InputOption::VALUE_REQUIRED, 'Payer personal number or organisation number');
         $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
