@@ -58,12 +58,12 @@ class AddCommand implements CommandInterface
         $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
         $command->addOption('address1', null, InputOption::VALUE_OPTIONAL, 'Address field 1');
         $command->addOption('address2', null, InputOption::VALUE_OPTIONAL, 'Address field 2');
-        $command->addOption('postalCode', null, InputOption::VALUE_OPTIONAL, 'Postal code');
-        $command->addOption('postalCity', null, InputOption::VALUE_OPTIONAL, 'Postal city');
-        $command->addOption('coAddress', null, InputOption::VALUE_OPTIONAL, 'C/o address');
+        $command->addOption('postal-code', null, InputOption::VALUE_OPTIONAL, 'Postal code');
+        $command->addOption('postal-city', null, InputOption::VALUE_OPTIONAL, 'Postal city');
+        $command->addOption('co-address', null, InputOption::VALUE_OPTIONAL, 'C/o address');
         $command->addOption('email', null, InputOption::VALUE_OPTIONAL, 'Contact email address');
         $command->addOption('phone', null, InputOption::VALUE_OPTIONAL, 'Contact phone number');
-        $command->addOption('donationAmount', null, InputOption::VALUE_OPTIONAL, 'Monthly donation amount');
+        $command->addOption('amount', null, InputOption::VALUE_OPTIONAL, 'Monthly donation amount');
         $command->addOption('comment', null, InputOption::VALUE_OPTIONAL, 'Comment');
     }
 
@@ -92,9 +92,9 @@ class AddCommand implements CommandInterface
             [
                 'address1' => $this->getProperty('address1', 'Donor Address line 1', '', $input, $output),
                 'address2' => $this->getProperty('address2', 'Donor Address line 2', '', $input, $output),
-                'postalCode' => $this->getProperty('postalCode', 'Donor Postal code', '', $input, $output),
-                'postalCity' => $this-> getProperty('postalCity', 'Donor Address city', '', $input, $output),
-                'coAddress' => $this->getProperty('coAddress', 'C/o Address', '', $input, $output),
+                'postalCode' => $this->getProperty('postal-code', 'Donor Postal code', '', $input, $output),
+                'postalCity' => $this-> getProperty('postal-city', 'Donor Address city', '', $input, $output),
+                'coAddress' => $this->getProperty('co-address', 'C/o Address', '', $input, $output),
             ],
             $donorBuilder
         );
@@ -107,7 +107,7 @@ class AddCommand implements CommandInterface
             $donorBuilder
         );
         $this->setDonationAmount(
-            $this->getProperty('donationAmount', 'Monthly donation amount', '0', $input, $output),
+            $this->getProperty('amount', 'Monthly donation amount', '0', $input, $output),
             $donorBuilder
         );
         $this->setComment(
