@@ -48,7 +48,7 @@ class InitCommand implements CommandInterface
         $command->setHelp('Initialize giroapp installation');
         $command->addOption('org-name', null, InputOption::VALUE_REQUIRED, 'Name of organization');
         $command->addOption('bgc-customer-number', null, InputOption::VALUE_REQUIRED, 'BGC customer number');
-        $command->addOption('bankgiro', null, InputOption::VALUE_REQUIRED, 'Bankgiro account number');
+        $command->addOption('bankgiro', null, InputOption::VALUE_REQUIRED, 'Bankgiro number');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
@@ -56,7 +56,7 @@ class InitCommand implements CommandInterface
         $settingsMapper = $container->get('settings_mapper');
         $this->updateSetting('org_name', 'Name of organization', $input, $output, $settingsMapper);
         $this->updateSetting('bgc_customer_number', 'BGC customer number', $input, $output, $settingsMapper);
-        $this->updateSetting('bankgiro', 'Bankgiro account number', $input, $output, $settingsMapper);
+        $this->updateSetting('bankgiro', 'Bankgiro number', $input, $output, $settingsMapper);
     }
 
     private function updateSetting(
