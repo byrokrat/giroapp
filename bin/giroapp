@@ -27,13 +27,14 @@ require __DIR__.'/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 
-$application = new Application();
+$version = trim(file_get_contents(__DIR__.'/../version'));
 
-$application->add(new CommandWrapper(new AddCommand));
-$application->add(new CommandWrapper(new ExportCommand));
-$application->add(new CommandWrapper(new ImportCommand));
-$application->add(new CommandWrapper(new InitCommand));
-$application->add(new CommandWrapper(new RevokeCommand));
-$application->add(new CommandWrapper(new StatusCommand));
+$app = new Application('GiroApp', $version);
 
-$application->run();
+$app->add(new CommandWrapper(new AddCommand));
+$app->add(new CommandWrapper(new ExportCommand));
+$app->add(new CommandWrapper(new ImportCommand));
+$app->add(new CommandWrapper(new InitCommand));
+$app->add(new CommandWrapper(new StatusCommand));
+
+$app->run();

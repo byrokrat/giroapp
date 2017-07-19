@@ -50,7 +50,7 @@ class CommandWrapper extends Command
      */
     protected function configure()
     {
-        $this->addOption('path', null, InputOption::VALUE_REQUIRED, 'Path to configuration directory');
+        $this->addOption('path', null, InputOption::VALUE_REQUIRED, 'User directory path');
         $this->command->configure($this);
     }
 
