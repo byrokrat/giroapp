@@ -136,7 +136,7 @@ class AddCommand implements CommandInterface
         InputInterface $input,
         OutputInterface $output
     ): string {
-        $value = $input->getOption(str_replace('_', '-', $key));
+        $value = $input->getOption($key);
 
         if (!$value) {
             $value = $this->command->getHelper('question')->ask(
