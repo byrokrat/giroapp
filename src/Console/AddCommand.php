@@ -53,7 +53,6 @@ class AddCommand implements CommandInterface
         $command->setName('add');
         $command->setDescription('Add a new donor');
         $command->setHelp('Register a new traditional printed mandate in database');
-        $command->addOption('payerNumber', null, InputOption::VALUE_REQUIRED, 'Unique identifier number for the donor');
         $command->addOption('account', null, InputOption::VALUE_REQUIRED, 'Payer account number');
         $command->addOption('id', null, InputOption::VALUE_REQUIRED, 'Payer personal number or organisation number');
         $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
@@ -75,10 +74,6 @@ class AddCommand implements CommandInterface
         $accountFactory = $container->get('account_factory');
         $idFactory = $container->get('id_factory');
 
-        $this->setPayerNumber(
-            $this->getProperty('payerNumber', 'Unique ID number for donor', '', $input, $output),
-            $donorBuilder
-        );
         $this->setAccount(
             $this->getProperty('account', 'Donor account number', '', $input, $output),
             $donorBuilder,
@@ -146,17 +141,6 @@ class AddCommand implements CommandInterface
             );
         }
         return $value;
-    }
-
-    private function setPayerNumber(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
-        if (is_numeric($value) && strlen($value) <= 16) {
-            $donorBuilder->setPayerNumber($value);
-        } else {
-            throw new \Exception('Payer number must be numerical, and max 16 digits');
-        }
     }
 
     private function setAccount(
