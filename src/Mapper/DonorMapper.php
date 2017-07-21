@@ -48,6 +48,19 @@ class DonorMapper
     }
 
     /**
+     * Check if a donor with specified key exists in database
+     * @return boolean
+     */
+    public function hasKey(string $key): boolean
+    {
+        if ($this->collection->has($key)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Get a unique donor identified by key
      */
     public function findByKey(string $key): Donor

@@ -121,10 +121,9 @@ class AddCommand implements CommandInterface
         );
 
         $donor = $donorBuilder->buildDonor();
-        try {
-            $donorMapper->findByKey($donor->getMandateKey());
-            throw new \Exception('A donor with this ID number and bank account already exists');
-        } catch (\RunTimeException $e) {
+        if ($donorMapper->hasKey($donor->getMandateKey())) {
+            throw new \RunTimeException('A donor with this ID number and bank account already exists');
+        } else {
             $donorMapper->save($donor);
             $container->get('event_dispatcher')->dispatch(
                 Events::MANDATE_ADDED_EVENT,
