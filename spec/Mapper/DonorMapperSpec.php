@@ -99,7 +99,7 @@ class DonorMapperSpec extends ObjectBehavior
     ) {
         $collection->has('foobar')->willReturn(true);
 
-        $this->shouldHaveKey('foobar');
+        $this->hasKey('foobar')->shouldReturn(true);
     }
 
     function it_can_find_report_nonexisting_donor(
@@ -107,6 +107,6 @@ class DonorMapperSpec extends ObjectBehavior
     ) {
         $collection->has('foobar')->willReturn(false);
 
-        $this->shouldNotHaveKey('foobar');
+        $this->hasKey('foobar')->shouldReturn(false);
     }
 }
