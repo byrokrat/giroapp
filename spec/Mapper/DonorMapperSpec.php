@@ -94,17 +94,15 @@ class DonorMapperSpec extends ObjectBehavior
         $this->delete($donor);
     }
 
-    function it_can_find_report_existing_donor(
-        $collection
-    ) {
+    function it_can_report_existing_donor($collection)
+    {
         $collection->has('foobar')->willReturn(true);
 
         $this->hasKey('foobar')->shouldReturn(true);
     }
 
-    function it_can_find_report_nonexisting_donor(
-        $collection
-    ) {
+    function it_can_report_nonexisting_donor($collection)
+    {
         $collection->has('foobar')->willReturn(false);
 
         $this->hasKey('foobar')->shouldReturn(false);
