@@ -1,5 +1,6 @@
 # ງir໐คpp
 
+[![Packagist Version](https://img.shields.io/packagist/v/byrokrat/giroapp.svg?style=flat-square)](https://packagist.org/packages/byrokrat/giroapp)
 [![Build Status](https://img.shields.io/travis/byrokrat/giroapp/master.svg?style=flat-square)](https://travis-ci.org/byrokrat/giroapp)
 [![Quality Score](https://img.shields.io/scrutinizer/g/byrokrat/giroapp.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/giroapp)
 [![Dependency Status](https://img.shields.io/gemnasium/byrokrat/giroapp.svg?style=flat-square)](https://gemnasium.com/byrokrat/giroapp)
@@ -15,7 +16,7 @@ Installation
 3. Install using composer
 
 ```shell
-composer create-project byrokrat/giroapp:1.0.0-alpha --repository '{"type":"vcs","url":"https://github.com/byrokrat/giroapp"}' --no-interaction --no-dev
+composer create-project byrokrat/giroapp:1.0.0-alpha --no-interaction --no-dev
 ```
 
 4. Add `giroapp/bin` to your environment `PATH`.
