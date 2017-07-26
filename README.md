@@ -11,17 +11,19 @@ Installation
 ------------
 1. Download the [composer](https://getcomposer.org/) dependency manager.
 
-2. `cd` to the desired installation directory (for example `cd /opt/giroapp`).
+2. `cd` to the desired installation directory (for example `cd /opt`).
 
 3. Install using composer
 
 ```shell
-composer create-project byrokrat/giroapp:1.0.0-alpha --no-interaction --no-dev
+composer create-project byrokrat/giroapp --stability=alpha --no-interaction --no-dev
 ```
 
-4. Add `giroapp/bin` to your environment `PATH`.
+4. Add `/opt/giroapp/bin` to your environment `PATH`.
 
-5. Setup your local installation using `giroapp init`.
+5. Optionally change your user directory path. See below.
+
+6. Setup your local installation using `giroapp init`.
 
 ### Changing the user directory path
 
