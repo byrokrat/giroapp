@@ -24,19 +24,7 @@ class PluginLoaderSpec extends ObjectBehavior
 
     function it_loads_plugins(EventDispatcherInterface $dispatcher)
     {
-        $dispatcher->addSubscriber(new DummyPlugin)->shouldBeCalled();
         $this->loadPlugins($dispatcher);
+        $dispatcher->addSubscriber(new DummyPlugin)->shouldHaveBeenCalled();
     }
-}
-
-class DummyPlugin implements EventSubscriberInterface
-{
-    public static function getSubscribedEvents()
-    {
-        return [];
-    }
-}
-
-abstract class AbstractPluginNotCreated implements EventSubscriberInterface
-{
 }
