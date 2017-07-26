@@ -53,6 +53,7 @@ class AddCommand implements CommandInterface
         $command->setName('add');
         $command->setDescription('Add a new donor');
         $command->setHelp('Register a new traditional printed mandate in database');
+        $command->addOption('payer-number', null, InputOption::VALUE_REQUIRED, 'Unique payer identifier');
         $command->addOption('account', null, InputOption::VALUE_REQUIRED, 'Payer account number');
         $command->addOption('id', null, InputOption::VALUE_REQUIRED, 'Payer personal number or organisation number');
         $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
@@ -74,6 +75,10 @@ class AddCommand implements CommandInterface
         $accountFactory = $container->get('account_factory');
         $idFactory = $container->get('id_factory');
 
+        $this->setPayerNumber(
+            $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output),
+            $donorBuilder
+        );
         $this->setAccount(
             $this->getProperty('account', 'Donor account number', '', $input, $output),
             $donorBuilder,
@@ -116,6 +121,9 @@ class AddCommand implements CommandInterface
         );
 
         $donor = $donorBuilder->buildDonor();
+        if ($donorMapper->hasKey($donor->getMandateKey())) {
+            throw new \RunTimeException('A donor with this ID number and bank account already exists');
+        }
         $donorMapper->save($donor);
         $container->get('event_dispatcher')->dispatch(
             Events::MANDATE_ADDED_EVENT,
@@ -141,6 +149,17 @@ class AddCommand implements CommandInterface
             );
         }
         return $value;
+    }
+
+    private function setPayerNumber(
+        string $value,
+        DonorBuilder $donorBuilder
+    ) {
+        if (is_numeric($value) && strlen($value) <= 16) {
+            $donorBuilder->setPayerNumber($value);
+        } else {
+            throw new \Exception('Payer number must be numerical, and max 16 digits');
+        }
     }
 
     private function setAccount(

@@ -11,7 +11,7 @@ Installation
 ------------
 1. Download the [composer](https://getcomposer.org/) dependency manager.
 
-2. `cd` to the desired installation directory (for example `cd ~/bin`).
+2. `cd` to the desired installation directory (for example `cd /opt/giroapp`).
 
 3. Install using composer
 
@@ -26,10 +26,14 @@ composer create-project byrokrat/giroapp:1.0.0-alpha --no-interaction --no-dev
 ### Changing the user directory path
 
 By default giroapp keeps database and other installation specific files in a
-directory named `~/.giroapp`. Change this behaviour by using any one of:
+directory named `.giroapp` in the home directory of the current user. This might
+not be optimal for a number of reasons (something like `/var/lib/giroapp` would
+for example be better from a security perspective).
+
+Change the user directory path by either:
 
 1. Define a `GIROAPP_PATH` environment variable pointing to desired directory.
-1. Use the `--path` option to set user directory at runtime.
+1. Use the `--path` option to set user directory at runtime (overrides).
 
 Writing plugins
 ---------------
