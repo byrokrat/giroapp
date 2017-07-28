@@ -95,15 +95,20 @@ class DonorMapper
     }
 
     /**
-     * Find active donor mandate identified by payer number
+     * Find active donor mandate identified by payer number.
+     *
+     * @throws RunTimeException if collection does not contain a valid post.
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
-        return $this->donorSchema->fromArray(
-            $this->collection->findOne(
-                $this->donorSchema->getPayerNumberSearchExpression($payerNumber)
-            )
+        $post = $this->collection->findOne(
+            $this->donorSchema->getPayerNumberSearchExpression($payerNumber)
         );
+
+        if (!empty($post)) {
+            return $this->donorSchema->fromArray($post);
+        }
+        throw new \RunTimeException("unknown payer number: $payerNumber");
     }
 
     /**

@@ -104,7 +104,7 @@ class MandateResponseListener
             }
         }
 
-        $infoCode = $node->getChild('info')->getValue();
+        $infoCode = '73.' . $node->getChild('info')->getValue();
 
         $donorEvent = new DonorEvent(
             sprintf(
