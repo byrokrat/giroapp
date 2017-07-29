@@ -95,7 +95,7 @@ class DonorMapper
     }
 
     /**
-     * Find active donor mandate identified by payer number.
+     * Find active donor mandate identified by payer number
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
