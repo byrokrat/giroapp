@@ -37,6 +37,7 @@ use byrokrat\amount\Currency\SEK;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Builder\MandateKeyBuilder;
 
 /**
  * Command to edit an existing mandate
@@ -54,10 +55,11 @@ class EditCommand implements CommandInterface
         $command->setName('edit');
         $command->setDescription('Edit an existing donor');
         $command->setHelp('Register a new traditional printed mandate in database');
-        $command->addOption('payer-number', null, InputOption::VALUE_REQUIRED, 'Unique payer identifier');
-        $command->addOption('account', null, InputOption::VALUE_REQUIRED, 'Payer account number');
-        $command->addOption('id', null, InputOption::VALUE_REQUIRED, 'Payer personal number or organisation number');
-        $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
+        $command->addOption('hash-id-key', null, InputOption::VALUE_OPTIONAL, 'Unique payer hash ID');
+        $command->addOption('payer-number', null, InputOption::VALUE_OPTIONAL, 'Autogiro identifier number');
+        $command->addOption('account', null, InputOption::VALUE_OPTIONAL, 'Payer account number');
+        $command->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Payer personal number or organisation number');
+        $command->addOption('name', null, InputOption::VALUE_OPTIONAL, 'Payer name');
         $command->addOption('address1', null, InputOption::VALUE_OPTIONAL, 'Address field 1');
         $command->addOption('address2', null, InputOption::VALUE_OPTIONAL, 'Address field 2');
         $command->addOption('postal-code', null, InputOption::VALUE_OPTIONAL, 'Postal code');
@@ -75,12 +77,12 @@ class EditCommand implements CommandInterface
         $donorMapper = $container->get('donor_mapper');
         $accountFactory = $container->get('account_factory');
         $idFactory = $container->get('id_factory');
+        $mandateKeyBuilder = $container->get('mandate_key_builder');
 
-        $donor = $donorMapper->findByActivePayerNumber(
-            $payerNumber = $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output)
-        );
+        $donor = $this->fetchDonor($donorMapper, $mandateKeyBuilder, $idFactory, $accountFactory, $input, $output);
 
-        $output->writeln('personal Id: ' . $donor->getDonorId());
+        $output->writeln('Hash Id key: ' . $donor->getMandateKey());
+        $output->writeln('Personal Id: ' . $donor->getDonorId());
         $output->writeln('Account number: ' . $donor->getAccount());
 
         $this->setName(
@@ -155,7 +157,7 @@ class EditCommand implements CommandInterface
             Events::MANDATE_EDITED_EVENT,
             new DonorEvent("Edited donor", $donor)
         );
-        $output->writeln('Donor edited');
+        $output->writeln('Donor updated.');
     }
 
     private function getProperty(
@@ -176,6 +178,34 @@ class EditCommand implements CommandInterface
         }
         return $value;
     }
+
+    private function fetchDonor(
+        DonorMapper $donorMapper,
+        MandateKeyBuilder $mandateKeyBuilder,
+        IdFactory $idFactory,
+        AccountFactory $accountFactory,
+        InputInterface $input,
+        OutputInterface $output
+    ) {
+        $donorId = $input->getOption('id');
+        $donorAccount = $input->getOption('account');
+        $donorKey = $input->getOption('hash-id-key');
+
+        if ($donorKey) {
+            return $donorMapper->findByKey($donorKey);
+        } elseif ($donorId && $donorAccount) {
+            return $donorMapper->findByKey(
+                $mandateKeyBuilder->buildKey(
+                    $idFactory->create($donorId),
+                    $accountFactory->createAccount($donorAccount)
+                )
+            );
+        }
+        return $donorMapper->findByActivePayerNumber(
+            $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output)
+        );
+    }
+
     private function setName(
         string $value,
         Donor $donor
