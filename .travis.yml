@@ -11,5 +11,6 @@ install:
 
 script:
   - vendor/bin/phpspec run --verbose
+  - vendor/bin/behat --verbose
   - vendor/bin/phpcs --standard=PSR2 src
   - vendor/bin/phpcs --standard=spec/ruleset.xml spec
