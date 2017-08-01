@@ -38,7 +38,7 @@ class DonorMapperSpec extends ObjectBehavior
     {
         $collection->has('foobar')->willReturn(false);
 
-        $this->shouldThrow(\RuntimeException::CLASS)->during('findByKey',['foobar']);
+        $this->shouldThrow(\RuntimeException::CLASS)->during('findByKey', ['foobar']);
     }
 
     function it_can_save_donor($collection, $donorSchema, Donor $donor)
