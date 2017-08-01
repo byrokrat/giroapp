@@ -48,7 +48,7 @@ class MandateResponseListener
         $this->donorMapper = $donorMapper;
     }
 
-    public function __invoke(NodeEvent $nodeEvent, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $name, EventDispatcherInterface $dispatcher)
     {
         $node = $nodeEvent->getNode();
 
