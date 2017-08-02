@@ -61,7 +61,10 @@ class CommandWrapper extends Command
     {
         $container = (new ContainerFactory)->createContainer(
             (string)$input->getOption('path'),
-            (string)getenv('GIROAPP_PATH')
+            (string)getenv('GIROAPP_PATH'),
+            (string)getenv('HOME'),
+            $_ENV,
+            $_SERVER
         );
 
         $container->get('event_dispatcher')->dispatch(Events::EXECUTION_START_EVENT);
