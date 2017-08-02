@@ -73,7 +73,7 @@ class DonorMapperSpec extends ObjectBehavior
         $donorSchema->getPayerNumberSearchExpression('payer-number')->willReturn($expr);
         $collection->findOne($expr)->willReturn([]);
 
-        $this->shouldThrow(new \RuntimeException("unknown payer number: payer-number"))->duringFindByActivePayerNumber('payer-number');
+        $this->shouldThrow(\RuntimeException::CLASS)->duringFindByActivePayerNumber('payer-number');
     }
 
     function it_can_find_by_payer_number(
