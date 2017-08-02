@@ -51,7 +51,7 @@ class InvalidNodeFilteringListener
         $this->settingsMapper = $settingsMapper;
     }
 
-    public function __invoke(NodeEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onMandateResponseEvent(NodeEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
     {
         $appBg = $this->bankgiroFactory->createAccount($this->settingsMapper->findByKey('bankgiro'));
         $nodeBg = $event->getNode()->getChild('payee_bankgiro')->getAttribute('account');

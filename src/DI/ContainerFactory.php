@@ -26,6 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 
 /**
  * Create the dependency injection container
@@ -41,6 +42,21 @@ class ContainerFactory
      * Name of file containing container spec
      */
     const CONTAINER_FILE_NAME = 'container.yaml';
+
+    /**
+     * The service id of the event dispatcher
+     */
+    const EVENT_DISPATCHER_SERVICE_ID = 'event_dispatcher';
+
+    /**
+     * All services tagged with this tag will be registered as event listeners
+     */
+    const EVENT_LISTENER_TAG = 'event_listener';
+
+    /**
+     * All services tagged with this tag will be registered as event subscribers
+     */
+    const EVENT_SUBSCRIBER_TAG = 'event_subscriber';
 
     /**
      * @param string $option  User directory from cli option
@@ -66,7 +82,14 @@ class ContainerFactory
             (new UserDirectoryLocator)->locateUserDirectory($option, $envPath, $envHome, $env, $server)
         );
 
-        $container->addCompilerPass(new EventListenerPass);
+        $container->addCompilerPass(
+            new RegisterListenersPass(
+                self::EVENT_DISPATCHER_SERVICE_ID,
+                self::EVENT_LISTENER_TAG,
+                self::EVENT_SUBSCRIBER_TAG
+            )
+        );
+
         $container->compile();
 
         return $container;

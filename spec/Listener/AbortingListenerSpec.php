@@ -19,6 +19,6 @@ class AbortingListenerSpec extends ObjectBehavior
     function it_throws_exceptions(LogEvent $event)
     {
         $event->getMessage()->willReturn('msg');
-        $this->shouldThrow('\Exception')->during('__invoke', [$event]);
+        $this->shouldThrow('\Exception')->during('onErrorEvent', [$event]);
     }
 }

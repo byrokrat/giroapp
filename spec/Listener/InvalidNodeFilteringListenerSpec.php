@@ -49,7 +49,7 @@ class InvalidNodeFilteringListenerSpec extends ObjectBehavior
 
         $event->getNode()->willReturn($parentNode);
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_dies_on_invalid_nodes(
@@ -76,6 +76,6 @@ class InvalidNodeFilteringListenerSpec extends ObjectBehavior
 
         $dispatcher->dispatch(Events::ERROR_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 }

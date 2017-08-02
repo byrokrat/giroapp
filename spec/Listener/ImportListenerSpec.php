@@ -44,7 +44,7 @@ class ImportListenerSpec extends ObjectBehavior
     ) {
         $event->getContents()->willReturn('foobar');
         $parser->parse('foobar')->willReturn($this->a_tree($fileNode));
-        $this->__invoke($event, '', $dispatcher);
+        $this->onImportEvent($event, '', $dispatcher);
     }
 
     function it_dispatches_approved_mandate_events(
@@ -66,6 +66,6 @@ class ImportListenerSpec extends ObjectBehavior
 
         $dispatcher->dispatch(Events::MANDATE_RESPONSE_EVENT, Argument::type(NodeEvent::CLASS))->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onImportEvent($event, '', $dispatcher);
     }
 }
