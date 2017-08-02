@@ -43,11 +43,19 @@ class ContainerFactory
     const CONTAINER_FILE_NAME = 'container.yaml';
 
     /**
-     * @param string $option      Optional user directory from cli option
-     * @param string $environment Optional user directory from environment
+     * @param string $option  User directory from cli option
+     * @param string $envPath User directory from environment
+     * @param string $envHome Home directory from environment
+     * @param array  $env     A copy of $_ENV
+     * @param array  $server  A copy of $_SERVER
      */
-    public function createContainer(string $option = '', string $environment = ''): ContainerInterface
-    {
+    public function createContainer(
+        string $option = '',
+        string $envPath = '',
+        string $envHome = '',
+        array $env = [],
+        array $server = []
+    ): ContainerInterface {
         $container = new ContainerBuilder();
 
         $loader = new YamlFileLoader($container, new FileLocator(self::CONTAINER_DIR));
@@ -55,7 +63,7 @@ class ContainerFactory
 
         $container->setParameter(
             'user.dir',
-            (new UserDirectoryLocator)->locateUserDirectory($option, $environment)
+            (new UserDirectoryLocator)->locateUserDirectory($option, $envPath, $envHome, $env, $server)
         );
 
         $container->addCompilerPass(new EventListenerPass);

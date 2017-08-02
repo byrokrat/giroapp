@@ -27,18 +27,72 @@ namespace byrokrat\giroapp\DI;
  */
 class UserDirectoryLocator
 {
-    public function locateUserDirectory(string $option, string $environment): string
+    const DEFAULT_DIR_NAME = '.giroapp';
+
+    /**
+     * @var callable
+     */
+    private $fallback;
+
+    /**
+     * Optionally supply a fallback used when no other strategy for finding home works
+     */
+    public function __construct(callable $fallback = null)
     {
-        if ($option) {
-            return $option;
+        $this->fallback = $fallback ?: function () {
+            if (function_exists('posix_getuid')) {
+                return $this->expand(posix_getpwuid(posix_getuid())['dir']);
+            }
+
+            return '';
+        };
+    }
+
+    /**
+     * Locate home from option, environment var, environment home, a copy of $_ENV or a copy of $_SERVER
+     */
+    public function locateUserDirectory(
+        string $option,
+        string $envPath,
+        string $envHome,
+        array $env,
+        array $server
+    ): string {
+        $dir = $option
+            ?: $envPath
+            ?: $this->expand($envHome)
+            ?: $this->parseHome($env)
+            ?: $this->parseHome($server)
+            ?: ($this->fallback)();
+
+        if (!$dir) {
+            throw new \RuntimeException('Unable to locate user directory');
         }
 
-        if ($environment) {
-            return $environment;
+        return $dir;
+    }
+
+    /**
+     * Parse home from an $_ENV or $_SERVER style array
+     */
+    private function parseHome(array $values): string
+    {
+        if (isset($values['HOME'])) {
+            return $this->expand($values['HOME']);
         }
 
-        $home = posix_getpwuid(posix_getuid())['dir'];
+        if (isset($values['HOMEDRIVE']) && isset($values['HOMEPATH'])) {
+            return $this->expand($values['HOMEDRIVE'] . $values['HOMEPATH']);
+        }
 
-        return $home . DIRECTORY_SEPARATOR . '.giroapp';
+        return '';
+    }
+
+    /**
+     * Append default directory name to $dir
+     */
+    private function expand(string $dir): string
+    {
+        return $dir ? $dir . DIRECTORY_SEPARATOR . self::DEFAULT_DIR_NAME : '';
     }
 }

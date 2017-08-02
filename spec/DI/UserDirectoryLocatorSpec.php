@@ -15,18 +15,69 @@ class UserDirectoryLocatorSpec extends ObjectBehavior
         $this->shouldHaveType(UserDirectoryLocator::CLASS);
     }
 
-    function it_returns_option_if_specified()
+    function it_can_read_option()
     {
-        $this->locateUserDirectory('option', 'environment')->shouldBeLike('option');
+        $this->locateUserDirectory('option', 'envPath', '', [], [])->shouldBeLike('option');
     }
 
-    function it_returns_environment_if_option_is_missing()
+    function it_can_read_environment_path()
     {
-        $this->locateUserDirectory('', 'environment')->shouldBeLike('environment');
+        $this->locateUserDirectory('', 'envPath', '', [], [])->shouldBeLike('envPath');
     }
 
-    function it_returns_default_path_if_nothins_is_specified()
+    function it_can_read_environment_home()
     {
-        $this->locateUserDirectory('', '')->shouldMatch('/\.giroapp$/');
+        $this->locateUserDirectory('', '', 'envHome', [], [])->shouldBeLike('envHome/.giroapp');
+    }
+
+    function it_can_read_environment_array_home_index()
+    {
+        $this->locateUserDirectory('', '', '', ['HOME' => 'foobar'], [])->shouldBeLike('foobar/.giroapp');
+    }
+
+    function it_can_read_environment_array_home_index_in_windows_mode()
+    {
+        $this->locateUserDirectory('', '', '', ['HOMEDRIVE' => 'foo', 'HOMEPATH' => 'bar'], [])
+            ->shouldBeLike('foobar/.giroapp');
+    }
+
+    function it_can_read_server_array_home_index()
+    {
+        $this->locateUserDirectory('', '', '', [], ['HOME' => 'foobar'])->shouldBeLike('foobar/.giroapp');
+    }
+
+    function it_can_read_server_array_home_index_in_windows_mode()
+    {
+        $this->locateUserDirectory('', '', '', [], ['HOMEDRIVE' => 'foo', 'HOMEPATH' => 'bar'])
+            ->shouldBeLike('foobar/.giroapp');
+    }
+
+    function it_uses_fallback_as_a_last_resort()
+    {
+        $this->beConstructedWith(function () {
+            return 'fallback';
+        });
+        $this->locateUserDirectory('', '', '', [], [])->shouldBeLike('fallback');
+    }
+
+    function it_ignores_unknown_array_indices()
+    {
+        $this->beConstructedWith(function () {
+            return 'fallback';
+        });
+        $this->locateUserDirectory('', '', '', ['ignored' => 'baz'], ['ignored' => 'baz'])->shouldBeLike('fallback');
+    }
+
+    function it_has_a_default_fallback_if_ext_posix_is_availiable()
+    {
+        $this->locateUserDirectory('', '', '', [], [])->shouldMatch('/\.giroapp$/');
+    }
+
+    function it_throws_exception_if_directory_is_not_found()
+    {
+        $this->beConstructedWith(function () {
+            return '';
+        });
+        $this->shouldThrow(\RuntimeException::CLASS)->duringLocateUserDirectory('', '', '', [], []);
     }
 }
