@@ -68,6 +68,14 @@ class DonorMapperSpec extends ObjectBehavior
         $this->findByActivePayerNumber('payer-number')->shouldEqual($donor);
     }
 
+    function it_throws_on_erroneous_active_payernumber($collection, $donorSchema, ExpressionInterface $expr)
+    {
+        $donorSchema->getPayerNumberSearchExpression('payer-number')->willReturn($expr);
+        $collection->findOne($expr)->willReturn([]);
+
+        $this->shouldThrow(\RuntimeException::CLASS)->duringFindByActivePayerNumber('payer-number');
+    }
+
     function it_can_find_by_payer_number(
         $collection,
         $donorSchema,
