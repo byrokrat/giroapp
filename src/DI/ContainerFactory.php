@@ -26,6 +26,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 
 /**
  * Create the dependency injection container
@@ -43,11 +44,34 @@ class ContainerFactory
     const CONTAINER_FILE_NAME = 'container.yaml';
 
     /**
-     * @param string $option      Optional user directory from cli option
-     * @param string $environment Optional user directory from environment
+     * The service id of the event dispatcher
      */
-    public function createContainer(string $option = '', string $environment = ''): ContainerInterface
-    {
+    const EVENT_DISPATCHER_SERVICE_ID = 'event_dispatcher';
+
+    /**
+     * All services tagged with this tag will be registered as event listeners
+     */
+    const EVENT_LISTENER_TAG = 'event_listener';
+
+    /**
+     * All services tagged with this tag will be registered as event subscribers
+     */
+    const EVENT_SUBSCRIBER_TAG = 'event_subscriber';
+
+    /**
+     * @param string $option  User directory from cli option
+     * @param string $envPath User directory from environment
+     * @param string $envHome Home directory from environment
+     * @param array  $env     A copy of $_ENV
+     * @param array  $server  A copy of $_SERVER
+     */
+    public function createContainer(
+        string $option = '',
+        string $envPath = '',
+        string $envHome = '',
+        array $env = [],
+        array $server = []
+    ): ContainerInterface {
         $container = new ContainerBuilder();
 
         $loader = new YamlFileLoader($container, new FileLocator(self::CONTAINER_DIR));
@@ -55,10 +79,17 @@ class ContainerFactory
 
         $container->setParameter(
             'user.dir',
-            (new UserDirectoryLocator)->locateUserDirectory($option, $environment)
+            (new UserDirectoryLocator)->locateUserDirectory($option, $envPath, $envHome, $env, $server)
         );
 
-        $container->addCompilerPass(new EventListenerPass);
+        $container->addCompilerPass(
+            new RegisterListenersPass(
+                self::EVENT_DISPATCHER_SERVICE_ID,
+                self::EVENT_LISTENER_TAG,
+                self::EVENT_SUBSCRIBER_TAG
+            )
+        );
+
         $container->compile();
 
         return $container;

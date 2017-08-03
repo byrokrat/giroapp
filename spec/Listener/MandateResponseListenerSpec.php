@@ -48,9 +48,11 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $parentNode->getChild('info')->willReturn($infoNode);
         $infoNode->getValue()->willReturn('');
+        $infoNode->getAttribute('message_id')->willReturn('');
+        $infoNode->getAttribute('message')->willReturn('');
 
         $parentNode->getChild('comment')->willReturn($commentNode);
-        $commentNode->getValue()->willReturn('');
+        $commentNode->getAttribute('message')->willReturn('');
 
         $donorMapper->findByActivePayerNumber('payer-number')->willReturn($donor);
 
@@ -84,7 +86,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $dispatcher->dispatch(Events::WARNING_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_fails_if_node_contains_invalid_account(
@@ -108,7 +110,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $dispatcher->dispatch(Events::WARNING_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_fails_on_unknown_response_code(
@@ -116,12 +118,12 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $infoNode,
         EventDispatcherInterface $dispatcher
     ) {
-        $infoNode->getValue()->willReturn('this-is-not-a-valid-autogiro-reposnose-code');
+        $infoNode->getAttribute('message_id')->willReturn('this-is-not-a-valid-autogiro-reposnose-code');
 
         $dispatcher->dispatch(Events::WARNING_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_sets_error_state_on_updated_payer_number(
@@ -131,13 +133,13 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donorMapper,
         EventDispatcherInterface $dispatcher
     ) {
-        $infoNode->getValue()->willReturn(Messages::MANDATE_UPDATED_PAYER_NUMBER_BY_RECIPIENT);
+        $infoNode->getAttribute('message_id')->willReturn(Messages::MANDATE_UPDATED_PAYER_NUMBER_BY_RECIPIENT);
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $donorMapper->save($donor)->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_sets_error_state_on_specific_mandate_response_from_bank(
@@ -147,13 +149,13 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donorMapper,
         EventDispatcherInterface $dispatcher
     ) {
-        $infoNode->getValue()->willReturn(Messages::MANDATE_ACCOUNT_RESPONSE_FROM_BANK);
+        $infoNode->getAttribute('message_id')->willReturn(Messages::MANDATE_ACCOUNT_RESPONSE_FROM_BANK);
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $donorMapper->save($donor)->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_sets_error_state_on_mandate_deleted_due_to_unanswered_request(
@@ -163,13 +165,13 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donorMapper,
         EventDispatcherInterface $dispatcher
     ) {
-        $infoNode->getValue()->willReturn(Messages::MANDATE_DELETED_DUE_TO_UNANSWERED_ACCOUNT_REQUEST);
+        $infoNode->getAttribute('message_id')->willReturn(Messages::MANDATE_DELETED_DUE_TO_UNANSWERED_ACCOUNT_REQUEST);
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $donorMapper->save($donor)->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_sets_inactive_state_on_mandate_deleted_by_payer(
@@ -179,13 +181,13 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donorMapper,
         EventDispatcherInterface $dispatcher
     ) {
-        $infoNode->getValue()->willReturn(Messages::MANDATE_DELETED_BY_PAYER);
+        $infoNode->getAttribute('message_id')->willReturn(Messages::MANDATE_DELETED_BY_PAYER);
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $donorMapper->save($donor)->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_sets_inactive_state_on_mandate_deleted_by_recipient(
@@ -195,13 +197,13 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donorMapper,
         EventDispatcherInterface $dispatcher
     ) {
-        $infoNode->getValue()->willReturn(Messages::MANDATE_DELETED_BY_RECIPIENT);
+        $infoNode->getAttribute('message_id')->willReturn(Messages::MANDATE_DELETED_BY_RECIPIENT);
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $donorMapper->save($donor)->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_sets_inactive_state_on_mandate_deleted_due_to_closed_recipient_bg(
@@ -211,13 +213,13 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donorMapper,
         EventDispatcherInterface $dispatcher
     ) {
-        $infoNode->getValue()->willReturn(Messages::MANDATE_DELETED_DUE_TO_CLOSED_RECIPIENT_BG);
+        $infoNode->getAttribute('message_id')->willReturn(Messages::MANDATE_DELETED_DUE_TO_CLOSED_RECIPIENT_BG);
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $donorMapper->save($donor)->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_sets_inactive_state_on_mandate_deleted_due_to_closed_payer_bg(
@@ -227,13 +229,13 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donorMapper,
         EventDispatcherInterface $dispatcher
     ) {
-        $infoNode->getValue()->willReturn(Messages::MANDATE_DELETED_DUE_TO_CLOSED_PAYER_BG);
+        $infoNode->getAttribute('message_id')->willReturn(Messages::MANDATE_DELETED_DUE_TO_CLOSED_PAYER_BG);
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $donorMapper->save($donor)->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 
     function it_sets_approved_state_on_mandate_created(
@@ -243,12 +245,12 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donorMapper,
         EventDispatcherInterface $dispatcher
     ) {
-        $infoNode->getValue()->willReturn(Messages::MANDATE_CREATED_BY_RECIPIENT);
+        $infoNode->getAttribute('message_id')->willReturn(Messages::MANDATE_CREATED_BY_RECIPIENT);
 
         $donor->setState(Argument::type(MandateApprovedState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_APPROVED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $donorMapper->save($donor)->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onMandateResponseEvent($event, '', $dispatcher);
     }
 }

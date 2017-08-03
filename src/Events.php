@@ -28,27 +28,27 @@ interface Events
     /**
      * Execution about to start
      */
-    const EXECUTION_START_EVENT = 'execution.start';
+    const EXECUTION_START_EVENT = 'EXECUTION_START_EVENT';
 
     /**
      * Execution about to end
      */
-    const EXECUTION_END_EVENT = 'execution.end';
+    const EXECUTION_END_EVENT = 'EXECUTION_END_EVENT';
 
     /**
      * A bank file imported, expects an ImportEvent
      */
-    const IMPORT_EVENT = 'file.import';
+    const IMPORT_EVENT = 'IMPORT_EVENT';
 
     /**
      * A mandate response received from bank, expects a NodeEvent
      */
-    const MANDATE_RESPONSE_EVENT = 'mandate.response';
+    const MANDATE_RESPONSE_EVENT = 'MANDATE_RESPONSE_EVENT';
 
     /**
      * A mandate has been added, expects a DonorEvent
      */
-    const MANDATE_ADDED_EVENT = 'mandate.added';
+    const MANDATE_ADDED_EVENT = 'MANDATE_ADDED_EVENT';
 
     /**
      * A mandate has been edited, expects a DonorEvent
@@ -58,35 +58,35 @@ interface Events
     /**
      * A mandate has been approved by the bank, expects a DonorEvent
      */
-    const MANDATE_APPROVED_EVENT = 'mandate.approved';
+    const MANDATE_APPROVED_EVENT = 'MANDATE_APPROVED_EVENT';
 
     /**
      * A mandate has been revoked, expects a DonorEvent
      */
-    const MANDATE_REVOKED_EVENT = 'mandate.revoked';
+    const MANDATE_REVOKED_EVENT = 'MANDATE_REVOKED_EVENT';
 
     /**
      * A mandate is invalid and could not be approved, expects a DonorEvent
      */
-    const MANDATE_INVALID_EVENT = 'mandate.invalid';
+    const MANDATE_INVALID_EVENT = 'MANDATE_INVALID_EVENT';
 
     /**
      * An unexpected and unrecoverable error, expects a LogEvent
      */
-    const ERROR_EVENT = 'ERROR';
+    const ERROR_EVENT = 'ERROR_EVENT';
 
     /**
      * An unexpected but recoverable situation, expects a LogEvent
      */
-    const WARNING_EVENT = 'WARNING';
+    const WARNING_EVENT = 'WARNING_EVENT';
 
     /**
      * Present information to user, expects a LogEvent
      */
-    const INFO_EVENT = 'INFO';
+    const INFO_EVENT = 'INFO_EVENT';
 
     /**
      * Present debug information to user, expects a LogEvent
      */
-    const DEBUG_EVENT = 'DEBUG';
+    const DEBUG_EVENT = 'DEBUG_EVENT';
 }

@@ -35,6 +35,6 @@ class LoggingListenerSpec extends ObjectBehavior
 
         $collection->commit()->shouldBeCalled();
 
-        $this->__invoke($event, 'ERR');
+        $this->onLogEvent($event, 'ERR');
     }
 }

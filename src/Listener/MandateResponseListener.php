@@ -48,7 +48,7 @@ class MandateResponseListener
         $this->donorMapper = $donorMapper;
     }
 
-    public function __invoke(NodeEvent $nodeEvent, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $name, EventDispatcherInterface $dispatcher)
     {
         $node = $nodeEvent->getNode();
 
@@ -104,18 +104,16 @@ class MandateResponseListener
             }
         }
 
-        $infoCode = $node->getChild('info')->getValue();
-
         $donorEvent = new DonorEvent(
             sprintf(
                 '%s (%s)',
-                Messages::MESSAGE_MAP[$infoCode] ?? '',
-                Messages::MESSAGE_MAP[$node->getChild('comment')->getValue()] ?? ''
+                $node->getChild('info')->getAttribute('message'),
+                $node->getChild('comment')->getAttribute('message')
             ),
             $donor
         );
 
-        switch ($infoCode) {
+        switch ($node->getChild('info')->getAttribute('message_id')) {
             case Messages::MANDATE_DELETED_BY_PAYER:
             case Messages::MANDATE_DELETED_BY_RECIPIENT:
             case Messages::MANDATE_DELETED_DUE_TO_CLOSED_RECIPIENT_BG:
@@ -139,7 +137,7 @@ class MandateResponseListener
             default:
                 $dispatcher->dispatch(
                     Events::WARNING_EVENT,
-                    new LogEvent("Invalid mandate response info code: $infoCode")
+                    new LogEvent("Invalid mandate response info code: {$node->getChild('info')->getValue()}")
                 );
                 $nodeEvent->stopPropagation();
                 return;

@@ -40,7 +40,7 @@ class LoggingListener
         $this->log = $log;
     }
 
-    public function __invoke(LogEvent $event, string $eventName)
+    public function onLogEvent(LogEvent $event, string $eventName)
     {
         $this->log->insert([
             'message' => $event->getMessage(),

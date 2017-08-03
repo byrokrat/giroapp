@@ -29,7 +29,7 @@ use byrokrat\giroapp\Event\LogEvent;
  */
 class AbortingListener
 {
-    public function __invoke(LogEvent $event)
+    public function onErrorEvent(LogEvent $event)
     {
         throw new \Exception($event->getMessage());
     }

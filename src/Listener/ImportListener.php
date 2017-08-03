@@ -45,7 +45,7 @@ class ImportListener
         $this->parser = $parser;
     }
 
-    public function __invoke(ImportEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onImportEvent(ImportEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
     {
         $enum = new Enumerator;
 
