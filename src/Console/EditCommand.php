@@ -54,21 +54,24 @@ class EditCommand implements CommandInterface
         $this->command = $command;
         $command->setName('edit');
         $command->setDescription('Edit an existing donor');
-        $command->setHelp('Register a new traditional printed mandate in database');
-        $command->addOption('hash-id-key', null, InputOption::VALUE_OPTIONAL, 'Unique payer hash ID');
-        $command->addOption('payer-number', null, InputOption::VALUE_OPTIONAL, 'Autogiro identifier number');
-        $command->addOption('account', null, InputOption::VALUE_OPTIONAL, 'Payer account number');
-        $command->addOption('id', null, InputOption::VALUE_OPTIONAL, 'Payer personal number or organisation number');
-        $command->addOption('name', null, InputOption::VALUE_OPTIONAL, 'Payer name');
-        $command->addOption('address1', null, InputOption::VALUE_OPTIONAL, 'Address field 1');
-        $command->addOption('address2', null, InputOption::VALUE_OPTIONAL, 'Address field 2');
-        $command->addOption('postal-code', null, InputOption::VALUE_OPTIONAL, 'Postal code');
-        $command->addOption('postal-city', null, InputOption::VALUE_OPTIONAL, 'Postal city');
-        $command->addOption('co-address', null, InputOption::VALUE_OPTIONAL, 'C/o address');
-        $command->addOption('email', null, InputOption::VALUE_OPTIONAL, 'Contact email address');
-        $command->addOption('phone', null, InputOption::VALUE_OPTIONAL, 'Contact phone number');
-        $command->addOption('amount', null, InputOption::VALUE_OPTIONAL, 'Monthly donation amount');
-        $command->addOption('comment', null, InputOption::VALUE_OPTIONAL, 'Comment');
+        $command->setHelp('Edit a donor in the database.');
+        $command->addArgument('donor-key', null, InputArgument::REQUIRED, 'Donor key or payernumber');
+        $command->addOption(
+            'use-payernumber',
+            false,
+            InputOption::VALUE_OPTIONAL,
+            'Use donor payer number for identification'
+        );
+        $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
+        $command->addOption('address1', null, InputOption::VALUE_REQUIRED, 'Address field 1');
+        $command->addOption('address2', null, InputOption::VALUE_REQUIRED, 'Address field 2');
+        $command->addOption('postal-code', null, InputOption::VALUE_REQUIRED, 'Postal code');
+        $command->addOption('postal-city', null, InputOption::VALUE_REQUIRED, 'Postal city');
+        $command->addOption('co-address', null, InputOption::VALUE_REQUIRED, 'C/o address');
+        $command->addOption('email', null, InputOption::VALUE_REQUIRED, 'Contact email address');
+        $command->addOption('phone', null, InputOption::VALUE_REQUIRED, 'Contact phone number');
+        $command->addOption('amount', null, InputOption::VALUE_REQUIRED, 'Monthly donation amount');
+        $command->addOption('comment', null, InputOption::VALUE_REQUIRED, 'Comment');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
@@ -181,29 +184,17 @@ class EditCommand implements CommandInterface
 
     private function fetchDonor(
         DonorMapper $donorMapper,
-        MandateKeyBuilder $mandateKeyBuilder,
-        IdFactory $idFactory,
-        AccountFactory $accountFactory,
         InputInterface $input,
         OutputInterface $output
     ) {
-        $donorId = $input->getOption('id');
-        $donorAccount = $input->getOption('account');
-        $donorKey = $input->getOption('hash-id-key');
+        $donorKey = $input->getArgument('donor-key');
+        $donorPayerNrOverride = $input->getOption('use-payernumber');
 
-        if ($donorKey) {
+        if (!$donorPayerNrOverride && $donorMapper->hasKey($donorKey)) {
             return $donorMapper->findByKey($donorKey);
-        } elseif ($donorId && $donorAccount) {
-            return $donorMapper->findByKey(
-                $mandateKeyBuilder->buildKey(
-                    $idFactory->create($donorId),
-                    $accountFactory->createAccount($donorAccount)
-                )
-            );
+        } else {
+            return $donorMapper->findByActivePayerNumber($donorKey);
         }
-        return $donorMapper->findByActivePayerNumber(
-            $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output)
-        );
     }
 
     private function setName(
