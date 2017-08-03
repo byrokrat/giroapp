@@ -56,7 +56,7 @@ class EditCommand implements CommandInterface
         $command->setName('edit');
         $command->setDescription('Edit an existing donor');
         $command->setHelp('Edit a donor in the database.');
-        $command->addArgument('donor-key', null, InputArgument::REQUIRED, 'Donor key or payernumber');
+        $command->addArgument('donor-key', InputArgument::REQUIRED, 'Donor key or payernumber');
         $command->addOption(
             'use-payernumber',
             false,
@@ -83,7 +83,7 @@ class EditCommand implements CommandInterface
         $idFactory = $container->get('id_factory');
         $mandateKeyBuilder = $container->get('mandate_key_builder');
 
-        $donor = $this->fetchDonor($donorMapper, $mandateKeyBuilder, $idFactory, $accountFactory, $input, $output);
+        $donor = $this->fetchDonor($donorMapper, $input, $output);
 
         $output->writeln('Hash Id key: ' . $donor->getMandateKey());
         $output->writeln('Personal Id: ' . $donor->getDonorId());
@@ -189,9 +189,9 @@ class EditCommand implements CommandInterface
         OutputInterface $output
     ) {
         $donorKey = $input->getArgument('donor-key');
-        $donorPayerNrOverride = $input->getOption('use-payernumber');
+        $forcePayerNumber = $input->getOption('use-payernumber');
 
-        if (!$donorPayerNrOverride && $donorMapper->hasKey($donorKey)) {
+        if (!$forcePayerNumber && $donorMapper->hasKey($donorKey)) {
             return $donorMapper->findByKey($donorKey);
         } else {
             return $donorMapper->findByActivePayerNumber($donorKey);
