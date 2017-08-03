@@ -38,7 +38,7 @@ class DonorMapperSpec extends ObjectBehavior
     {
         $collection->has('foobar')->willReturn(false);
 
-        $this->shouldThrow(\RuntimeException::CLASS)->during('findByKey',['foobar']);
+        $this->shouldThrow(\RuntimeException::CLASS)->during('findByKey', ['foobar']);
     }
 
     function it_can_save_donor($collection, $donorSchema, Donor $donor)
@@ -66,6 +66,14 @@ class DonorMapperSpec extends ObjectBehavior
         $donorSchema->fromArray(['SCHEMA_DOCUMENT'])->willReturn($donor);
 
         $this->findByActivePayerNumber('payer-number')->shouldEqual($donor);
+    }
+
+    function it_throws_on_erroneous_active_payernumber($collection, $donorSchema, ExpressionInterface $expr)
+    {
+        $donorSchema->getPayerNumberSearchExpression('payer-number')->willReturn($expr);
+        $collection->findOne($expr)->willReturn([]);
+
+        $this->shouldThrow(\RuntimeException::CLASS)->duringFindByActivePayerNumber('payer-number');
     }
 
     function it_can_find_by_payer_number(

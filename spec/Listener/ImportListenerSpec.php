@@ -36,25 +36,36 @@ class ImportListenerSpec extends ObjectBehavior
         return $node;
     }
 
-    function it_parses_content(ImportEvent $event, Parser $parser, FileNode $fileNode, EventDispatcherInterface $dispatcher)
-    {
+    function it_parses_content(
+        ImportEvent $event,
+        Parser $parser,
+        FileNode $fileNode,
+        EventDispatcherInterface $dispatcher
+    ) {
         $event->getContents()->willReturn('foobar');
         $parser->parse('foobar')->willReturn($this->a_tree($fileNode));
-        $this->__invoke($event, '', $dispatcher);
+        $this->onImportEvent($event, '', $dispatcher);
     }
 
-    function it_dispatches_approved_mandate_events(ImportEvent $event, Parser $parser, FileNode $fileNode, EventDispatcherInterface $dispatcher, MandateResponseNode $node)
-    {
+    function it_dispatches_approved_mandate_events(
+        ImportEvent $event,
+        Parser $parser,
+        FileNode $fileNode,
+        EventDispatcherInterface $dispatcher,
+        MandateResponseNode $node
+    ) {
         $event->getContents()->willReturn('foobar');
 
         $parser->parse('foobar')->willReturn(
-            $this->a_tree($fileNode, '',
+            $this->a_tree(
+                $fileNode,
+                '',
                 $this->a_tree($node, 'MandateResponseNode')
             )
         );
 
         $dispatcher->dispatch(Events::MANDATE_RESPONSE_EVENT, Argument::type(NodeEvent::CLASS))->shouldBeCalled();
 
-        $this->__invoke($event, '', $dispatcher);
+        $this->onImportEvent($event, '', $dispatcher);
     }
 }

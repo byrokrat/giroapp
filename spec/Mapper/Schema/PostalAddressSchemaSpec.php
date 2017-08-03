@@ -25,7 +25,7 @@ class PostalAddressSchemaSpec extends ObjectBehavior
         'address2' => 'cccc',
         'coAddress' => 'dddd');
 
-        $this->fromArray($doc)->shouldBeLike( new PostalAddress(
+        $this->fromArray($doc)->shouldBeLike(new PostalAddress(
             '12345',
             'aaaa',
             'bbbb',
