@@ -51,6 +51,11 @@ interface Events
     const MANDATE_ADDED_EVENT = 'MANDATE_ADDED_EVENT';
 
     /**
+     * A mandate has been edited, expects a DonorEvent
+     */
+    const MANDATE_EDITED_EVENT = 'MANDATE_EDITED_EVENT';
+
+    /**
      * A mandate has been approved by the bank, expects a DonorEvent
      */
     const MANDATE_APPROVED_EVENT = 'MANDATE_APPROVED_EVENT';
