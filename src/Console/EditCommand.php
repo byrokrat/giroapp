@@ -58,9 +58,9 @@ class EditCommand implements CommandInterface
         $command->setHelp('Edit a donor in the database.');
         $command->addArgument('donor-key', InputArgument::REQUIRED, 'Donor key or payernumber');
         $command->addOption(
-            'use-payernumber',
+            'force-payer-number',
             false,
-            InputOption::VALUE_OPTIONAL,
+            InputOption::VALUE_NONE,
             'Use donor payer number for identification'
         );
         $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
@@ -189,7 +189,7 @@ class EditCommand implements CommandInterface
         OutputInterface $output
     ) {
         $donorKey = $input->getArgument('donor-key');
-        $forcePayerNumber = $input->getOption('use-payernumber');
+        $forcePayerNumber = $input->getOption('force-payer-number');
 
         if (!$forcePayerNumber && $donorMapper->hasKey($donorKey)) {
             return $donorMapper->findByKey($donorKey);
