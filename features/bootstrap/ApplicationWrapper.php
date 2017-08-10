@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 use byrokrat\giroapp\DI\ContainerFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * Wrapper around an application setup
@@ -85,6 +86,7 @@ class ApplicationWrapper
     {
         if (!isset($this->container)) {
             $this->container = (new ContainerFactory)->createContainer(
+                new NullOutput,
                 $this->directory. '/' . self::USER_DIR,
                 ''
             );

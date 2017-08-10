@@ -27,6 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Create the dependency injection container
@@ -59,6 +60,7 @@ class ContainerFactory
     const EVENT_SUBSCRIBER_TAG = 'event_subscriber';
 
     /**
+     * @param OutputInterface $output
      * @param string $option  User directory from cli option
      * @param string $envPath User directory from environment
      * @param string $envHome Home directory from environment
@@ -66,6 +68,7 @@ class ContainerFactory
      * @param array  $server  A copy of $_SERVER
      */
     public function createContainer(
+        OutputInterface $output,
         string $option = '',
         string $envPath = '',
         string $envHome = '',
@@ -81,6 +84,8 @@ class ContainerFactory
             'user.dir',
             (new UserDirectoryLocator)->locateUserDirectory($option, $envPath, $envHome, $env, $server)
         );
+
+        $container->register('output', $output);
 
         $container->addCompilerPass(
             new RegisterListenersPass(

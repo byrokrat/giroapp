@@ -6,6 +6,7 @@ namespace spec\byrokrat\giroapp\DI;
 
 use byrokrat\giroapp\DI\ContainerFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -16,8 +17,8 @@ class ContainerFactorySpec extends ObjectBehavior
         $this->shouldHaveType(ContainerFactory::CLASS);
     }
 
-    function it_creates_containers()
+    function it_creates_containers(OutputInterface $output)
     {
-        $this->createContainer()->shouldHaveType(ContainerInterface::CLASS);
+        $this->createContainer($output)->shouldHaveType(ContainerInterface::CLASS);
     }
 }

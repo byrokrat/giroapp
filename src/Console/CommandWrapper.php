@@ -60,6 +60,7 @@ class CommandWrapper extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = (new ContainerFactory)->createContainer(
+            $output,
             (string)$input->getOption('path'),
             (string)getenv('GIROAPP_PATH'),
             (string)getenv('HOME'),
