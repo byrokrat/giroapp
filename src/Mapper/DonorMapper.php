@@ -95,7 +95,9 @@ class DonorMapper
     }
 
     /**
-     * Find active donor mandate identified by payer number
+     * Find active donor mandate identified by payer number.
+     *
+     * @throws RunTimeException if collection does not contain a valid post.
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
