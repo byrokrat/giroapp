@@ -26,6 +26,7 @@ use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\Builder\DonorBuilder;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -37,6 +38,7 @@ use byrokrat\amount\Currency\SEK;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Builder\MandateKeyBuilder;
 
 /**
  * Command to edit an existing mandate
@@ -52,12 +54,13 @@ class EditCommand implements CommandInterface
     {
         $this->command = $command;
         $command->setName('edit');
+        $command->setDescription('Edit an existing donor');
         $command->setHelp('Edit a donor in the database.');
-        $command->addArgument('donor-key', null, InputArgument::REQUIRED, 'Donor key or payernumber');
+        $command->addArgument('donor-key', InputArgument::REQUIRED, 'Donor key or payernumber');
         $command->addOption(
-            'use-payernumber',
+            'force-payer-number',
             false,
-            InputOption::VALUE_OPTIONAL,
+            InputOption::VALUE_NONE,
             'Use donor payer number for identification'
         );
         $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
@@ -78,12 +81,12 @@ class EditCommand implements CommandInterface
         $donorMapper = $container->get('donor_mapper');
         $accountFactory = $container->get('account_factory');
         $idFactory = $container->get('id_factory');
+        $mandateKeyBuilder = $container->get('mandate_key_builder');
 
-        $donor = $donorMapper->findByActivePayerNumber(
-            $payerNumber = $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output)
-        );
+        $donor = $this->fetchDonor($donorMapper, $input, $output);
 
-        $output->writeln('personal Id: ' . $donor->getDonorId());
+        $output->writeln('Hash Id key: ' . $donor->getMandateKey());
+        $output->writeln('Personal Id: ' . $donor->getDonorId());
         $output->writeln('Account number: ' . $donor->getAccount());
 
         $this->setName(
@@ -158,7 +161,7 @@ class EditCommand implements CommandInterface
             Events::MANDATE_EDITED_EVENT,
             new DonorEvent("Edited donor", $donor)
         );
-        $output->writeln('Donor edited');
+        $output->writeln('Donor updated.');
     }
 
     private function getProperty(
@@ -179,6 +182,22 @@ class EditCommand implements CommandInterface
         }
         return $value;
     }
+
+    private function fetchDonor(
+        DonorMapper $donorMapper,
+        InputInterface $input,
+        OutputInterface $output
+    ) {
+        $donorKey = $input->getArgument('donor-key');
+        $forcePayerNumber = $input->getOption('force-payer-number');
+
+        if (!$forcePayerNumber && $donorMapper->hasKey($donorKey)) {
+            return $donorMapper->findByKey($donorKey);
+        } else {
+            return $donorMapper->findByActivePayerNumber($donorKey);
+        }
+    }
+
     private function setName(
         string $value,
         Donor $donor
