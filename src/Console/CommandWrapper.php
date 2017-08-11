@@ -28,6 +28,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * Wrapper of giroapp console commands
@@ -39,10 +40,23 @@ class CommandWrapper extends Command
      */
     private $command;
 
+    /**
+     * @var bool
+     */
+    private $discardOutputMessages = false;
+
     public function __construct(CommandInterface $command)
     {
         $this->command = $command;
         parent::__construct();
+    }
+
+    /**
+     * Instruct wrapper to ignore messages written to standard out
+     */
+    public function discardOutputMessages()
+    {
+        $this->discardOutputMessages = true;
     }
 
     /**
@@ -60,7 +74,7 @@ class CommandWrapper extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = (new ContainerFactory)->createContainer(
-            $output,
+            $this->discardOutputMessages ? new NullOutput : $output,
             (string)$input->getOption('path'),
             (string)getenv('GIROAPP_PATH'),
             (string)getenv('HOME'),

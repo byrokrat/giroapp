@@ -26,9 +26,9 @@ services:
         class: byrokrat\giroapp\Listener\OutputtingListener
         arguments: ['@output']
         tags:
-            - { name: event_listener, event: WARNING_EVENT, priority: 9 }
-            - { name: event_listener, event: INFO_EVENT, priority: 9 }
-            - { name: event_listener, event: DEBUG_EVENT, priority: 9 }
+            - { name: event_listener, event: WARNING_EVENT, priority: -10 }
+            - { name: event_listener, event: INFO_EVENT, priority: -10 }
+            - { name: event_listener, event: DEBUG_EVENT, priority: -10 }
 
     aborting_listener:
         class: byrokrat\giroapp\Listener\AbortingListener
