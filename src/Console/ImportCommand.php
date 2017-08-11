@@ -51,7 +51,7 @@ class ImportCommand implements CommandInterface
 
         $container->get('event_dispatcher')->dispatch(
             Events::IMPORT_EVENT,
-            new ImportEvent(file_get_contents($input->getArgument('filename')))
+            new ImportEvent(file_get_contents($input->getArgument('filename')), $input->getArgument('filename'))
         );
     }
 }

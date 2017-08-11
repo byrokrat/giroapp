@@ -2,6 +2,7 @@ parameters:
     db.settings: 'data/settings.json'
     db.donors: 'data/donors.json'
     db.transactions: 'data/transactions.json'
+    db.filehashes: 'data/filehashes.json'
     db.log: 'var/log'
 
 services:
@@ -12,6 +13,7 @@ services:
                 settings: '@db_settings_engine'
                 donors: '@db_donors_engine'
                 transactions: '@db_transactions_engine'
+                filehashes: '@db_filehashes_engine'
                 log: '@db_log_engine'
 
     settings_mapper:
@@ -53,6 +55,14 @@ services:
     db_transactions_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.transactions%', '@filesystem']
+
+    db_filehashes_collection:
+        class: hanneskod\yaysondb\Collection
+        arguments: ['@db_filehashes_engine']
+
+    db_filehashes_engine:
+        class: hanneskod\yaysondb\Engine\FlysystemEngine
+        arguments: ['%db.filehashes%', '@filesystem']
 
     db_log_collection:
         class: hanneskod\yaysondb\Collection

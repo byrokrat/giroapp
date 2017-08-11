@@ -37,9 +37,10 @@ class ImportEvent extends Event
     /**
      * Load content to import
      */
-    public function __construct(string $contents)
+    public function __construct(string $contents, string $filename)
     {
         $this->contents = $contents;
+        $this->filename = $filename;
     }
 
     /**
@@ -48,5 +49,13 @@ class ImportEvent extends Event
     public function getContents(): string
     {
         return $this->contents;
+    }
+
+    /**
+     * Get name of imported file
+     */
+    public function getFilename(): string
+    {
+        return $this->filename;
     }
 }

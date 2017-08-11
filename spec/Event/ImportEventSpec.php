@@ -13,7 +13,7 @@ class ImportEventSpec extends ObjectBehavior
 {
     function let()
     {
-        $this->beConstructedWith('foobar');
+        $this->beConstructedWith('foo', 'bar');
     }
 
     function it_is_initializable()
@@ -28,6 +28,11 @@ class ImportEventSpec extends ObjectBehavior
 
     function it_contains_contents()
     {
-        $this->getContents()->shouldBeLike('foobar');
+        $this->getContents()->shouldBeLike('foo');
+    }
+ 
+    function it_contains_filename()
+    {
+        $this->getFilename()->shouldBeLike('bar');
     }
 }

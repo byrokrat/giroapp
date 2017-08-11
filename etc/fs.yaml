@@ -16,5 +16,6 @@ services:
                 - '%db.donors%'
                 - '%db.transactions%'
                 - '%db.log%'
+                - '%db.filehashes%'
             -
                 - '%plugins.dir%'
