@@ -40,9 +40,14 @@ class OutputtingListener
         $this->output = $output;
     }
 
+    public function onErrorEvent(LogEvent $event)
+    {
+        $this->output->writeln("<error>ERROR: {$event->getMessage()}</error>");
+    }
+
     public function onWarningEvent(LogEvent $event)
     {
-        $this->output->writeln($event->getMessage());
+        $this->output->writeln("<question>WARNING: {$event->getMessage()}</question>");
     }
 
     public function onInfoEvent(LogEvent $event)

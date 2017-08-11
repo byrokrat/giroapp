@@ -22,11 +22,18 @@ class OutputtingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(OutputtingListener::CLASS);
     }
 
+    function it_writes_error_messages(LogEvent $event, $output)
+    {
+        $event->getMessage()->willReturn('foobar');
+        $this->onErrorEvent($event);
+        $output->writeln('<error>ERROR: foobar</error>')->shouldHaveBeenCalled();
+    }
+
     function it_writes_warning_messages(LogEvent $event, $output)
     {
         $event->getMessage()->willReturn('foobar');
         $this->onWarningEvent($event);
-        $output->writeln('foobar')->shouldHaveBeenCalled();
+        $output->writeln('<question>WARNING: foobar</question>')->shouldHaveBeenCalled();
     }
 
     function it_writes_info_messages(LogEvent $event, $output)
