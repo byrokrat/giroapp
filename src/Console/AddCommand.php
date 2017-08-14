@@ -124,11 +124,18 @@ class AddCommand implements CommandInterface
             throw new \RunTimeException('A donor with this ID number and bank account already exists');
         }
         $donorMapper->save($donor);
+
         $container->get('event_dispatcher')->dispatch(
             Events::MANDATE_ADDED_EVENT,
-            new DonorEvent("Created new donor", $donor)
+            new DonorEvent(
+                sprintf(
+                    'Added donor <info>%s</info> with mandate key <info>%s</info>',
+                    $donor->getName(),
+                    $donor->getMandateKey()
+                ),
+                $donor
+            )
         );
-        $output->writeln('New donor saved');
     }
 
     private function getProperty(

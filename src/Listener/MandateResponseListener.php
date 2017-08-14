@@ -106,7 +106,8 @@ class MandateResponseListener
 
         $donorEvent = new DonorEvent(
             sprintf(
-                '%s (%s)',
+                '%s: %s (%s)',
+                $donor->getMandateKey(),
                 $node->getChild('info')->getAttribute('message'),
                 $node->getChild('comment')->getAttribute('message')
             ),
@@ -137,7 +138,13 @@ class MandateResponseListener
             default:
                 $dispatcher->dispatch(
                     Events::WARNING_EVENT,
-                    new LogEvent("Invalid mandate response info code: {$node->getChild('info')->getValue()}")
+                    new LogEvent(
+                        sprintf(
+                            '%s: invalid mandate response code: %s',
+                            $donor->getMandateKey(),
+                            $node->getChild('info')->getValue()
+                        )
+                    )
                 );
                 $nodeEvent->stopPropagation();
                 return;

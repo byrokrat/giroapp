@@ -35,7 +35,7 @@ services:
         class: byrokrat\giroapp\Listener\ImportListener
         arguments: ["@=service('autogiro_parser_factory').createParser()"]
         tags:
-            - { name: event_listener, event: IMPORT_EVENT, priority: 10 }
+            - { name: event_listener, event: IMPORT_EVENT, priority: 9 }
 
     invalid_node_filtering_listener:
         class: byrokrat\giroapp\Listener\InvalidNodeFilteringListener
@@ -54,6 +54,11 @@ services:
         arguments: ['@donor_mapper']
         tags:
             - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 1 }
+
+    application_monitior:
+        class: byrokrat\giroapp\ApplicationMonitor
+        tags:
+            - { name: event_subscriber }
 
     autogiro_parser_factory:
         class: byrokrat\autogiro\Parser\ParserFactory

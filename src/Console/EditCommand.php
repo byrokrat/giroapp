@@ -156,11 +156,17 @@ class EditCommand implements CommandInterface
         );
 
         $donorMapper->save($donor);
+
         $container->get('event_dispatcher')->dispatch(
             Events::MANDATE_EDITED_EVENT,
-            new DonorEvent("Edited donor", $donor)
+            new DonorEvent(
+                sprintf(
+                    'Updated mandate <info>%s</info>',
+                    $donor->getMandateKey()
+                ),
+                $donor
+            )
         );
-        $output->writeln('Donor updated.');
     }
 
     private function getProperty(
