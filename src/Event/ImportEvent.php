@@ -22,13 +22,16 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event;
 
-use Symfony\Component\EventDispatcher\Event;
-
 /**
  * Dispatched when a file is imported
  */
-class ImportEvent extends Event
+class ImportEvent extends LogEvent
 {
+    /**
+     * @var string
+     */
+    private $filename;
+
     /**
      * @var string
      */
@@ -37,9 +40,19 @@ class ImportEvent extends Event
     /**
      * Load content to import
      */
-    public function __construct(string $contents)
+    public function __construct(string $filename, string $contents)
     {
+        parent::__construct("Importing file <info>$filename</info>", ['filename' => 'filename']);
+        $this->filename = $filename;
         $this->contents = $contents;
+    }
+
+    /**
+     * Get name of file to import
+     */
+    public function getFilename(): string
+    {
+        return $this->filename;
     }
 
     /**

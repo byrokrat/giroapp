@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,12 +34,12 @@ use byrokrat\giroapp\Event\ImportEvent;
  */
 class ImportCommand implements CommandInterface
 {
-    public function configure(Command $command)
+    public function configure(CommandWrapper $wrapper)
     {
-        $command->setName('import');
-        $command->setDescription('Import a file from autogirot');
-        $command->setHelp('Import a file with data from autogirot');
-        $command->addArgument('filename', InputArgument::REQUIRED, 'The name of the file to import');
+        $wrapper->setName('import');
+        $wrapper->setDescription('Import a file from autogirot');
+        $wrapper->setHelp('Import a file with data from autogirot');
+        $wrapper->addArgument('filename', InputArgument::REQUIRED, 'The name of the file to import');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
@@ -51,7 +50,10 @@ class ImportCommand implements CommandInterface
 
         $container->get('event_dispatcher')->dispatch(
             Events::IMPORT_EVENT,
-            new ImportEvent(file_get_contents($input->getArgument('filename')))
+            new ImportEvent(
+                $input->getArgument('filename'),
+                file_get_contents($input->getArgument('filename'))
+            )
         );
     }
 }

@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -33,9 +32,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 interface CommandInterface
 {
     /**
-     * Configure the symfony command
+     * Configure the command
      */
-    public function configure(Command $command);
+    public function configure(CommandWrapper $wrapper);
 
     /**
      * Execute command

@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,17 +33,19 @@ use byrokrat\banking\BankgiroFactory;
  */
 class ExportCommand implements CommandInterface
 {
-    public function configure(Command $command)
+    public function configure(CommandWrapper $wrapper)
     {
-        $command->setName('export');
-        $command->setDescription('Export a file to autogirot');
-        $command->setHelp('Create a file with new set of autogiro actions');
+        $wrapper->setName('export');
+        $wrapper->setDescription('Export a file to autogirot');
+        $wrapper->setHelp('Create a file with new set of autogiro actions');
+        $wrapper->discardOutputMessages();
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
         $settings = $container->get('settings_mapper');
 
+        // TODO inject writer as a dependency (eg. create in the dic)
         $writer = (new WriterFactory)->createWriter(
             $settings->findByKey('bgc_customer_number'),
             (new BankgiroFactory)->createAccount($settings->findByKey('bankgiro'))

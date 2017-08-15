@@ -27,6 +27,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
+use Symfony\Component\Console\Output\OutputInterface;
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\LogEvent;
 
 /**
  * Create the dependency injection container
@@ -59,6 +62,7 @@ class ContainerFactory
     const EVENT_SUBSCRIBER_TAG = 'event_subscriber';
 
     /**
+     * @param OutputInterface $output
      * @param string $option  User directory from cli option
      * @param string $envPath User directory from environment
      * @param string $envHome Home directory from environment
@@ -66,6 +70,7 @@ class ContainerFactory
      * @param array  $server  A copy of $_SERVER
      */
     public function createContainer(
+        OutputInterface $output,
         string $option = '',
         string $envPath = '',
         string $envHome = '',
@@ -77,10 +82,11 @@ class ContainerFactory
         $loader = new YamlFileLoader($container, new FileLocator(self::CONTAINER_DIR));
         $loader->load(self::CONTAINER_FILE_NAME);
 
-        $container->setParameter(
-            'user.dir',
-            (new UserDirectoryLocator)->locateUserDirectory($option, $envPath, $envHome, $env, $server)
-        );
+        $userDir = (new UserDirectoryLocator)->locateUserDirectory($option, $envPath, $envHome, $env, $server);
+
+        $container->setParameter('user.dir', $userDir);
+
+        $container->set('output', $output);
 
         $container->addCompilerPass(
             new RegisterListenersPass(
@@ -91,6 +97,11 @@ class ContainerFactory
         );
 
         $container->compile();
+
+        $container->get('event_dispatcher')->dispatch(
+            Events::DEBUG_EVENT,
+            new LogEvent("User directory <info>$userDir</info>", ['userDir' => $userDir])
+        );
 
         return $container;
     }
