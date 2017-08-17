@@ -120,6 +120,7 @@ class FeatureContext implements Context
     public function theDonorDatabaseContains(TableNode $table)
     {
         $container = $this->app->getContainer();
+        $container->get('db_donors_collection')->reset();
 
         foreach ($table->getHash() as $row) {
             foreach ($container->get('donor_mapper')->findAll() as $donor) {
@@ -128,6 +129,10 @@ class FeatureContext implements Context
                 }
 
                 if (isset($row['payer-number']) && $donor->getPayerNumber() != $row['payer-number']) {
+                    continue;
+                }
+
+                if (isset($row['mandate-key']) && $donor->getMandateKey() != $row['mandate-key']) {
                     continue;
                 }
 
@@ -170,6 +175,16 @@ class FeatureContext implements Context
             }
 
             throw new Exception("Unable to find donor in database");
+        }
+    }
+
+    /**
+     * @Then there is no error
+     */
+    public function thereIsNoError()
+    {
+        if ($this->result->isError()) {
+            throw new \Exception("Error: {$this->result->getErrorOutput()}");
         }
     }
 
