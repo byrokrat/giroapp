@@ -199,6 +199,26 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then the output matches:
+     */
+    public function theOutputMatches(PyStringNode $string)
+    {
+        $output = explode("\n", $this->result->getOutput());
+        $regexes = explode("\n", (string)$string);
+
+        if (count($output) != count($regexes)) {
+            throw new \Exception("Not the same number of regexes as lines in output");
+        }
+
+        foreach ($regexes as $lineNr => $regexp) {
+            if (!preg_match("/^$regexp\s*$/", $output[$lineNr])) {
+                throw new \Exception("Unable to find $regexp in {$output[$lineNr]}");
+            }
+        }
+    }
+
+
+    /**
      * @Then the output contains :string
      */
     public function theOutputContains($string)
