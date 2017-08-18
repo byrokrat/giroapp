@@ -24,7 +24,6 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\Builder\DonorBuilder;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,29 +42,29 @@ use byrokrat\giroapp\Event\DonorEvent;
 class AddCommand implements CommandInterface
 {
     /**
-     * @var Command
+     * @var CommandWrapper
      */
-    private $command;
+    private $wrapper;
 
-    public function configure(Command $command)
+    public function configure(CommandWrapper $wrapper)
     {
-        $this->command = $command;
-        $command->setName('add');
-        $command->setDescription('Add a new donor');
-        $command->setHelp('Register a new traditional printed mandate in database');
-        $command->addOption('payer-number', null, InputOption::VALUE_REQUIRED, 'Unique payer identifier');
-        $command->addOption('account', null, InputOption::VALUE_REQUIRED, 'Payer account number');
-        $command->addOption('id', null, InputOption::VALUE_REQUIRED, 'Payer personal number or organisation number');
-        $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
-        $command->addOption('address1', null, InputOption::VALUE_OPTIONAL, 'Address field 1');
-        $command->addOption('address2', null, InputOption::VALUE_OPTIONAL, 'Address field 2');
-        $command->addOption('postal-code', null, InputOption::VALUE_OPTIONAL, 'Postal code');
-        $command->addOption('postal-city', null, InputOption::VALUE_OPTIONAL, 'Postal city');
-        $command->addOption('co-address', null, InputOption::VALUE_OPTIONAL, 'C/o address');
-        $command->addOption('email', null, InputOption::VALUE_OPTIONAL, 'Contact email address');
-        $command->addOption('phone', null, InputOption::VALUE_OPTIONAL, 'Contact phone number');
-        $command->addOption('amount', null, InputOption::VALUE_OPTIONAL, 'Monthly donation amount');
-        $command->addOption('comment', null, InputOption::VALUE_OPTIONAL, 'Comment');
+        $this->wrapper = $wrapper;
+        $wrapper->setName('add');
+        $wrapper->setDescription('Add a new donor');
+        $wrapper->setHelp('Register a new traditional printed mandate in database');
+        $wrapper->addOption('payer-number', null, InputOption::VALUE_REQUIRED, 'Unique payer identifier');
+        $wrapper->addOption('account', null, InputOption::VALUE_REQUIRED, 'Payer account number');
+        $wrapper->addOption('id', null, InputOption::VALUE_REQUIRED, 'Payer personal number or organisation number');
+        $wrapper->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
+        $wrapper->addOption('address1', null, InputOption::VALUE_OPTIONAL, 'Address field 1');
+        $wrapper->addOption('address2', null, InputOption::VALUE_OPTIONAL, 'Address field 2');
+        $wrapper->addOption('postal-code', null, InputOption::VALUE_OPTIONAL, 'Postal code');
+        $wrapper->addOption('postal-city', null, InputOption::VALUE_OPTIONAL, 'Postal city');
+        $wrapper->addOption('co-address', null, InputOption::VALUE_OPTIONAL, 'C/o address');
+        $wrapper->addOption('email', null, InputOption::VALUE_OPTIONAL, 'Contact email address');
+        $wrapper->addOption('phone', null, InputOption::VALUE_OPTIONAL, 'Contact phone number');
+        $wrapper->addOption('amount', null, InputOption::VALUE_OPTIONAL, 'Monthly donation amount');
+        $wrapper->addOption('comment', null, InputOption::VALUE_OPTIONAL, 'Comment');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
@@ -125,11 +124,18 @@ class AddCommand implements CommandInterface
             throw new \RunTimeException('A donor with this ID number and bank account already exists');
         }
         $donorMapper->save($donor);
+
         $container->get('event_dispatcher')->dispatch(
             Events::MANDATE_ADDED_EVENT,
-            new DonorEvent("Created new donor", $donor)
+            new DonorEvent(
+                sprintf(
+                    'Added donor <info>%s</info> with mandate key <info>%s</info>',
+                    $donor->getName(),
+                    $donor->getMandateKey()
+                ),
+                $donor
+            )
         );
-        $output->writeln('New donor saved');
     }
 
     private function getProperty(
@@ -142,7 +148,7 @@ class AddCommand implements CommandInterface
         $value = $input->getOption($key);
 
         if (!$value) {
-            $value = $this->command->getHelper('question')->ask(
+            $value = $this->wrapper->getHelper('question')->ask(
                 $input,
                 $output,
                 new Question("$desc: ", $default)

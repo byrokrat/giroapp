@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -33,11 +32,11 @@ use Symfony\Component\Console\Helper\Table;
  */
 class StatusCommand implements CommandInterface
 {
-    public function configure(Command $command)
+    public function configure(CommandWrapper $wrapper)
     {
-        $command->setName('status');
-        $command->setDescription('Inspect database status');
-        $command->setHelp('Display statistics for current database status');
+        $wrapper->setName('status');
+        $wrapper->setDescription('Inspect database status');
+        $wrapper->setHelp('Display statistics for current database status');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)

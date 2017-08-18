@@ -22,15 +22,43 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
+use Symfony\Component\Console\Output\OutputInterface;
 use byrokrat\giroapp\Event\LogEvent;
 
 /**
- * Throw exception on log event
+ * Write warning, info and debug messages to output
  */
-class AbortingListener
+class OutputtingListener
 {
+    /**
+     * @var OutputInterface
+     */
+    private $output;
+
+    public function __construct(OutputInterface $output)
+    {
+        $this->output = $output;
+    }
+
     public function onErrorEvent(LogEvent $event)
     {
-        throw new \Exception($event->getMessage());
+        $this->output->writeln("<error>ERROR: {$event->getMessage()}</error>");
+    }
+
+    public function onWarningEvent(LogEvent $event)
+    {
+        $this->output->writeln("<question>WARNING: {$event->getMessage()}</question>");
+    }
+
+    public function onInfoEvent(LogEvent $event)
+    {
+        $this->output->writeln($event->getMessage());
+    }
+
+    public function onDebugEvent(LogEvent $event)
+    {
+        if ($this->output->isVerbose()) {
+            $this->output->writeln($event->getMessage());
+        }
     }
 }

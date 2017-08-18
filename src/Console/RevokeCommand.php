@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,11 +31,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class RevokeCommand implements CommandInterface
 {
-    public function configure(Command $command)
+    public function configure(CommandWrapper $wrapper)
     {
-        $command->setName('revoke');
-        $command->setDescription('Revoke a donor mandate');
-        $command->setHelp('Revoke a mandate and stop receiving donations from donor');
+        $wrapper->setName('revoke');
+        $wrapper->setDescription('Revoke a donor mandate');
+        $wrapper->setHelp('Revoke a mandate and stop receiving donations from donor');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)

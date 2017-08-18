@@ -120,6 +120,7 @@ class FeatureContext implements Context
     public function theDonorDatabaseContains(TableNode $table)
     {
         $container = $this->app->getContainer();
+        $container->get('db_donors_collection')->reset();
 
         foreach ($table->getHash() as $row) {
             foreach ($container->get('donor_mapper')->findAll() as $donor) {
@@ -128,6 +129,10 @@ class FeatureContext implements Context
                 }
 
                 if (isset($row['payer-number']) && $donor->getPayerNumber() != $row['payer-number']) {
+                    continue;
+                }
+
+                if (isset($row['mandate-key']) && $donor->getMandateKey() != $row['mandate-key']) {
                     continue;
                 }
 
@@ -174,6 +179,16 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then there is no error
+     */
+    public function thereIsNoError()
+    {
+        if ($this->result->isError()) {
+            throw new \Exception("Error: {$this->result->getErrorOutput()}");
+        }
+    }
+
+    /**
      * @Then I get an error
      */
     public function iGetAnError()
@@ -182,6 +197,26 @@ class FeatureContext implements Context
             throw new \Exception('App invocation should result in an error');
         }
     }
+
+    /**
+     * @Then the output matches:
+     */
+    public function theOutputMatches(PyStringNode $string)
+    {
+        $output = explode("\n", $this->result->getOutput());
+        $regexes = explode("\n", (string)$string);
+
+        if (count($output) != count($regexes)) {
+            throw new \Exception("Not the same number of regexes as lines in output");
+        }
+
+        foreach ($regexes as $lineNr => $regexp) {
+            if (!preg_match("/^$regexp\s*$/", $output[$lineNr])) {
+                throw new \Exception("Unable to find $regexp in {$output[$lineNr]}");
+            }
+        }
+    }
+
 
     /**
      * @Then the output contains :string

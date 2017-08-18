@@ -5,7 +5,7 @@ Feature: Exporting files to autogirot
 
   Background:
     Given a fresh installation
-    And an orgnization 'foo' with bankgiro '58056201' and bgc customer number '123456'
+    And an orgnization 'foo' with bankgiro '58056201' and bgc customer number '111111'
 
   Scenario: I export a new paper based mandate
     Given there are donors:
@@ -14,7 +14,8 @@ Feature: Exporting files to autogirot
     When I run "export"
     Then the output matches:
         """
-        TODO Regexp that matches the expected ag file...
+        01\d{8}AUTOGIRO                                            1111110058056201
+        04005805620100000000000123455000000001111116\d{2}8203232775
         """
     And the donor database contains:
       | payer-number | state            |
@@ -27,7 +28,8 @@ Feature: Exporting files to autogirot
     When I run "export"
     Then the output matches:
         """
-        TODO Regexp that matches the expected ag file...
+        01\d{8}AUTOGIRO                                            1111110058056201
+        0400580562010000000000012345
         """
     And the donor database contains:
       | payer-number | state            |
@@ -35,12 +37,13 @@ Feature: Exporting files to autogirot
 
   Scenario: I register transactions from donor
     Given there are donors:
-      | payer-number | state                |
-      | 12345        | MandateApprovedState |
+      | id         | account     | payer-number | state                | amount |
+      | 8203232775 | 50001111116 | 12345        | MandateApprovedState | 999    |
     When I run "export"
     Then the output matches:
         """
-        TODO Regexp that matches the expected ag file...
+        01\d{8}AUTOGIRO                                            1111110058056201
+        82\d{8}1    00000000000123450000000999000058056201wkjmljAZVk7KQz9w
         """
     And the donor database contains:
       | payer-number | state       |
@@ -53,7 +56,8 @@ Feature: Exporting files to autogirot
     When I run "export"
     Then the output matches:
         """
-        TODO Regexp that matches the expected ag file...
+        01\d{8}AUTOGIRO                                            1111110058056201
+        0300580562010000000000012345
         """
     And the donor database contains:
       | payer-number | state               |

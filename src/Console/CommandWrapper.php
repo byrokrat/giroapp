@@ -23,11 +23,13 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\DI\ContainerFactory;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\NullOutput;
 
 /**
  * Wrapper of giroapp console commands
@@ -39,10 +41,23 @@ class CommandWrapper extends Command
      */
     private $command;
 
+    /**
+     * @var bool
+     */
+    private $discardOutputMessages = false;
+
     public function __construct(CommandInterface $command)
     {
         $this->command = $command;
         parent::__construct();
+    }
+
+    /**
+     * Instruct wrapper to ignore messages written to standard out
+     */
+    public function discardOutputMessages()
+    {
+        $this->discardOutputMessages = true;
     }
 
     /**
@@ -60,6 +75,7 @@ class CommandWrapper extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $container = (new ContainerFactory)->createContainer(
+            $this->discardOutputMessages ? new NullOutput : $output,
             (string)$input->getOption('path'),
             (string)getenv('GIROAPP_PATH'),
             (string)getenv('HOME'),
@@ -67,10 +83,25 @@ class CommandWrapper extends Command
             $_SERVER
         );
 
-        $container->get('event_dispatcher')->dispatch(Events::EXECUTION_START_EVENT);
+        $dispatcher = $container->get('event_dispatcher');
 
-        $this->command->execute($input, $output, $container);
-
-        $container->get('event_dispatcher')->dispatch(Events::EXECUTION_END_EVENT);
+        try {
+            $dispatcher->dispatch(Events::EXECUTION_START_EVENT);
+            $this->command->execute($input, $output, $container);
+            $dispatcher->dispatch(Events::EXECUTION_END_EVENT);
+        } catch (\Exception $e) {
+            $dispatcher->dispatch(
+                Events::ERROR_EVENT,
+                new LogEvent(
+                    "[EXCEPTION] {$e->getMessage()}",
+                    [
+                        'class' => get_class($e),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                )
+            );
+            throw $e;
+        }
     }
 }

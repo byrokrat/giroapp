@@ -23,7 +23,6 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Mapper\SettingsMapper;
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,19 +35,19 @@ use Symfony\Component\Console\Question\Question;
 class InitCommand implements CommandInterface
 {
     /**
-     * @var Command
+     * @var CommandWrapper
      */
-    private $command;
+    private $wrapper;
 
-    public function configure(Command $command)
+    public function configure(CommandWrapper $wrapper)
     {
-        $this->command = $command;
-        $command->setName('init');
-        $command->setDescription('Initialize the database');
-        $command->setHelp('Initialize giroapp installation');
-        $command->addOption('org-name', null, InputOption::VALUE_REQUIRED, 'Name of organization');
-        $command->addOption('bgc-customer-number', null, InputOption::VALUE_REQUIRED, 'BGC customer number');
-        $command->addOption('bankgiro', null, InputOption::VALUE_REQUIRED, 'Bankgiro number');
+        $this->wrapper = $wrapper;
+        $wrapper->setName('init');
+        $wrapper->setDescription('Initialize the database');
+        $wrapper->setHelp('Initialize giroapp installation');
+        $wrapper->addOption('org-name', null, InputOption::VALUE_REQUIRED, 'Name of organization');
+        $wrapper->addOption('bgc-customer-number', null, InputOption::VALUE_REQUIRED, 'BGC customer number');
+        $wrapper->addOption('bankgiro', null, InputOption::VALUE_REQUIRED, 'Bankgiro number');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
@@ -71,7 +70,7 @@ class InitCommand implements CommandInterface
         $newValue = $input->getOption(str_replace('_', '-', $key));
 
         if (!$newValue) {
-            $newValue = $this->command->getHelper('question')->ask(
+            $newValue = $this->wrapper->getHelper('question')->ask(
                 $input,
                 $output,
                 new Question("$desc [<info>$currentValue</info>]: ", $currentValue)
