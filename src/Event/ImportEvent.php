@@ -45,7 +45,6 @@ class ImportEvent extends LogEvent
         parent::__construct("Importing file <info>$filename</info>", ['filename' => 'filename']);
         $this->filename = $filename;
         $this->contents = $contents;
-        $this->filename = $filename;
     }
 
     /**
