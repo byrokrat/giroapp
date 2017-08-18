@@ -20,47 +20,48 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\Mapper;
+
+use hanneskod\yaysondb\CollectionInterface;
 
 /**
- * Dispatched when a file is imported
+ * Mapps key-value pairs to a db collection
  */
-class ImportEvent extends LogEvent
+class FilechecksumMapper
 {
     /**
-     * @var string
+     * @var CollectionInterface
      */
-    private $filename;
+    private $collection;
 
-    /**
-     * @var string
-     */
-    private $contents;
-
-    /**
-     * Load content to import
-     */
-    public function __construct(string $filename, string $contents)
+    public function __construct(CollectionInterface $collection)
     {
-        parent::__construct("Importing file <info>$filename</info>", ['filename' => 'filename']);
-        $this->filename = $filename;
-        $this->contents = $contents;
-        $this->filename = $filename;
+        $this->collection = $collection;
     }
 
     /**
-     * Get name of file to import
+     * Check for presence of a record by hash
      */
-    public function getFilename(): string
+    public function has(string $key): bool
     {
-        return $this->filename;
+        return $this->collection->has($key);
     }
 
     /**
-     * Get content to import
+     * Lookup record identified by hash
+     *
+     * @return array of arrays
      */
-    public function getContents(): string
+    public function findByKey(string $key): array
     {
-        return $this->contents;
+        return $this->collection->has($key) ? $this->collection->read($key) : '';
+    }
+
+    /**
+     * Save file hash record
+     */
+    public function save(string $key, array $values)
+    {
+        $this->collection->insert($values, $key);
     }
 }

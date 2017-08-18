@@ -25,42 +25,47 @@ namespace byrokrat\giroapp\Listener;
 use hanneskod\yaysondb\Yaysondb;
 
 /**
- * Filter NodeEvents where payee information does not match local registry
+ * Protect against multiple imports of the same file by storing file hashes of imported files
  */
 class FileChecksumListener
 {
     /**
-     * @var Yaysondb
+     * @var FileChecksumMapper
      */
-    private $db;
+    private $fileChecksumMapper;
 
-    public function __construct(Yaysondb $db)
+    public function __construct(FileChecksumMapper $fileChecksumMapper)
     {
-        $this->db = $db;
+        $this->fileChecksumMapper = $fileChecksumMapper;
     }
 
-    public function onImportEvent(ImportEvent $file)
+    public function importEvent(ImportEvent $file, EventDispatcherInterface $dispatcher)
     {
-        $filename = $file->getFilename();
-        $fileChecksum = hash(sha256, $file->getContents());
+        $fileChecksum = hash('sha256', $file->getContents());
 
-        if ($this->db->has($fileChecksum) {
+        if ($this->fileChecksumMapper->has($fileChecksum)) {
+            $preExistingFile = $this->fileChecksumMapper->findByKey($fileChecksum);
             $dispatcher->dispatch(
                 Events::ERROR_EVENT,
                 new LogEvent(
                     'File has been previously imported',
-                    ['file' => explode(', ', $file)]
+                    [
+                        'rejected file' => $file->getFilename(),
+                        'pre-existing file' => $preExistingFile['filename'],
+                        'previous import date' => $preExistingFile['date'],
+                    ]
                 )
             );
 
             $event->stopPropagation();
+            return;
         }
 
-        $this->db->insert([
-            $fileChecksum => [
-                'filename' => $filename,
+        $this->fileChecksumMapper->save(
+            $fileChecksum, [
+                'filename' => $file->getFilename(),
                 'date' => date('Y/m/d H:i:s')
             ]
-        ]);
+        );
     }
 }
