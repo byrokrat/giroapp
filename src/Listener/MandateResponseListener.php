@@ -106,31 +106,42 @@ class MandateResponseListener
 
         $donorEvent = new DonorEvent(
             sprintf(
-                '%s: %s (%s)',
+                '%s: %s',
                 $donor->getMandateKey(),
-                $node->getChild('info')->getAttribute('message'),
-                $node->getChild('comment')->getAttribute('message')
+                $node->getChild('status')->getAttribute('message')
             ),
             $donor
         );
 
-        switch ($node->getChild('info')->getAttribute('message_id')) {
-            case Messages::MANDATE_DELETED_BY_PAYER:
-            case Messages::MANDATE_DELETED_BY_RECIPIENT:
-            case Messages::MANDATE_DELETED_DUE_TO_CLOSED_RECIPIENT_BG:
-            case Messages::MANDATE_DELETED_DUE_TO_CLOSED_PAYER_BG:
+        switch ($node->getChild('status')->getAttribute('message_id')) {
+            case Messages::STATUS_MANDATE_DELETED_BY_PAYER:
+            case Messages::STATUS_MANDATE_DELETED_DUE_TO_UNANSWERED_ACCOUNT_REQUEST:
+            case Messages::STATUS_MANDATE_DELETED:
+            case Messages::STATUS_MANDATE_DELETED_DUE_TO_CLOSED_PAYER_BG:
+            case Messages::STATUS_MANDATE_DELETED_BY_BANK:
+            case Messages::STATUS_MANDATE_DELETED_BY_BGC:
                 $donor->setState(new InactiveState);
                 $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, $donorEvent);
                 break;
 
-            case Messages::MANDATE_CREATED_BY_RECIPIENT:
+            case Messages::STATUS_MANDATE_CREATED:
                 $donor->setState(new MandateApprovedState);
                 $dispatcher->dispatch(Events::MANDATE_APPROVED_EVENT, $donorEvent);
                 break;
 
-            case Messages::MANDATE_UPDATED_PAYER_NUMBER_BY_RECIPIENT:
-            case Messages::MANDATE_ACCOUNT_RESPONSE_FROM_BANK:
-            case Messages::MANDATE_DELETED_DUE_TO_UNANSWERED_ACCOUNT_REQUEST:
+            case Messages::STATUS_MANDATE_ACCOUNT_NOT_ALLOWED:
+            case Messages::STATUS_MANDATE_DOES_NOT_EXIST:
+            case Messages::STATUS_MANDATE_INVALID_ACCOUNT_OR_ID:
+            case Messages::STATUS_MANDATE_PAYER_NUMBER_DOES_NOT_EXIST:
+            case Messages::STATUS_MANDATE_ALREADY_EXISTS:
+            case Messages::STATUS_MANDATE_INVALID_ID_OR_BG_NOT_ALLOWED:
+            case Messages::STATUS_MANDATE_INVALID_PAYER_NUMBER:
+            case Messages::STATUS_MANDATE_INVALID_ACCOUNT:
+            case Messages::STATUS_MANDATE_INVALID_PAYEE_ACCOUNT:
+            case Messages::STATUS_MANDATE_INACTIVE_PAYEE_ACCOUNT:
+            case Messages::STATUS_MANDATE_BLOCKED_BY_PAYER:
+            case Messages::STATUS_MANDATE_BLOCK_REMOVED:
+            case Messages::STATUS_MANDATE_MAX_AMOUNT_NOT_ALLOWED:
                 $donor->setState(new ErrorState);
                 $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, $donorEvent);
                 break;
@@ -140,9 +151,9 @@ class MandateResponseListener
                     Events::WARNING_EVENT,
                     new LogEvent(
                         sprintf(
-                            '%s: invalid mandate response code: %s',
+                            '%s: invalid mandate status code: %s',
                             $donor->getMandateKey(),
-                            $node->getChild('info')->getValue()
+                            $node->getChild('status')->getValue()
                         )
                     )
                 );

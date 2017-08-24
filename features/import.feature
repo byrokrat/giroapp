@@ -28,6 +28,20 @@ Feature: Importing files
       | payer-number | state                |
       | 12345        | MandateApprovedState |
 
+  Scenario: I import an autogiro file rejecting a mandate register request
+    Given there are donors:
+      | payer-number | state            |
+      | 12345        | MandateSentState |
+    When I import:
+        """
+        01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
+        73005805620100000000000123455000000001111116198203232775     042320170817
+        092017081799000000000
+        """
+    Then the donor database contains:
+      | payer-number | state         |
+      | 12345        | ErrorState |
+
   Scenario: I import an autogiro file revocing a mandate
     Given there are donors:
       | payer-number | state       |
