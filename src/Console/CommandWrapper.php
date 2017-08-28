@@ -83,7 +83,7 @@ class CommandWrapper extends Command
             $_SERVER
         );
 
-        // TODO this is a bit silly...
+        // Accessed in ProjectServiceContainer
         putenv("GIROAPP_PATH=$userDir");
 
         $container = new ProjectServiceContainer;
