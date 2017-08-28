@@ -30,14 +30,14 @@
         "hanneskod/yaysondb": "^2.1",
         "hanneskod/classtools": "^1.1",
         "symfony/dependency-injection": "^3.3",
-        "symfony/config": "^3.3",
-        "symfony/yaml": "^3.3",
         "symfony/console": "^3.3",
         "symfony/event-dispatcher": "^3.3",
         "symfony/finder": "^3.3",
         "hashids/hashids": "^2"
     },
     "require-dev": {
+        "symfony/config": "^3.3",
+        "symfony/yaml": "^3.3",
         "phpspec/phpspec": "^3.4",
         "behat/behat": "^3.3",
         "squizlabs/php_codesniffer": "^3.0"

@@ -1,4 +1,12 @@
 <?php
+/**
+ * Builds the dependency injection container
+ *
+ * Please note that this script requires development dependencies to be installed
+ * (will not work together with the composer flag --no-dev).
+ *
+ * Usage: php build_container.php
+ */
 
 declare(strict_types = 1);
 
