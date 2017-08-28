@@ -82,6 +82,14 @@ class ApplicationWrapper
         return $filename;
     }
 
+    public function createPlugin(string $content)
+    {
+        file_put_contents(
+            $this->directory . '/' . self::USER_DIR . '/plugins/' . uniqid() . '.php',
+            "<?php $content"
+        );
+    }
+
     public function getContainer(): ContainerInterface
     {
         if (!isset($this->container)) {

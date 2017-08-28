@@ -97,6 +97,14 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given a plugin:
+     */
+    public function aPlugin(PyStringNode $content)
+    {
+        $this->app->createPlugin((string)$content);
+    }
+
+    /**
      * @When I run :command
      */
     public function iRun($command)
