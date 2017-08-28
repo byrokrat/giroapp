@@ -16,6 +16,11 @@ class ApplicationWrapper
     private $directory;
 
     /**
+     * @var string Path to giroapp user directory
+     */
+    private $userDir;
+
+    /**
      * @var string Path to executable
      */
     private $executable;
@@ -29,9 +34,9 @@ class ApplicationWrapper
     {
         $this->directory = sys_get_temp_dir() . '/giroapp_acceptance_tests_' . time();
         mkdir($this->directory);
-        $userDir = $this->directory . '/giroapp';
-        mkdir($userDir);
-        putenv("GIROAPP_PATH=$userDir");
+        $this->userDir = $this->directory . '/giroapp';
+        mkdir($this->userDir);
+        putenv("GIROAPP_PATH={$this->userDir}");
         $this->executable = $executable ?: realpath(getcwd() . '/bin/giroapp');
     }
 
@@ -76,6 +81,14 @@ class ApplicationWrapper
         file_put_contents("{$this->directory}/$filename", $content);
 
         return $filename;
+    }
+
+    public function createPlugin(string $content)
+    {
+        file_put_contents(
+            $this->userDir . '/plugins/' . uniqid() . '.php',
+            "<?php $content"
+        );
     }
 
     public function getContainer(): ProjectServiceContainer
