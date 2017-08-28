@@ -75,11 +75,11 @@ class FeatureContext implements Context
         foreach ($table->getHash() as $row) {
             $row = array_merge(self::DEFAULT_DONOR_ROW, $row);
 
-            $donor = $container->get('donor_builder')
+            $donor = $container->get('byrokrat\giroapp\Builder\DonorBuilder')
                 ->setMandateSource(constant("byrokrat\\giroapp\\Model\\Donor::{$row['mandate-source']}"))
                 ->setPayerNumber($row['payer-number'])
-                ->setId($container->get('id_factory')->create($row['id']))
-                ->setAccount($container->get('account_factory')->createAccount($row['account']))
+                ->setId($container->get('byrokrat\id\IdFactory')->create($row['id']))
+                ->setAccount($container->get('byrokrat\banking\AccountFactory')->createAccount($row['account']))
                 ->setName($row['name'])
                 ->setEmail($row['email'])
                 ->setPhone($row['phone'])
@@ -91,8 +91,8 @@ class FeatureContext implements Context
 
             $donor->setState(new $stateClass);
 
-            $container->get('donor_mapper')->save($donor);
-            $container->get('db_handle')->commit();
+            $container->get('byrokrat\giroapp\Mapper\DonorMapper')->save($donor);
+            $container->get('db')->commit();
         }
     }
 
@@ -120,10 +120,10 @@ class FeatureContext implements Context
     public function theDonorDatabaseContains(TableNode $table)
     {
         $container = $this->app->getContainer();
-        $container->get('db_donors_collection')->reset();
+        $container->get('db_donor_collection')->reset();
 
         foreach ($table->getHash() as $row) {
-            foreach ($container->get('donor_mapper')->findAll() as $donor) {
+            foreach ($container->get('byrokrat\giroapp\Mapper\DonorMapper')->findAll() as $donor) {
                 if (isset($row['mandate-source']) && $donor->getMandateSource() != constant("byrokrat\\giroapp\\Model\\Donor::{$row['mandate-source']}")) {
                     continue;
                 }
@@ -136,11 +136,11 @@ class FeatureContext implements Context
                     continue;
                 }
 
-                if (isset($row['id']) && (string)$donor->getDonorId() != (string)$container->get('id_factory')->create($row['id'])) {
+                if (isset($row['id']) && (string)$donor->getDonorId() != (string)$container->get('byrokrat\id\IdFactory')->create($row['id'])) {
                     continue;
                 }
 
-                if (isset($row['account']) && !$donor->getAccount()->equals($container->get('account_factory')->createAccount($row['account']))) {
+                if (isset($row['account']) && !$donor->getAccount()->equals($container->get('byrokrat\banking\AccountFactory')->createAccount($row['account']))) {
                     continue;
                 }
 

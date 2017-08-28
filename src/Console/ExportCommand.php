@@ -43,7 +43,7 @@ class ExportCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $settings = $container->get('settings_mapper');
+        $settings = $container->get('byrokrat\giroapp\Mapper\SettingsMapper');
 
         // TODO inject writer as a dependency (eg. create in the dic)
         $writer = (new WriterFactory)->createWriter(
@@ -51,7 +51,7 @@ class ExportCommand implements CommandInterface
             (new BankgiroFactory)->createAccount($settings->findByKey('bankgiro'))
         );
 
-        $donorMapper = $container->get('donor_mapper');
+        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
 
         foreach ($donorMapper->findAll() as $donor) {
             $donor->exportToAutogiro($writer);

@@ -5,6 +5,6 @@ vendor/bin/phpspec run
 
 vendor/bin/behat --stop-on-failure
 
-vendor/bin/phpcs --standard=PSR2 src
+vendor/bin/phpcs src --standard=PSR2 --ignore=src/ProjectServiceContainer.php
 
-vendor/bin/phpcs --standard=spec/ruleset.xml spec
+vendor/bin/phpcs spec --standard=spec/ruleset.xml

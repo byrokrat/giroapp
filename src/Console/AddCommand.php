@@ -69,10 +69,10 @@ class AddCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $donorBuilder = $container->get('donor_builder');
-        $donorMapper = $container->get('donor_mapper');
-        $accountFactory = $container->get('account_factory');
-        $idFactory = $container->get('id_factory');
+        $donorBuilder = $container->get('byrokrat\giroapp\Builder\DonorBuilder');
+        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
+        $accountFactory = $container->get('byrokrat\banking\AccountFactory');
+        $idFactory = $container->get('byrokrat\id\IdFactory');
 
         $this->setPayerNumber(
             $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output),

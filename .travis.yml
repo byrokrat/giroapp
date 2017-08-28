@@ -12,5 +12,5 @@ install:
 script:
   - vendor/bin/phpspec run --verbose
   - vendor/bin/behat --verbose
-  - vendor/bin/phpcs --standard=PSR2 src
-  - vendor/bin/phpcs --standard=spec/ruleset.xml spec
+  - vendor/bin/phpcs src --standard=PSR2 --ignore=src/ProjectServiceContainer.php
+  - vendor/bin/phpcs spec --standard=spec/ruleset.xml

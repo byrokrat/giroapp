@@ -53,7 +53,7 @@ class StatusCommand implements CommandInterface
             'status'
         ]);
 
-        foreach ($container->get('donor_mapper')->findAll() as $donor) {
+        foreach ($container->get('byrokrat\giroapp\Mapper\DonorMapper')->findAll() as $donor) {
             $table->addRow([
                 $donor->getMandateKey(),
                 $donor->getName(),

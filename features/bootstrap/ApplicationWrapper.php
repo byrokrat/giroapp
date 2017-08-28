@@ -2,8 +2,7 @@
 
 declare(strict_types = 1);
 
-use byrokrat\giroapp\DI\ContainerFactory;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use byrokrat\giroapp\ProjectServiceContainer;
 use Symfony\Component\Console\Output\NullOutput;
 
 /**
@@ -11,11 +10,6 @@ use Symfony\Component\Console\Output\NullOutput;
  */
 class ApplicationWrapper
 {
-    /**
-     * Name of directory where user data is stored
-     */
-    const USER_DIR = '.giroapp';
-
     /**
      * @var string Full path to directory where test data is stored
      */
@@ -27,7 +21,7 @@ class ApplicationWrapper
     private $executable;
 
     /**
-     * @var ContainerInterface
+     * @var ProjectServiceContainer
      */
     private $container;
 
@@ -35,7 +29,9 @@ class ApplicationWrapper
     {
         $this->directory = sys_get_temp_dir() . '/giroapp_acceptance_tests_' . time();
         mkdir($this->directory);
-        mkdir($this->directory . '/' . self::USER_DIR);
+        $userDir = $this->directory . '/giroapp';
+        mkdir($userDir);
+        putenv("GIROAPP_PATH=$userDir");
         $this->executable = $executable ?: realpath(getcwd() . '/bin/giroapp');
     }
 
@@ -54,7 +50,7 @@ class ApplicationWrapper
     public function execute(string $command): Result
     {
         $process = proc_open(
-            "{$this->executable} $command --no-interaction --no-ansi -vvv --path='".self::USER_DIR."'",
+            "{$this->executable} $command --no-interaction --no-ansi -vvv",
             [
                 1 => ["pipe", "w"],
                 2 => ["pipe", "w"]
@@ -82,14 +78,11 @@ class ApplicationWrapper
         return $filename;
     }
 
-    public function getContainer(): ContainerInterface
+    public function getContainer(): ProjectServiceContainer
     {
         if (!isset($this->container)) {
-            $this->container = (new ContainerFactory)->createContainer(
-                new NullOutput,
-                $this->directory. '/' . self::USER_DIR,
-                ''
-            );
+            $this->container = new ProjectServiceContainer;
+            $this->container->set('output', new NullOutput);
         }
 
         return $this->container;
