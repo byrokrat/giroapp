@@ -37,18 +37,18 @@ use Symfony\Component\Console\Output\NullOutput;
 class CommandWrapper extends Command
 {
     /**
-     * @var CommandInterface
+     * @var string Name of command class
      */
-    private $command;
+    private $commandClass;
 
     /**
      * @var bool
      */
     private $discardOutputMessages = false;
 
-    public function __construct(CommandInterface $command)
+    public function __construct(string $commandClass)
     {
-        $this->command = $command;
+        $this->commandClass = $commandClass;
         parent::__construct();
     }
 
@@ -66,7 +66,7 @@ class CommandWrapper extends Command
     protected function configure()
     {
         $this->addOption('path', null, InputOption::VALUE_REQUIRED, 'User directory path');
-        $this->command::configure($this);
+        $this->commandClass::configure($this);
     }
 
     /**
@@ -87,7 +87,7 @@ class CommandWrapper extends Command
 
         try {
             $dispatcher->dispatch(Events::EXECUTION_START_EVENT);
-            $this->command->execute($input, $output, $container);
+            (new $this->commandClass)->execute($input, $output, $container);
             $dispatcher->dispatch(Events::EXECUTION_END_EVENT);
         } catch (\Exception $e) {
             $dispatcher->dispatch(
