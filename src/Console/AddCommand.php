@@ -44,11 +44,11 @@ class AddCommand implements CommandInterface
     /**
      * @var CommandWrapper
      */
-    private $wrapper;
+    private static $wrapper;
 
-    public function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper)
     {
-        $this->wrapper = $wrapper;
+        self::$wrapper = $wrapper;
         $wrapper->setName('add');
         $wrapper->setDescription('Add a new donor');
         $wrapper->setHelp('Register a new traditional printed mandate in database');
@@ -148,7 +148,7 @@ class AddCommand implements CommandInterface
         $value = $input->getOption($key);
 
         if (!$value) {
-            $value = $this->wrapper->getHelper('question')->ask(
+            $value = self::$wrapper->getHelper('question')->ask(
                 $input,
                 $output,
                 new Question("$desc: ", $default)

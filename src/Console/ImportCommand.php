@@ -34,7 +34,7 @@ use byrokrat\giroapp\Event\ImportEvent;
  */
 class ImportCommand implements CommandInterface
 {
-    public function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper)
     {
         $wrapper->setName('import');
         $wrapper->setDescription('Import a file from autogirot');

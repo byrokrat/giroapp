@@ -37,11 +37,11 @@ class InitCommand implements CommandInterface
     /**
      * @var CommandWrapper
      */
-    private $wrapper;
+    private static $wrapper;
 
-    public function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper)
     {
-        $this->wrapper = $wrapper;
+        self::$wrapper = $wrapper;
         $wrapper->setName('init');
         $wrapper->setDescription('Initialize the database');
         $wrapper->setHelp('Initialize giroapp installation');
@@ -70,7 +70,7 @@ class InitCommand implements CommandInterface
         $newValue = $input->getOption(str_replace('_', '-', $key));
 
         if (!$newValue) {
-            $newValue = $this->wrapper->getHelper('question')->ask(
+            $newValue = self::$wrapper->getHelper('question')->ask(
                 $input,
                 $output,
                 new Question("$desc [<info>$currentValue</info>]: ", $currentValue)

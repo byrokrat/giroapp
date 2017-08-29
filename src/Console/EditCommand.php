@@ -47,11 +47,11 @@ class EditCommand implements CommandInterface
     /**
      * @var CommandWrapper
      */
-    private $wrapper;
+    private static $wrapper;
 
-    public function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper)
     {
-        $this->wrapper = $wrapper;
+        self::$wrapper = $wrapper;
         $wrapper->setName('edit');
         $wrapper->setDescription('Edit an existing donor');
         $wrapper->setHelp('Edit a donor in the database.');
@@ -179,7 +179,7 @@ class EditCommand implements CommandInterface
         $value = $input->getOption($key);
 
         if (!$value) {
-            $value = $this->wrapper->getHelper('question')->ask(
+            $value = self::$wrapper->getHelper('question')->ask(
                 $input,
                 $output,
                 new Question("$desc: [$default]", $default)

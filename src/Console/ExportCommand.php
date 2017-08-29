@@ -33,7 +33,7 @@ use byrokrat\banking\BankgiroFactory;
  */
 class ExportCommand implements CommandInterface
 {
-    public function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper)
     {
         $wrapper->setName('export');
         $wrapper->setDescription('Export a file to autogirot');

@@ -32,7 +32,7 @@ use Symfony\Component\Console\Helper\Table;
  */
 class StatusCommand implements CommandInterface
 {
-    public function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper)
     {
         $wrapper->setName('status');
         $wrapper->setDescription('Inspect database status');

@@ -34,7 +34,7 @@ interface CommandInterface
     /**
      * Configure the command
      */
-    public function configure(CommandWrapper $wrapper);
+    public static function configure(CommandWrapper $wrapper);
 
     /**
      * Execute command

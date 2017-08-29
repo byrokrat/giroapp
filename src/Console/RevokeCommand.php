@@ -31,7 +31,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class RevokeCommand implements CommandInterface
 {
-    public function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper)
     {
         $wrapper->setName('revoke');
         $wrapper->setDescription('Revoke a donor mandate');
