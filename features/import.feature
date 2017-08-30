@@ -42,7 +42,7 @@ Feature: Importing files
       | payer-number | state         |
       | 12345        | ErrorState |
 
-  Scenario: I import an autogiro file revocing a mandate
+  Scenario: I import an autogiro file revoking a mandate
     Given there are donors:
       | payer-number | state       |
       | 12345        | ActiveState |
