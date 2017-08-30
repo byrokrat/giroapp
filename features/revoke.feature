@@ -9,6 +9,7 @@ Feature: Revoking mandates
       | payer-number | state       |
       | 12345        | ActiveState |
     When I run "revoke 12345"
-    Then the donor database contains:
+    Then there is no error
+    And the donor database contains:
       | payer-number | state              |
       | 12345        | RevokeMandateState |
