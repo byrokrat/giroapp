@@ -29,7 +29,7 @@ class NewMandateState extends AbstractState
 {
     public function getDescription(): string
     {
-        return 'A printed mandate has been received from the donor';
+        return 'A mandate has been received from the donor';
     }
 
     public function isExportable(): bool

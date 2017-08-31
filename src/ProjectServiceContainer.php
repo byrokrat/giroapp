@@ -48,8 +48,20 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\listener\\mandateresponselistener' => 'byrokrat\\giroapp\\Listener\\MandateResponseListener',
             'byrokrat\\giroapp\\listener\\outputtinglistener' => 'byrokrat\\giroapp\\Listener\\OutputtingListener',
             'byrokrat\\giroapp\\mapper\\donormapper' => 'byrokrat\\giroapp\\Mapper\\DonorMapper',
+            'byrokrat\\giroapp\\mapper\\schema\\donorschema' => 'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema',
+            'byrokrat\\giroapp\\mapper\\schema\\postaladdressschema' => 'byrokrat\\giroapp\\Mapper\\Schema\\PostalAddressSchema',
             'byrokrat\\giroapp\\mapper\\settingsmapper' => 'byrokrat\\giroapp\\Mapper\\SettingsMapper',
             'byrokrat\\giroapp\\mapper\\transactionmapper' => 'byrokrat\\giroapp\\Mapper\\TransactionMapper',
+            'byrokrat\\giroapp\\model\\donorstate\\activestate' => 'byrokrat\\giroapp\\Model\\DonorState\\ActiveState',
+            'byrokrat\\giroapp\\model\\donorstate\\donorstatefactory' => 'byrokrat\\giroapp\\Model\\DonorState\\DonorStateFactory',
+            'byrokrat\\giroapp\\model\\donorstate\\errorstate' => 'byrokrat\\giroapp\\Model\\DonorState\\ErrorState',
+            'byrokrat\\giroapp\\model\\donorstate\\inactivestate' => 'byrokrat\\giroapp\\Model\\DonorState\\InactiveState',
+            'byrokrat\\giroapp\\model\\donorstate\\mandateapprovedstate' => 'byrokrat\\giroapp\\Model\\DonorState\\MandateApprovedState',
+            'byrokrat\\giroapp\\model\\donorstate\\mandatesentstate' => 'byrokrat\\giroapp\\Model\\DonorState\\MandateSentState',
+            'byrokrat\\giroapp\\model\\donorstate\\newdigitalmandatestate' => 'byrokrat\\giroapp\\Model\\DonorState\\NewDigitalMandateState',
+            'byrokrat\\giroapp\\model\\donorstate\\newmandatestate' => 'byrokrat\\giroapp\\Model\\DonorState\\NewMandateState',
+            'byrokrat\\giroapp\\model\\donorstate\\revocationsentstate' => 'byrokrat\\giroapp\\Model\\DonorState\\RevocationSentState',
+            'byrokrat\\giroapp\\model\\donorstate\\revokemandatestate' => 'byrokrat\\giroapp\\Model\\DonorState\\RevokeMandateState',
             'byrokrat\\id\\idfactory' => 'byrokrat\\id\\IdFactory',
         );
         $this->methodMap = array(
@@ -69,8 +81,20 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\MandateResponseListener' => 'getByrokrat_Giroapp_Listener_MandateResponseListenerService',
             'byrokrat\\giroapp\\Listener\\OutputtingListener' => 'getByrokrat_Giroapp_Listener_OutputtingListenerService',
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => 'getByrokrat_Giroapp_Mapper_DonorMapperService',
+            'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => 'getByrokrat_Giroapp_Mapper_Schema_DonorSchemaService',
+            'byrokrat\\giroapp\\Mapper\\Schema\\PostalAddressSchema' => 'getByrokrat_Giroapp_Mapper_Schema_PostalAddressSchemaService',
             'byrokrat\\giroapp\\Mapper\\SettingsMapper' => 'getByrokrat_Giroapp_Mapper_SettingsMapperService',
             'byrokrat\\giroapp\\Mapper\\TransactionMapper' => 'getByrokrat_Giroapp_Mapper_TransactionMapperService',
+            'byrokrat\\giroapp\\Model\\DonorState\\ActiveState' => 'getByrokrat_Giroapp_Model_DonorState_ActiveStateService',
+            'byrokrat\\giroapp\\Model\\DonorState\\DonorStateFactory' => 'getByrokrat_Giroapp_Model_DonorState_DonorStateFactoryService',
+            'byrokrat\\giroapp\\Model\\DonorState\\ErrorState' => 'getByrokrat_Giroapp_Model_DonorState_ErrorStateService',
+            'byrokrat\\giroapp\\Model\\DonorState\\InactiveState' => 'getByrokrat_Giroapp_Model_DonorState_InactiveStateService',
+            'byrokrat\\giroapp\\Model\\DonorState\\MandateApprovedState' => 'getByrokrat_Giroapp_Model_DonorState_MandateApprovedStateService',
+            'byrokrat\\giroapp\\Model\\DonorState\\MandateSentState' => 'getByrokrat_Giroapp_Model_DonorState_MandateSentStateService',
+            'byrokrat\\giroapp\\Model\\DonorState\\NewDigitalMandateState' => 'getByrokrat_Giroapp_Model_DonorState_NewDigitalMandateStateService',
+            'byrokrat\\giroapp\\Model\\DonorState\\NewMandateState' => 'getByrokrat_Giroapp_Model_DonorState_NewMandateStateService',
+            'byrokrat\\giroapp\\Model\\DonorState\\RevocationSentState' => 'getByrokrat_Giroapp_Model_DonorState_RevocationSentStateService',
+            'byrokrat\\giroapp\\Model\\DonorState\\RevokeMandateState' => 'getByrokrat_Giroapp_Model_DonorState_RevokeMandateStateService',
             'byrokrat\\id\\IdFactory' => 'getByrokrat_Id_IdFactoryService',
             'db' => 'getDbService',
             'db_donor_collection' => 'getDbDonorCollectionService',
@@ -274,7 +298,27 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Mapper_DonorMapperService()
     {
-        return $this->services['byrokrat\giroapp\Mapper\DonorMapper'] = new \byrokrat\giroapp\Mapper\DonorMapper(${($_ = isset($this->services['db_donor_collection']) ? $this->services['db_donor_collection'] : $this->get('db_donor_collection')) && false ?: '_'}, new \byrokrat\giroapp\Mapper\Schema\DonorSchema(new \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema(), new \byrokrat\giroapp\Model\DonorState\DonorStateFactory(), ${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->get('byrokrat\banking\AccountFactory')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->get('byrokrat\id\IdFactory')) && false ?: '_'}));
+        return $this->services['byrokrat\giroapp\Mapper\DonorMapper'] = new \byrokrat\giroapp\Mapper\DonorMapper(${($_ = isset($this->services['db_donor_collection']) ? $this->services['db_donor_collection'] : $this->get('db_donor_collection')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema']) ? $this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema'] : $this->get('byrokrat\giroapp\Mapper\Schema\DonorSchema')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Mapper\Schema\DonorSchema' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Mapper\Schema\DonorSchema
+     */
+    protected function getByrokrat_Giroapp_Mapper_Schema_DonorSchemaService()
+    {
+        return $this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema'] = new \byrokrat\giroapp\Mapper\Schema\DonorSchema(${($_ = isset($this->services['byrokrat\giroapp\Mapper\Schema\PostalAddressSchema']) ? $this->services['byrokrat\giroapp\Mapper\Schema\PostalAddressSchema'] : $this->get('byrokrat\giroapp\Mapper\Schema\PostalAddressSchema')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Model\DonorState\DonorStateFactory']) ? $this->services['byrokrat\giroapp\Model\DonorState\DonorStateFactory'] : $this->get('byrokrat\giroapp\Model\DonorState\DonorStateFactory')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->get('byrokrat\banking\AccountFactory')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->get('byrokrat\id\IdFactory')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Mapper\Schema\PostalAddressSchema' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema
+     */
+    protected function getByrokrat_Giroapp_Mapper_Schema_PostalAddressSchemaService()
+    {
+        return $this->services['byrokrat\giroapp\Mapper\Schema\PostalAddressSchema'] = new \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema();
     }
 
     /**
@@ -295,6 +339,106 @@ class ProjectServiceContainer extends Container
     protected function getByrokrat_Giroapp_Mapper_TransactionMapperService()
     {
         return $this->services['byrokrat\giroapp\Mapper\TransactionMapper'] = new \byrokrat\giroapp\Mapper\TransactionMapper(${($_ = isset($this->services['db_transaction_collection']) ? $this->services['db_transaction_collection'] : $this->get('db_transaction_collection')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\ActiveState' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\ActiveState
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_ActiveStateService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\ActiveState'] = new \byrokrat\giroapp\Model\DonorState\ActiveState();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\DonorStateFactory' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\DonorStateFactory
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_DonorStateFactoryService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\DonorStateFactory'] = new \byrokrat\giroapp\Model\DonorState\DonorStateFactory();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\ErrorState' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\ErrorState
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_ErrorStateService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\ErrorState'] = new \byrokrat\giroapp\Model\DonorState\ErrorState();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\InactiveState' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\InactiveState
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_InactiveStateService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\InactiveState'] = new \byrokrat\giroapp\Model\DonorState\InactiveState();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\MandateApprovedState' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\MandateApprovedState
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_MandateApprovedStateService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\MandateApprovedState'] = new \byrokrat\giroapp\Model\DonorState\MandateApprovedState(${($_ = isset($this->services['byrokrat\giroapp\Builder\DateBuilder']) ? $this->services['byrokrat\giroapp\Builder\DateBuilder'] : $this->get('byrokrat\giroapp\Builder\DateBuilder')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\MandateSentState' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\MandateSentState
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_MandateSentStateService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\MandateSentState'] = new \byrokrat\giroapp\Model\DonorState\MandateSentState();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\NewDigitalMandateState' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\NewDigitalMandateState
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_NewDigitalMandateStateService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\NewDigitalMandateState'] = new \byrokrat\giroapp\Model\DonorState\NewDigitalMandateState();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\NewMandateState' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\NewMandateState
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_NewMandateStateService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\NewMandateState'] = new \byrokrat\giroapp\Model\DonorState\NewMandateState();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\RevocationSentState' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\RevocationSentState
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_RevocationSentStateService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\RevocationSentState'] = new \byrokrat\giroapp\Model\DonorState\RevocationSentState();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Model\DonorState\RevokeMandateState' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\DonorState\RevokeMandateState
+     */
+    protected function getByrokrat_Giroapp_Model_DonorState_RevokeMandateStateService()
+    {
+        return $this->services['byrokrat\giroapp\Model\DonorState\RevokeMandateState'] = new \byrokrat\giroapp\Model\DonorState\RevokeMandateState();
     }
 
     /**

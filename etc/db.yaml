@@ -17,6 +17,9 @@ services:
                 transactions: '@db_transaction_engine'
                 log: '@db_log_engine'
 
+    byrokrat\giroapp\Mapper\:
+        resource: '../src/Mapper/*'
+
     byrokrat\giroapp\Mapper\SettingsMapper:
         class: ~
         arguments: ['@db_settings_collection']

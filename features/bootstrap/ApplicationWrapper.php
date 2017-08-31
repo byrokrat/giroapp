@@ -2,9 +2,6 @@
 
 declare(strict_types = 1);
 
-use byrokrat\giroapp\ProjectServiceContainer;
-use Symfony\Component\Console\Output\NullOutput;
-
 /**
  * Wrapper around an application setup
  */
@@ -24,11 +21,6 @@ class ApplicationWrapper
      * @var string Path to executable
      */
     private $executable;
-
-    /**
-     * @var ProjectServiceContainer
-     */
-    private $container;
 
     public function __construct(string $executable = '')
     {
@@ -89,15 +81,5 @@ class ApplicationWrapper
             $this->userDir . '/plugins/' . uniqid() . '.php',
             "<?php $content"
         );
-    }
-
-    public function getContainer(): ProjectServiceContainer
-    {
-        if (!isset($this->container)) {
-            $this->container = new ProjectServiceContainer;
-            $this->container->set('output', new NullOutput);
-        }
-
-        return $this->container;
     }
 }

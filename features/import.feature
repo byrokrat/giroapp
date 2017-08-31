@@ -16,42 +16,36 @@ Feature: Importing files
 
   Scenario: I import an autogiro file approving a mandate register request
     Given there are donors:
-      | payer-number | state            |
-      | 12345        | MandateSentState |
+      | payer-number | state        |
+      | 12345        | MANDATE_SENT |
     When I import:
         """
         01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
         73005805620100000000000123455000000001111116198203232775     043220170817
         092017081799000000000
         """
-    Then the donor database contains:
-      | payer-number | state                |
-      | 12345        | MandateApprovedState |
+    And the database contains donor "12345" with "state" matching "MandateApprovedState"
 
   Scenario: I import an autogiro file rejecting a mandate register request
     Given there are donors:
-      | payer-number | state            |
-      | 12345        | MandateSentState |
+      | payer-number | state        |
+      | 12345        | MANDATE_SENT |
     When I import:
         """
         01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
         73005805620100000000000123455000000001111116198203232775     042320170817
         092017081799000000000
         """
-    Then the donor database contains:
-      | payer-number | state         |
-      | 12345        | ErrorState |
+    And the database contains donor "12345" with "state" matching "ErrorState"
 
   Scenario: I import an autogiro file revoking a mandate
     Given there are donors:
-      | payer-number | state       |
-      | 12345        | ActiveState |
+      | payer-number | state  |
+      | 12345        | ACTIVE |
     When I import:
         """
         01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
         73005805620100000000000123455000000001111116198203232775     033320170817
         092017081799000000000
         """
-    Then the donor database contains:
-      | payer-number | state         |
-      | 12345        | InactiveState |
+    And the database contains donor "12345" with "state" matching "InactiveState"
