@@ -6,10 +6,8 @@ Feature: Revoking mandates
   Scenario: I revoke a mandate
     Given a fresh installation
     And there are donors:
-      | payer-number | state       |
-      | 12345        | ActiveState |
+      | payer-number | state  |
+      | 12345        | ACTIVE |
     When I run "revoke 12345"
     Then there is no error
-    And the donor database contains:
-      | payer-number | state              |
-      | 12345        | RevokeMandateState |
+    And the database contains donor "12345" with "state" matching "RevokeMandateState"
