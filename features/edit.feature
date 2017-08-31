@@ -50,3 +50,14 @@ Feature: Editing donors
     And the donor database contains:
       | payer-number | name | co-address | address1 | address2 | postal-code | postal-city | email      | phone | amount | comment |
       | 1            | bar  | co         | adr1     | adr2     | 123         | cty         | hej@hoj.se | 789   | 100    | updated |
+
+  Scenario: I edit a donor and change state
+    Given a fresh installation
+    And there are donors:
+      | payer-number | state            |
+      | 1            | MandateSentState |
+    When I run "edit 1 --state active"
+    Then there is no error
+    And the donor database contains:
+      | payer-number | state       |
+      | 1            | ActiveState |
