@@ -2,10 +2,6 @@
 
 declare(strict_types = 1);
 
-use byrokrat\giroapp\DI\ContainerFactory;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Console\Output\NullOutput;
-
 /**
  * Wrapper around an application setup
  */
@@ -25,11 +21,6 @@ class ApplicationWrapper
      * @var string Path to executable
      */
     private $executable;
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
 
     public function __construct(string $executable = '')
     {
@@ -88,18 +79,5 @@ class ApplicationWrapper
             $this->directory . '/' . self::USER_DIR . '/plugins/' . uniqid() . '.php',
             "<?php $content"
         );
-    }
-
-    public function getContainer(): ContainerInterface
-    {
-        if (!isset($this->container)) {
-            $this->container = (new ContainerFactory)->createContainer(
-                new NullOutput,
-                $this->directory. '/' . self::USER_DIR,
-                ''
-            );
-        }
-
-        return $this->container;
     }
 }
