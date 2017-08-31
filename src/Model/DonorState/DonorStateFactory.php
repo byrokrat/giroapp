@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Model\DonorState;
 
+use byrokrat\giroapp\States;
+
 /**
  * Handles the creation of state objects
  */
@@ -32,6 +34,10 @@ class DonorStateFactory
      */
     public function createDonorState(string $stateId): DonorState
     {
+        if (isset(States::STATE_MAP[strtoupper($stateId)])) {
+            $stateId = States::STATE_MAP[strtoupper($stateId)];
+        }
+
         if (!class_exists($stateId)) {
             throw new \RuntimeException("Unknown state id $stateId");
         }
