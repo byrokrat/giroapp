@@ -25,5 +25,5 @@ Feature: Plugins
             }
         }
         """
-    When I run "status"
+    When I run "ls"
     Then the output contains "my-cool-plugin-is-executed"
