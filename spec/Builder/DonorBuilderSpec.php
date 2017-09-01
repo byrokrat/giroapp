@@ -7,7 +7,6 @@ namespace spec\byrokrat\giroapp\Builder;
 use byrokrat\giroapp\Builder\DonorBuilder;
 use byrokrat\giroapp\Builder\MandateKeyBuilder;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorState\DonorState;
 use byrokrat\giroapp\Model\DonorState\NewMandateState;
 use byrokrat\giroapp\Model\DonorState\NewDigitalMandateState;
 use byrokrat\giroapp\Model\PostalAddress;

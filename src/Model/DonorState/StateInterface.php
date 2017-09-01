@@ -26,7 +26,7 @@ use byrokrat\autogiro\Writer\Writer;
 /**
  * Defines a donor state in relation to bgc
  */
-interface DonorState
+interface StateInterface
 {
     /**
      * Get state identifier

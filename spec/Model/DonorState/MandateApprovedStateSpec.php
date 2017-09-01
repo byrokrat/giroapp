@@ -21,7 +21,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
 
     function it_implements_the_state_interface()
     {
-        $this->shouldHaveType(DonorState\DonorState::CLASS);
+        $this->shouldHaveType(DonorState\StateInterface::CLASS);
     }
 
     function it_contains_an_id()

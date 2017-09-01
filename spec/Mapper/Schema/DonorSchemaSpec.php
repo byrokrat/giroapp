@@ -7,7 +7,7 @@ namespace spec\byrokrat\giroapp\Mapper\Schema;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
 use byrokrat\giroapp\Model\DonorState\DonorStateFactory;
-use byrokrat\giroapp\Model\DonorState\DonorState;
+use byrokrat\giroapp\Model\DonorState\StateInterface;
 use byrokrat\giroapp\Model\DonorState\ActiveState;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Model\Donor;
@@ -65,7 +65,7 @@ class DonorSchemaSpec extends ObjectBehavior
         $donorStateFactory,
         $accountFactory,
         $idFactory,
-        DonorState $donorState,
+        StateInterface $donorState,
         AccountNumber $account,
         PersonalId $id,
         PostalAddress $address
@@ -98,7 +98,7 @@ class DonorSchemaSpec extends ObjectBehavior
         AccountNumber $account,
         PersonalId $id,
         PostalAddress $address,
-        DonorState $donorState,
+        StateInterface $donorState,
         SEK $amount
     ) {
         $postalAddressSchema->toArray($address)->willReturn(['foobar']);

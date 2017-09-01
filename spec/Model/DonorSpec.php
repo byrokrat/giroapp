@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorState\DonorState;
+use byrokrat\giroapp\Model\DonorState\StateInterface;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
@@ -24,7 +24,7 @@ class DonorSpec extends ObjectBehavior
     const COMMENT = 'comment';
 
     function let(
-        DonorState $state,
+        StateInterface $state,
         AccountNumber $account,
         PersonalId $donorId,
         PostalAddress $address,
@@ -61,7 +61,7 @@ class DonorSpec extends ObjectBehavior
         $this->getState()->shouldEqual($state);
     }
 
-    function it_can_set_state(DonorState $newState)
+    function it_can_set_state(StateInterface $newState)
     {
         $this->getState()->shouldNotEqual($newState);
         $this->setState($newState);

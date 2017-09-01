@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Model\DonorState;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 
-abstract class AbstractState implements DonorState
+abstract class AbstractState implements StateInterface
 {
     public function getId(): string
     {

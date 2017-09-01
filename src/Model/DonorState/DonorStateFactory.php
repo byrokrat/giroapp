@@ -32,7 +32,7 @@ class DonorStateFactory
     /**
      * @throws \RuntimeException If state id is unknown
      */
-    public function createDonorState(string $stateId): DonorState
+    public function createDonorState(string $stateId): StateInterface
     {
         if (isset(States::STATE_MAP[strtoupper($stateId)])) {
             $stateId = States::STATE_MAP[strtoupper($stateId)];
@@ -44,7 +44,7 @@ class DonorStateFactory
 
         $state = new $stateId;
 
-        if (!$state instanceof DonorState) {
+        if (!$state instanceof StateInterface) {
             throw new \RuntimeException("Unvalid state id $stateId");
         }
 
