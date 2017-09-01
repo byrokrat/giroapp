@@ -22,8 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
+use byrokrat\giroapp\States;
+
 class MandateSentState extends AbstractState
 {
+    public function getId(): string
+    {
+        return States::MANDATE_SENT;
+    }
+
     public function getDescription(): string
     {
         return 'Mandate has been sent to the bank and is awaiting approval';

@@ -43,4 +43,4 @@ Feature: Editing donors
       | 1            | MANDATE_SENT |
     When I run "edit 1 --state active"
     Then there is no error
-    And the database contains donor "1" with "state" matching "ActiveState"
+    And the database contains donor "1" with "state" matching "ACTIVE"

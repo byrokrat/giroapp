@@ -6,6 +6,7 @@ namespace spec\byrokrat\giroapp\State;
 
 use byrokrat\giroapp\State\RevocationSentState;
 use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
@@ -25,7 +26,7 @@ class RevocationSentStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(RevocationSentState::CLASS);
+        $this->getId()->shouldEqual(States::REVOCATION_SENT);
     }
 
     function it_contains_a_description()

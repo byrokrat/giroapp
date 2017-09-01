@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Builder\DateBuilder;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
@@ -36,6 +37,11 @@ class MandateApprovedState extends AbstractState
     public function __construct(DateBuilder $dateBuilder = null)
     {
         $this->dateBuilder = $dateBuilder ?: new DateBuilder;
+    }
+
+    public function getId(): string
+    {
+        return States::MANDATE_APPROVED;
     }
 
     public function getDescription(): string

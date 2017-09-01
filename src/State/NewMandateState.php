@@ -22,11 +22,17 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 
 class NewMandateState extends AbstractState
 {
+    public function getId(): string
+    {
+        return States::NEW_MANDATE;
+    }
+
     public function getDescription(): string
     {
         return 'A mandate has been received from the donor';

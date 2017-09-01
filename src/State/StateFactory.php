@@ -30,24 +30,31 @@ use byrokrat\giroapp\States;
 class StateFactory
 {
     /**
+     * Map state identifier to class name
+     */
+    private static $stateToClassMap = [
+        States::ACTIVE              => ActiveState::CLASS,
+        States::ERROR               => ErrorState::CLASS,
+        States::INACTIVE            => InactiveState::CLASS,
+        States::NEW_MANDATE         => NewMandateState::CLASS,
+        States::NEW_DIGITAL_MANDATE => NewDigitalMandateState::CLASS,
+        States::MANDATE_SENT        => MandateSentState::CLASS,
+        States::MANDATE_APPROVED    => MandateApprovedState::CLASS,
+        States::REVOKE_MANDATE      => RevokeMandateState::CLASS,
+        States::REVOCATION_SENT     => RevocationSentState::CLASS,
+    ];
+
+    /**
      * @throws \RuntimeException If state id is unknown
      */
     public function createState(string $stateId): StateInterface
     {
-        if (isset(States::STATE_MAP[strtoupper($stateId)])) {
-            $stateId = States::STATE_MAP[strtoupper($stateId)];
-        }
+        $stateId = strtoupper($stateId);
 
-        if (!class_exists($stateId)) {
+        if (!isset(self::$stateToClassMap[$stateId])) {
             throw new \RuntimeException("Unknown state id $stateId");
         }
 
-        $state = new $stateId;
-
-        if (!$state instanceof StateInterface) {
-            throw new \RuntimeException("Unvalid state id $stateId");
-        }
-
-        return $state;
+        return new self::$stateToClassMap[$stateId];
     }
 }

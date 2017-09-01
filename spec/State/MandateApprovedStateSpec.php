@@ -7,6 +7,7 @@ namespace spec\byrokrat\giroapp\State;
 use byrokrat\giroapp\State\MandateApprovedState;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\ActiveState;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Builder\DateBuilder;
 use byrokrat\autogiro\Writer\Writer;
@@ -28,7 +29,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(MandateApprovedState::CLASS);
+        $this->getId()->shouldEqual(States::MANDATE_APPROVED);
     }
 
     function it_contains_a_description()

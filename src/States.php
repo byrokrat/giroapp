@@ -71,19 +71,4 @@ interface States
      * Revocation request has been sent to the bank
      */
     const REVOCATION_SENT = 'REVOCATION_SENT';
-
-    /**
-     * Map state identifier to class name
-     */
-    const STATE_MAP = [
-        self::ACTIVE              => State\ActiveState::CLASS,
-        self::ERROR               => State\ErrorState::CLASS,
-        self::INACTIVE            => State\InactiveState::CLASS,
-        self::NEW_MANDATE         => State\NewMandateState::CLASS,
-        self::NEW_DIGITAL_MANDATE => State\NewDigitalMandateState::CLASS,
-        self::MANDATE_SENT        => State\MandateSentState::CLASS,
-        self::MANDATE_APPROVED    => State\MandateApprovedState::CLASS,
-        self::REVOKE_MANDATE      => State\RevokeMandateState::CLASS,
-        self::REVOCATION_SENT     => State\RevocationSentState::CLASS,
-    ];
 }

@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp\State;
 
 use byrokrat\giroapp\State\MandateSentState;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
@@ -26,7 +26,7 @@ class MandateSentStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(MandateSentState::CLASS);
+        $this->getId()->shouldEqual(States::MANDATE_SENT);
     }
 
     function it_contains_a_description()

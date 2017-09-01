@@ -22,8 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
+use byrokrat\giroapp\States;
+
 class ErrorState extends AbstractState
 {
+    public function getId(): string
+    {
+        return States::ERROR;
+    }
+
     public function getDescription(): string
     {
         return 'Donor is inactive due to an error';

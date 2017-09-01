@@ -17,7 +17,7 @@ Feature: Exporting files to autogirot
         01\d{8}AUTOGIRO                                            1111110058056201
         04005805620100000000000123455000000001111116\d{2}8203232775
         """
-    And the database contains donor "12345" with "state" matching "MandateSentState"
+    And the database contains donor "12345" with "state" matching "MANDATE_SENT"
 
   Scenario: I respond to a new digital mandate
     Given there are donors:
@@ -29,7 +29,7 @@ Feature: Exporting files to autogirot
         01\d{8}AUTOGIRO                                            1111110058056201
         0400580562010000000000012345
         """
-    And the database contains donor "12345" with "state" matching "MandateSentState"
+    And the database contains donor "12345" with "state" matching "MANDATE_SENT"
 
   Scenario: I register transactions from donor
     Given there are donors:
@@ -41,7 +41,7 @@ Feature: Exporting files to autogirot
         01\d{8}AUTOGIRO                                            1111110058056201
         82\d{8}1    00000000000123450000000999000058056201wkjmljAZVk7KQz9w
         """
-    And the database contains donor "12345" with "state" matching "ActiveState"
+    And the database contains donor "12345" with "state" matching "ACTIVE"
 
   Scenario: I revoke a donor mandate
     Given there are donors:
@@ -53,4 +53,4 @@ Feature: Exporting files to autogirot
         01\d{8}AUTOGIRO                                            1111110058056201
         0300580562010000000000012345
         """
-    And the database contains donor "12345" with "state" matching "RevocationSentState"
+    And the database contains donor "12345" with "state" matching "REVOCATION_SENT"

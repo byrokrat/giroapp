@@ -27,11 +27,6 @@ use byrokrat\autogiro\Writer\Writer;
 
 abstract class AbstractState implements StateInterface
 {
-    public function getId(): string
-    {
-        return get_class($this);
-    }
-
     public function isExportable(): bool
     {
         return false;

@@ -7,6 +7,7 @@ namespace spec\byrokrat\giroapp\State;
 use byrokrat\giroapp\State\NewDigitalMandateState;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\MandateSentState;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
@@ -26,7 +27,7 @@ class NewDigitalMandateStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(NewDigitalMandateState::CLASS);
+        $this->getId()->shouldEqual(States::NEW_DIGITAL_MANDATE);
     }
 
     function it_contains_a_description()

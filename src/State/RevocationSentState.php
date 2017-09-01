@@ -22,8 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
+use byrokrat\giroapp\States;
+
 class RevocationSentState extends AbstractState
 {
+    public function getId(): string
+    {
+        return States::REVOCATION_SENT;
+    }
+
     public function getDescription(): string
     {
         return 'Revocation request has been sent to the bank';

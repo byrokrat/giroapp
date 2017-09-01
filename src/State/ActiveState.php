@@ -22,8 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
+use byrokrat\giroapp\States;
+
 class ActiveState extends AbstractState
 {
+    public function getId(): string
+    {
+        return States::ACTIVE;
+    }
+
     public function getDescription(): string
     {
         return 'Donor is active';

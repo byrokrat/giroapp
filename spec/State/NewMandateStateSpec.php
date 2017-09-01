@@ -7,6 +7,7 @@ namespace spec\byrokrat\giroapp\State;
 use byrokrat\giroapp\State\NewMandateState;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\MandateSentState;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 use byrokrat\banking\AccountNumber;
@@ -28,7 +29,7 @@ class NewMandateStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(NewMandateState::CLASS);
+        $this->getId()->shouldEqual(States::NEW_MANDATE);
     }
 
     function it_contains_a_description()
