@@ -20,12 +20,19 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
-class ActiveState extends AbstractState
+use byrokrat\giroapp\States;
+
+class InactiveState extends AbstractState
 {
+    public function getId(): string
+    {
+        return States::INACTIVE;
+    }
+
     public function getDescription(): string
     {
-        return 'Donor is active';
+        return 'Donor is inactive (has been revoked/rejected)';
     }
 }

@@ -91,7 +91,7 @@ class EditCommand implements CommandInterface
         );
 
         $donor->setState(
-            $container->get('byrokrat\giroapp\Model\DonorState\DonorStateFactory')->createDonorState(
+            $container->get('byrokrat\giroapp\State\StateFactory')->createState(
                 $this->getProperty('state', 'Donor state', $donor->getState()->getId(), $input, $output)
             )
         );

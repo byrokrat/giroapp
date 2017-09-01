@@ -10,4 +10,4 @@ Feature: Revoking mandates
       | 12345        | ACTIVE |
     When I run "revoke 12345"
     Then there is no error
-    And the database contains donor "12345" with "state" matching "RevokeMandateState"
+    And the database contains donor "12345" with "state" matching "REVOKE_MANDATE"

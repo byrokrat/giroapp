@@ -67,8 +67,8 @@ services:
     byrokrat\giroapp\Builder\:
         resource: '../src/Builder/*'
 
-    byrokrat\giroapp\Model\DonorState\:
-        resource: '../src/Model/DonorState/*'
+    byrokrat\giroapp\State\:
+        resource: '../src/State/*'
 
     byrokrat\autogiro\Parser\ParserFactory: ~
 

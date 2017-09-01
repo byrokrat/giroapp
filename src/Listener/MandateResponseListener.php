@@ -27,9 +27,9 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\NodeEvent;
-use byrokrat\giroapp\Model\DonorState\MandateApprovedState;
-use byrokrat\giroapp\Model\DonorState\InactiveState;
-use byrokrat\giroapp\Model\DonorState\ErrorState;
+use byrokrat\giroapp\State\MandateApprovedState;
+use byrokrat\giroapp\State\InactiveState;
+use byrokrat\giroapp\State\ErrorState;
 use byrokrat\autogiro\Messages;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

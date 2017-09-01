@@ -20,24 +20,19 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\giroapp\States;
 
-abstract class AbstractState implements DonorState
+class MandateSentState extends AbstractState
 {
     public function getId(): string
     {
-        return get_class($this);
+        return States::MANDATE_SENT;
     }
 
-    public function isExportable(): bool
+    public function getDescription(): string
     {
-        return false;
-    }
-
-    public function export(Donor $donor, Writer $writer)
-    {
+        return 'Mandate has been sent to the bank and is awaiting approval';
     }
 }

@@ -2,29 +2,31 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Model\DonorState;
+namespace spec\byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\DonorState;
+use byrokrat\giroapp\State\ErrorState;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class ActiveStateSpec extends ObjectBehavior
+class ErrorStateSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorState\ActiveState::CLASS);
+        $this->shouldHaveType(ErrorState::CLASS);
     }
 
     function it_implements_the_state_interface()
     {
-        $this->shouldHaveType(DonorState\DonorState::CLASS);
+        $this->shouldHaveType(StateInterface::CLASS);
     }
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(DonorState\ActiveState::CLASS);
+        $this->getId()->shouldEqual(States::ERROR);
     }
 
     function it_contains_a_description()

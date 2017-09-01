@@ -2,9 +2,12 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Model\DonorState;
+namespace spec\byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\DonorState;
+use byrokrat\giroapp\State\MandateApprovedState;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\ActiveState;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Builder\DateBuilder;
 use byrokrat\autogiro\Writer\Writer;
@@ -16,17 +19,17 @@ class MandateApprovedStateSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorState\MandateApprovedState::CLASS);
+        $this->shouldHaveType(MandateApprovedState::CLASS);
     }
 
     function it_implements_the_state_interface()
     {
-        $this->shouldHaveType(DonorState\DonorState::CLASS);
+        $this->shouldHaveType(StateInterface::CLASS);
     }
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(DonorState\MandateApprovedState::CLASS);
+        $this->getId()->shouldEqual(States::MANDATE_APPROVED);
     }
 
     function it_contains_a_description()
@@ -44,7 +47,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $amount->isPositive()->willReturn(false);
 
         $donor->getDonationAmount()->willReturn($amount);
-        $donor->setState(Argument::type(DonorState\ActiveState::CLASS))->shouldNotBeCalled();
+        $donor->setState(Argument::type(ActiveState::CLASS))->shouldNotBeCalled();
 
         $this->export($donor, $writer);
     }
@@ -61,7 +64,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
 
         $dateBuilder->buildDate()->willReturn($date);
 
-        $donor->setState(Argument::type(DonorState\ActiveState::CLASS))->shouldBeCalled();
+        $donor->setState(Argument::type(ActiveState::CLASS))->shouldBeCalled();
 
         $this->export($donor, $writer);
 

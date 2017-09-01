@@ -20,12 +20,19 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
-class MandateSentState extends AbstractState
+use byrokrat\giroapp\States;
+
+class ActiveState extends AbstractState
 {
+    public function getId(): string
+    {
+        return States::ACTIVE;
+    }
+
     public function getDescription(): string
     {
-        return 'Mandate has been sent to the bank and is awaiting approval';
+        return 'Donor is active';
     }
 }
