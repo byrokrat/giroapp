@@ -20,26 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\Writer;
-
-class NewDigitalMandateState extends AbstractState
+class RevocationSentState extends AbstractState
 {
     public function getDescription(): string
     {
-        return 'A digital mandate has been received from the bank';
-    }
-
-    public function isExportable(): bool
-    {
-        return true;
-    }
-
-    public function export(Donor $donor, Writer $writer)
-    {
-        $writer->acceptDigitalMandate($donor->getPayerNumber());
-        $donor->setState(new MandateSentState);
+        return 'Revocation request has been sent to the bank';
     }
 }

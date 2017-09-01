@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
 use byrokrat\giroapp\States;
 

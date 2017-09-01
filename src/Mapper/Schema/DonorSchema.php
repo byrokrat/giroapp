@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Mapper\Schema;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
-use byrokrat\giroapp\Model\DonorState\StateFactory;
+use byrokrat\giroapp\State\StateFactory;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\IdFactory;
 use byrokrat\amount\Currency\SEK;

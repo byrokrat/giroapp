@@ -23,9 +23,9 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Builder;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorState\StateInterface;
-use byrokrat\giroapp\Model\DonorState\NewMandateState;
-use byrokrat\giroapp\Model\DonorState\NewDigitalMandateState;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\NewMandateState;
+use byrokrat\giroapp\State\NewDigitalMandateState;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\id\Id;
 use byrokrat\banking\AccountNumber;

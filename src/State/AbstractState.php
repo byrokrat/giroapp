@@ -20,12 +20,24 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
-class ActiveState extends AbstractState
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\autogiro\Writer\Writer;
+
+abstract class AbstractState implements StateInterface
 {
-    public function getDescription(): string
+    public function getId(): string
     {
-        return 'Donor is active';
+        return get_class($this);
+    }
+
+    public function isExportable(): bool
+    {
+        return false;
+    }
+
+    public function export(Donor $donor, Writer $writer)
+    {
     }
 }

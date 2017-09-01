@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorState\StateInterface;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;

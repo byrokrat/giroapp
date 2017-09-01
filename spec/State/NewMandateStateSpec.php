@@ -2,9 +2,11 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Model\DonorState;
+namespace spec\byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\DonorState;
+use byrokrat\giroapp\State\NewMandateState;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\MandateSentState;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 use byrokrat\banking\AccountNumber;
@@ -16,17 +18,17 @@ class NewMandateStateSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorState\NewMandateState::CLASS);
+        $this->shouldHaveType(NewMandateState::CLASS);
     }
 
     function it_implements_the_state_interface()
     {
-        $this->shouldHaveType(DonorState\StateInterface::CLASS);
+        $this->shouldHaveType(StateInterface::CLASS);
     }
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(DonorState\NewMandateState::CLASS);
+        $this->getId()->shouldEqual(NewMandateState::CLASS);
     }
 
     function it_contains_a_description()
@@ -45,7 +47,7 @@ class NewMandateStateSpec extends ObjectBehavior
         $donor->getAccount()->willReturn($account);
         $donor->getDonorId()->willReturn($id);
 
-        $donor->setState(Argument::type(DonorState\MandateSentState::CLASS))->shouldBeCalled();
+        $donor->setState(Argument::type(MandateSentState::CLASS))->shouldBeCalled();
 
         $this->export($donor, $writer);
 

@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Model;
 
-use byrokrat\giroapp\Model\DonorState\StateInterface;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\Id;
 use byrokrat\amount\Currency\SEK;

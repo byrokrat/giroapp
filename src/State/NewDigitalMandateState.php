@@ -20,24 +20,26 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 
-abstract class AbstractState implements StateInterface
+class NewDigitalMandateState extends AbstractState
 {
-    public function getId(): string
+    public function getDescription(): string
     {
-        return get_class($this);
+        return 'A digital mandate has been received from the bank';
     }
 
     public function isExportable(): bool
     {
-        return false;
+        return true;
     }
 
     public function export(Donor $donor, Writer $writer)
     {
+        $writer->acceptDigitalMandate($donor->getPayerNumber());
+        $donor->setState(new MandateSentState);
     }
 }

@@ -20,7 +20,7 @@
 
 namespace byrokrat\giroapp;
 
-use byrokrat\giroapp\Model\DonorState as State;
+use byrokrat\giroapp\State;
 
 /**
  * Donor state identifiers

@@ -20,12 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
-class RevocationSentState extends AbstractState
+class InactiveState extends AbstractState
 {
     public function getDescription(): string
     {
-        return 'Revocation request has been sent to the bank';
+        return 'Donor is inactive (has been revoked/rejected)';
     }
 }

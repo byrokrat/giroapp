@@ -20,26 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\Writer;
-
-class RevokeMandateState extends AbstractState
+class MandateSentState extends AbstractState
 {
     public function getDescription(): string
     {
-        return 'Mandate is awaiting revocation';
-    }
-
-    public function isExportable(): bool
-    {
-        return true;
-    }
-
-    public function export(Donor $donor, Writer $writer)
-    {
-        $writer->deleteMandate($donor->getPayerNumber());
-        $donor->setState(new RevocationSentState);
+        return 'Mandate has been sent to the bank and is awaiting approval';
     }
 }

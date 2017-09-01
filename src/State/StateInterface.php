@@ -18,14 +18,35 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\State;
 
-namespace byrokrat\giroapp\Model\DonorState;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\autogiro\Writer\Writer;
 
-class InactiveState extends AbstractState
+/**
+ * Defines a donor state in relation to bgc
+ */
+interface StateInterface
 {
-    public function getDescription(): string
-    {
-        return 'Donor is inactive (has been revoked/rejected)';
-    }
+    /**
+     * Get state identifier
+     */
+    public function getId(): string;
+
+    /**
+     * Get free text state description
+     */
+    public function getDescription(): string;
+
+    /**
+     * Check if this state is exportable to autogirot
+     */
+    public function isExportable(): bool;
+
+    /**
+     * Export to autogiro and possibly perform state transition
+     *
+     * @return void
+     */
+    public function export(Donor $donor, Writer $writer);
 }

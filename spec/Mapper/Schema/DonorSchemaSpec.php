@@ -6,9 +6,9 @@ namespace spec\byrokrat\giroapp\Mapper\Schema;
 
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
-use byrokrat\giroapp\Model\DonorState\StateFactory;
-use byrokrat\giroapp\Model\DonorState\StateInterface;
-use byrokrat\giroapp\Model\DonorState\ActiveState;
+use byrokrat\giroapp\State\StateFactory;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\ActiveState;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\banking\AccountFactory;
@@ -65,20 +65,20 @@ class DonorSchemaSpec extends ObjectBehavior
         $stateFactory,
         $accountFactory,
         $idFactory,
-        StateInterface $donorState,
+        StateInterface $state,
         AccountNumber $account,
         PersonalId $id,
         PostalAddress $address
     ) {
         $postalAddressSchema->fromArray(['foobar'])->willReturn($address);
-        $stateFactory->createState('state')->willReturn($donorState);
+        $stateFactory->createState('state')->willReturn($state);
         $accountFactory->createAccount('account')->willReturn($account);
         $idFactory->create('id')->willReturn($id);
 
         $this->fromArray($this->schemaDocument)->shouldBeLike(
             new Donor(
                 'mandate-key',
-                $donorState->getWrappedObject(),
+                $state->getWrappedObject(),
                 'mandate-source',
                 'payer-number',
                 $account->getWrappedObject(),
@@ -98,18 +98,18 @@ class DonorSchemaSpec extends ObjectBehavior
         AccountNumber $account,
         PersonalId $id,
         PostalAddress $address,
-        StateInterface $donorState,
+        StateInterface $state,
         SEK $amount
     ) {
         $postalAddressSchema->toArray($address)->willReturn(['foobar']);
-        $donorState->getId()->willReturn('state');
+        $state->getId()->willReturn('state');
         $account->getNumber()->willReturn('account');
         $id->format('S-sk')->willReturn('id');
         $amount->getAmount()->willReturn('1');
 
         $donor = new Donor(
             'mandate-key',
-            $donorState->getWrappedObject(),
+            $state->getWrappedObject(),
             'mandate-source',
             'payer-number',
             $account->getWrappedObject(),

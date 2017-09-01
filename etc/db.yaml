@@ -69,4 +69,4 @@ services:
         class: byrokrat\giroapp\Mapper\Schema\PostalAddressSchema
 
     donor_state_factory:
-        class: byrokrat\giroapp\Model\DonorState\StateFactory
+        class: byrokrat\giroapp\State\StateFactory

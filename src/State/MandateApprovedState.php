@@ -20,16 +20,27 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
+use byrokrat\giroapp\Builder\DateBuilder;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 
-class NewMandateState extends AbstractState
+class MandateApprovedState extends AbstractState
 {
+    /**
+     * @var DateBuilder
+     */
+    private $dateBuilder;
+
+    public function __construct(DateBuilder $dateBuilder = null)
+    {
+        $this->dateBuilder = $dateBuilder ?: new DateBuilder;
+    }
+
     public function getDescription(): string
     {
-        return 'A mandate has been received from the donor';
+        return 'Mandate has been approved by the bank';
     }
 
     public function isExportable(): bool
@@ -39,7 +50,15 @@ class NewMandateState extends AbstractState
 
     public function export(Donor $donor, Writer $writer)
     {
-        $writer->addNewMandate($donor->getPayerNumber(), $donor->getAccount(), $donor->getDonorId());
-        $donor->setState(new MandateSentState);
+        if ($donor->getDonationAmount()->isPositive()) {
+            $writer->addMonthlyTransaction(
+                $donor->getPayerNumber(),
+                $donor->getDonationAmount(),
+                $this->dateBuilder->buildDate(),
+                $donor->getMandateKey()
+            );
+
+            $donor->setState(new ActiveState);
+        }
     }
 }

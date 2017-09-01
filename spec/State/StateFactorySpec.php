@@ -2,9 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Model\DonorState;
+namespace spec\byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\DonorState;
+use byrokrat\giroapp\State\StateFactory;
+use byrokrat\giroapp\State\ActiveState;
 use byrokrat\giroapp\States;
 use PhpSpec\ObjectBehavior;
 
@@ -12,12 +13,12 @@ class StateFactorySpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorState\StateFactory::CLASS);
+        $this->shouldHaveType(StateFactory::CLASS);
     }
 
     function it_creates_states()
     {
-        $this->createState(DonorState\ActiveState::CLASS)->shouldHaveType(DonorState\ActiveState::CLASS);
+        $this->createState(ActiveState::CLASS)->shouldHaveType(ActiveState::CLASS);
     }
 
     function it_fails_on_unknown_state_id()
@@ -32,6 +33,6 @@ class StateFactorySpec extends ObjectBehavior
 
     function it_creates_states_from_state_id()
     {
-        $this->createState(States::ACTIVE)->shouldHaveType(DonorState\ActiveState::CLASS);
+        $this->createState(States::ACTIVE)->shouldHaveType(ActiveState::CLASS);
     }
 }
