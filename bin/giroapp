@@ -36,8 +36,8 @@ $app->add(new CommandWrapper(new EditCommand));
 $app->add(new CommandWrapper(new ExportCommand));
 $app->add(new CommandWrapper(new ImportCommand));
 $app->add(new CommandWrapper(new InitCommand));
+$app->add(new CommandWrapper(new LsCommand));
 $app->add(new CommandWrapper(new RevokeCommand));
 $app->add(new CommandWrapper(new ShowCommand));
-$app->add(new CommandWrapper(new StatusCommand));
 
 $app->run();
