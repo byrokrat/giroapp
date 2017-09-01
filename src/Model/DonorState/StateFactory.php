@@ -27,12 +27,12 @@ use byrokrat\giroapp\States;
 /**
  * Handles the creation of state objects
  */
-class DonorStateFactory
+class StateFactory
 {
     /**
      * @throws \RuntimeException If state id is unknown
      */
-    public function createDonorState(string $stateId): StateInterface
+    public function createState(string $stateId): StateInterface
     {
         if (isset(States::STATE_MAP[strtoupper($stateId)])) {
             $stateId = States::STATE_MAP[strtoupper($stateId)];

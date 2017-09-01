@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp\Mapper\Schema;
 
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
-use byrokrat\giroapp\Model\DonorState\DonorStateFactory;
+use byrokrat\giroapp\Model\DonorState\StateFactory;
 use byrokrat\giroapp\Model\DonorState\StateInterface;
 use byrokrat\giroapp\Model\DonorState\ActiveState;
 use byrokrat\giroapp\Model\PostalAddress;
@@ -43,13 +43,13 @@ class DonorSchemaSpec extends ObjectBehavior
 
     function let(
         PostalAddressSchema $postalAddressSchema,
-        DonorStateFactory $donorStateFactory,
+        StateFactory $stateFactory,
         AccountFactory $accountFactory,
         IdFactory $idFactory
     ) {
         $this->beConstructedWith(
             $postalAddressSchema,
-            $donorStateFactory,
+            $stateFactory,
             $accountFactory,
             $idFactory
         );
@@ -62,7 +62,7 @@ class DonorSchemaSpec extends ObjectBehavior
 
     function it_can_create_donor(
         $postalAddressSchema,
-        $donorStateFactory,
+        $stateFactory,
         $accountFactory,
         $idFactory,
         StateInterface $donorState,
@@ -71,7 +71,7 @@ class DonorSchemaSpec extends ObjectBehavior
         PostalAddress $address
     ) {
         $postalAddressSchema->fromArray(['foobar'])->willReturn($address);
-        $donorStateFactory->createDonorState('state')->willReturn($donorState);
+        $stateFactory->createState('state')->willReturn($donorState);
         $accountFactory->createAccount('account')->willReturn($account);
         $idFactory->create('id')->willReturn($id);
 

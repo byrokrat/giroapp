@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Mapper\Schema;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
-use byrokrat\giroapp\Model\DonorState\DonorStateFactory;
+use byrokrat\giroapp\Model\DonorState\StateFactory;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\IdFactory;
 use byrokrat\amount\Currency\SEK;
@@ -44,9 +44,9 @@ class DonorSchema
     private $addressSchema;
 
     /**
-     * @var DonorStateFactory
+     * @var StateFactory
      */
-    private $donorStateFactory;
+    private $stateFactory;
 
     /**
      * @var AccountFactory
@@ -60,12 +60,12 @@ class DonorSchema
 
     public function __construct(
         PostalAddressSchema $postalAddressSchema,
-        DonorStateFactory $donorStateFactory,
+        StateFactory $stateFactory,
         AccountFactory $accountFactory,
         IdFactory $idFactory
     ) {
         $this->addressSchema = $postalAddressSchema;
-        $this->donorStateFactory = $donorStateFactory;
+        $this->stateFactory = $stateFactory;
         $this->accountFactory = $accountFactory;
         $this->idFactory = $idFactory;
     }
@@ -93,7 +93,7 @@ class DonorSchema
     {
         return new Donor(
             $doc['mandateKey'],
-            $this->donorStateFactory->createDonorState($doc['state']),
+            $this->stateFactory->createState($doc['state']),
             $doc['mandateSource'],
             $doc['payerNumber'],
             $this->accountFactory->createAccount($doc['account']),
