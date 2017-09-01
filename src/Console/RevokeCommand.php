@@ -27,7 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Model\DonorState\RevokeMandateState;
+use byrokrat\giroapp\State\RevokeMandateState;
 
 /**
  * Command to revoke a mandate

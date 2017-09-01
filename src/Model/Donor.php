@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Model;
 
-use byrokrat\giroapp\Model\DonorState\DonorState;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\Id;
 use byrokrat\amount\Currency\SEK;
@@ -49,7 +49,7 @@ class Donor
     private $mandateKey;
 
     /**
-     * @var DonorState
+     * @var StateInterface
      */
     private $state;
 
@@ -105,7 +105,7 @@ class Donor
 
     public function __construct(
         string $mandateKey,
-        DonorState $state,
+        StateInterface $state,
         string $mandateSource,
         string $payerNumber,
         AccountNumber $account,
@@ -136,12 +136,12 @@ class Donor
         return $this->mandateKey;
     }
 
-    public function getState(): DonorState
+    public function getState(): StateInterface
     {
         return $this->state;
     }
 
-    public function setState(DonorState $state)
+    public function setState(StateInterface $state)
     {
         $this->state = $state;
     }

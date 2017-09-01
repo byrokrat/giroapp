@@ -20,12 +20,32 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
-class InactiveState extends AbstractState
+use byrokrat\giroapp\States;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\autogiro\Writer\Writer;
+
+class NewDigitalMandateState extends AbstractState
 {
+    public function getId(): string
+    {
+        return States::NEW_DIGITAL_MANDATE;
+    }
+
     public function getDescription(): string
     {
-        return 'Donor is inactive (has been revoked/rejected)';
+        return 'A digital mandate has been received from the bank';
+    }
+
+    public function isExportable(): bool
+    {
+        return true;
+    }
+
+    public function export(Donor $donor, Writer $writer)
+    {
+        $writer->acceptDigitalMandate($donor->getPayerNumber());
+        $donor->setState(new MandateSentState);
     }
 }

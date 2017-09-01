@@ -18,7 +18,7 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\Model\DonorState;
+namespace byrokrat\giroapp\State;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
@@ -26,7 +26,7 @@ use byrokrat\autogiro\Writer\Writer;
 /**
  * Defines a donor state in relation to bgc
  */
-interface DonorState
+interface StateInterface
 {
     /**
      * Get state identifier

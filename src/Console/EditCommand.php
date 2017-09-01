@@ -91,7 +91,7 @@ class EditCommand implements CommandInterface
         );
 
         $donor->setState(
-            $container->get('donor_state_factory')->createDonorState(
+            $container->get('donor_state_factory')->createState(
                 $this->getProperty('state', 'Donor state', $donor->getState()->getId(), $input, $output)
             )
         );

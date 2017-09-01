@@ -6,8 +6,8 @@ Feature: Purging inactive donors
   Scenario: I purge inactive donors
     Given a fresh installation
     And there are donors:
-      | payer-number | state         |
-      | 12345        | InactiveState |
+      | payer-number | state    |
+      | 12345        | INACTIVE |
     When I run "purge"
     Then the donor database does not contain:
       | payer-number |

@@ -6,15 +6,15 @@ Feature: Examine database status
   Background:
     Given a fresh installation
     And there are donors:
-      | payer-number | state                  | amount |
-      | 1            | ActiveState            | 100    |
-      | 2            | InactiveState          | 100    |
-      | 3            | MandateApprovedState   | 100    |
-      | 4            | MandateSentState       | 100    |
-      | 5            | NewDigitalMandateState | 100    |
-      | 6            | NewMandateState        | 100    |
-      | 7            | RevocationSentState    | 100    |
-      | 8            | RevokeMandateState     | 100    |
+      | payer-number | state               | amount |
+      | 1            | ACTIVE              | 100    |
+      | 2            | INACTIVE            | 100    |
+      | 3            | MANDATE_APPROVED    | 100    |
+      | 4            | MANDATE_SENT        | 100    |
+      | 5            | NEW_DIGITAL_MANDATE | 100    |
+      | 6            | NEW_MANDATE         | 100    |
+      | 7            | REVOCATION_SENT     | 100    |
+      | 8            | REVOKE_MANDATE      | 100    |
 
   Scenario: I check the exportable count
     When I run "status --exportable-count"
