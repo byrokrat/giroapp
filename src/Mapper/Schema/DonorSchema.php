@@ -36,7 +36,7 @@ use hanneskod\yaysondb\Operators as y;
  */
 class DonorSchema
 {
-    const TYPE_VERSION = 'giroapp/donor:0.1';
+    const TYPE_VERSION = 'giroapp/donor:0.2';
 
     /**
      * @var PostalAddressSchema
@@ -85,7 +85,8 @@ class DonorSchema
             'email' => $donor->getEmail(),
             'phone' => $donor->getPhone(),
             'donationAmount' => $donor->getDonationAmount()->getAmount(),
-            'comment' => $donor->getComment()
+            'comment' => $donor->getComment(),
+            'attributes' => $donor->getAttributes()
         ];
     }
 
@@ -103,7 +104,8 @@ class DonorSchema
             $doc['email'],
             $doc['phone'],
             new SEK($doc['donationAmount']),
-            $doc['comment']
+            $doc['comment'],
+            $doc['attributes'] ?? []
         );
     }
 
