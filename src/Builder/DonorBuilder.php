@@ -92,6 +92,11 @@ class DonorBuilder
     private $comment = '';
 
     /**
+     * @var array
+     */
+    private $attributes = [];
+
+    /**
      * @var SEK
      */
     private $donationAmount;
@@ -164,6 +169,12 @@ class DonorBuilder
         return $this;
     }
 
+    public function setAttribute(string $key, string $value)
+    {
+        $this->attributes[$key] = $value;
+        return $this;
+    }
+
     public function buildDonor(): Donor
     {
         return new Donor(
@@ -178,7 +189,8 @@ class DonorBuilder
             $this->email,
             $this->phone,
             $this->getDonationAmount(),
-            $this->comment
+            $this->comment,
+            $this->attributes
         );
     }
 
