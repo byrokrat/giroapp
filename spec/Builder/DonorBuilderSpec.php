@@ -102,6 +102,8 @@ class DonorBuilderSpec extends ObjectBehavior
             ->setPhone('phone')
             ->setDonationAmount($amount)
             ->setComment('comment')
+            ->setAttribute('foo', 'bar')
+            ->setAttribute('baz', 'bal')
             ->buildDonor();
 
         $createdDonor->shouldBeLike(
@@ -117,7 +119,11 @@ class DonorBuilderSpec extends ObjectBehavior
                 'email',
                 'phone',
                 $amount->getWrappedObject(),
-                'comment'
+                'comment',
+                [
+                    'foo' => 'bar',
+                    'baz' => 'bal'
+                ]
             )
         );
     }
