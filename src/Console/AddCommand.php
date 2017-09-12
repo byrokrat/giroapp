@@ -33,6 +33,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\IdFactory;
 use byrokrat\amount\Currency\SEK;
+use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Event\DonorEvent;
 
@@ -73,6 +74,8 @@ class AddCommand implements CommandInterface
         $donorMapper = $container->get('donor_mapper');
         $accountFactory = $container->get('account_factory');
         $idFactory = $container->get('id_factory');
+
+        $donorBuilder->setMandateSource(Donor::MANDATE_SOURCE_PAPER);
 
         $this->setPayerNumber(
             $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output),
