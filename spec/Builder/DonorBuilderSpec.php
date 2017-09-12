@@ -37,6 +37,7 @@ class DonorBuilderSpec extends ObjectBehavior
     function it_fails_if_id_is_not_set($account)
     {
         $this->setAccount($account)
+            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
             ->setName('name');
 
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
@@ -45,6 +46,7 @@ class DonorBuilderSpec extends ObjectBehavior
     function it_fails_if_account_is_not_set($id)
     {
         $this->setId($id)
+            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
             ->setName('name');
 
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
@@ -53,6 +55,7 @@ class DonorBuilderSpec extends ObjectBehavior
     function it_fails_if_name_is_not_set($id, $account)
     {
         $this->setId($id)
+            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
             ->setAccount($account);
 
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
@@ -62,32 +65,54 @@ class DonorBuilderSpec extends ObjectBehavior
     {
         $this->setId($id)
             ->setAccount($account)
+            ->setName('name')
             ->setMandateSource('this-is-not-a-valid-mandate-source');
+
+        $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
+    }
+
+    function it_fails_if_mandate_source_is_not_set($id, $account)
+    {
+        $this->setId($id)
+            ->setAccount($account)
+            ->setName('name');
 
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
     }
 
     function it_builds_minimal_donors($id, $account)
     {
-        $this->setId($id)->setAccount($account)->setName('name')->buildDonor()->shouldHaveType(Donor::CLASS);
+        $this->setId($id)
+            ->setAccount($account)
+            ->setName('name')
+            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
+            ->buildDonor()
+            ->shouldHaveType(Donor::CLASS);
     }
 
     function it_uses_default_values($id, $account)
     {
-        $this->setId($id)->setAccount($account)->setName('name')->buildDonor()->shouldBeLike(new Donor(
-            self::MANDATE_KEY,
-            new NewMandateState,
-            Donor::MANDATE_SOURCE_PAPER,
-            self::PAYER_NUMBER,
-            $account->getWrappedObject(),
-            $id->getWrappedObject(),
-            'name',
-            new PostalAddress('', '', '', '', ''),
-            '',
-            '',
-            new SEK('0'),
-            ''
-        ));
+        $this->setId($id)
+            ->setAccount($account)
+            ->setName('name')
+            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
+            ->buildDonor()
+            ->shouldBeLike(
+                new Donor(
+                    self::MANDATE_KEY,
+                    new NewMandateState,
+                    Donor::MANDATE_SOURCE_PAPER,
+                    self::PAYER_NUMBER,
+                    $account->getWrappedObject(),
+                    $id->getWrappedObject(),
+                    'name',
+                    new PostalAddress('', '', '', '', ''),
+                    '',
+                    '',
+                    new SEK('0'),
+                    ''
+                )
+            );
     }
 
     function it_can_set_values($id, $account, PostalAddress $postalAddress, SEK $amount)
