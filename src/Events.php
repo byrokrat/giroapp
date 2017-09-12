@@ -66,6 +66,11 @@ interface Events
     const MANDATE_REVOKED_EVENT = 'MANDATE_REVOKED_EVENT';
 
     /**
+     * A mandate has been dropped, expects a DonorEvent
+     */
+    const MANDATE_DROPPED_EVENT = 'MANDATE_DROPPED_EVENT';
+
+    /**
      * A mandate is invalid and could not be approved, expects a DonorEvent
      */
     const MANDATE_INVALID_EVENT = 'MANDATE_INVALID_EVENT';
