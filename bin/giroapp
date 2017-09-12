@@ -32,6 +32,7 @@ $version = trim(file_get_contents(__DIR__.'/../version'));
 $app = new Application('GiroApp', $version);
 
 $app->add(new CommandWrapper(new AddCommand));
+$app->add(new CommandWrapper(new DropCommand));
 $app->add(new CommandWrapper(new EditCommand));
 $app->add(new CommandWrapper(new ExportCommand));
 $app->add(new CommandWrapper(new ImportCommand));
