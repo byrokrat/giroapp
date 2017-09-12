@@ -39,6 +39,11 @@ class Donor
     const MANDATE_SOURCE_PAPER = 'MANDATE_SOURCE_PAPER';
 
     /**
+     * Indicator that mandate is from an online form (eg. mandate from homepage)
+     */
+    const MANDATE_SOURCE_ONLINE_FORM = 'MANDATE_SOURCE_ONLINE_FORM';
+
+    /**
      * Indicator that mandate is digital
      */
     const MANDATE_SOURCE_DIGITAL = 'MANDATE_SOURCE_DIGITAL';
