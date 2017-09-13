@@ -90,6 +90,17 @@ class DonorBuilderSpec extends ObjectBehavior
             ->shouldHaveType(Donor::CLASS);
     }
 
+    function it_can_reset($id, $account)
+    {
+        $this->setId($id)
+            ->setAccount($account)
+            ->setName('name')
+            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
+            ->reset();
+
+        $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
+    }
+
     function it_uses_default_values($id, $account)
     {
         $this->setId($id)

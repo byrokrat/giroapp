@@ -107,6 +107,26 @@ class DonorBuilder
     }
 
     /**
+     * Reset builder to initial state
+     */
+    public function reset(): self
+    {
+        unset($this->mandateSource);
+        unset($this->payerNumber);
+        unset($this->id);
+        unset($this->account);
+        unset($this->state);
+        unset($this->name);
+        unset($this->postalAddress);
+        $this->email = '';
+        $this->phone = '';
+        $this->comment = '';
+        $this->attributes = [];
+        unset($this->donationAmount);
+        return $this;
+    }
+
+    /**
      * Use one of the donor mandate source constants
      */
     public function setMandateSource(string $mandateSource): self
