@@ -47,6 +47,8 @@ interface XmlMandateMigrationInterface
 
     /**
      * Get a map of custom data field names to action or semantic constant
+     *
+     * @param string $formId Id of the form to map
      */
-    public function getXmlMigrationMap(): array;
+    public function getXmlMigrationMap(string $formId): array;
 }

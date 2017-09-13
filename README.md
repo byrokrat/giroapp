@@ -119,12 +119,14 @@ values should be handled by creating an implementation of
 The following example tells giroapp that the content of the custom data field
 `phone` should be handled as a phone number.
 
+The `$formId` parameter may be used to return different maps for different forms.
+
 ```php
 use byrokrat\giroapp\Xml\XmlMandateMigrationInterface;
 
 class MyCustomMigration implements XmlMandateMigrationInterface
 {
-    public function getXmlMigrationMap(): array
+    public function getXmlMigrationMap(string $formId): array
     {
         return [
             'phone' => self::PHONE
@@ -141,7 +143,7 @@ use byrokrat\giroapp\Builder\DonorBuilder;
 
 class MyCustomMigration implements XmlMandateMigrationInterface
 {
-    public function getXmlMigrationMap(): array
+    public function getXmlMigrationMap(string $formId): array
     {
         return [
             'phone' => function (DonorBuilder $donorBuilder, string $value) {

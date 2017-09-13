@@ -16,7 +16,6 @@ class CustomdataTranslatorSpec extends ObjectBehavior
 {
     function let(XmlMandateMigrationInterface $migrationMap)
     {
-        $migrationMap->getXmlMigrationMap()->willReturn([]);
         $this->beConstructedWith($migrationMap);
     }
 
@@ -25,55 +24,60 @@ class CustomdataTranslatorSpec extends ObjectBehavior
         $this->shouldHaveType(CustomdataTranslator::CLASS);
     }
 
-    function it_sets_attribute_if_key_is_not_migrated(DonorBuilder $donorBuilder)
+    function it_sets_attribute_if_key_is_not_migrated($migrationMap, DonorBuilder $donorBuilder)
     {
-        $this->writeValue($donorBuilder, 'key', 'value');
+        $migrationMap->getXmlMigrationMap('formId')->willReturn([]);
+        $this->writeValue($donorBuilder, 'formId', 'key', 'value');
         $donorBuilder->setAttribute('key', 'value')->shouldHaveBeenCalled();
     }
 
-    function it_throws_exception_on_invalid_migration_map($migrationMap)
+    function it_throws_exception_on_invalid_migration_map($migrationMap, DonorBuilder $donorBuilder)
     {
-        $migrationMap->getXmlMigrationMap()->willReturn(['foo' => 'not-a-callable...']);
-        $this->shouldThrow(InvalidXmlMandateMigrationException::CLASS)->duringInstantiation();
+        $migrationMap->getXmlMigrationMap('f')->willReturn(['foo' => 'not-a-callable...']);
+        $this->shouldThrow(InvalidXmlMandateMigrationException::CLASS)->duringWriteValue($donorBuilder, 'f', '', '');
     }
 
     function it_runs_callable_if_defined($migrationMap, DonorBuilder $donorBuilder)
     {
-        $migrationMap->getXmlMigrationMap()->willReturn([
+        $migrationMap->getXmlMigrationMap('formId')->willReturn([
             'foo' => function (DonorBuilder $donorBuilder, string $value) {
                 $donorBuilder->setAttribute('bar', 'this-is-my-cool-callable-action');
             }
         ]);
 
-        $this->writeValue($donorBuilder, 'foo', 'ignored...');
+        $this->writeValue($donorBuilder, 'formId', 'foo', 'ignored...');
         $donorBuilder->setAttribute('bar', 'this-is-my-cool-callable-action')->shouldHaveBeenCalled();
     }
 
     function it_sets_phone_numbers($migrationMap, DonorBuilder $donorBuilder)
     {
-        $migrationMap->getXmlMigrationMap()->willReturn(['phone' => XmlMandateMigrationInterface::PHONE]);
+        $migrationMap->getXmlMigrationMap('formId')->willReturn(['phone' => XmlMandateMigrationInterface::PHONE]);
         $donorBuilder->setPhone('12345')->shouldBeCalled();
-        $this->writeValue($donorBuilder, 'phone', '12345');
+        $this->writeValue($donorBuilder, 'formId', 'phone', '12345');
     }
 
     function it_sets_mail_addresses($migrationMap, DonorBuilder $donorBuilder)
     {
-        $migrationMap->getXmlMigrationMap()->willReturn(['mail' => XmlMandateMigrationInterface::EMAIL]);
+        $migrationMap->getXmlMigrationMap('formId')->willReturn(['mail' => XmlMandateMigrationInterface::EMAIL]);
         $donorBuilder->setEmail('foo@bar.com')->shouldBeCalled();
-        $this->writeValue($donorBuilder, 'mail', 'foo@bar.com');
+        $this->writeValue($donorBuilder, 'formId', 'mail', 'foo@bar.com');
     }
 
     function it_sets_amounts($migrationMap, DonorBuilder $donorBuilder)
     {
-        $migrationMap->getXmlMigrationMap()->willReturn(['amount' => XmlMandateMigrationInterface::DONATION_AMOUNT]);
+        $migrationMap->getXmlMigrationMap('formId')->willReturn(
+            ['amount' => XmlMandateMigrationInterface::DONATION_AMOUNT]
+        );
         $donorBuilder->setDonationAmount(new SEK('100'))->shouldBeCalled();
-        $this->writeValue($donorBuilder, 'amount', '100');
+        $this->writeValue($donorBuilder, 'formId', 'amount', '100');
     }
 
     function it_sets_comments($migrationMap, DonorBuilder $donorBuilder)
     {
-        $migrationMap->getXmlMigrationMap()->willReturn(['comment' => XmlMandateMigrationInterface::COMMENT]);
+        $migrationMap->getXmlMigrationMap('formId')->willReturn(
+            ['comment' => XmlMandateMigrationInterface::COMMENT]
+        );
         $donorBuilder->setComment('foobar')->shouldBeCalled();
-        $this->writeValue($donorBuilder, 'comment', 'foobar');
+        $this->writeValue($donorBuilder, 'formId', 'comment', 'foobar');
     }
 }

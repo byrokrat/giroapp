@@ -23,6 +23,6 @@ class NullXmlMandateMigationSpec extends ObjectBehavior
 
     function it_returns_an_empty_map()
     {
-        $this->getXmlMigrationMap()->shouldReturn([]);
+        $this->getXmlMigrationMap('')->shouldReturn([]);
     }
 }

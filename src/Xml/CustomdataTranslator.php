@@ -32,39 +32,77 @@ use byrokrat\amount\Currency\SEK;
 class CustomdataTranslator
 {
     /**
-     * @var callable[]
+     * @var XmlMandateMigrationInterface
      */
     private $migrationMap;
 
     /**
-     * @throws InvalidXmlMandateMigrationException if migration map contains invalid value
+     * @var array Collection of created migration maps
      */
+    private $createdMaps = [];
+
     public function __construct(XmlMandateMigrationInterface $migrationMap)
     {
-        foreach ($migrationMap->getXmlMigrationMap() as $key => $value) {
+        $this->migrationMap = $migrationMap;
+    }
+
+    /**
+     * Write value to donorBuilder using migration map as translation key
+     */
+    public function writeValue(DonorBuilder $donorBuilder, string $formId, string $key, string $value)
+    {
+        $map = $this->getMap($formId);
+
+        if (isset($map[$key])) {
+            return (unset)$map[$key]($donorBuilder, $value);
+        }
+
+        return (unset)$donorBuilder->setAttribute($key, $value);
+    }
+
+    /**
+     * Get cached map for requested form
+     */
+    private function getMap(string $formId): array
+    {
+        if (!isset($this->createdMaps[$formId])) {
+            $this->createdMaps[$formId] = $this->buildMap($formId);
+        }
+
+        return $this->createdMaps[$formId];
+    }
+
+    /**
+     * @throws InvalidXmlMandateMigrationException if migration map contains invalid value
+     */
+    private function buildMap(string $formId): array
+    {
+        $map = [];
+
+        foreach ($this->migrationMap->getXmlMigrationMap($formId) as $key => $value) {
             if (is_callable($value)) {
-                $this->migrationMap[$key] = $value;
+                $map[$key] = $value;
                 continue;
             }
 
             switch ($value) {
                 case XmlMandateMigrationInterface::PHONE:
-                    $this->migrationMap[$key] = function ($donorBuilder, $value) {
+                    $map[$key] = function ($donorBuilder, $value) {
                         $donorBuilder->setPhone($value);
                     };
                     break;
                 case XmlMandateMigrationInterface::EMAIL:
-                    $this->migrationMap[$key] = function ($donorBuilder, $value) {
+                    $map[$key] = function ($donorBuilder, $value) {
                         $donorBuilder->setEmail($value);
                     };
                     break;
                 case XmlMandateMigrationInterface::DONATION_AMOUNT:
-                    $this->migrationMap[$key] = function ($donorBuilder, $value) {
+                    $map[$key] = function ($donorBuilder, $value) {
                         $donorBuilder->setDonationAmount(new SEK($value));
                     };
                     break;
                 case XmlMandateMigrationInterface::COMMENT:
-                    $this->migrationMap[$key] = function ($donorBuilder, $value) {
+                    $map[$key] = function ($donorBuilder, $value) {
                         $donorBuilder->setComment($value);
                     };
                     break;
@@ -72,17 +110,7 @@ class CustomdataTranslator
                     throw new InvalidXmlMandateMigrationException("Invalid migration for key $key");
             }
         }
-    }
 
-    /**
-     * Write value to donorBuilder using migration map as translation key
-     */
-    public function writeValue(DonorBuilder $donorBuilder, string $key, string $value)
-    {
-        if (isset($this->migrationMap[$key])) {
-            return (unset)$this->migrationMap[$key]($donorBuilder, $value);
-        }
-
-        return (unset)$donorBuilder->setAttribute($key, $value);
+        return $map;
     }
 }
