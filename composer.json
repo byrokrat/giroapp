@@ -20,9 +20,10 @@
         }
     },
     "require": {
-        "php": "^7.0",
+        "php": "^7.1",
         "ext-mbstring": "*",
         "ext-bcmath": "*",
+        "ext-simplexml": "*",
         "byrokrat/amount": "^1.0",
         "byrokrat/autogiro": "dev-master",
         "byrokrat/banking": "^1.4",

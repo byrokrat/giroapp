@@ -81,7 +81,7 @@ class XmlObject
     /**
      * Generator that yields XmlObject instances with xml subsets
      */
-    public function getElements(string $path): \Generator
+    public function getElements(string $path): iterable
     {
         foreach ($this->xml->xpath($path) as $element) {
             yield new XmlObject($element->asXML());
