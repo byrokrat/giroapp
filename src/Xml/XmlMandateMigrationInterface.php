@@ -18,48 +18,37 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\Xml;
 
 /**
- * Dispatched when a file is imported
+ * Defines the semantic content of custom data fields in xml mandates
  */
-class ImportEvent extends LogEvent
+interface XmlMandateMigrationInterface
 {
     /**
-     * @var string
+     * Indicator that a field contains a phone number
      */
-    private $filename;
+    const PHONE = 'PHONE';
 
     /**
-     * @var string
+     * Indicator that a field contains an email address
      */
-    private $contents;
+    const EMAIL = 'EMAIL';
 
     /**
-     * Load content to import
+     * Indicator that a field contains amount to be donated monthly
      */
-    public function __construct(string $filename, string $contents)
-    {
-        parent::__construct("Importing file <info>$filename</info>", ['filename' => 'filename']);
-        $this->filename = $filename;
-        $this->contents = $contents;
-    }
+    const DONATION_AMOUNT = 'DONATION_AMOUNT';
 
     /**
-     * Get name of file to import
+     * Indicator that a field contains a comment
      */
-    public function getFilename(): string
-    {
-        return $this->filename;
-    }
+    const COMMENT = 'COMMENT';
 
     /**
-     * Get content to import
+     * Get a map of custom data field names to action or semantic constant
+     *
+     * @param string $formId Id of the form to map
      */
-    public function getContents(): string
-    {
-        return $this->contents;
-    }
+    public function getXmlMigrationMap(string $formId): array;
 }

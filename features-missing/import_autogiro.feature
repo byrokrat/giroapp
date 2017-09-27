@@ -28,7 +28,7 @@ Feature: Importing files
         """
         AG-EMEDGIV layout with a new mandate..
         """
-    And the database contains donor "12345" with "state" matching "NEW_DIGITAL_MANDATE"
+    Then the database contains donor "12345" with "state" matching "NEW_DIGITAL_MANDATE"
 
   Scenario: I import an autogiro file with a digital mandate that already exists
     Given there are donors:
