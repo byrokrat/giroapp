@@ -54,6 +54,12 @@ services:
         tags:
             - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 10 }
 
+    FileChecksumListener:
+        class: byrokrat\giroapp\Listener\FileChecksumListener
+        arguments: ['@db_filehashes_collection']
+        tags:
+            - { name: event_listener, event: IMPORT_EVENT, priority: 10 }
+
     comitting_listener:
         class: byrokrat\giroapp\Listener\CommittingListener
         arguments: ['@db_handle']
