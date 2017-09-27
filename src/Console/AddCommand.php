@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\Builder\DonorBuilder;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -71,7 +70,6 @@ class AddCommand implements CommandInterface
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
         $donorBuilder = $container->get('donor_builder');
-        $donorMapper = $container->get('donor_mapper');
         $accountFactory = $container->get('account_factory');
         $idFactory = $container->get('id_factory');
 
@@ -123,10 +121,6 @@ class AddCommand implements CommandInterface
         );
 
         $donor = $donorBuilder->buildDonor();
-        if ($donorMapper->hasKey($donor->getMandateKey())) {
-            throw new \RunTimeException('A donor with this ID number and bank account already exists');
-        }
-        $donorMapper->save($donor);
 
         $container->get('event_dispatcher')->dispatch(
             Events::MANDATE_ADDED_EVENT,

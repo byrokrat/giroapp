@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Event;
 /**
  * Dispatched when a file is imported
  */
-class ImportEvent extends LogEvent
+class FileEvent extends LogEvent
 {
     /**
      * @var string

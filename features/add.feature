@@ -30,11 +30,3 @@ Feature: Adding new donors
     And the explicit payer number strategy
     When I run "add --payer-number 1 --account 50001111116 --name foo --amount 100"
     Then I get an error
-
-  Scenario: I add a new donor that already exists
-    Given a fresh installation
-    And there are donors:
-      | payer-number | name | account     | id         | state  | amount |
-      | 1            | foo  | 50001111116 | 8203232775 | ACTIVE | 100    |
-    When I run "add --payer-number 1 --account 50001111116 --id 8203232775 --name foo --amount 100"
-    Then I get an error

@@ -249,6 +249,7 @@ class DonorBuilder
 
         switch ($this->getMandateSource()) {
             case Donor::MANDATE_SOURCE_PAPER:
+            case Donor::MANDATE_SOURCE_ONLINE_FORM:
                 return new NewMandateState;
             case Donor::MANDATE_SOURCE_DIGITAL:
                 return new NewDigitalMandateState;

@@ -32,10 +32,21 @@ services:
             - { name: event_listener, event: DEBUG_EVENT, priority: -10 }
 
     import_listener:
-        class: byrokrat\giroapp\Listener\ImportListener
-        arguments: ["@=service('autogiro_parser_factory').createParser()"]
+        class: byrokrat\giroapp\Listener\ImportingListener
         tags:
             - { name: event_listener, event: IMPORT_EVENT, priority: 9 }
+
+    import_autogiro_listener:
+        class: byrokrat\giroapp\Listener\ImportingAutogiroListener
+        arguments: ["@=service('autogiro_parser_factory').createParser()"]
+        tags:
+            - { name: event_listener, event: IMPORT_AUTOGIRO_EVENT, priority: 9 }
+
+    import_xml_listener:
+        class: byrokrat\giroapp\Listener\ImportingXmlListener
+        arguments: ['@xml_mandate_parser']
+        tags:
+            - { name: event_listener, event: IMPORT_XML_EVENT, priority: 9 }
 
     invalid_node_filtering_listener:
         class: byrokrat\giroapp\Listener\InvalidNodeFilteringListener
@@ -48,6 +59,12 @@ services:
         arguments: ['@db_handle']
         tags:
             - { name: event_listener, event: EXECUTION_END_EVENT, priority: 1 }
+
+    mandate_persisting_listener:
+        class: byrokrat\giroapp\Listener\MandatePersistingListener
+        arguments: ['@donor_mapper']
+        tags:
+            - { name: event_listener, event: MANDATE_ADDED_EVENT, priority: 10 }
 
     mandate_response_listener:
         class: byrokrat\giroapp\Listener\MandateResponseListener
@@ -71,6 +88,10 @@ services:
 
     id_factory:
         class: byrokrat\id\PersonalIdFactory
+        arguments: ['@organization_id_factory']
+
+    organization_id_factory:
+        class: byrokrat\id\OrganizationIdFactory
 
     donor_builder:
         class: byrokrat\giroapp\Builder\DonorBuilder
@@ -78,3 +99,30 @@ services:
 
     mandate_key_builder:
         class: byrokrat\giroapp\Builder\MandateKeyBuilder
+
+    xml_mandate_parser:
+        class: byrokrat\giroapp\Xml\XmlMandateParser
+        arguments:
+            - '@organization_id'
+            - '@organization_bg'
+            - '@donor_builder'
+            - '@customdata_translator'
+            - '@account_factory'
+            - '@id_factory'
+
+    customdata_translator:
+        class: byrokrat\giroapp\Xml\CustomdataTranslator
+        arguments: ['@null_xml_mandate_migation']
+
+    null_xml_mandate_migation:
+        class: byrokrat\giroapp\Xml\NullXmlMandateMigation
+
+    organization_id:
+        class: byrokrat\id\Id
+        factory: 'id_factory:create'
+        arguments: ["@=service('settings_mapper').findByKey('org_number')"]
+
+    organization_bg:
+        class: byrokrat\banking\AccountNumber
+        factory: 'bankgiro_factory:createAccount'
+        arguments: ["@=service('settings_mapper').findByKey('bankgiro')"]
