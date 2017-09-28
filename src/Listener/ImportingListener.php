@@ -23,38 +23,29 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\ImportEvent;
-use byrokrat\giroapp\Event\NodeEvent;
+use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\Event\XmlEvent;
+use byrokrat\giroapp\Xml\XmlObject;
+use byrokrat\giroapp\Exception\InvalidXmlException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use byrokrat\autogiro\Parser\Parser;
-use byrokrat\autogiro\Enumerator;
-use byrokrat\autogiro\Tree\Record\Response\MandateResponseNode;
 
 /**
- * Parse an autogiro file and fire events based on content
+ * Generic file import listener, dispatch events based on file type
  */
-class ImportListener
+class ImportingListener
 {
-    /**
-     * @var Parser
-     */
-    private $parser;
-
-    public function __construct(Parser $parser)
+    public function onImportEvent(FileEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
     {
-        $this->parser = $parser;
-    }
-
-    public function onImportEvent(ImportEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
-    {
-        $enum = new Enumerator;
-
-        $enum->onMandateResponseNode(function (MandateResponseNode $node) use ($dispatcher) {
-            $dispatcher->dispatch(Events::MANDATE_RESPONSE_EVENT, new NodeEvent($node));
-        });
-
-        // TODO dispatch events on all response nodes
-
-        $enum->enumerate($this->parser->parse($event->getContents()));
+        try {
+            $dispatcher->dispatch(
+                Events::IMPORT_XML_EVENT,
+                new XmlEvent(
+                    $event->getFilename(),
+                    new XmlObject($event->getContents())
+                )
+            );
+        } catch (InvalidXmlException $e) {
+            $dispatcher->dispatch(Events::IMPORT_AUTOGIRO_EVENT, $event);
+        }
     }
 }

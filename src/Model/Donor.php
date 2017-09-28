@@ -39,6 +39,11 @@ class Donor
     const MANDATE_SOURCE_PAPER = 'MANDATE_SOURCE_PAPER';
 
     /**
+     * Indicator that mandate is from an online form (eg. mandate from homepage)
+     */
+    const MANDATE_SOURCE_ONLINE_FORM = 'MANDATE_SOURCE_ONLINE_FORM';
+
+    /**
      * Indicator that mandate is digital
      */
     const MANDATE_SOURCE_DIGITAL = 'MANDATE_SOURCE_DIGITAL';
@@ -103,6 +108,11 @@ class Donor
      */
     private $comment;
 
+    /**
+     * @var array Loaded attributes
+     */
+    private $attributes;
+
     public function __construct(
         string $mandateKey,
         StateInterface $state,
@@ -115,7 +125,8 @@ class Donor
         string $email,
         string $phone,
         SEK $donationAmount,
-        string $comment
+        string $comment,
+        array $attributes = []
     ) {
         $this->mandateKey = $mandateKey;
         $this->setState($state);
@@ -129,6 +140,7 @@ class Donor
         $this->setPhone($phone);
         $this->setDonationAmount($donationAmount);
         $this->setComment($comment);
+        $this->attributes = $attributes;
     }
 
     public function getMandateKey(): string
@@ -234,5 +246,43 @@ class Donor
     public function exportToAutogiro(Writer $writer)
     {
         $this->getState()->export($this, $writer);
+    }
+
+    /**
+     * Check if attribute is set
+     */
+    public function hasAttribute(string $key): bool
+    {
+        return isset($this->attributes[$key]);
+    }
+
+    /**
+     * Set an attribute
+     */
+    public function setAttribute(string $key, string $value)
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    /**
+     * Get attribute
+     *
+     * @throws \RuntimeException if attribute is not set
+     */
+    public function getAttribute(string $key): string
+    {
+        if (!$this->hasAttribute($key)) {
+            throw new \RuntimeException("Unknown attribute $key");
+        }
+
+        return $this->attributes[$key];
+    }
+
+    /**
+     * Get all loaded attributes
+     */
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 }

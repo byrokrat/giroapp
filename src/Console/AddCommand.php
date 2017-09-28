@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\Builder\DonorBuilder;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,6 +32,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\IdFactory;
 use byrokrat\amount\Currency\SEK;
+use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Event\DonorEvent;
 
@@ -56,23 +56,24 @@ class AddCommand implements CommandInterface
         $wrapper->addOption('account', null, InputOption::VALUE_REQUIRED, 'Payer account number');
         $wrapper->addOption('id', null, InputOption::VALUE_REQUIRED, 'Payer personal number or organisation number');
         $wrapper->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
-        $wrapper->addOption('address1', null, InputOption::VALUE_OPTIONAL, 'Address field 1');
-        $wrapper->addOption('address2', null, InputOption::VALUE_OPTIONAL, 'Address field 2');
-        $wrapper->addOption('postal-code', null, InputOption::VALUE_OPTIONAL, 'Postal code');
-        $wrapper->addOption('postal-city', null, InputOption::VALUE_OPTIONAL, 'Postal city');
-        $wrapper->addOption('co-address', null, InputOption::VALUE_OPTIONAL, 'C/o address');
-        $wrapper->addOption('email', null, InputOption::VALUE_OPTIONAL, 'Contact email address');
-        $wrapper->addOption('phone', null, InputOption::VALUE_OPTIONAL, 'Contact phone number');
-        $wrapper->addOption('amount', null, InputOption::VALUE_OPTIONAL, 'Monthly donation amount');
-        $wrapper->addOption('comment', null, InputOption::VALUE_OPTIONAL, 'Comment');
+        $wrapper->addOption('address1', null, InputOption::VALUE_REQUIRED, 'Address field 1');
+        $wrapper->addOption('address2', null, InputOption::VALUE_REQUIRED, 'Address field 2');
+        $wrapper->addOption('postal-code', null, InputOption::VALUE_REQUIRED, 'Postal code');
+        $wrapper->addOption('postal-city', null, InputOption::VALUE_REQUIRED, 'Postal city');
+        $wrapper->addOption('co-address', null, InputOption::VALUE_REQUIRED, 'C/o address');
+        $wrapper->addOption('email', null, InputOption::VALUE_REQUIRED, 'Contact email address');
+        $wrapper->addOption('phone', null, InputOption::VALUE_REQUIRED, 'Contact phone number');
+        $wrapper->addOption('amount', null, InputOption::VALUE_REQUIRED, 'Monthly donation amount');
+        $wrapper->addOption('comment', null, InputOption::VALUE_REQUIRED, 'Comment');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
         $donorBuilder = $container->get('byrokrat\giroapp\Builder\DonorBuilder');
-        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
         $accountFactory = $container->get('byrokrat\banking\AccountFactory');
         $idFactory = $container->get('byrokrat\id\IdFactory');
+
+        $donorBuilder->setMandateSource(Donor::MANDATE_SOURCE_PAPER);
 
         $this->setPayerNumber(
             $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output),
@@ -120,10 +121,6 @@ class AddCommand implements CommandInterface
         );
 
         $donor = $donorBuilder->buildDonor();
-        if ($donorMapper->hasKey($donor->getMandateKey())) {
-            throw new \RunTimeException('A donor with this ID number and bank account already exists');
-        }
-        $donorMapper->save($donor);
 
         $container->get('event_dispatcher')->dispatch(
             Events::MANDATE_ADDED_EVENT,

@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * This file is part of byrokrat\giroapp.
@@ -19,26 +18,13 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Exception;
 
-namespace byrokrat\giroapp\Console;
+use byrokrat\giroapp\Exception as AppException;
 
-require __DIR__.'/../vendor/autoload.php';
-
-use Symfony\Component\Console\Application;
-
-$version = trim(file_get_contents(__DIR__.'/../version'));
-
-$app = new Application('GiroApp', $version);
-
-$app->add(new CommandWrapper(new AddCommand));
-$app->add(new CommandWrapper(new DropCommand));
-$app->add(new CommandWrapper(new EditCommand));
-$app->add(new CommandWrapper(new ExportCommand));
-$app->add(new CommandWrapper(new ImportCommand));
-$app->add(new CommandWrapper(new InitCommand));
-$app->add(new CommandWrapper(new LsCommand));
-$app->add(new CommandWrapper(new RevokeCommand));
-$app->add(new CommandWrapper(new ShowCommand));
-
-$app->run();
+/**
+ * Exception thrown when an xml mandate migration map contains an invalid value
+ */
+class InvalidXmlMandateMigrationException extends \RuntimeException implements AppException
+{
+}

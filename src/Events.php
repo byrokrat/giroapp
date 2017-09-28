@@ -36,9 +36,19 @@ interface Events
     const EXECUTION_END_EVENT = 'EXECUTION_END_EVENT';
 
     /**
-     * A bank file imported, expects an ImportEvent
+     * A file imported, expects an FileEvent
      */
     const IMPORT_EVENT = 'IMPORT_EVENT';
+
+    /**
+     * An autogiro file imported, expects an FileEvent
+     */
+    const IMPORT_AUTOGIRO_EVENT = 'IMPORT_AUTOGIRO_EVENT';
+
+    /**
+     * An XML file imported, expects an XmlEvent
+     */
+    const IMPORT_XML_EVENT = 'IMPORT_XML_EVENT';
 
     /**
      * A mandate response received from bank, expects a NodeEvent
@@ -64,6 +74,11 @@ interface Events
      * A mandate has been revoked, expects a DonorEvent
      */
     const MANDATE_REVOKED_EVENT = 'MANDATE_REVOKED_EVENT';
+
+    /**
+     * A mandate has been dropped, expects a DonorEvent
+     */
+    const MANDATE_DROPPED_EVENT = 'MANDATE_DROPPED_EVENT';
 
     /**
      * A mandate is invalid and could not be approved, expects a DonorEvent

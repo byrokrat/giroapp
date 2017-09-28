@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 /**
  * This file is part of byrokrat\giroapp.
@@ -21,24 +20,28 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console;
+namespace byrokrat\giroapp\Event;
 
-require __DIR__.'/../vendor/autoload.php';
+use byrokrat\giroapp\Xml\XmlObject;
 
-use Symfony\Component\Console\Application;
+/**
+ * Dispatched when an xml file is imported
+ */
+class XmlEvent extends FileEvent
+{
+    /**
+     * @var XmlObject
+     */
+    private $xml;
 
-$version = trim(file_get_contents(__DIR__.'/../version'));
+    public function __construct(string $filename, XmlObject $xml)
+    {
+        parent::__construct($filename, $xml->asXml());
+        $this->xml = $xml;
+    }
 
-$app = new Application('GiroApp', $version);
-
-$app->add(new CommandWrapper(new AddCommand));
-$app->add(new CommandWrapper(new DropCommand));
-$app->add(new CommandWrapper(new EditCommand));
-$app->add(new CommandWrapper(new ExportCommand));
-$app->add(new CommandWrapper(new ImportCommand));
-$app->add(new CommandWrapper(new InitCommand));
-$app->add(new CommandWrapper(new LsCommand));
-$app->add(new CommandWrapper(new RevokeCommand));
-$app->add(new CommandWrapper(new ShowCommand));
-
-$app->run();
+    public function getXmlObject(): XmlObject
+    {
+        return $this->xml;
+    }
+}

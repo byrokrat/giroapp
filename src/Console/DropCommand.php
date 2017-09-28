@@ -23,36 +23,49 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\Event\DonorEvent;
 
 /**
- * Command to import a file from autogirot
+ * Command to drop a mandate (remove from database)
  */
-class ImportCommand implements CommandInterface
+class DropCommand implements CommandInterface
 {
+    use Traits\DonorArgumentTrait;
+
     public function configure(CommandWrapper $wrapper)
     {
-        $wrapper->setName('import');
-        $wrapper->setDescription('Import a file from autogirot');
-        $wrapper->setHelp('Import a file with data from autogirot');
-        $wrapper->addArgument('filename', InputArgument::REQUIRED, 'The name of the file to import');
+        $wrapper->setName('drop');
+        $wrapper->setDescription('Drop a donor mandate');
+        $wrapper->setHelp('Remove a mandate completely from the database');
+        $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force drop');
+        $this->configureDonorArgument($wrapper);
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        if (!is_readable($input->getArgument('filename')) || !is_file($input->getArgument('filename'))) {
-            throw new \RuntimeException("Unable to read file {$input->getArgument('filename')}");
+        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
+
+        $donor = $this->getDonorUsingArgument($input, $donorMapper);
+
+        if ($donor->getState()->getId() != States::INACTIVE && !$input->getOption('force')) {
+            throw new \RuntimeException('Unable to drop mandate that is not inactive. Use -f to override.');
         }
 
+        $donorMapper->delete($donor);
+
         $container->get('event_dispatcher')->dispatch(
-            Events::IMPORT_EVENT,
-            new FileEvent(
-                $input->getArgument('filename'),
-                file_get_contents($input->getArgument('filename'))
+            Events::MANDATE_DROPPED_EVENT,
+            new DonorEvent(
+                sprintf(
+                    'Dropped mandate <info>%s</info>',
+                    $donor->getMandateKey()
+                ),
+                $donor
             )
         );
     }

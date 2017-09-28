@@ -42,9 +42,12 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\builder\\mandatekeybuilder' => 'byrokrat\\giroapp\\Builder\\MandateKeyBuilder',
             'byrokrat\\giroapp\\di\\pluginloader' => 'byrokrat\\giroapp\\DI\\PluginLoader',
             'byrokrat\\giroapp\\listener\\committinglistener' => 'byrokrat\\giroapp\\Listener\\CommittingListener',
-            'byrokrat\\giroapp\\listener\\importlistener' => 'byrokrat\\giroapp\\Listener\\ImportListener',
+            'byrokrat\\giroapp\\listener\\importingautogirolistener' => 'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener',
+            'byrokrat\\giroapp\\listener\\importinglistener' => 'byrokrat\\giroapp\\Listener\\ImportingListener',
+            'byrokrat\\giroapp\\listener\\importingxmllistener' => 'byrokrat\\giroapp\\Listener\\ImportingXmlListener',
             'byrokrat\\giroapp\\listener\\invalidnodefilteringlistener' => 'byrokrat\\giroapp\\Listener\\InvalidNodeFilteringListener',
             'byrokrat\\giroapp\\listener\\logginglistener' => 'byrokrat\\giroapp\\Listener\\LoggingListener',
+            'byrokrat\\giroapp\\listener\\mandatepersistinglistener' => 'byrokrat\\giroapp\\Listener\\MandatePersistingListener',
             'byrokrat\\giroapp\\listener\\mandateresponselistener' => 'byrokrat\\giroapp\\Listener\\MandateResponseListener',
             'byrokrat\\giroapp\\listener\\outputtinglistener' => 'byrokrat\\giroapp\\Listener\\OutputtingListener',
             'byrokrat\\giroapp\\mapper\\donormapper' => 'byrokrat\\giroapp\\Mapper\\DonorMapper',
@@ -62,7 +65,11 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\state\\revocationsentstate' => 'byrokrat\\giroapp\\State\\RevocationSentState',
             'byrokrat\\giroapp\\state\\revokemandatestate' => 'byrokrat\\giroapp\\State\\RevokeMandateState',
             'byrokrat\\giroapp\\state\\statefactory' => 'byrokrat\\giroapp\\State\\StateFactory',
+            'byrokrat\\giroapp\\xml\\customdatatranslator' => 'byrokrat\\giroapp\\Xml\\CustomdataTranslator',
+            'byrokrat\\giroapp\\xml\\xmlmandatemigrationinterface' => 'byrokrat\\giroapp\\Xml\\XmlMandateMigrationInterface',
+            'byrokrat\\giroapp\\xml\\xmlmandateparser' => 'byrokrat\\giroapp\\Xml\\XmlMandateParser',
             'byrokrat\\id\\idfactory' => 'byrokrat\\id\\IdFactory',
+            'byrokrat\\id\\organizationidfactory' => 'byrokrat\\id\\OrganizationIdFactory',
         );
         $this->methodMap = array(
             'byrokrat\\autogiro\\Parser\\Parser' => 'getByrokrat_Autogiro_Parser_ParserService',
@@ -75,9 +82,12 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Builder\\MandateKeyBuilder' => 'getByrokrat_Giroapp_Builder_MandateKeyBuilderService',
             'byrokrat\\giroapp\\DI\\PluginLoader' => 'getByrokrat_Giroapp_DI_PluginLoaderService',
             'byrokrat\\giroapp\\Listener\\CommittingListener' => 'getByrokrat_Giroapp_Listener_CommittingListenerService',
-            'byrokrat\\giroapp\\Listener\\ImportListener' => 'getByrokrat_Giroapp_Listener_ImportListenerService',
+            'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener' => 'getByrokrat_Giroapp_Listener_ImportingAutogiroListenerService',
+            'byrokrat\\giroapp\\Listener\\ImportingListener' => 'getByrokrat_Giroapp_Listener_ImportingListenerService',
+            'byrokrat\\giroapp\\Listener\\ImportingXmlListener' => 'getByrokrat_Giroapp_Listener_ImportingXmlListenerService',
             'byrokrat\\giroapp\\Listener\\InvalidNodeFilteringListener' => 'getByrokrat_Giroapp_Listener_InvalidNodeFilteringListenerService',
             'byrokrat\\giroapp\\Listener\\LoggingListener' => 'getByrokrat_Giroapp_Listener_LoggingListenerService',
+            'byrokrat\\giroapp\\Listener\\MandatePersistingListener' => 'getByrokrat_Giroapp_Listener_MandatePersistingListenerService',
             'byrokrat\\giroapp\\Listener\\MandateResponseListener' => 'getByrokrat_Giroapp_Listener_MandateResponseListenerService',
             'byrokrat\\giroapp\\Listener\\OutputtingListener' => 'getByrokrat_Giroapp_Listener_OutputtingListenerService',
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => 'getByrokrat_Giroapp_Mapper_DonorMapperService',
@@ -95,7 +105,11 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\State\\RevocationSentState' => 'getByrokrat_Giroapp_State_RevocationSentStateService',
             'byrokrat\\giroapp\\State\\RevokeMandateState' => 'getByrokrat_Giroapp_State_RevokeMandateStateService',
             'byrokrat\\giroapp\\State\\StateFactory' => 'getByrokrat_Giroapp_State_StateFactoryService',
+            'byrokrat\\giroapp\\Xml\\CustomdataTranslator' => 'getByrokrat_Giroapp_Xml_CustomdataTranslatorService',
+            'byrokrat\\giroapp\\Xml\\XmlMandateMigrationInterface' => 'getByrokrat_Giroapp_Xml_XmlMandateMigrationInterfaceService',
+            'byrokrat\\giroapp\\Xml\\XmlMandateParser' => 'getByrokrat_Giroapp_Xml_XmlMandateParserService',
             'byrokrat\\id\\IdFactory' => 'getByrokrat_Id_IdFactoryService',
+            'byrokrat\\id\\OrganizationIdFactory' => 'getByrokrat_Id_OrganizationIdFactoryService',
             'db' => 'getDbService',
             'db_donor_collection' => 'getDbDonorCollectionService',
             'db_donor_engine' => 'getDbDonorEngineService',
@@ -107,6 +121,8 @@ class ProjectServiceContainer extends Container
             'db_transaction_engine' => 'getDbTransactionEngineService',
             'event_dispatcher' => 'getEventDispatcherService',
             'filesystem' => 'getFilesystemService',
+            'organization_bg' => 'getOrganizationBgService',
+            'organization_id' => 'getOrganizationIdService',
         );
         $this->privates = array(
             'filesystem' => true,
@@ -242,13 +258,33 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the public 'byrokrat\giroapp\Listener\ImportListener' shared autowired service.
+     * Gets the public 'byrokrat\giroapp\Listener\ImportingAutogiroListener' shared autowired service.
      *
-     * @return \byrokrat\giroapp\Listener\ImportListener
+     * @return \byrokrat\giroapp\Listener\ImportingAutogiroListener
      */
-    protected function getByrokrat_Giroapp_Listener_ImportListenerService()
+    protected function getByrokrat_Giroapp_Listener_ImportingAutogiroListenerService()
     {
-        return $this->services['byrokrat\giroapp\Listener\ImportListener'] = new \byrokrat\giroapp\Listener\ImportListener(${($_ = isset($this->services['byrokrat\autogiro\Parser\Parser']) ? $this->services['byrokrat\autogiro\Parser\Parser'] : $this->get('byrokrat\autogiro\Parser\Parser')) && false ?: '_'});
+        return $this->services['byrokrat\giroapp\Listener\ImportingAutogiroListener'] = new \byrokrat\giroapp\Listener\ImportingAutogiroListener(${($_ = isset($this->services['byrokrat\autogiro\Parser\Parser']) ? $this->services['byrokrat\autogiro\Parser\Parser'] : $this->get('byrokrat\autogiro\Parser\Parser')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Listener\ImportingListener' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Listener\ImportingListener
+     */
+    protected function getByrokrat_Giroapp_Listener_ImportingListenerService()
+    {
+        return $this->services['byrokrat\giroapp\Listener\ImportingListener'] = new \byrokrat\giroapp\Listener\ImportingListener();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Listener\ImportingXmlListener' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Listener\ImportingXmlListener
+     */
+    protected function getByrokrat_Giroapp_Listener_ImportingXmlListenerService()
+    {
+        return $this->services['byrokrat\giroapp\Listener\ImportingXmlListener'] = new \byrokrat\giroapp\Listener\ImportingXmlListener(${($_ = isset($this->services['byrokrat\giroapp\Xml\XmlMandateParser']) ? $this->services['byrokrat\giroapp\Xml\XmlMandateParser'] : $this->get('byrokrat\giroapp\Xml\XmlMandateParser')) && false ?: '_'});
     }
 
     /**
@@ -269,6 +305,16 @@ class ProjectServiceContainer extends Container
     protected function getByrokrat_Giroapp_Listener_LoggingListenerService()
     {
         return $this->services['byrokrat\giroapp\Listener\LoggingListener'] = new \byrokrat\giroapp\Listener\LoggingListener(${($_ = isset($this->services['db_log_collection']) ? $this->services['db_log_collection'] : $this->get('db_log_collection')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Listener\MandatePersistingListener' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Listener\MandatePersistingListener
+     */
+    protected function getByrokrat_Giroapp_Listener_MandatePersistingListenerService()
+    {
+        return $this->services['byrokrat\giroapp\Listener\MandatePersistingListener'] = new \byrokrat\giroapp\Listener\MandatePersistingListener(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->get('byrokrat\giroapp\Mapper\DonorMapper')) && false ?: '_'});
     }
 
     /**
@@ -442,13 +488,53 @@ class ProjectServiceContainer extends Container
     }
 
     /**
+     * Gets the public 'byrokrat\giroapp\Xml\CustomdataTranslator' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Xml\CustomdataTranslator
+     */
+    protected function getByrokrat_Giroapp_Xml_CustomdataTranslatorService()
+    {
+        return $this->services['byrokrat\giroapp\Xml\CustomdataTranslator'] = new \byrokrat\giroapp\Xml\CustomdataTranslator(${($_ = isset($this->services['byrokrat\giroapp\Xml\XmlMandateMigrationInterface']) ? $this->services['byrokrat\giroapp\Xml\XmlMandateMigrationInterface'] : $this->get('byrokrat\giroapp\Xml\XmlMandateMigrationInterface')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Xml\XmlMandateMigrationInterface' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Xml\NullXmlMandateMigration
+     */
+    protected function getByrokrat_Giroapp_Xml_XmlMandateMigrationInterfaceService()
+    {
+        return $this->services['byrokrat\giroapp\Xml\XmlMandateMigrationInterface'] = new \byrokrat\giroapp\Xml\NullXmlMandateMigration();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Xml\XmlMandateParser' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Xml\XmlMandateParser
+     */
+    protected function getByrokrat_Giroapp_Xml_XmlMandateParserService()
+    {
+        return $this->services['byrokrat\giroapp\Xml\XmlMandateParser'] = new \byrokrat\giroapp\Xml\XmlMandateParser(${($_ = isset($this->services['organization_id']) ? $this->services['organization_id'] : $this->get('organization_id')) && false ?: '_'}, ${($_ = isset($this->services['organization_bg']) ? $this->services['organization_bg'] : $this->get('organization_bg')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Builder\DonorBuilder']) ? $this->services['byrokrat\giroapp\Builder\DonorBuilder'] : $this->get('byrokrat\giroapp\Builder\DonorBuilder')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Xml\CustomdataTranslator']) ? $this->services['byrokrat\giroapp\Xml\CustomdataTranslator'] : $this->get('byrokrat\giroapp\Xml\CustomdataTranslator')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->get('byrokrat\banking\AccountFactory')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->get('byrokrat\id\IdFactory')) && false ?: '_'});
+    }
+
+    /**
      * Gets the public 'byrokrat\id\IdFactory' shared service.
      *
      * @return \byrokrat\id\PersonalIdFactory
      */
     protected function getByrokrat_Id_IdFactoryService()
     {
-        return $this->services['byrokrat\id\IdFactory'] = new \byrokrat\id\PersonalIdFactory();
+        return $this->services['byrokrat\id\IdFactory'] = new \byrokrat\id\PersonalIdFactory(${($_ = isset($this->services['byrokrat\id\OrganizationIdFactory']) ? $this->services['byrokrat\id\OrganizationIdFactory'] : $this->get('byrokrat\id\OrganizationIdFactory')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\id\OrganizationIdFactory' shared service.
+     *
+     * @return \byrokrat\id\OrganizationIdFactory
+     */
+    protected function getByrokrat_Id_OrganizationIdFactoryService()
+    {
+        return $this->services['byrokrat\id\OrganizationIdFactory'] = new \byrokrat\id\OrganizationIdFactory();
     }
 
     /**
@@ -572,8 +658,14 @@ class ProjectServiceContainer extends Container
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\OutputtingListener']) ? $this->services['byrokrat\giroapp\Listener\OutputtingListener'] : $this->get('byrokrat\giroapp\Listener\OutputtingListener')) && false ?: '_'};
         }, 1 => 'onDEBUGEVENT'), -10);
         $instance->addListener('IMPORT_EVENT', array(0 => function () {
-            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ImportListener']) ? $this->services['byrokrat\giroapp\Listener\ImportListener'] : $this->get('byrokrat\giroapp\Listener\ImportListener')) && false ?: '_'};
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ImportingListener']) ? $this->services['byrokrat\giroapp\Listener\ImportingListener'] : $this->get('byrokrat\giroapp\Listener\ImportingListener')) && false ?: '_'};
         }, 1 => 'onIMPORTEVENT'), 9);
+        $instance->addListener('IMPORT_AUTOGIRO_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ImportingAutogiroListener']) ? $this->services['byrokrat\giroapp\Listener\ImportingAutogiroListener'] : $this->get('byrokrat\giroapp\Listener\ImportingAutogiroListener')) && false ?: '_'};
+        }, 1 => 'onIMPORTAUTOGIROEVENT'), 9);
+        $instance->addListener('IMPORT_XML_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ImportingXmlListener']) ? $this->services['byrokrat\giroapp\Listener\ImportingXmlListener'] : $this->get('byrokrat\giroapp\Listener\ImportingXmlListener')) && false ?: '_'};
+        }, 1 => 'onIMPORTXMLEVENT'), 9);
         $instance->addListener('MANDATE_RESPONSE_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\InvalidNodeFilteringListener']) ? $this->services['byrokrat\giroapp\Listener\InvalidNodeFilteringListener'] : $this->get('byrokrat\giroapp\Listener\InvalidNodeFilteringListener')) && false ?: '_'};
         }, 1 => 'onMANDATERESPONSEEVENT'), 10);
@@ -583,6 +675,9 @@ class ProjectServiceContainer extends Container
         $instance->addListener('MANDATE_RESPONSE_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\MandateResponseListener']) ? $this->services['byrokrat\giroapp\Listener\MandateResponseListener'] : $this->get('byrokrat\giroapp\Listener\MandateResponseListener')) && false ?: '_'};
         }, 1 => 'onMANDATERESPONSEEVENT'), 1);
+        $instance->addListener('MANDATE_ADDED_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\MandatePersistingListener']) ? $this->services['byrokrat\giroapp\Listener\MandatePersistingListener'] : $this->get('byrokrat\giroapp\Listener\MandatePersistingListener')) && false ?: '_'};
+        }, 1 => 'onMANDATEADDEDEVENT'), 10);
         $instance->addListener('IMPORT_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\ApplicationMonitor']) ? $this->services['byrokrat\giroapp\ApplicationMonitor'] : $this->get('byrokrat\giroapp\ApplicationMonitor')) && false ?: '_'};
         }, 1 => 'dispatchInfo'), 10);
@@ -598,12 +693,35 @@ class ProjectServiceContainer extends Container
         $instance->addListener('MANDATE_REVOKED_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\ApplicationMonitor']) ? $this->services['byrokrat\giroapp\ApplicationMonitor'] : $this->get('byrokrat\giroapp\ApplicationMonitor')) && false ?: '_'};
         }, 1 => 'dispatchInfo'), 10);
+        $instance->addListener('MANDATE_DROPPED_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\ApplicationMonitor']) ? $this->services['byrokrat\giroapp\ApplicationMonitor'] : $this->get('byrokrat\giroapp\ApplicationMonitor')) && false ?: '_'};
+        }, 1 => 'dispatchInfo'), 10);
         $instance->addListener('MANDATE_INVALID_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\ApplicationMonitor']) ? $this->services['byrokrat\giroapp\ApplicationMonitor'] : $this->get('byrokrat\giroapp\ApplicationMonitor')) && false ?: '_'};
         }, 1 => 'dispatchWarning'), 10);
         ${($_ = isset($this->services['byrokrat\giroapp\DI\PluginLoader']) ? $this->services['byrokrat\giroapp\DI\PluginLoader'] : $this->get('byrokrat\giroapp\DI\PluginLoader')) && false ?: '_'}->loadPlugins($instance);
 
         return $instance;
+    }
+
+    /**
+     * Gets the public 'organization_bg' shared autowired service.
+     *
+     * @return \byrokrat\banking\AccountNumber
+     */
+    protected function getOrganizationBgService()
+    {
+        return $this->services['organization_bg'] = ${($_ = isset($this->services['byrokrat\banking\BankgiroFactory']) ? $this->services['byrokrat\banking\BankgiroFactory'] : $this->get('byrokrat\banking\BankgiroFactory')) && false ?: '_'}->createAccount(${($_ = isset($this->services['byrokrat\giroapp\Mapper\SettingsMapper']) ? $this->services['byrokrat\giroapp\Mapper\SettingsMapper'] : $this->get('byrokrat\giroapp\Mapper\SettingsMapper')) && false ?: '_'}->findByKey("bankgiro"));
+    }
+
+    /**
+     * Gets the public 'organization_id' shared autowired service.
+     *
+     * @return \byrokrat\id\Id
+     */
+    protected function getOrganizationIdService()
+    {
+        return $this->services['organization_id'] = ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->get('byrokrat\id\IdFactory')) && false ?: '_'}->create(${($_ = isset($this->services['byrokrat\giroapp\Mapper\SettingsMapper']) ? $this->services['byrokrat\giroapp\Mapper\SettingsMapper'] : $this->get('byrokrat\giroapp\Mapper\SettingsMapper')) && false ?: '_'}->findByKey("org_number"));
     }
 
     /**

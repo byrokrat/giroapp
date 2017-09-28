@@ -43,10 +43,20 @@ services:
             - { name: event_listener, event: INFO_EVENT, priority: -10 }
             - { name: event_listener, event: DEBUG_EVENT, priority: -10 }
 
-    byrokrat\giroapp\Listener\ImportListener:
+    byrokrat\giroapp\Listener\ImportingListener:
         class: ~
         tags:
             - { name: event_listener, event: IMPORT_EVENT, priority: 9 }
+
+    byrokrat\giroapp\Listener\ImportingAutogiroListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: IMPORT_AUTOGIRO_EVENT, priority: 9 }
+
+    byrokrat\giroapp\Listener\ImportingXmlListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: IMPORT_XML_EVENT, priority: 9 }
 
     byrokrat\giroapp\Listener\InvalidNodeFilteringListener:
         class: ~
@@ -63,6 +73,11 @@ services:
         class: ~
         tags:
             - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 1 }
+
+    byrokrat\giroapp\Listener\MandatePersistingListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: MANDATE_ADDED_EVENT, priority: 10 }
 
     byrokrat\giroapp\Builder\:
         resource: '../src/Builder/*'
@@ -82,3 +97,27 @@ services:
     byrokrat\id\IdFactory:
         class: byrokrat\id\PersonalIdFactory
         autowire: false
+        arguments: ['@byrokrat\id\OrganizationIdFactory']
+
+    byrokrat\id\OrganizationIdFactory:
+        class: ~
+        autowire: false
+
+    byrokrat\giroapp\Xml\XmlMandateParser:
+        class: ~
+        arguments: ['@organization_id', '@organization_bg']
+
+    byrokrat\giroapp\Xml\CustomdataTranslator: ~
+
+    byrokrat\giroapp\Xml\XmlMandateMigrationInterface:
+        class: byrokrat\giroapp\Xml\NullXmlMandateMigration
+
+    organization_id:
+        class: byrokrat\id\Id
+        factory: 'byrokrat\id\IdFactory:create'
+        arguments: ["@=service('byrokrat\\\\giroapp\\\\Mapper\\\\SettingsMapper').findByKey('org_number')"]
+
+    organization_bg:
+        class: byrokrat\banking\AccountNumber
+        factory: 'byrokrat\banking\BankgiroFactory:createAccount'
+        arguments: ["@=service('byrokrat\\\\giroapp\\\\Mapper\\\\SettingsMapper').findByKey('bankgiro')"]

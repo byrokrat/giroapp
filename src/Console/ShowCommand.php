@@ -52,7 +52,8 @@ class ShowCommand implements CommandInterface
         'email'          => 'email',
         'phone'          => 'phone',
         'amount'         => 'donationAmount',
-        'comment'        => 'comment'
+        'comment'        => 'comment',
+        'attributes'     => 'attributes'
     ];
 
     public function configure(CommandWrapper $wrapper)
@@ -75,6 +76,7 @@ class ShowCommand implements CommandInterface
         $wrapper->addOption('phone', null, InputOption::VALUE_NONE, 'Show phone number');
         $wrapper->addOption('amount', null, InputOption::VALUE_NONE, 'Show monthly donation amount');
         $wrapper->addOption('comment', null, InputOption::VALUE_NONE, 'Show comment');
+        $wrapper->addOption('attributes', null, InputOption::VALUE_NONE, 'Show attributes');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)

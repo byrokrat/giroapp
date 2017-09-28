@@ -20,46 +20,15 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\Xml;
 
 /**
- * Dispatched when a file is imported
+ * An empty (null object) mandate migration map
  */
-class ImportEvent extends LogEvent
+class NullXmlMandateMigration implements XmlMandateMigrationInterface
 {
-    /**
-     * @var string
-     */
-    private $filename;
-
-    /**
-     * @var string
-     */
-    private $contents;
-
-    /**
-     * Load content to import
-     */
-    public function __construct(string $filename, string $contents)
+    public function getXmlMigrationMap(string $formId): array
     {
-        parent::__construct("Importing file <info>$filename</info>", ['filename' => 'filename']);
-        $this->filename = $filename;
-        $this->contents = $contents;
-    }
-
-    /**
-     * Get name of file to import
-     */
-    public function getFilename(): string
-    {
-        return $this->filename;
-    }
-
-    /**
-     * Get content to import
-     */
-    public function getContents(): string
-    {
-        return $this->contents;
+        return [];
     }
 }

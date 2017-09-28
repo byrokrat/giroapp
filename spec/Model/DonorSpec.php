@@ -22,6 +22,8 @@ class DonorSpec extends ObjectBehavior
     const EMAIL = 'email';
     const PHONE = 'phone';
     const COMMENT = 'comment';
+    const ATTR_KEY = 'ATTR_KEY';
+    const ATTR_VALUE = 'ATTR_VALUE';
 
     function let(
         StateInterface $state,
@@ -42,7 +44,8 @@ class DonorSpec extends ObjectBehavior
             self::EMAIL,
             self::PHONE,
             $donationAmount,
-            self::COMMENT
+            self::COMMENT,
+            [self::ATTR_KEY => self::ATTR_VALUE]
         );
     }
 
@@ -171,5 +174,37 @@ class DonorSpec extends ObjectBehavior
     {
         $this->exportToAutogiro($writer);
         $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
+    }
+
+    function it_contains_attributes()
+    {
+        $this->getAttribute(self::ATTR_KEY)->shouldReturn(self::ATTR_VALUE);
+    }
+
+    function it_can_check_for_attribute()
+    {
+        $this->hasAttribute('foobar')->shouldReturn(false);
+    }
+
+    function it_recognizes_loaded_attributes()
+    {
+        $this->setAttribute('foobar', 'baz');
+        $this->hasAttribute('foobar')->shouldReturn(true);
+    }
+
+    function it_can_read_attributes()
+    {
+        $this->setAttribute('foobar', 'baz');
+        $this->getAttribute('foobar')->shouldReturn('baz');
+    }
+
+    function it_throws_exception_if_attribute_does_not_exist()
+    {
+        $this->shouldThrow(\RuntimeException::CLASS)->duringGetAttribute('foobar');
+    }
+
+    function it_can_show_all_attributes()
+    {
+        $this->getAttributes()->shouldReturn([self::ATTR_KEY => self::ATTR_VALUE]);
     }
 }

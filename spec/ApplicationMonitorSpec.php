@@ -49,6 +49,11 @@ class ApplicationMonitorSpec extends ObjectBehavior
         $this->getSubscribedEvents()->shouldHaveKeyWithValue(Events::MANDATE_REVOKED_EVENT, ['dispatchInfo', 10]);
     }
 
+    function it_listens_to_dropped_mandate_events()
+    {
+        $this->getSubscribedEvents()->shouldHaveKeyWithValue(Events::MANDATE_DROPPED_EVENT, ['dispatchInfo', 10]);
+    }
+
     function it_listens_to_invalid_mandate_events()
     {
         $this->getSubscribedEvents()->shouldHaveKeyWithValue(Events::MANDATE_INVALID_EVENT, ['dispatchWarning', 10]);

@@ -24,7 +24,7 @@ Feature: Importing files
         73005805620100000000000123455000000001111116198203232775     043220170817
         092017081799000000000
         """
-    And the database contains donor "12345" with "state" matching "MANDATE_APPROVED"
+    Then the database contains donor "12345" with "state" matching "MANDATE_APPROVED"
 
   Scenario: I import an autogiro file rejecting a mandate register request
     Given there are donors:
@@ -36,7 +36,7 @@ Feature: Importing files
         73005805620100000000000123455000000001111116198203232775     042320170817
         092017081799000000000
         """
-    And the database contains donor "12345" with "state" matching "ERROR"
+    Then the database contains donor "12345" with "state" matching "ERROR"
 
   Scenario: I import an autogiro file revoking a mandate
     Given there are donors:
@@ -48,4 +48,4 @@ Feature: Importing files
         73005805620100000000000123455000000001111116198203232775     033320170817
         092017081799000000000
         """
-    And the database contains donor "12345" with "state" matching "INACTIVE"
+    Then the database contains donor "12345" with "state" matching "INACTIVE"

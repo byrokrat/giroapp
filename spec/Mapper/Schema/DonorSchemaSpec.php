@@ -22,23 +22,39 @@ use Prophecy\Argument;
 
 class DonorSchemaSpec extends ObjectBehavior
 {
+    const MANDATE_KEY = 'mandate-key';
+    const MANDATE_SOURCE = 'mandate-source';
+    const PAYER_NUMBER = 'payer-number';
+    const STATE = 'state';
+    const NAME = 'name';
+    const ACCOUNT = 'account';
+    const ID = 'id';
+    const ADDRESS = 'address';
+    const EMAIL = 'email';
+    const PHONE = 'phone';
+    const AMOUNT = '100';
+    const COMMENT = 'comment';
+    const ATTR_KEY = 'ATTR_KEY';
+    const ATTR_VALUE = 'ATTR_VALUE';
+
     /**
      * @var array A schema formatted document to test against
      */
     private $schemaDocument = [
         'type' => DonorSchema::TYPE_VERSION,
-        'mandateKey' => 'mandate-key',
-        'state' => 'state',
-        'mandateSource' => 'mandate-source',
-        'payerNumber' => 'payer-number',
-        'account' => 'account',
-        'donorId' => 'id',
-        'name' => 'name',
-        'address' => ['foobar'],
-        'email' => 'email',
-        'phone' => 'phone',
-        'donationAmount' => '1',
-        'comment' => 'comment'
+        'mandateKey' => self::MANDATE_KEY,
+        'mandateSource' => self::MANDATE_SOURCE,
+        'payerNumber' => self::PAYER_NUMBER,
+        'state' => self::STATE,
+        'name' => self::NAME,
+        'account' => self::ACCOUNT,
+        'donorId' => self::ID,
+        'address' => [self::ADDRESS],
+        'email' => self::EMAIL,
+        'phone' => self::PHONE,
+        'donationAmount' => self::AMOUNT,
+        'comment' => self::COMMENT,
+        'attributes' => [self::ATTR_KEY => self::ATTR_VALUE]
     ];
 
     function let(
@@ -70,25 +86,26 @@ class DonorSchemaSpec extends ObjectBehavior
         PersonalId $id,
         PostalAddress $address
     ) {
-        $postalAddressSchema->fromArray(['foobar'])->willReturn($address);
-        $stateFactory->createState('state')->willReturn($state);
-        $accountFactory->createAccount('account')->willReturn($account);
-        $idFactory->create('id')->willReturn($id);
+        $postalAddressSchema->fromArray([self::ADDRESS])->willReturn($address);
+        $stateFactory->createState(self::STATE)->willReturn($state);
+        $accountFactory->createAccount(self::ACCOUNT)->willReturn($account);
+        $idFactory->create(self::ID)->willReturn($id);
 
         $this->fromArray($this->schemaDocument)->shouldBeLike(
             new Donor(
-                'mandate-key',
+                self::MANDATE_KEY,
                 $state->getWrappedObject(),
-                'mandate-source',
-                'payer-number',
+                self::MANDATE_SOURCE,
+                self::PAYER_NUMBER,
                 $account->getWrappedObject(),
                 $id->getWrappedObject(),
-                'name',
+                self::NAME,
                 $address->getWrappedObject(),
-                'email',
-                'phone',
-                new SEK('1'),
-                'comment'
+                self::EMAIL,
+                self::PHONE,
+                new SEK(self::AMOUNT),
+                self::COMMENT,
+                [self::ATTR_KEY => self::ATTR_VALUE]
             )
         );
     }
@@ -101,25 +118,26 @@ class DonorSchemaSpec extends ObjectBehavior
         StateInterface $state,
         SEK $amount
     ) {
-        $postalAddressSchema->toArray($address)->willReturn(['foobar']);
-        $state->getId()->willReturn('state');
-        $account->getNumber()->willReturn('account');
-        $id->format('S-sk')->willReturn('id');
-        $amount->getAmount()->willReturn('1');
+        $postalAddressSchema->toArray($address)->willReturn([self::ADDRESS]);
+        $state->getId()->willReturn(self::STATE);
+        $account->getNumber()->willReturn(self::ACCOUNT);
+        $id->format('S-sk')->willReturn(self::ID);
+        $amount->getAmount()->willReturn(self::AMOUNT);
 
         $donor = new Donor(
-            'mandate-key',
+            self::MANDATE_KEY,
             $state->getWrappedObject(),
-            'mandate-source',
-            'payer-number',
+            self::MANDATE_SOURCE,
+            self::PAYER_NUMBER,
             $account->getWrappedObject(),
             $id->getWrappedObject(),
-            'name',
+            self::NAME,
             $address->getWrappedObject(),
-            'email',
-            'phone',
+            self::EMAIL,
+            self::PHONE,
             $amount->getWrappedObject(),
-            'comment'
+            self::COMMENT,
+            [self::ATTR_KEY => self::ATTR_VALUE]
         );
 
         $this->toArray($donor)->shouldBeLike($this->schemaDocument);

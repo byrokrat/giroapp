@@ -20,14 +20,15 @@
         }
     },
     "require": {
-        "php": "^7.0",
+        "php": "^7.1",
         "ext-mbstring": "*",
         "ext-bcmath": "*",
+        "ext-simplexml": "*",
         "byrokrat/amount": "^1.0",
         "byrokrat/autogiro": "dev-master",
         "byrokrat/banking": "^1.4",
         "byrokrat/id": "^1.0",
-        "hanneskod/yaysondb": "^2.1",
+        "hanneskod/yaysondb": "^2.1.1",
         "hanneskod/classtools": "^1.1",
         "symfony/dependency-injection": "^3.3",
         "symfony/console": "^3.3",

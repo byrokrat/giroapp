@@ -1,7 +1,15 @@
 # Updating from alpha-1
 
-The `alpha-2` version contains some updates in the database schema that breaks
-backwards compatability.
+The `alpha-2` version contains some important changes.
+
+## Dependencies
+
+Depends on php 7.1
+Depends on the SimpleXML extension.
+
+## Database
+
+Contains some updates in the database schema that breaks backwards compatability.
 
 The sed script `alpha1-to-alpa2.sedscript` can update your `donors.json` to
 the current syntax.

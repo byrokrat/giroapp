@@ -49,6 +49,14 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given an orgnization :name with bankgiro :bg and organization id :id
+     */
+    public function anOrgnizationWithBankgiroAndOrganizationId($name, $bg, $id)
+    {
+        $this->result = $this->app->init("--org-name='$name' --bankgiro='$bg' --org-number='$id'");
+    }
+
+    /**
      * @Given the explicit payer number strategy
      */
     public function theExplicitPayerNumberStrategy()

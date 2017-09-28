@@ -28,15 +28,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Console\Helper\Table;
 
 /**
- * Command to show stats on the current donor database
+ * Command to list donors in database
  */
-class StatusCommand implements CommandInterface
+class LsCommand implements CommandInterface
 {
     public function configure(CommandWrapper $wrapper)
     {
-        $wrapper->setName('status');
-        $wrapper->setDescription('Inspect database status');
-        $wrapper->setHelp('Display statistics for current database status');
+        $wrapper->setName('ls');
+        $wrapper->setDescription('List donors');
+        $wrapper->setHelp('List donors in database');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
@@ -44,27 +44,24 @@ class StatusCommand implements CommandInterface
         $table = new Table($output);
 
         $table->setHeaders([
-            'mandate_key',
+            'mandate-key',
+            'payer-number',
             'name',
-            'payer_number',
-            'account',
-            'amount',
-            'comment',
-            'status'
+            'status',
+            'export'
         ]);
 
         foreach ($container->get('byrokrat\giroapp\Mapper\DonorMapper')->findAll() as $donor) {
             $table->addRow([
                 $donor->getMandateKey(),
-                $donor->getName(),
                 $donor->getPayerNumber(),
-                $donor->getAccount(),
-                $donor->getDonationAmount()->getString(0),
-                $donor->getComment(),
-                $donor->getState()->getDescription()
+                $donor->getName(),
+                $donor->getState()->getId(),
+                $donor->getState()->isExportable() ? 'yes' : 'no'
             ]);
         }
 
+        $table->setStyle('compact');
         $table->render();
     }
 }
