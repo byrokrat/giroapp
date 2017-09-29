@@ -23,7 +23,6 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\ProjectServiceContainer;
-use byrokrat\giroapp\DI\UserDirectoryLocator;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
 use Symfony\Component\Console\Command\Command;
@@ -75,17 +74,6 @@ class CommandWrapper extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $userDir = (new UserDirectoryLocator)->locateUserDirectory(
-            (string)$input->getOption('path'),
-            (string)getenv('GIROAPP_PATH'),
-            (string)getenv('HOME'),
-            $_ENV,
-            $_SERVER
-        );
-
-        // Accessed in ProjectServiceContainer
-        putenv("GIROAPP_PATH=$userDir");
-
         $container = new ProjectServiceContainer;
 
         $container->set('output', $this->discardOutputMessages ? new NullOutput : $output);
@@ -94,7 +82,7 @@ class CommandWrapper extends Command
 
         $dispatcher->dispatch(
             Events::DEBUG_EVENT,
-            new LogEvent("User directory <info>$userDir</info>", ['userDir' => $userDir])
+            new LogEvent("User directory: <info>{$container->getParameter('user.dir')}</info>")
         );
 
         try {

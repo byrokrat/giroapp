@@ -1,4 +1,5 @@
 parameters:
+    env(GIROAPP_PATH): 'giroapp'
     user.dir: '%env(GIROAPP_PATH)%'
     plugins.dir: 'plugins'
 

@@ -28,7 +28,6 @@ class ApplicationWrapper
         mkdir($this->directory);
         $this->userDir = $this->directory . '/giroapp';
         mkdir($this->userDir);
-        putenv("GIROAPP_PATH={$this->userDir}");
         $this->executable = $executable ?: realpath(getcwd() . '/bin/giroapp');
     }
 

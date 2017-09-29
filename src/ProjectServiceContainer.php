@@ -826,6 +826,7 @@ class ProjectServiceContainer extends Container
             'db.donors' => 'data/donors.json',
             'db.transactions' => 'data/transactions.json',
             'db.log' => 'var/log',
+            'env(giroapp_path)' => 'giroapp',
             'plugins.dir' => 'plugins',
         );
     }
