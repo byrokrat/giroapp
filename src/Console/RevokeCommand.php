@@ -27,6 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\State\RevokeMandateState;
 
 /**
@@ -46,7 +47,7 @@ class RevokeCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $donorMapper = $container->get('donor_mapper');
+        $donorMapper = $container->get(DonorMapper::CLASS);
 
         $donor = $this->getDonorUsingArgument($input, $donorMapper);
 

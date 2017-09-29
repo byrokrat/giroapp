@@ -28,14 +28,12 @@ composer create-project byrokrat/giroapp --stability=alpha --no-interaction --no
 ### Changing the user directory path
 
 By default giroapp keeps database and other installation specific files in a
-directory named `.giroapp` in the home directory of the current user. This might
-not be optimal for a number of reasons (something like `/var/lib/giroapp` would
+directory named `giroapp` in current working directory. This might not be
+optimal for a number of reasons (something like `/var/lib/giroapp` would
 for example be better from a security perspective).
 
-Change the user directory path by either:
-
-1. Define a `GIROAPP_PATH` environment variable pointing to desired directory.
-1. Use the `--path` option to set user directory at runtime (overrides).
+Change the user directory path by creating a `GIROAPP_PATH` environment variable
+pointing to the desired directory.
 
 Writing plugins
 ---------------

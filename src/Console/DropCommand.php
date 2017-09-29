@@ -48,7 +48,7 @@ class DropCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $donorMapper = $container->get('donor_mapper');
+        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
 
         $donor = $this->getDonorUsingArgument($input, $donorMapper);
 

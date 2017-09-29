@@ -56,22 +56,22 @@ class AddCommand implements CommandInterface
         $wrapper->addOption('account', null, InputOption::VALUE_REQUIRED, 'Payer account number');
         $wrapper->addOption('id', null, InputOption::VALUE_REQUIRED, 'Payer personal number or organisation number');
         $wrapper->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
-        $wrapper->addOption('address1', null, InputOption::VALUE_OPTIONAL, 'Address field 1');
-        $wrapper->addOption('address2', null, InputOption::VALUE_OPTIONAL, 'Address field 2');
-        $wrapper->addOption('postal-code', null, InputOption::VALUE_OPTIONAL, 'Postal code');
-        $wrapper->addOption('postal-city', null, InputOption::VALUE_OPTIONAL, 'Postal city');
-        $wrapper->addOption('co-address', null, InputOption::VALUE_OPTIONAL, 'C/o address');
-        $wrapper->addOption('email', null, InputOption::VALUE_OPTIONAL, 'Contact email address');
-        $wrapper->addOption('phone', null, InputOption::VALUE_OPTIONAL, 'Contact phone number');
-        $wrapper->addOption('amount', null, InputOption::VALUE_OPTIONAL, 'Monthly donation amount');
-        $wrapper->addOption('comment', null, InputOption::VALUE_OPTIONAL, 'Comment');
+        $wrapper->addOption('address1', null, InputOption::VALUE_REQUIRED, 'Address field 1');
+        $wrapper->addOption('address2', null, InputOption::VALUE_REQUIRED, 'Address field 2');
+        $wrapper->addOption('postal-code', null, InputOption::VALUE_REQUIRED, 'Postal code');
+        $wrapper->addOption('postal-city', null, InputOption::VALUE_REQUIRED, 'Postal city');
+        $wrapper->addOption('co-address', null, InputOption::VALUE_REQUIRED, 'C/o address');
+        $wrapper->addOption('email', null, InputOption::VALUE_REQUIRED, 'Contact email address');
+        $wrapper->addOption('phone', null, InputOption::VALUE_REQUIRED, 'Contact phone number');
+        $wrapper->addOption('amount', null, InputOption::VALUE_REQUIRED, 'Monthly donation amount');
+        $wrapper->addOption('comment', null, InputOption::VALUE_REQUIRED, 'Comment');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $donorBuilder = $container->get('donor_builder');
-        $accountFactory = $container->get('account_factory');
-        $idFactory = $container->get('id_factory');
+        $donorBuilder = $container->get('byrokrat\giroapp\Builder\DonorBuilder');
+        $accountFactory = $container->get('byrokrat\banking\AccountFactory');
+        $idFactory = $container->get('byrokrat\id\IdFactory');
 
         $donorBuilder->setMandateSource(Donor::MANDATE_SOURCE_PAPER);
 

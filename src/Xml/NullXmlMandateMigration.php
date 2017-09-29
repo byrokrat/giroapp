@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Xml;
 /**
  * An empty (null object) mandate migration map
  */
-class NullXmlMandateMigation implements XmlMandateMigrationInterface
+class NullXmlMandateMigration implements XmlMandateMigrationInterface
 {
     public function getXmlMigrationMap(string $formId): array
     {

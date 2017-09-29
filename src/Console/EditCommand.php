@@ -73,11 +73,11 @@ class EditCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $donorBuilder = $container->get('donor_builder');
-        $donorMapper = $container->get('donor_mapper');
-        $accountFactory = $container->get('account_factory');
-        $idFactory = $container->get('id_factory');
-        $mandateKeyBuilder = $container->get('mandate_key_builder');
+        $donorBuilder = $container->get('byrokrat\giroapp\Builder\DonorBuilder');
+        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
+        $accountFactory = $container->get('byrokrat\banking\AccountFactory');
+        $idFactory = $container->get('byrokrat\id\IdFactory');
+        $mandateKeyBuilder = $container->get('byrokrat\giroapp\Builder\MandateKeyBuilder');
 
         $donor = $this->getDonorUsingArgument($input, $donorMapper);
 
@@ -91,7 +91,7 @@ class EditCommand implements CommandInterface
         );
 
         $donor->setState(
-            $container->get('donor_state_factory')->createState(
+            $container->get('byrokrat\giroapp\State\StateFactory')->createState(
                 $this->getProperty('state', 'Donor state', $donor->getState()->getId(), $input, $output)
             )
         );

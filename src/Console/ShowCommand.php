@@ -26,6 +26,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 
 /**
  * Display information on individual donors
@@ -79,8 +81,8 @@ class ShowCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $content = $container->get('donor_schema')->toArray(
-            $this->getDonorUsingArgument($input, $container->get('donor_mapper'))
+        $content = $container->get(DonorSchema::CLASS)->toArray(
+            $this->getDonorUsingArgument($input, $container->get(DonorMapper::CLASS))
         );
 
         $showContent = $content;
