@@ -58,9 +58,9 @@ class AddCommand implements CommandInterface
         $wrapper->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
         $wrapper->addOption('address1', null, InputOption::VALUE_REQUIRED, 'Address field 1');
         $wrapper->addOption('address2', null, InputOption::VALUE_REQUIRED, 'Address field 2');
+        $wrapper->addOption('address3', null, InputOption::VALUE_REQUIRED, 'Address field 3');
         $wrapper->addOption('postal-code', null, InputOption::VALUE_REQUIRED, 'Postal code');
         $wrapper->addOption('postal-city', null, InputOption::VALUE_REQUIRED, 'Postal city');
-        $wrapper->addOption('co-address', null, InputOption::VALUE_REQUIRED, 'C/o address');
         $wrapper->addOption('email', null, InputOption::VALUE_REQUIRED, 'Contact email address');
         $wrapper->addOption('phone', null, InputOption::VALUE_REQUIRED, 'Contact phone number');
         $wrapper->addOption('amount', null, InputOption::VALUE_REQUIRED, 'Monthly donation amount');
@@ -95,11 +95,11 @@ class AddCommand implements CommandInterface
         );
         $this->setPostalAddress(
             [
-                'address1' => $this->getProperty('address1', 'Donor Address line 1', '', $input, $output),
-                'address2' => $this->getProperty('address2', 'Donor Address line 2', '', $input, $output),
-                'postalCode' => $this->getProperty('postal-code', 'Donor Postal code', '', $input, $output),
-                'postalCity' => $this-> getProperty('postal-city', 'Donor Address city', '', $input, $output),
-                'coAddress' => $this->getProperty('co-address', 'C/o Address', '', $input, $output),
+                'address1' => $this->getProperty('address1', 'Donor address line 1', '', $input, $output),
+                'address2' => $this->getProperty('address2', 'Donor address line 2', '', $input, $output),
+                'address3' => $this->getProperty('address3', 'Donor address line 3', '', $input, $output),
+                'postal_code' => $this->getProperty('postal-code', 'Donor postal code', '', $input, $output),
+                'postal_city' => $this-> getProperty('postal-city', 'Donor address city', '', $input, $output),
             ],
             $donorBuilder
         );
@@ -203,15 +203,13 @@ class AddCommand implements CommandInterface
         DonorBuilder $donorBuilder
     ) {
         if ($values) {
-            $newPostalAddress = new PostalAddress(
-                $values['postalCode'],
-                $values['postalCity'],
+            $donorBuilder->setPostalAddress(new PostalAddress(
                 $values['address1'],
                 $values['address2'],
-                $values['coAddress']
-            );
-
-            $donorBuilder->setPostalAddress($newPostalAddress);
+                $values['address3'],
+                $values['postal_code'],
+                $values['postal_city']
+            ));
         }
     }
 

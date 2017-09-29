@@ -16,33 +16,33 @@ class PostalAddressSpec extends ObjectBehavior
         $this->shouldHaveType(PostalAddress::CLASS);
     }
 
-    function it_contains_co_address()
+    function it_contains_line_1()
     {
-        $this->beConstructedWith('', '', '', '', 'foobar');
-        $this->getCoAddress()->shouldEqual('foobar');
+        $this->beConstructedWith('foobar', '', '', '', '');
+        $this->getLine1()->shouldEqual('foobar');
     }
 
-    function it_contains_address_line_1()
+    function it_contains_line_2()
+    {
+        $this->beConstructedWith('', 'foobar', '', '', '');
+        $this->getLine2()->shouldEqual('foobar');
+    }
+
+    function it_contains_line_3()
     {
         $this->beConstructedWith('', '', 'foobar', '', '');
-        $this->getAddress1()->shouldEqual('foobar');
-    }
-
-    function it_contains_address_line_2()
-    {
-        $this->beConstructedWith('', '', '', 'foobar', '');
-        $this->getAddress2()->shouldEqual('foobar');
+        $this->getLine3()->shouldEqual('foobar');
     }
 
     function it_contains_a_postal_code()
     {
-        $this->beConstructedWith('foobar', '', '', '', '');
+        $this->beConstructedWith('', '', '', 'foobar', '');
         $this->getPostalCode()->shouldEqual('foobar');
     }
 
     function it_contains_a_postal_city()
     {
-        $this->beConstructedWith('', 'foobar', '', '', '');
+        $this->beConstructedWith('', '', '', '', 'foobar');
         $this->getPostalCity()->shouldEqual('foobar');
     }
 }
