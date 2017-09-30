@@ -41,18 +41,18 @@ class DonorSchemaSpec extends ObjectBehavior
      * @var array A schema formatted document to test against
      */
     private $schemaDocument = [
-        'type' => DonorSchema::TYPE_VERSION,
-        'mandateKey' => self::MANDATE_KEY,
-        'mandateSource' => self::MANDATE_SOURCE,
-        'payerNumber' => self::PAYER_NUMBER,
+        'type' => DonorSchema::TYPE,
+        'mandate_key' => self::MANDATE_KEY,
+        'mandate_source' => self::MANDATE_SOURCE,
+        'payer_number' => self::PAYER_NUMBER,
         'state' => self::STATE,
         'name' => self::NAME,
         'account' => self::ACCOUNT,
-        'donorId' => self::ID,
+        'donor_id' => self::ID,
         'address' => [self::ADDRESS],
         'email' => self::EMAIL,
         'phone' => self::PHONE,
-        'donationAmount' => self::AMOUNT,
+        'donation_amount' => self::AMOUNT,
         'comment' => self::COMMENT,
         'attributes' => [self::ATTR_KEY => self::ATTR_VALUE]
     ];
@@ -146,30 +146,30 @@ class DonorSchemaSpec extends ObjectBehavior
     function it_can_create_payer_number_search_expressions()
     {
         $this->getPayerNumberSearchExpression('1234')->shouldMatchDocument([
-            'payerNumber' => '1234'
+            'payer_number' => '1234'
         ]);
 
         $this->getPayerNumberSearchExpression('1234')->shouldNotMatchDocument([
-            'payerNumber' => 'not-1234'
+            'payer_number' => 'not-1234'
         ]);
 
         $this->getPayerNumberSearchExpression('1234')->shouldNotMatchDocument([
-            'not-payer-number' => '1234'
+            'not_payer_number' => '1234'
         ]);
     }
 
     function it_can_create_mandate_key_search_expressions()
     {
         $this->getMandateKeySearchExpression('1234')->shouldMatchDocument([
-            'mandateKey' => '1234'
+            'mandate_key' => '1234'
         ]);
 
         $this->getMandateKeySearchExpression('1234')->shouldNotMatchDocument([
-            'mandateKey' => 'not-1234'
+            'mandate_key' => 'not-1234'
         ]);
 
         $this->getMandateKeySearchExpression('1234')->shouldNotMatchDocument([
-            'not-mandate-key' => '1234'
+            'not_mandate_key' => '1234'
         ]);
     }
 

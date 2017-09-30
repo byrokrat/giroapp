@@ -32,11 +32,14 @@ use hanneskod\yaysondb\Expression\ExpressionInterface;
 use hanneskod\yaysondb\Operators as y;
 
 /**
- * Takes a Donor object and transforms it to an array
+ * Maps Donor objects to arrays
  */
 class DonorSchema
 {
-    const TYPE_VERSION = 'giroapp/donor:0.2';
+    /**
+     * Schema type identifier
+     */
+    const TYPE = 'giroapp/donor:alpha2';
 
     /**
      * @var PostalAddressSchema
@@ -73,18 +76,18 @@ class DonorSchema
     public function toArray(Donor $donor): array
     {
         return [
-            'type' => self::TYPE_VERSION,
-            'mandateKey' => $donor->getMandateKey(),
+            'type' => self::TYPE,
+            'mandate_key' => $donor->getMandateKey(),
             'state' => $donor->getState()->getId(),
-            'mandateSource' => $donor->getMandateSource(),
-            'payerNumber' => $donor->getPayerNumber(),
+            'mandate_source' => $donor->getMandateSource(),
+            'payer_number' => $donor->getPayerNumber(),
             'account' => $donor->getAccount()->getNumber(),
-            'donorId' => $donor->getDonorId()->format('S-sk'),
+            'donor_id' => $donor->getDonorId()->format('S-sk'),
             'name' => $donor->getName(),
             'address' => $this->addressSchema->toArray($donor->getAddress()),
             'email' => $donor->getEmail(),
             'phone' => $donor->getPhone(),
-            'donationAmount' => $donor->getDonationAmount()->getAmount(),
+            'donation_amount' => $donor->getDonationAmount()->getAmount(),
             'comment' => $donor->getComment(),
             'attributes' => $donor->getAttributes()
         ];
@@ -93,17 +96,17 @@ class DonorSchema
     public function fromArray(array $doc): Donor
     {
         return new Donor(
-            $doc['mandateKey'],
+            $doc['mandate_key'],
             $this->stateFactory->createState($doc['state']),
-            $doc['mandateSource'],
-            $doc['payerNumber'],
+            $doc['mandate_source'],
+            $doc['payer_number'],
             $this->accountFactory->createAccount($doc['account']),
-            $this->idFactory->create($doc['donorId']),
+            $this->idFactory->create($doc['donor_id']),
             $doc['name'],
             $this->addressSchema->fromArray($doc['address']),
             $doc['email'],
             $doc['phone'],
-            new SEK($doc['donationAmount']),
+            new SEK($doc['donation_amount']),
             $doc['comment'],
             $doc['attributes'] ?? []
         );
@@ -111,11 +114,11 @@ class DonorSchema
 
     public function getPayerNumberSearchExpression(string $payerNumber): ExpressionInterface
     {
-        return y::doc(['payerNumber' => y::equals($payerNumber)]);
+        return y::doc(['payer_number' => y::equals($payerNumber)]);
     }
 
     public function getMandateKeySearchExpression(string $mandateKey): ExpressionInterface
     {
-        return y::doc(['mandateKey' => y::equals($mandateKey)]);
+        return y::doc(['mandate_key' => y::equals($mandateKey)]);
     }
 }

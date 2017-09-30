@@ -12,3 +12,8 @@ s/"address1":/"line2":/g
 s/"address2":/"line3":/g
 s/"postalCode":/"postal_code":/g
 s/"postalCity":/"postal_city":/g
+s/"mandateKey":/"mandate_key":/g
+s/"mandateSource":/"mandate_source":/g
+s/"payerNumber":/"payer_number":/g
+s/"donorId":/"donor_id":/g
+s/"donationAmount":/"donation_amount":/g
