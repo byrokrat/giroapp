@@ -84,7 +84,7 @@ class DonorSchema
             'account' => $donor->getAccount()->getNumber(),
             'donor_id' => $donor->getDonorId()->format('S-sk'),
             'name' => $donor->getName(),
-            'address' => $this->addressSchema->toArray($donor->getAddress()),
+            'address' => $this->addressSchema->toArray($donor->getPostalAddress()),
             'email' => $donor->getEmail(),
             'phone' => $donor->getPhone(),
             'donation_amount' => $donor->getDonationAmount()->getAmount(),

@@ -101,35 +101,35 @@ class EditCommand implements CommandInterface
                 'address1' => $this->getProperty(
                     'address1',
                     'Donor address line 1',
-                    $donor->getAddress()->getLine1(),
+                    $donor->getPostalAddress()->getLine1(),
                     $input,
                     $output
                 ),
                 'address2' => $this->getProperty(
                     'address2',
                     'Donor address line 2',
-                    $donor->getAddress()->getLine2(),
+                    $donor->getPostalAddress()->getLine2(),
                     $input,
                     $output
                 ),
                 'address3' => $this->getProperty(
                     'address3',
                     'Donor address line 3',
-                    $donor->getAddress()->getLine3(),
+                    $donor->getPostalAddress()->getLine3(),
                     $input,
                     $output
                 ),
                 'postal_code' => $this->getProperty(
                     'postal-code',
                     'Donor postal code',
-                    $donor->getAddress()->getPostalCode(),
+                    $donor->getPostalAddress()->getPostalCode(),
                     $input,
                     $output
                 ),
                 'postal_city' => $this-> getProperty(
                     'postal-city',
                     'Donor address city',
-                    $donor->getAddress()->getPostalCity(),
+                    $donor->getPostalAddress()->getPostalCity(),
                     $input,
                     $output
                 )
@@ -208,7 +208,7 @@ class EditCommand implements CommandInterface
         Donor $donor
     ) {
         if ($values) {
-            $donor->setAddress(new PostalAddress(
+            $donor->setPostalAddress(new PostalAddress(
                 $values['address1'],
                 $values['address2'],
                 $values['address3'],
