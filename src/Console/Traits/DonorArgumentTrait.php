@@ -34,7 +34,7 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 trait DonorArgumentTrait
 {
-    protected function configureDonorArgument(CommandWrapper $wrapper)
+    protected static function configureDonorArgument(CommandWrapper $wrapper)
     {
         $wrapper->addArgument(
             'donor',
@@ -50,7 +50,7 @@ trait DonorArgumentTrait
         );
     }
 
-    protected function getDonorUsingArgument(InputInterface $input, DonorMapper $donorMapper): Donor
+    protected static function getDonorUsingArgument(InputInterface $input, DonorMapper $donorMapper): Donor
     {
         $key = $input->getArgument('donor');
 

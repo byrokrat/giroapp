@@ -22,13 +22,14 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\States;
+use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Mapper\DonorMapper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use byrokrat\giroapp\States;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\DonorEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to drop a mandate (remove from database)
@@ -37,28 +38,42 @@ class DropCommand implements CommandInterface
 {
     use Traits\DonorArgumentTrait;
 
-    public function configure(CommandWrapper $wrapper)
+    /**
+     * @var EventDispatcher
+     */
+    private $dispatcher;
+
+    /**
+     * @var DonorMapper
+     */
+    private $donorMapper;
+
+    public function __construct(EventDispatcher $dispatcher, DonorMapper $donorMapper)
+    {
+        $this->dispatcher = $dispatcher;
+        $this->donorMapper = $donorMapper;
+    }
+
+    public static function configure(CommandWrapper $wrapper)
     {
         $wrapper->setName('drop');
         $wrapper->setDescription('Drop a donor mandate');
         $wrapper->setHelp('Remove a mandate completely from the database');
         $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force drop');
-        $this->configureDonorArgument($wrapper);
+        self::configureDonorArgument($wrapper);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
-        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
-
-        $donor = $this->getDonorUsingArgument($input, $donorMapper);
+        $donor = self::getDonorUsingArgument($input, $this->donorMapper);
 
         if ($donor->getState()->getId() != States::INACTIVE && !$input->getOption('force')) {
             throw new \RuntimeException('Unable to drop mandate that is not inactive. Use -f to override.');
         }
 
-        $donorMapper->delete($donor);
+        $this->donorMapper->delete($donor);
 
-        $container->get('event_dispatcher')->dispatch(
+        $this->dispatcher->dispatch(
             Events::MANDATE_DROPPED_EVENT,
             new DonorEvent(
                 sprintf(

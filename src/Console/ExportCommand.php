@@ -22,18 +22,33 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\autogiro\Writer\Writer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use byrokrat\autogiro\Writer\WriterFactory;
-use byrokrat\banking\BankgiroFactory;
 
 /**
  * Command to create autogiro files
  */
 class ExportCommand implements CommandInterface
 {
-    public function configure(CommandWrapper $wrapper)
+    /**
+     * @var DonorMapper
+     */
+    private $donorMapper;
+
+    /**
+     * @var Writer
+     */
+    private $autogiroWriter;
+
+    public function __construct(DonorMapper $donorMapper, Writer $autogiroWriter)
+    {
+        $this->donorMapper = $donorMapper;
+        $this->autogiroWriter = $autogiroWriter;
+    }
+
+    public static function configure(CommandWrapper $wrapper)
     {
         $wrapper->setName('export');
         $wrapper->setDescription('Export a file to autogirot');
@@ -41,23 +56,13 @@ class ExportCommand implements CommandInterface
         $wrapper->discardOutputMessages();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
-        $settings = $container->get('byrokrat\giroapp\Mapper\SettingsMapper');
-
-        // TODO inject writer as a dependency (eg. create in the dic)
-        $writer = (new WriterFactory)->createWriter(
-            $settings->findByKey('bgc_customer_number'),
-            (new BankgiroFactory)->createAccount($settings->findByKey('bankgiro'))
-        );
-
-        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
-
-        foreach ($donorMapper->findAll() as $donor) {
-            $donor->exportToAutogiro($writer);
-            $donorMapper->save($donor);
+        foreach ($this->donorMapper->findAll() as $donor) {
+            $donor->exportToAutogiro($this->autogiroWriter);
+            $this->donorMapper->save($donor);
         }
 
-        $output->write($writer->getContent());
+        $output->write($this->autogiroWriter->getContent());
     }
 }

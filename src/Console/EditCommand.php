@@ -22,22 +22,19 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Mapper\DonorMapper;
-use byrokrat\giroapp\Builder\DonorBuilder;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\State\StateFactory;
+use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Console\Question\Question;
-use byrokrat\giroapp\Events;
-use byrokrat\banking\AccountFactory;
-use byrokrat\id\IdFactory;
-use byrokrat\amount\Currency\SEK;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Builder\MandateKeyBuilder;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to edit an existing mandate
@@ -49,15 +46,37 @@ class EditCommand implements CommandInterface
     /**
      * @var CommandWrapper
      */
-    private $wrapper;
+    private static $wrapper;
 
-    public function configure(CommandWrapper $wrapper)
+    /**
+     * @var EventDispatcher
+     */
+    private $dispatcher;
+
+    /**
+     * @var DonorMapper
+     */
+    private $donorMapper;
+
+    /**
+     * @var StateFactory
+     */
+    private $stateFactory;
+
+    public function __construct(EventDispatcher $dispatcher, DonorMapper $donorMapper, StateFactory $stateFactory)
     {
-        $this->wrapper = $wrapper;
+        $this->dispatcher = $dispatcher;
+        $this->donorMapper = $donorMapper;
+        $this->stateFactory = $stateFactory;
+    }
+
+    public static function configure(CommandWrapper $wrapper)
+    {
+        self::$wrapper = $wrapper;
         $wrapper->setName('edit');
         $wrapper->setDescription('Edit an existing donor');
         $wrapper->setHelp('Edit a donor in the database.');
-        $this->configureDonorArgument($wrapper);
+        self::configureDonorArgument($wrapper);
         $wrapper->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
         $wrapper->addOption('state', null, InputOption::VALUE_REQUIRED, 'Donor state identifier');
         $wrapper->addOption('address1', null, InputOption::VALUE_REQUIRED, 'Address field 1');
@@ -71,15 +90,9 @@ class EditCommand implements CommandInterface
         $wrapper->addOption('comment', null, InputOption::VALUE_REQUIRED, 'Comment');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
-        $donorBuilder = $container->get('byrokrat\giroapp\Builder\DonorBuilder');
-        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
-        $accountFactory = $container->get('byrokrat\banking\AccountFactory');
-        $idFactory = $container->get('byrokrat\id\IdFactory');
-        $mandateKeyBuilder = $container->get('byrokrat\giroapp\Builder\MandateKeyBuilder');
-
-        $donor = $this->getDonorUsingArgument($input, $donorMapper);
+        $donor = self::getDonorUsingArgument($input, $this->donorMapper);
 
         $output->writeln('Hash Id key: ' . $donor->getMandateKey());
         $output->writeln('Personal Id: ' . $donor->getDonorId());
@@ -91,7 +104,7 @@ class EditCommand implements CommandInterface
         );
 
         $donor->setState(
-            $container->get('byrokrat\giroapp\State\StateFactory')->createState(
+            $this->stateFactory->createState(
                 $this->getProperty('state', 'Donor state', $donor->getState()->getId(), $input, $output)
             )
         );
@@ -136,14 +149,17 @@ class EditCommand implements CommandInterface
             ],
             $donor
         );
+
         $this->setEmail(
             $this->getProperty('email', 'Contact email address', $donor->getEmail(), $input, $output),
             $donor
         );
+
         $this->setPhone(
             $this->getProperty('phone', 'Contact phone number', $donor->getPhone(), $input, $output),
             $donor
         );
+
         $this->setDonationAmount(
             $this->getProperty(
                 'amount',
@@ -154,14 +170,15 @@ class EditCommand implements CommandInterface
             ),
             $donor
         );
+
         $this->setComment(
             $this->getProperty('comment', 'Comment', $donor->getComment(), $input, $output),
             $donor
         );
 
-        $donorMapper->save($donor);
+        $this->donorMapper->save($donor);
 
-        $container->get('event_dispatcher')->dispatch(
+        $this->dispatcher->dispatch(
             Events::MANDATE_EDITED_EVENT,
             new DonorEvent(
                 sprintf(
@@ -183,19 +200,18 @@ class EditCommand implements CommandInterface
         $value = $input->getOption($key);
 
         if (!$value) {
-            $value = $this->wrapper->getHelper('question')->ask(
+            $value = self::$wrapper->getHelper('question')->ask(
                 $input,
                 $output,
                 new Question("$desc [$default]: ", $default)
             );
         }
+
         return $value;
     }
 
-    private function setName(
-        string $value,
-        Donor $donor
-    ) {
+    private function setName(string $value, Donor $donor)
+    {
         if ($value) {
             $donor->setName($value);
         } else {
@@ -203,10 +219,8 @@ class EditCommand implements CommandInterface
         }
     }
 
-    private function setPostalAddress(
-        array $values,
-        Donor $donor
-    ) {
+    private function setPostalAddress(array $values, Donor $donor)
+    {
         if ($values) {
             $donor->setPostalAddress(new PostalAddress(
                 $values['address1'],
@@ -218,38 +232,30 @@ class EditCommand implements CommandInterface
         }
     }
 
-    private function setEmail(
-        string $value,
-        Donor $donor
-    ) {
+    private function setEmail(string $value, Donor $donor)
+    {
         if ($value) {
             $donor->setEmail($value);
         }
     }
 
-    private function setPhone(
-        string $value,
-        Donor $donor
-    ) {
+    private function setPhone(string $value, Donor $donor)
+    {
         if ($value) {
             $donor->setPhone($value);
         }
     }
 
-    private function setDonationAmount(
-        string $value,
-        Donor $donor
-    ) {
+    private function setDonationAmount(string $value, Donor $donor)
+    {
         if ($value) {
             $newDonationAmount = new SEK($value);
             $donor->setDonationAmount($newDonationAmount);
         }
     }
 
-    private function setComment(
-        string $value,
-        Donor $donor
-    ) {
+    private function setComment(string $value, Donor $donor)
+    {
         if ($value) {
             $donor->setComment($value);
         }

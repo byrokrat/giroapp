@@ -23,22 +23,22 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-require __DIR__.'/../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 use Symfony\Component\Console\Application;
 
-$version = trim(file_get_contents(__DIR__.'/../version'));
+$version = trim(file_get_contents(__DIR__ . '/../version'));
 
 $app = new Application('GiroApp', $version);
 
-$app->add(new CommandWrapper(new AddCommand));
-$app->add(new CommandWrapper(new DropCommand));
-$app->add(new CommandWrapper(new EditCommand));
-$app->add(new CommandWrapper(new ExportCommand));
-$app->add(new CommandWrapper(new ImportCommand));
-$app->add(new CommandWrapper(new InitCommand));
-$app->add(new CommandWrapper(new LsCommand));
-$app->add(new CommandWrapper(new RevokeCommand));
-$app->add(new CommandWrapper(new ShowCommand));
+$app->add(new CommandWrapper(AddCommand::CLASS));
+$app->add(new CommandWrapper(DropCommand::CLASS));
+$app->add(new CommandWrapper(EditCommand::CLASS));
+$app->add(new CommandWrapper(ExportCommand::CLASS));
+$app->add(new CommandWrapper(ImportCommand::CLASS));
+$app->add(new CommandWrapper(InitCommand::CLASS));
+$app->add(new CommandWrapper(LsCommand::CLASS));
+$app->add(new CommandWrapper(RevokeCommand::CLASS));
+$app->add(new CommandWrapper(ShowCommand::CLASS));
 
 $app->run();

@@ -33,7 +33,7 @@ define('CONTAINER_TARGET', __DIR__ . '/src/ProjectServiceContainer.php');
 /**
  * The service id of the event dispatcher
  */
-define('EVENT_DISPATCHER_SERVICE_ID', 'event_dispatcher');
+define('EVENT_DISPATCHER_SERVICE_ID', 'Symfony\Component\EventDispatcher\EventDispatcher');
 
 /**
  * All services tagged with this tag will be registered as event listeners

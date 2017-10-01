@@ -26,7 +26,6 @@ use byrokrat\giroapp\Mapper\SettingsMapper;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Console\Question\Question;
 
 /**
@@ -37,11 +36,21 @@ class InitCommand implements CommandInterface
     /**
      * @var CommandWrapper
      */
-    private $wrapper;
+    private static $wrapper;
 
-    public function configure(CommandWrapper $wrapper)
+    /**
+     * @var SettingsMapper
+     */
+    private $settingsMapper;
+
+    public function __construct(SettingsMapper $settingsMapper)
     {
-        $this->wrapper = $wrapper;
+        $this->settingsMapper = $settingsMapper;
+    }
+
+    public static function configure(CommandWrapper $wrapper)
+    {
+        self::$wrapper = $wrapper;
         $wrapper->setName('init');
         $wrapper->setDescription('Initialize the database');
         $wrapper->setHelp('Initialize giroapp installation');
@@ -51,28 +60,26 @@ class InitCommand implements CommandInterface
         $wrapper->addOption('bankgiro', null, InputOption::VALUE_REQUIRED, 'Bankgiro number');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
-        $settingsMapper = $container->get('byrokrat\giroapp\Mapper\SettingsMapper');
-        $this->updateSetting('org_name', 'Name of organization', $input, $output, $settingsMapper);
-        $this->updateSetting('org_number', 'Organization id number', $input, $output, $settingsMapper);
-        $this->updateSetting('bgc_customer_number', 'BGC customer number', $input, $output, $settingsMapper);
-        $this->updateSetting('bankgiro', 'Bankgiro number', $input, $output, $settingsMapper);
+        $this->updateSetting('org_name', 'Name of organization', $input, $output);
+        $this->updateSetting('org_number', 'Organization id number', $input, $output);
+        $this->updateSetting('bgc_customer_number', 'BGC customer number', $input, $output);
+        $this->updateSetting('bankgiro', 'Bankgiro number', $input, $output);
     }
 
     private function updateSetting(
         string $key,
         string $desc,
         InputInterface $input,
-        OutputInterface $output,
-        SettingsMapper $settingsMapper
+        OutputInterface $output
     ) {
-        $currentValue = $settingsMapper->findByKey($key);
+        $currentValue = $this->settingsMapper->findByKey($key);
 
         $newValue = $input->getOption(str_replace('_', '-', $key));
 
         if (!$newValue) {
-            $newValue = $this->wrapper->getHelper('question')->ask(
+            $newValue = self::$wrapper->getHelper('question')->ask(
                 $input,
                 $output,
                 new Question("$desc [<info>$currentValue</info>]: ", $currentValue)
@@ -80,7 +87,7 @@ class InitCommand implements CommandInterface
         }
 
         if ($newValue != $currentValue) {
-            $settingsMapper->save($key, $newValue);
+            $this->settingsMapper->save($key, $newValue);
             $output->writeln("$desc set to: <info>$newValue</info>");
         }
     }

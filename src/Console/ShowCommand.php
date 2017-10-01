@@ -22,12 +22,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use byrokrat\giroapp\Mapper\DonorMapper;
-use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 
 /**
  * Display information on individual donors
@@ -56,12 +55,28 @@ class ShowCommand implements CommandInterface
         'attributes'     => 'attributes'
     ];
 
-    public function configure(CommandWrapper $wrapper)
+    /**
+     * @var DonorMapper
+     */
+    private $donorMapper;
+
+    /**
+     * @var DonorSchema
+     */
+    private $donorSchema;
+
+    public function __construct(DonorMapper $donorMapper, DonorSchema $donorSchema)
+    {
+        $this->donorMapper = $donorMapper;
+        $this->donorSchema = $donorSchema;
+    }
+
+    public static function configure(CommandWrapper $wrapper)
     {
         $wrapper->setName('show');
         $wrapper->setDescription('Display donor information');
         $wrapper->setHelp('Display information on individual donors');
-        $this->configureDonorArgument($wrapper);
+        self::configureDonorArgument($wrapper);
         $wrapper->discardOutputMessages();
         $wrapper->addOption('type', null, InputOption::VALUE_NONE, 'Show donor type identifier');
         $wrapper->addOption('mandate-key', null, InputOption::VALUE_NONE, 'Show mandate key');
@@ -79,10 +94,10 @@ class ShowCommand implements CommandInterface
         $wrapper->addOption('attributes', null, InputOption::VALUE_NONE, 'Show attributes');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
-        $content = $container->get(DonorSchema::CLASS)->toArray(
-            $this->getDonorUsingArgument($input, $container->get(DonorMapper::CLASS))
+        $content = $this->donorSchema->toArray(
+            self::getDonorUsingArgument($input, $this->donorMapper)
         );
 
         $showContent = $content;
@@ -98,7 +113,7 @@ class ShowCommand implements CommandInterface
         }
 
         foreach ($showContent as $info) {
-            $output->writeln(implode((array)$info));
+            $output->writeln(implode(' ', (array)$info));
         }
     }
 }
