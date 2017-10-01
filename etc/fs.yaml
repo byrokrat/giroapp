@@ -1,15 +1,18 @@
 services:
+    _defaults:
+        public: false
+
     filesystem:
         class: League\Flysystem\Filesystem
         arguments: ['@filesystem_adapter']
-        configurator: 'filesystem_configurator:createFiles'
+        configurator: 'byrokrat\giroapp\DI\FilesystemConfigurator:createFiles'
 
     filesystem_adapter:
         class: League\Flysystem\Adapter\Local
         arguments: ['%user.dir%']
 
-    filesystem_configurator:
-        class: byrokrat\giroapp\DI\FilesystemConfigurator
+    byrokrat\giroapp\DI\FilesystemConfigurator:
+        class: ~
         arguments:
             -
                 - '%db.settings%'

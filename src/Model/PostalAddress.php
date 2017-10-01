@@ -30,17 +30,17 @@ class PostalAddress
     /**
      * @var string
      */
-    private $coAddress;
+    private $line1;
 
     /**
      * @var string
      */
-    private $address1;
+    private $line2;
 
     /**
      * @var string
      */
-    private $address2;
+    private $line3;
 
     /**
      * @var string
@@ -53,32 +53,32 @@ class PostalAddress
     private $postalCity;
 
     public function __construct(
-        string $postalCode = "",
-        string $postalCity = "",
-        string $address1 = "",
-        string $address2 = "",
-        string $coAddress = ""
+        string $line1,
+        string $line2,
+        string $line3,
+        string $postalCode,
+        string $postalCity
     ) {
-        $this->coAddress = $coAddress;
-        $this->address1 = $address1;
-        $this->address2 = $address2;
+        $this->line1 = $line1;
+        $this->line2 = $line2;
+        $this->line3 = $line3;
         $this->postalCode = $postalCode;
         $this->postalCity = $postalCity;
     }
 
-    public function getCoAddress(): string
+    public function getLine1(): string
     {
-        return $this->coAddress;
+        return $this->line1;
     }
 
-    public function getAddress1(): string
+    public function getLine2(): string
     {
-        return $this->address1;
+        return $this->line2;
     }
 
-    public function getAddress2(): string
+    public function getLine3(): string
     {
-        return $this->address2;
+        return $this->line3;
     }
 
     public function getPostalCode(): string

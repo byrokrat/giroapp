@@ -46,14 +46,16 @@ class InitCommand implements CommandInterface
         $wrapper->setDescription('Initialize the database');
         $wrapper->setHelp('Initialize giroapp installation');
         $wrapper->addOption('org-name', null, InputOption::VALUE_REQUIRED, 'Name of organization');
+        $wrapper->addOption('org-number', null, InputOption::VALUE_REQUIRED, 'Organization id number');
         $wrapper->addOption('bgc-customer-number', null, InputOption::VALUE_REQUIRED, 'BGC customer number');
         $wrapper->addOption('bankgiro', null, InputOption::VALUE_REQUIRED, 'Bankgiro number');
     }
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $settingsMapper = $container->get('settings_mapper');
+        $settingsMapper = $container->get('byrokrat\giroapp\Mapper\SettingsMapper');
         $this->updateSetting('org_name', 'Name of organization', $input, $output, $settingsMapper);
+        $this->updateSetting('org_number', 'Organization id number', $input, $output, $settingsMapper);
         $this->updateSetting('bgc_customer_number', 'BGC customer number', $input, $output, $settingsMapper);
         $this->updateSetting('bankgiro', 'Bankgiro number', $input, $output, $settingsMapper);
     }

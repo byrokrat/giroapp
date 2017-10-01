@@ -1,4 +1,6 @@
 parameters:
+    env(GIROAPP_PATH): 'giroapp'
+    user.dir: '%env(GIROAPP_PATH)%'
     plugins.dir: 'plugins'
 
 imports:
@@ -6,24 +8,35 @@ imports:
     - { resource: fs.yaml }
 
 services:
+    _defaults:
+        autowire: true
+
+    output:
+        synthetic: true
+
     event_dispatcher:
         class: Symfony\Component\EventDispatcher\EventDispatcher
-        configurator: 'plugin_loader:loadPlugins'
+        configurator: 'byrokrat\giroapp\DI\PluginLoader:loadPlugins'
 
-    plugin_loader:
-        class: byrokrat\giroapp\DI\PluginLoader
+    byrokrat\giroapp\DI\PluginLoader:
+        class: ~
         arguments: ['%user.dir%/%plugins.dir%', '@filesystem']
 
-    logging_listener:
-        class: byrokrat\giroapp\Listener\LoggingListener
+    byrokrat\giroapp\ApplicationMonitor:
+        class: ~
+        tags:
+            - { name: event_subscriber }
+
+    byrokrat\giroapp\Listener\LoggingListener:
+        class: ~
         arguments: ['@db_log_collection']
         tags:
             - { name: event_listener, event: ERROR_EVENT, method: onLogEvent, priority: 10 }
             - { name: event_listener, event: WARNING_EVENT, method: onLogEvent, priority: 10 }
             - { name: event_listener, event: INFO_EVENT, method: onLogEvent, priority: 10 }
 
-    outputting_listener:
-        class: byrokrat\giroapp\Listener\OutputtingListener
+    byrokrat\giroapp\Listener\OutputtingListener:
+        class: ~
         arguments: ['@output']
         tags:
             - { name: event_listener, event: ERROR_EVENT, priority: -10 }
@@ -31,50 +44,81 @@ services:
             - { name: event_listener, event: INFO_EVENT, priority: -10 }
             - { name: event_listener, event: DEBUG_EVENT, priority: -10 }
 
-    import_listener:
-        class: byrokrat\giroapp\Listener\ImportListener
-        arguments: ["@=service('autogiro_parser_factory').createParser()"]
+    byrokrat\giroapp\Listener\ImportingListener:
+        class: ~
         tags:
             - { name: event_listener, event: IMPORT_EVENT, priority: 9 }
 
-    invalid_node_filtering_listener:
-        class: byrokrat\giroapp\Listener\InvalidNodeFilteringListener
-        arguments: ['@bankgiro_factory', '@settings_mapper']
+    byrokrat\giroapp\Listener\ImportingAutogiroListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: IMPORT_AUTOGIRO_EVENT, priority: 9 }
+
+    byrokrat\giroapp\Listener\ImportingXmlListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: IMPORT_XML_EVENT, priority: 9 }
+
+    byrokrat\giroapp\Listener\InvalidNodeFilteringListener:
+        class: ~
         tags:
             - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 10 }
 
-    comitting_listener:
-        class: byrokrat\giroapp\Listener\CommittingListener
-        arguments: ['@db_handle']
+    byrokrat\giroapp\Listener\CommittingListener:
+        class: ~
+        arguments: ['@db']
         tags:
             - { name: event_listener, event: EXECUTION_END_EVENT, priority: 1 }
 
-    mandate_response_listener:
-        class: byrokrat\giroapp\Listener\MandateResponseListener
-        arguments: ['@donor_mapper']
+    byrokrat\giroapp\Listener\MandateResponseListener:
+        class: ~
         tags:
             - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 1 }
 
-    application_monitior:
-        class: byrokrat\giroapp\ApplicationMonitor
+    byrokrat\giroapp\Listener\MandatePersistingListener:
+        class: ~
         tags:
-            - { name: event_subscriber }
+            - { name: event_listener, event: MANDATE_ADDED_EVENT, priority: 10 }
 
-    autogiro_parser_factory:
-        class: byrokrat\autogiro\Parser\ParserFactory
+    byrokrat\giroapp\Builder\:
+        resource: '../src/Builder/*'
 
-    bankgiro_factory:
-        class: byrokrat\banking\BankgiroFactory
+    byrokrat\giroapp\State\:
+        resource: '../src/State/*'
 
-    account_factory:
-        class: byrokrat\banking\AccountFactory
+    byrokrat\autogiro\Parser\ParserFactory: ~
 
-    id_factory:
+    byrokrat\autogiro\Parser\Parser:
+        factory: 'byrokrat\autogiro\Parser\ParserFactory:createParser'
+
+    byrokrat\banking\BankgiroFactory: ~
+
+    byrokrat\banking\AccountFactory: ~
+
+    byrokrat\id\IdFactory:
         class: byrokrat\id\PersonalIdFactory
+        autowire: false
+        arguments: ['@byrokrat\id\OrganizationIdFactory']
 
-    donor_builder:
-        class: byrokrat\giroapp\Builder\DonorBuilder
-        arguments: ['@mandate_key_builder']
+    byrokrat\id\OrganizationIdFactory:
+        class: ~
+        autowire: false
 
-    mandate_key_builder:
-        class: byrokrat\giroapp\Builder\MandateKeyBuilder
+    byrokrat\giroapp\Xml\XmlMandateParser:
+        class: ~
+        arguments: ['@organization_id', '@organization_bg']
+
+    byrokrat\giroapp\Xml\CustomdataTranslator: ~
+
+    byrokrat\giroapp\Xml\XmlMandateMigrationInterface:
+        class: byrokrat\giroapp\Xml\NullXmlMandateMigration
+
+    organization_id:
+        class: byrokrat\id\Id
+        factory: 'byrokrat\id\IdFactory:create'
+        arguments: ["@=service('byrokrat\\\\giroapp\\\\Mapper\\\\SettingsMapper').findByKey('org_number')"]
+
+    organization_bg:
+        class: byrokrat\banking\AccountNumber
+        factory: 'byrokrat\banking\BankgiroFactory:createAccount'
+        arguments: ["@=service('byrokrat\\\\giroapp\\\\Mapper\\\\SettingsMapper').findByKey('bankgiro')"]

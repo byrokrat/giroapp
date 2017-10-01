@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Model;
 
-use byrokrat\giroapp\Model\DonorState\DonorState;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\Id;
 use byrokrat\amount\Currency\SEK;
@@ -39,6 +39,11 @@ class Donor
     const MANDATE_SOURCE_PAPER = 'MANDATE_SOURCE_PAPER';
 
     /**
+     * Indicator that mandate is from an online form (eg. mandate from homepage)
+     */
+    const MANDATE_SOURCE_ONLINE_FORM = 'MANDATE_SOURCE_ONLINE_FORM';
+
+    /**
      * Indicator that mandate is digital
      */
     const MANDATE_SOURCE_DIGITAL = 'MANDATE_SOURCE_DIGITAL';
@@ -49,7 +54,7 @@ class Donor
     private $mandateKey;
 
     /**
-     * @var DonorState
+     * @var StateInterface
      */
     private $state;
 
@@ -103,9 +108,14 @@ class Donor
      */
     private $comment;
 
+    /**
+     * @var array Loaded attributes
+     */
+    private $attributes;
+
     public function __construct(
         string $mandateKey,
-        DonorState $state,
+        StateInterface $state,
         string $mandateSource,
         string $payerNumber,
         AccountNumber $account,
@@ -115,7 +125,8 @@ class Donor
         string $email,
         string $phone,
         SEK $donationAmount,
-        string $comment
+        string $comment,
+        array $attributes = []
     ) {
         $this->mandateKey = $mandateKey;
         $this->setState($state);
@@ -124,11 +135,12 @@ class Donor
         $this->account = $account;
         $this->donorId = $donorId;
         $this->setName($name);
-        $this->setAddress($address);
+        $this->setPostalAddress($address);
         $this->setEmail($email);
         $this->setPhone($phone);
         $this->setDonationAmount($donationAmount);
         $this->setComment($comment);
+        $this->attributes = $attributes;
     }
 
     public function getMandateKey(): string
@@ -136,12 +148,12 @@ class Donor
         return $this->mandateKey;
     }
 
-    public function getState(): DonorState
+    public function getState(): StateInterface
     {
         return $this->state;
     }
 
-    public function setState(DonorState $state)
+    public function setState(StateInterface $state)
     {
         $this->state = $state;
     }
@@ -181,12 +193,12 @@ class Donor
         $this->name = $name;
     }
 
-    public function getAddress(): PostalAddress
+    public function getPostalAddress(): PostalAddress
     {
         return $this->address;
     }
 
-    public function setAddress(PostalAddress $address)
+    public function setPostalAddress(PostalAddress $address)
     {
         $this->address = $address;
     }
@@ -234,5 +246,43 @@ class Donor
     public function exportToAutogiro(Writer $writer)
     {
         $this->getState()->export($this, $writer);
+    }
+
+    /**
+     * Check if attribute is set
+     */
+    public function hasAttribute(string $key): bool
+    {
+        return isset($this->attributes[$key]);
+    }
+
+    /**
+     * Set an attribute
+     */
+    public function setAttribute(string $key, string $value)
+    {
+        $this->attributes[$key] = $value;
+    }
+
+    /**
+     * Get attribute
+     *
+     * @throws \RuntimeException if attribute is not set
+     */
+    public function getAttribute(string $key): string
+    {
+        if (!$this->hasAttribute($key)) {
+            throw new \RuntimeException("Unknown attribute $key");
+        }
+
+        return $this->attributes[$key];
+    }
+
+    /**
+     * Get all loaded attributes
+     */
+    public function getAttributes(): array
+    {
+        return $this->attributes;
     }
 }

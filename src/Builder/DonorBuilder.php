@@ -23,9 +23,9 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Builder;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorState\DonorState;
-use byrokrat\giroapp\Model\DonorState\NewMandateState;
-use byrokrat\giroapp\Model\DonorState\NewDigitalMandateState;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\NewMandateState;
+use byrokrat\giroapp\State\NewDigitalMandateState;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\id\Id;
 use byrokrat\banking\AccountNumber;
@@ -44,7 +44,7 @@ class DonorBuilder
     /**
      * @var string
      */
-    private $mandateSource = Donor::MANDATE_SOURCE_PAPER;
+    private $mandateSource;
 
     /**
      * @var string
@@ -62,7 +62,7 @@ class DonorBuilder
     private $account;
 
     /**
-     * @var DonorState
+     * @var StateInterface
      */
     private $state;
 
@@ -92,6 +92,11 @@ class DonorBuilder
     private $comment = '';
 
     /**
+     * @var array
+     */
+    private $attributes = [];
+
+    /**
      * @var SEK
      */
     private $donationAmount;
@@ -99,6 +104,26 @@ class DonorBuilder
     public function __construct(MandateKeyBuilder $keyBuilder)
     {
         $this->keyBuilder = $keyBuilder;
+    }
+
+    /**
+     * Reset builder to initial state
+     */
+    public function reset(): self
+    {
+        unset($this->mandateSource);
+        unset($this->payerNumber);
+        unset($this->id);
+        unset($this->account);
+        unset($this->state);
+        unset($this->name);
+        unset($this->postalAddress);
+        $this->email = '';
+        $this->phone = '';
+        $this->comment = '';
+        $this->attributes = [];
+        unset($this->donationAmount);
+        return $this;
     }
 
     /**
@@ -164,12 +189,18 @@ class DonorBuilder
         return $this;
     }
 
+    public function setAttribute(string $key, string $value)
+    {
+        $this->attributes[$key] = $value;
+        return $this;
+    }
+
     public function buildDonor(): Donor
     {
         return new Donor(
             $this->keyBuilder->buildKey($this->getId(), $this->getAccount()),
             $this->getState(),
-            $this->mandateSource,
+            $this->getMandateSource(),
             $this->getPayerNumber(),
             $this->getAccount(),
             $this->getId(),
@@ -178,8 +209,18 @@ class DonorBuilder
             $this->email,
             $this->phone,
             $this->getDonationAmount(),
-            $this->comment
+            $this->comment,
+            $this->attributes
         );
+    }
+
+    private function getMandateSource(): string
+    {
+        if (!isset($this->mandateSource)) {
+            throw new \RuntimeException('Unable to build Donor, mandate source not set');
+        }
+
+        return $this->mandateSource;
     }
 
     private function getId(): Id
@@ -200,14 +241,15 @@ class DonorBuilder
         throw new \RuntimeException('Unable to build Donor, account not set');
     }
 
-    private function getState(): DonorState
+    private function getState(): StateInterface
     {
         if (isset($this->state)) {
             return $this->state;
         }
 
-        switch ($this->mandateSource) {
+        switch ($this->getMandateSource()) {
             case Donor::MANDATE_SOURCE_PAPER:
+            case Donor::MANDATE_SOURCE_ONLINE_FORM:
                 return new NewMandateState;
             case Donor::MANDATE_SOURCE_DIGITAL:
                 return new NewDigitalMandateState;

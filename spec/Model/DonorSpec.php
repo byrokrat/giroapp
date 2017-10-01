@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorState\DonorState;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
@@ -22,9 +22,11 @@ class DonorSpec extends ObjectBehavior
     const EMAIL = 'email';
     const PHONE = 'phone';
     const COMMENT = 'comment';
+    const ATTR_KEY = 'ATTR_KEY';
+    const ATTR_VALUE = 'ATTR_VALUE';
 
     function let(
-        DonorState $state,
+        StateInterface $state,
         AccountNumber $account,
         PersonalId $donorId,
         PostalAddress $address,
@@ -42,7 +44,8 @@ class DonorSpec extends ObjectBehavior
             self::EMAIL,
             self::PHONE,
             $donationAmount,
-            self::COMMENT
+            self::COMMENT,
+            [self::ATTR_KEY => self::ATTR_VALUE]
         );
     }
 
@@ -61,7 +64,7 @@ class DonorSpec extends ObjectBehavior
         $this->getState()->shouldEqual($state);
     }
 
-    function it_can_set_state(DonorState $newState)
+    function it_can_set_state(StateInterface $newState)
     {
         $this->getState()->shouldNotEqual($newState);
         $this->setState($newState);
@@ -109,14 +112,14 @@ class DonorSpec extends ObjectBehavior
 
     function it_contains_an_address($address)
     {
-        $this->getAddress()->shouldEqual($address);
+        $this->getPostalAddress()->shouldEqual($address);
     }
 
     function it_can_set_address(PostalAddress $newAddress)
     {
-        $this->getAddress()->shouldNotEqual($newAddress);
-        $this->setAddress($newAddress);
-        $this->getAddress()->shouldEqual($newAddress);
+        $this->getPostalAddress()->shouldNotEqual($newAddress);
+        $this->setPostalAddress($newAddress);
+        $this->getPostalAddress()->shouldEqual($newAddress);
     }
 
     function it_contains_an_email()
@@ -171,5 +174,37 @@ class DonorSpec extends ObjectBehavior
     {
         $this->exportToAutogiro($writer);
         $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
+    }
+
+    function it_contains_attributes()
+    {
+        $this->getAttribute(self::ATTR_KEY)->shouldReturn(self::ATTR_VALUE);
+    }
+
+    function it_can_check_for_attribute()
+    {
+        $this->hasAttribute('foobar')->shouldReturn(false);
+    }
+
+    function it_recognizes_loaded_attributes()
+    {
+        $this->setAttribute('foobar', 'baz');
+        $this->hasAttribute('foobar')->shouldReturn(true);
+    }
+
+    function it_can_read_attributes()
+    {
+        $this->setAttribute('foobar', 'baz');
+        $this->getAttribute('foobar')->shouldReturn('baz');
+    }
+
+    function it_throws_exception_if_attribute_does_not_exist()
+    {
+        $this->shouldThrow(\RuntimeException::CLASS)->duringGetAttribute('foobar');
+    }
+
+    function it_can_show_all_attributes()
+    {
+        $this->getAttributes()->shouldReturn([self::ATTR_KEY => self::ATTR_VALUE]);
     }
 }

@@ -44,6 +44,8 @@ use byrokrat\giroapp\Builder\MandateKeyBuilder;
  */
 class EditCommand implements CommandInterface
 {
+    use Traits\DonorArgumentTrait;
+
     /**
      * @var CommandWrapper
      */
@@ -55,19 +57,14 @@ class EditCommand implements CommandInterface
         $wrapper->setName('edit');
         $wrapper->setDescription('Edit an existing donor');
         $wrapper->setHelp('Edit a donor in the database.');
-        $wrapper->addArgument('donor-key', InputArgument::REQUIRED, 'Donor key or payernumber');
-        $wrapper->addOption(
-            'force-payer-number',
-            false,
-            InputOption::VALUE_NONE,
-            'Use donor payer number for identification'
-        );
+        self::configureDonorArgument($wrapper);
         $wrapper->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
+        $wrapper->addOption('state', null, InputOption::VALUE_REQUIRED, 'Donor state identifier');
         $wrapper->addOption('address1', null, InputOption::VALUE_REQUIRED, 'Address field 1');
         $wrapper->addOption('address2', null, InputOption::VALUE_REQUIRED, 'Address field 2');
+        $wrapper->addOption('address3', null, InputOption::VALUE_REQUIRED, 'Address field 3');
         $wrapper->addOption('postal-code', null, InputOption::VALUE_REQUIRED, 'Postal code');
         $wrapper->addOption('postal-city', null, InputOption::VALUE_REQUIRED, 'Postal city');
-        $wrapper->addOption('co-address', null, InputOption::VALUE_REQUIRED, 'C/o address');
         $wrapper->addOption('email', null, InputOption::VALUE_REQUIRED, 'Contact email address');
         $wrapper->addOption('phone', null, InputOption::VALUE_REQUIRED, 'Contact phone number');
         $wrapper->addOption('amount', null, InputOption::VALUE_REQUIRED, 'Monthly donation amount');
@@ -76,13 +73,13 @@ class EditCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
     {
-        $donorBuilder = $container->get('donor_builder');
-        $donorMapper = $container->get('donor_mapper');
-        $accountFactory = $container->get('account_factory');
-        $idFactory = $container->get('id_factory');
-        $mandateKeyBuilder = $container->get('mandate_key_builder');
+        $donorBuilder = $container->get('byrokrat\giroapp\Builder\DonorBuilder');
+        $donorMapper = $container->get('byrokrat\giroapp\Mapper\DonorMapper');
+        $accountFactory = $container->get('byrokrat\banking\AccountFactory');
+        $idFactory = $container->get('byrokrat\id\IdFactory');
+        $mandateKeyBuilder = $container->get('byrokrat\giroapp\Builder\MandateKeyBuilder');
 
-        $donor = $this->fetchDonor($donorMapper, $input, $output);
+        $donor = self::getDonorUsingArgument($input, $donorMapper);
 
         $output->writeln('Hash Id key: ' . $donor->getMandateKey());
         $output->writeln('Personal Id: ' . $donor->getDonorId());
@@ -92,43 +89,50 @@ class EditCommand implements CommandInterface
             $this->getProperty('name', 'Donor name', $donor->getName(), $input, $output),
             $donor
         );
+
+        $donor->setState(
+            $container->get('byrokrat\giroapp\State\StateFactory')->createState(
+                $this->getProperty('state', 'Donor state', $donor->getState()->getId(), $input, $output)
+            )
+        );
+
         $this->setPostalAddress(
             [
                 'address1' => $this->getProperty(
                     'address1',
-                    'Donor Address line 1',
-                    $donor->getAddress()->getAddress1(),
+                    'Donor address line 1',
+                    $donor->getPostalAddress()->getLine1(),
                     $input,
                     $output
                 ),
                 'address2' => $this->getProperty(
                     'address2',
-                    'Donor Address line 2',
-                    $donor->getAddress()->getAddress2(),
+                    'Donor address line 2',
+                    $donor->getPostalAddress()->getLine2(),
                     $input,
                     $output
                 ),
-                'postalCode' => $this->getProperty(
+                'address3' => $this->getProperty(
+                    'address3',
+                    'Donor address line 3',
+                    $donor->getPostalAddress()->getLine3(),
+                    $input,
+                    $output
+                ),
+                'postal_code' => $this->getProperty(
                     'postal-code',
-                    'Donor Postal code',
-                    $donor->getAddress()->getPostalCode(),
+                    'Donor postal code',
+                    $donor->getPostalAddress()->getPostalCode(),
                     $input,
                     $output
                 ),
-                'postalCity' => $this-> getProperty(
+                'postal_city' => $this-> getProperty(
                     'postal-city',
-                    'Donor Address city',
-                    $donor->getAddress()->getPostalCity(),
+                    'Donor address city',
+                    $donor->getPostalAddress()->getPostalCity(),
                     $input,
                     $output
-                ),
-                'coAddress' => $this->getProperty(
-                    'co-address',
-                    'C/o Address',
-                    $donor->getAddress()->getCoAddress(),
-                    $input,
-                    $output
-                ),
+                )
             ],
             $donor
         );
@@ -182,25 +186,10 @@ class EditCommand implements CommandInterface
             $value = self::$wrapper->getHelper('question')->ask(
                 $input,
                 $output,
-                new Question("$desc: [$default]", $default)
+                new Question("$desc [$default]: ", $default)
             );
         }
         return $value;
-    }
-
-    private function fetchDonor(
-        DonorMapper $donorMapper,
-        InputInterface $input,
-        OutputInterface $output
-    ) {
-        $donorKey = $input->getArgument('donor-key');
-        $forcePayerNumber = $input->getOption('force-payer-number');
-
-        if (!$forcePayerNumber && $donorMapper->hasKey($donorKey)) {
-            return $donorMapper->findByKey($donorKey);
-        } else {
-            return $donorMapper->findByActivePayerNumber($donorKey);
-        }
     }
 
     private function setName(
@@ -219,15 +208,13 @@ class EditCommand implements CommandInterface
         Donor $donor
     ) {
         if ($values) {
-            $newPostalAddress = new PostalAddress(
-                $values['postalCode'],
-                $values['postalCity'],
+            $donor->setPostalAddress(new PostalAddress(
                 $values['address1'],
                 $values['address2'],
-                $values['coAddress']
-            );
-
-            $donor->setAddress($newPostalAddress);
+                $values['address3'],
+                $values['postal_code'],
+                $values['postal_city']
+            ));
         }
     }
 

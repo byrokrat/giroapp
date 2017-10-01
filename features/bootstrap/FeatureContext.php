@@ -11,8 +11,7 @@ class FeatureContext implements Context
 {
     const DEFAULT_DONOR_ROW = [
         'payer-number' => '1',
-        'state' => 'ActiveState',
-        'mandate-source' => 'MANDATE_SOURCE_PAPER',
+        'state' => 'ACTIVE',
         'account' => '50001111116',
         'id' => '8203232775',
         'name' => 'name',
@@ -50,6 +49,14 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given an orgnization :name with bankgiro :bg and organization id :id
+     */
+    public function anOrgnizationWithBankgiroAndOrganizationId($name, $bg, $id)
+    {
+        $this->result = $this->app->init("--org-name='$name' --bankgiro='$bg' --org-number='$id'");
+    }
+
+    /**
      * @Given the explicit payer number strategy
      */
     public function theExplicitPayerNumberStrategy()
@@ -70,29 +77,26 @@ class FeatureContext implements Context
      */
     public function thereAreDonors(TableNode $table)
     {
-        $container = $this->app->getContainer();
-
         foreach ($table->getHash() as $row) {
             $row = array_merge(self::DEFAULT_DONOR_ROW, $row);
 
-            $donor = $container->get('donor_builder')
-                ->setMandateSource(constant("byrokrat\\giroapp\\Model\\Donor::{$row['mandate-source']}"))
-                ->setPayerNumber($row['payer-number'])
-                ->setId($container->get('id_factory')->create($row['id']))
-                ->setAccount($container->get('account_factory')->createAccount($row['account']))
-                ->setName($row['name'])
-                ->setEmail($row['email'])
-                ->setPhone($row['phone'])
-                ->setDonationAmount(new byrokrat\amount\Currency\SEK($row['amount']))
-                ->setComment($row['comment'])
-                ->buildDonor();
+            $this->iRun(sprintf(
+                'add --payer-number %s --account %s --id %s --name %s --email %s --phone %s --amount %s --comment %s',
+                $row['payer-number'],
+                $row['account'],
+                $row['id'],
+                $row['name'],
+                $row['email'],
+                $row['phone'],
+                $row['amount'],
+                $row['comment']
+            ));
 
-            $stateClass = "byrokrat\\giroapp\\Model\\DonorState\\{$row['state']}";
+            $this->thereIsNoError();
 
-            $donor->setState(new $stateClass);
+            $this->iRun(sprintf('edit %s --state %s', $row['payer-number'], $row['state']));
 
-            $container->get('donor_mapper')->save($donor);
-            $container->get('db_handle')->commit();
+            $this->thereIsNoError();
         }
     }
 
@@ -123,70 +127,6 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then the donor database contains:
-     */
-    public function theDonorDatabaseContains(TableNode $table)
-    {
-        $container = $this->app->getContainer();
-        $container->get('db_donors_collection')->reset();
-
-        foreach ($table->getHash() as $row) {
-            foreach ($container->get('donor_mapper')->findAll() as $donor) {
-                if (isset($row['mandate-source']) && $donor->getMandateSource() != constant("byrokrat\\giroapp\\Model\\Donor::{$row['mandate-source']}")) {
-                    continue;
-                }
-
-                if (isset($row['payer-number']) && $donor->getPayerNumber() != $row['payer-number']) {
-                    continue;
-                }
-
-                if (isset($row['mandate-key']) && $donor->getMandateKey() != $row['mandate-key']) {
-                    continue;
-                }
-
-                if (isset($row['id']) && (string)$donor->getDonorId() != (string)$container->get('id_factory')->create($row['id'])) {
-                    continue;
-                }
-
-                if (isset($row['account']) && !$donor->getAccount()->equals($container->get('account_factory')->createAccount($row['account']))) {
-                    continue;
-                }
-
-                if (isset($row['name']) && $donor->getName() != $row['name']) {
-                    continue;
-                }
-
-                if (isset($row['email']) && $donor->getEmail() != $row['email']) {
-                    continue;
-                }
-
-                if (isset($row['phone']) && $donor->getPhone() != $row['phone']) {
-                    continue;
-                }
-
-                if (isset($row['amount']) && !$donor->getDonationAmount()->equals(new byrokrat\amount\Currency\SEK($row['amount']))) {
-                    continue;
-                }
-
-                if (isset($row['comment']) && $donor->getComment() != $row['comment']) {
-                    continue;
-                }
-
-                if (isset($row['state'])) {
-                    $stateClass = "byrokrat\\giroapp\\Model\\DonorState\\{$row['state']}";
-                    if (!$donor->getState() instanceof $stateClass) {
-                        continue;
-                    }
-                }
-
-                return true;
-            }
-
-            throw new Exception("Unable to find donor in database");
-        }
-    }
-
-    /**
      * @Then there is no error
      */
     public function thereIsNoError()
@@ -207,6 +147,16 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then the database contains donor :donor with :field matching :expected
+     */
+    public function theDatabaseContainsDonorWithMatching($donor, $field, $expected)
+    {
+        $this->iRun("show $donor --$field");
+        $this->thereIsNoError();
+        $this->theOutputContains($expected);
+    }
+
+    /**
      * @Then the output matches:
      */
     public function theOutputMatches(PyStringNode $string)
@@ -224,7 +174,6 @@ class FeatureContext implements Context
             }
         }
     }
-
 
     /**
      * @Then the output contains :string

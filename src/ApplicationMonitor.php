@@ -39,6 +39,7 @@ class ApplicationMonitor implements EventSubscriberInterface
             Events::MANDATE_EDITED_EVENT   => ['dispatchInfo',    10],
             Events::MANDATE_APPROVED_EVENT => ['dispatchInfo',    10],
             Events::MANDATE_REVOKED_EVENT  => ['dispatchInfo',    10],
+            Events::MANDATE_DROPPED_EVENT  => ['dispatchInfo',    10],
             Events::MANDATE_INVALID_EVENT  => ['dispatchWarning', 10],
         ];
     }

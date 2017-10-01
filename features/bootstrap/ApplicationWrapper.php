@@ -2,40 +2,32 @@
 
 declare(strict_types = 1);
 
-use byrokrat\giroapp\DI\ContainerFactory;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Console\Output\NullOutput;
-
 /**
  * Wrapper around an application setup
  */
 class ApplicationWrapper
 {
     /**
-     * Name of directory where user data is stored
-     */
-    const USER_DIR = '.giroapp';
-
-    /**
      * @var string Full path to directory where test data is stored
      */
     private $directory;
+
+    /**
+     * @var string Path to giroapp user directory
+     */
+    private $userDir;
 
     /**
      * @var string Path to executable
      */
     private $executable;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
     public function __construct(string $executable = '')
     {
         $this->directory = sys_get_temp_dir() . '/giroapp_acceptance_tests_' . time();
         mkdir($this->directory);
-        mkdir($this->directory . '/' . self::USER_DIR);
+        $this->userDir = $this->directory . '/giroapp';
+        mkdir($this->userDir);
         $this->executable = $executable ?: realpath(getcwd() . '/bin/giroapp');
     }
 
@@ -54,7 +46,7 @@ class ApplicationWrapper
     public function execute(string $command): Result
     {
         $process = proc_open(
-            "{$this->executable} $command --no-interaction --no-ansi -vvv --path='".self::USER_DIR."'",
+            "{$this->executable} $command --no-interaction --no-ansi -vvv",
             [
                 1 => ["pipe", "w"],
                 2 => ["pipe", "w"]
@@ -85,21 +77,8 @@ class ApplicationWrapper
     public function createPlugin(string $content)
     {
         file_put_contents(
-            $this->directory . '/' . self::USER_DIR . '/plugins/' . uniqid() . '.php',
+            $this->userDir . '/plugins/' . uniqid() . '.php',
             "<?php $content"
         );
-    }
-
-    public function getContainer(): ContainerInterface
-    {
-        if (!isset($this->container)) {
-            $this->container = (new ContainerFactory)->createContainer(
-                new NullOutput,
-                $this->directory. '/' . self::USER_DIR,
-                ''
-            );
-        }
-
-        return $this->container;
     }
 }

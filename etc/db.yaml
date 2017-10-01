@@ -5,17 +5,23 @@ parameters:
     db.log: 'var/log'
 
 services:
-    db_handle:
+    _defaults:
+        autowire: true
+
+    db:
         class: hanneskod\yaysondb\Yaysondb
         arguments:
             -
                 settings: '@db_settings_engine'
-                donors: '@db_donors_engine'
-                transactions: '@db_transactions_engine'
+                donors: '@db_donor_engine'
+                transactions: '@db_transaction_engine'
                 log: '@db_log_engine'
 
-    settings_mapper:
-        class: byrokrat\giroapp\Mapper\SettingsMapper
+    byrokrat\giroapp\Mapper\:
+        resource: '../src/Mapper/*'
+
+    byrokrat\giroapp\Mapper\SettingsMapper:
+        class: ~
         arguments: ['@db_settings_collection']
 
     db_settings_collection:
@@ -26,31 +32,27 @@ services:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.settings%', '@filesystem']
 
-    donor_mapper:
-        class: byrokrat\giroapp\Mapper\DonorMapper
-        arguments: ['@db_donors_collection', '@donor_schema']
+    byrokrat\giroapp\Mapper\DonorMapper:
+        class: ~
+        arguments: ['@db_donor_collection']
 
-    donor_schema:
-        class: byrokrat\giroapp\Mapper\Schema\DonorSchema
-        arguments: ['@postal_address_schema', '@donor_state_factory', '@account_factory', '@id_factory']
-
-    db_donors_collection:
+    db_donor_collection:
         class: hanneskod\yaysondb\Collection
-        arguments: ['@db_donors_engine']
+        arguments: ['@db_donor_engine']
 
-    db_donors_engine:
+    db_donor_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.donors%', '@filesystem']
 
-    transaction_mapper:
-        class: byrokrat\giroapp\Mapper\TransactionMapper
-        arguments: ['@db_transactions_collection']
+    byrokrat\giroapp\Mapper\TransactionMapper:
+        class: ~
+        arguments: ['@db_transaction_collection']
 
-    db_transactions_collection:
+    db_transaction_collection:
         class: hanneskod\yaysondb\Collection
-        arguments: ['@db_transactions_engine']
+        arguments: ['@db_transaction_engine']
 
-    db_transactions_engine:
+    db_transaction_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.transactions%', '@filesystem']
 
@@ -60,13 +62,4 @@ services:
 
     db_log_engine:
         class: hanneskod\yaysondb\Engine\LogEngine
-        arguments: ['%user.dir%/%db.log%', '@db_log_formatter']
-
-    db_log_formatter:
-        class: byrokrat\giroapp\LogFormatter
-
-    postal_address_schema:
-        class: byrokrat\giroapp\Mapper\Schema\PostalAddressSchema
-
-    donor_state_factory:
-        class: byrokrat\giroapp\Model\DonorState\DonorStateFactory
+        arguments: ['%user.dir%/%db.log%']

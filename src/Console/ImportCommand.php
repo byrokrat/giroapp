@@ -27,7 +27,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\ImportEvent;
+use byrokrat\giroapp\Event\FileEvent;
 
 /**
  * Command to import a file from autogirot
@@ -50,7 +50,7 @@ class ImportCommand implements CommandInterface
 
         $container->get('event_dispatcher')->dispatch(
             Events::IMPORT_EVENT,
-            new ImportEvent(
+            new FileEvent(
                 $input->getArgument('filename'),
                 file_get_contents($input->getArgument('filename'))
             )
