@@ -63,17 +63,17 @@ services:
     byrokrat\giroapp\Listener\ImportingListener:
         class: ~
         tags:
-            - { name: event_listener, event: IMPORT_EVENT, priority: 9 }
+            - { name: event_listener, event: IMPORT_EVENT }
 
     byrokrat\giroapp\Listener\ImportingAutogiroListener:
         class: ~
         tags:
-            - { name: event_listener, event: IMPORT_AUTOGIRO_EVENT, priority: 9 }
+            - { name: event_listener, event: IMPORT_AUTOGIRO_EVENT }
 
     byrokrat\giroapp\Listener\ImportingXmlListener:
         class: ~
         tags:
-            - { name: event_listener, event: IMPORT_XML_EVENT, priority: 9 }
+            - { name: event_listener, event: IMPORT_XML_EVENT }
 
     byrokrat\giroapp\Listener\InvalidNodeFilteringListener:
         class: ~
@@ -84,12 +84,12 @@ services:
         class: ~
         arguments: ['@db']
         tags:
-            - { name: event_listener, event: EXECUTION_END_EVENT, priority: 1 }
+            - { name: event_listener, event: EXECUTION_END_EVENT }
 
     byrokrat\giroapp\Listener\MandateResponseListener:
         class: ~
         tags:
-            - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 1 }
+            - { name: event_listener, event: MANDATE_RESPONSE_EVENT }
 
     byrokrat\giroapp\Listener\MandatePersistingListener:
         class: ~
