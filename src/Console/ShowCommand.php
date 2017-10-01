@@ -41,17 +41,17 @@ class ShowCommand implements CommandInterface
      */
     private static $optionToSchemaMap = [
         'type'           => 'type',
-        'mandate-key'    => 'mandateKey',
-        'mandate-source' => 'mandateSource',
-        'payer-number'   => 'payerNumber',
+        'mandate-key'    => 'mandate_key',
+        'mandate-source' => 'mandate_source',
+        'payer-number'   => 'payer_number',
         'state'          => 'state',
         'account'        => 'account',
-        'id'             => 'donorId',
+        'id'             => 'donor_id',
         'name'           => 'name',
         'address'        => 'address',
         'email'          => 'email',
         'phone'          => 'phone',
-        'amount'         => 'donationAmount',
+        'amount'         => 'donation_amount',
         'comment'        => 'comment',
         'attributes'     => 'attributes'
     ];

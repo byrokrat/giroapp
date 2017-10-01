@@ -135,7 +135,7 @@ class Donor
         $this->account = $account;
         $this->donorId = $donorId;
         $this->setName($name);
-        $this->setAddress($address);
+        $this->setPostalAddress($address);
         $this->setEmail($email);
         $this->setPhone($phone);
         $this->setDonationAmount($donationAmount);
@@ -193,12 +193,12 @@ class Donor
         $this->name = $name;
     }
 
-    public function getAddress(): PostalAddress
+    public function getPostalAddress(): PostalAddress
     {
         return $this->address;
     }
 
-    public function setAddress(PostalAddress $address)
+    public function setPostalAddress(PostalAddress $address)
     {
         $this->address = $address;
     }

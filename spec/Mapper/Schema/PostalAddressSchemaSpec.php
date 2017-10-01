@@ -16,40 +16,30 @@ class PostalAddressSchemaSpec extends ObjectBehavior
         $this->shouldHaveType(PostalAddressSchema::CLASS);
     }
 
-    function it_can_create_postaladdress()
+    function it_can_create_address()
     {
-        $doc = array(
-        'postalCode' => '12345',
-        'postalCity' => 'aaaa',
-        'address1' => 'bbbb',
-        'address2' => 'cccc',
-        'coAddress' => 'dddd');
+        $doc = [
+            'line1' => '1',
+            'line2' => '2',
+            'line3' => '3',
+            'postal_code' => 'code',
+            'postal_city' => 'city'
+        ];
 
-        $this->fromArray($doc)->shouldBeLike(new PostalAddress(
-            '12345',
-            'aaaa',
-            'bbbb',
-            'cccc',
-            'dddd'
-        ));
+        $this->fromArray($doc)->shouldBeLike(
+            new PostalAddress('1', '2', '3', 'code', 'city')
+        );
     }
 
-    function it_can_create_arrays()
+    function it_can_create_array()
     {
-        $postalAddress = new PostalAddress(
-            '12345',
-            'aaaa',
-            'bbbb',
-            'cccc',
-            'dddd'
-        );
-        $this->toArray($postalAddress)->shouldBeLike([
-            'postalCode' => '12345',
-            'postalCity' => 'aaaa',
-            'address1' => 'bbbb',
-            'address2' => 'cccc',
-            'coAddress' => 'dddd',
-            'type' => PostalAddressSchema::TYPE_VERSION
+        $this->toArray(new PostalAddress('1', '2', '3', 'code', 'city'))->shouldBeLike([
+            'type' => PostalAddressSchema::TYPE,
+            'line1' => '1',
+            'line2' => '2',
+            'line3' => '3',
+            'postal_code' => 'code',
+            'postal_city' => 'city'
         ]);
     }
 }

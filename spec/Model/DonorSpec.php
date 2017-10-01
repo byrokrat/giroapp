@@ -112,14 +112,14 @@ class DonorSpec extends ObjectBehavior
 
     function it_contains_an_address($address)
     {
-        $this->getAddress()->shouldEqual($address);
+        $this->getPostalAddress()->shouldEqual($address);
     }
 
     function it_can_set_address(PostalAddress $newAddress)
     {
-        $this->getAddress()->shouldNotEqual($newAddress);
-        $this->setAddress($newAddress);
-        $this->getAddress()->shouldEqual($newAddress);
+        $this->getPostalAddress()->shouldNotEqual($newAddress);
+        $this->setPostalAddress($newAddress);
+        $this->getPostalAddress()->shouldEqual($newAddress);
     }
 
     function it_contains_an_email()

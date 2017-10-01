@@ -62,9 +62,9 @@ class EditCommand implements CommandInterface
         $wrapper->addOption('state', null, InputOption::VALUE_REQUIRED, 'Donor state identifier');
         $wrapper->addOption('address1', null, InputOption::VALUE_REQUIRED, 'Address field 1');
         $wrapper->addOption('address2', null, InputOption::VALUE_REQUIRED, 'Address field 2');
+        $wrapper->addOption('address3', null, InputOption::VALUE_REQUIRED, 'Address field 3');
         $wrapper->addOption('postal-code', null, InputOption::VALUE_REQUIRED, 'Postal code');
         $wrapper->addOption('postal-city', null, InputOption::VALUE_REQUIRED, 'Postal city');
-        $wrapper->addOption('co-address', null, InputOption::VALUE_REQUIRED, 'C/o address');
         $wrapper->addOption('email', null, InputOption::VALUE_REQUIRED, 'Contact email address');
         $wrapper->addOption('phone', null, InputOption::VALUE_REQUIRED, 'Contact phone number');
         $wrapper->addOption('amount', null, InputOption::VALUE_REQUIRED, 'Monthly donation amount');
@@ -100,39 +100,39 @@ class EditCommand implements CommandInterface
             [
                 'address1' => $this->getProperty(
                     'address1',
-                    'Donor Address line 1',
-                    $donor->getAddress()->getAddress1(),
+                    'Donor address line 1',
+                    $donor->getPostalAddress()->getLine1(),
                     $input,
                     $output
                 ),
                 'address2' => $this->getProperty(
                     'address2',
-                    'Donor Address line 2',
-                    $donor->getAddress()->getAddress2(),
+                    'Donor address line 2',
+                    $donor->getPostalAddress()->getLine2(),
                     $input,
                     $output
                 ),
-                'postalCode' => $this->getProperty(
+                'address3' => $this->getProperty(
+                    'address3',
+                    'Donor address line 3',
+                    $donor->getPostalAddress()->getLine3(),
+                    $input,
+                    $output
+                ),
+                'postal_code' => $this->getProperty(
                     'postal-code',
-                    'Donor Postal code',
-                    $donor->getAddress()->getPostalCode(),
+                    'Donor postal code',
+                    $donor->getPostalAddress()->getPostalCode(),
                     $input,
                     $output
                 ),
-                'postalCity' => $this-> getProperty(
+                'postal_city' => $this-> getProperty(
                     'postal-city',
-                    'Donor Address city',
-                    $donor->getAddress()->getPostalCity(),
+                    'Donor address city',
+                    $donor->getPostalAddress()->getPostalCity(),
                     $input,
                     $output
-                ),
-                'coAddress' => $this->getProperty(
-                    'co-address',
-                    'C/o Address',
-                    $donor->getAddress()->getCoAddress(),
-                    $input,
-                    $output
-                ),
+                )
             ],
             $donor
         );
@@ -208,15 +208,13 @@ class EditCommand implements CommandInterface
         Donor $donor
     ) {
         if ($values) {
-            $newPostalAddress = new PostalAddress(
-                $values['postalCode'],
-                $values['postalCity'],
+            $donor->setPostalAddress(new PostalAddress(
                 $values['address1'],
                 $values['address2'],
-                $values['coAddress']
-            );
-
-            $donor->setAddress($newPostalAddress);
+                $values['address3'],
+                $values['postal_code'],
+                $values['postal_city']
+            ));
         }
     }
 
