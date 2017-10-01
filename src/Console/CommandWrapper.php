@@ -27,7 +27,6 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\NullOutput;
 
@@ -65,7 +64,6 @@ class CommandWrapper extends Command
      */
     protected function configure()
     {
-        $this->addOption('path', null, InputOption::VALUE_REQUIRED, 'User directory path');
         $this->commandClass::configure($this);
     }
 
@@ -78,7 +76,7 @@ class CommandWrapper extends Command
 
         $container->set('output', $this->discardOutputMessages ? new NullOutput : $output);
 
-        $dispatcher = $container->get('event_dispatcher');
+        $dispatcher = $container->get('Symfony\Component\EventDispatcher\EventDispatcher');
 
         $dispatcher->dispatch(
             Events::DEBUG_EVENT,
@@ -87,7 +85,7 @@ class CommandWrapper extends Command
 
         try {
             $dispatcher->dispatch(Events::EXECUTION_START_EVENT);
-            (new $this->commandClass)->execute($input, $output, $container);
+            $container->get($this->commandClass)->execute($input, $output);
             $dispatcher->dispatch(Events::EXECUTION_END_EVENT);
         } catch (\Exception $e) {
             $dispatcher->dispatch(

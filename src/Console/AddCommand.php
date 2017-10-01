@@ -22,19 +22,19 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Builder\DonorBuilder;
+use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\amount\Currency\SEK;
+use byrokrat\banking\AccountFactory;
+use byrokrat\id\IdFactory;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Console\Question\Question;
-use byrokrat\giroapp\Events;
-use byrokrat\banking\AccountFactory;
-use byrokrat\id\IdFactory;
-use byrokrat\amount\Currency\SEK;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\giroapp\Event\DonorEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to add a new mandate
@@ -45,6 +45,38 @@ class AddCommand implements CommandInterface
      * @var CommandWrapper
      */
     private static $wrapper;
+
+    /**
+     * @var EventDispatcher
+     */
+    private $dispatcher;
+
+    /**
+     * @var DonorBuilder
+     */
+    private $donorBuilder;
+
+    /**
+     * @var AccountFactory
+     */
+    private $accountFactory;
+
+    /**
+     * @var IdFactory
+     */
+    private $idFactory;
+
+    public function __construct(
+        EventDispatcher $dispatcher,
+        DonorBuilder $donorBuilder,
+        AccountFactory $accountFactory,
+        IdFactory $idFactory
+    ) {
+        $this->dispatcher = $dispatcher;
+        $this->donorBuilder = $donorBuilder;
+        $this->accountFactory = $accountFactory;
+        $this->idFactory = $idFactory;
+    }
 
     public static function configure(CommandWrapper $wrapper)
     {
@@ -67,32 +99,28 @@ class AddCommand implements CommandInterface
         $wrapper->addOption('comment', null, InputOption::VALUE_REQUIRED, 'Comment');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
-        $donorBuilder = $container->get('byrokrat\giroapp\Builder\DonorBuilder');
-        $accountFactory = $container->get('byrokrat\banking\AccountFactory');
-        $idFactory = $container->get('byrokrat\id\IdFactory');
+        $this->donorBuilder->reset();
 
-        $donorBuilder->setMandateSource(Donor::MANDATE_SOURCE_PAPER);
+        $this->donorBuilder->setMandateSource(Donor::MANDATE_SOURCE_PAPER);
 
         $this->setPayerNumber(
-            $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output),
-            $donorBuilder
+            $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output)
         );
+
         $this->setAccount(
-            $this->getProperty('account', 'Donor account number', '', $input, $output),
-            $donorBuilder,
-            $accountFactory
+            $this->getProperty('account', 'Donor account number', '', $input, $output)
         );
+
         $this->setId(
-            $this->getProperty('id', 'Donor personal id number or organisation number', '', $input, $output),
-            $donorBuilder,
-            $idFactory
+            $this->getProperty('id', 'Donor personal id number or organisation number', '', $input, $output)
         );
+
         $this->setName(
-            $this->getProperty('name', 'Donor name', '', $input, $output),
-            $donorBuilder
+            $this->getProperty('name', 'Donor name', '', $input, $output)
         );
+
         $this->setPostalAddress(
             [
                 'address1' => $this->getProperty('address1', 'Donor address line 1', '', $input, $output),
@@ -100,29 +128,28 @@ class AddCommand implements CommandInterface
                 'address3' => $this->getProperty('address3', 'Donor address line 3', '', $input, $output),
                 'postal_code' => $this->getProperty('postal-code', 'Donor postal code', '', $input, $output),
                 'postal_city' => $this-> getProperty('postal-city', 'Donor address city', '', $input, $output),
-            ],
-            $donorBuilder
+            ]
         );
+
         $this->setEmail(
-            $this->getProperty('email', 'Contact email address', '', $input, $output),
-            $donorBuilder
+            $this->getProperty('email', 'Contact email address', '', $input, $output)
         );
+
         $this->setPhone(
-            $this->getProperty('phone', 'Contact phone number', '', $input, $output),
-            $donorBuilder
+            $this->getProperty('phone', 'Contact phone number', '', $input, $output)
         );
+
         $this->setDonationAmount(
-            $this->getProperty('amount', 'Monthly donation amount', '0', $input, $output),
-            $donorBuilder
+            $this->getProperty('amount', 'Monthly donation amount', '0', $input, $output)
         );
+
         $this->setComment(
-            $this->getProperty('comment', 'Comment', '', $input, $output),
-            $donorBuilder
+            $this->getProperty('comment', 'Comment', '', $input, $output)
         );
 
-        $donor = $donorBuilder->buildDonor();
+        $donor = $this->donorBuilder->buildDonor();
 
-        $container->get('event_dispatcher')->dispatch(
+        $this->dispatcher->dispatch(
             Events::MANDATE_ADDED_EVENT,
             new DonorEvent(
                 sprintf(
@@ -151,59 +178,50 @@ class AddCommand implements CommandInterface
                 new Question("$desc: ", $default)
             );
         }
+
         return $value;
     }
 
-    private function setPayerNumber(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
+    private function setPayerNumber(string $value)
+    {
         if (is_numeric($value) && strlen($value) <= 16) {
-            $donorBuilder->setPayerNumber($value);
+            $this->donorBuilder->setPayerNumber($value);
         } else {
             throw new \Exception('Payer number must be numerical, and max 16 digits');
         }
     }
 
-    private function setAccount(
-        $value,
-        DonorBuilder $donorBuilder,
-        AccountFactory $accountFactory
-    ) {
+    private function setAccount($value)
+    {
         if ($value) {
-            $newAccount = $accountFactory->createAccount($value);
-            $donorBuilder->setAccount($newAccount);
+            $this->donorBuilder->setAccount(
+                $this->accountFactory->createAccount($value)
+            );
         } else {
             throw new \Exception('Donor needs an account number');
         }
     }
 
-    private function setId(
-        string $value,
-        DonorBuilder $donorBuilder,
-        IdFactory $idFactory
-    ) {
-        $newId = $idFactory->create($value);
-        $donorBuilder->setId($newId);
+    private function setId(string $value)
+    {
+        $this->donorBuilder->setId(
+            $this->idFactory->create($value)
+        );
     }
 
-    private function setName(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
+    private function setName(string $value)
+    {
         if ($value) {
-            $donorBuilder->setName($value);
+            $this->donorBuilder->setName($value);
         } else {
             throw new \Exception('Donor needs a name');
         }
     }
 
-    private function setPostalAddress(
-        array $values,
-        DonorBuilder $donorBuilder
-    ) {
+    private function setPostalAddress(array $values)
+    {
         if ($values) {
-            $donorBuilder->setPostalAddress(new PostalAddress(
+            $this->donorBuilder->setPostalAddress(new PostalAddress(
                 $values['address1'],
                 $values['address2'],
                 $values['address3'],
@@ -213,40 +231,32 @@ class AddCommand implements CommandInterface
         }
     }
 
-    private function setEmail(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
+    private function setEmail(string $value)
+    {
         if ($value) {
-            $donorBuilder->setEmail($value);
+            $this->donorBuilder->setEmail($value);
         }
     }
 
-    private function setPhone(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
+    private function setPhone(string $value)
+    {
         if ($value) {
-            $donorBuilder->setPhone($value);
+            $this->donorBuilder->setPhone($value);
         }
     }
 
-    private function setDonationAmount(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
+    private function setDonationAmount(string $value)
+    {
         if ($value) {
             $newDonationAmount = new SEK($value);
-            $donorBuilder->setDonationAmount($newDonationAmount);
+            $this->donorBuilder->setDonationAmount($newDonationAmount);
         }
     }
 
-    private function setComment(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
+    private function setComment(string $value)
+    {
         if ($value) {
-            $donorBuilder->setComment($value);
+            $this->donorBuilder->setComment($value);
         }
     }
 }

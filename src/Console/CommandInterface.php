@@ -24,7 +24,6 @@ namespace byrokrat\giroapp\Console;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Interface for giroapp console commands
@@ -32,12 +31,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 interface CommandInterface
 {
     /**
-     * Configure the command
+     * Configure command
      */
     public static function configure(CommandWrapper $wrapper);
 
     /**
      * Execute command
      */
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container);
+    public function execute(InputInterface $input, OutputInterface $output);
 }

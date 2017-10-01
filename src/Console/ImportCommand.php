@@ -22,18 +22,28 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\FileEvent;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\FileEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to import a file from autogirot
  */
 class ImportCommand implements CommandInterface
 {
+    /**
+     * @var EventDispatcher
+     */
+    private $dispatcher;
+
+    public function __construct(EventDispatcher $dispatcher)
+    {
+        $this->dispatcher = $dispatcher;
+    }
+
     public static function configure(CommandWrapper $wrapper)
     {
         $wrapper->setName('import');
@@ -42,13 +52,13 @@ class ImportCommand implements CommandInterface
         $wrapper->addArgument('filename', InputArgument::REQUIRED, 'The name of the file to import');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function execute(InputInterface $input, OutputInterface $output)
     {
         if (!is_readable($input->getArgument('filename')) || !is_file($input->getArgument('filename'))) {
             throw new \RuntimeException("Unable to read file {$input->getArgument('filename')}");
         }
 
-        $container->get('event_dispatcher')->dispatch(
+        $this->dispatcher->dispatch(
             Events::IMPORT_EVENT,
             new FileEvent(
                 $input->getArgument('filename'),

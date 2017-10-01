@@ -14,8 +14,18 @@ services:
     output:
         synthetic: true
 
-    event_dispatcher:
-        class: Symfony\Component\EventDispatcher\EventDispatcher
+    byrokrat\giroapp\Builder\:
+        resource: '../src/Builder/*'
+
+    byrokrat\giroapp\Console\:
+        resource: '../src/Console/*'
+        exclude: '../src/Console/CommandWrapper.php'
+
+    byrokrat\giroapp\State\:
+        resource: '../src/State/*'
+
+    Symfony\Component\EventDispatcher\EventDispatcher:
+        class: ~
         configurator: 'byrokrat\giroapp\DI\PluginLoader:loadPlugins'
 
     byrokrat\giroapp\DI\PluginLoader:
@@ -80,16 +90,18 @@ services:
         tags:
             - { name: event_listener, event: MANDATE_ADDED_EVENT, priority: 10 }
 
-    byrokrat\giroapp\Builder\:
-        resource: '../src/Builder/*'
-
-    byrokrat\giroapp\State\:
-        resource: '../src/State/*'
-
     byrokrat\autogiro\Parser\ParserFactory: ~
 
     byrokrat\autogiro\Parser\Parser:
         factory: 'byrokrat\autogiro\Parser\ParserFactory:createParser'
+
+    byrokrat\autogiro\Writer\Writer:
+        factory: 'byrokrat\autogiro\Writer\WriterFactory:createWriter'
+        arguments:
+            - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\SettingsMapper').findByKey('bgc_customer_number')"
+            - '@organization_bg'
+
+    byrokrat\autogiro\Writer\WriterFactory: ~
 
     byrokrat\banking\BankgiroFactory: ~
 
@@ -119,6 +131,6 @@ services:
         arguments: ["@=service('byrokrat\\\\giroapp\\\\Mapper\\\\SettingsMapper').findByKey('org_number')"]
 
     organization_bg:
-        class: byrokrat\banking\AccountNumber
+        class: byrokrat\banking\Bankgiro
         factory: 'byrokrat\banking\BankgiroFactory:createAccount'
         arguments: ["@=service('byrokrat\\\\giroapp\\\\Mapper\\\\SettingsMapper').findByKey('bankgiro')"]
