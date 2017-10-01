@@ -26,8 +26,9 @@ class ApplicationWrapper
     {
         $this->directory = sys_get_temp_dir() . '/giroapp_acceptance_tests_' . time();
         mkdir($this->directory);
-        $this->userDir = $this->directory . '/giroapp';
+        $this->userDir = $this->directory . '/giroapp_path';
         mkdir($this->userDir);
+        putenv("GIROAPP_PATH={$this->userDir}");
         $this->executable = $executable ?: realpath(getcwd() . '/bin/giroapp');
     }
 
