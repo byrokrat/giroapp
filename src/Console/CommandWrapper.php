@@ -59,18 +59,12 @@ class CommandWrapper extends Command
         $this->discardOutputMessages = true;
     }
 
-    /**
-     * Configure the path option
-     */
     protected function configure()
     {
         $this->commandClass::configure($this);
     }
 
-    /**
-     * Dispatch events and call wrapped command
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $container = new ProjectServiceContainer;
 
@@ -99,7 +93,8 @@ class CommandWrapper extends Command
                     ]
                 )
             );
-            throw $e;
         }
+
+        return $container->get('byrokrat\giroapp\Listener\ExitStatusListener')->getExitStatus();
     }
 }

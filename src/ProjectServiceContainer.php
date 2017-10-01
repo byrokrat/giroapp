@@ -53,6 +53,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\console\\showcommand' => 'byrokrat\\giroapp\\Console\\ShowCommand',
             'byrokrat\\giroapp\\di\\pluginloader' => 'byrokrat\\giroapp\\DI\\PluginLoader',
             'byrokrat\\giroapp\\listener\\committinglistener' => 'byrokrat\\giroapp\\Listener\\CommittingListener',
+            'byrokrat\\giroapp\\listener\\exitstatuslistener' => 'byrokrat\\giroapp\\Listener\\ExitStatusListener',
             'byrokrat\\giroapp\\listener\\importingautogirolistener' => 'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener',
             'byrokrat\\giroapp\\listener\\importinglistener' => 'byrokrat\\giroapp\\Listener\\ImportingListener',
             'byrokrat\\giroapp\\listener\\importingxmllistener' => 'byrokrat\\giroapp\\Listener\\ImportingXmlListener',
@@ -106,6 +107,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\ShowCommand' => 'getByrokrat_Giroapp_Console_ShowCommandService',
             'byrokrat\\giroapp\\DI\\PluginLoader' => 'getByrokrat_Giroapp_DI_PluginLoaderService',
             'byrokrat\\giroapp\\Listener\\CommittingListener' => 'getByrokrat_Giroapp_Listener_CommittingListenerService',
+            'byrokrat\\giroapp\\Listener\\ExitStatusListener' => 'getByrokrat_Giroapp_Listener_ExitStatusListenerService',
             'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener' => 'getByrokrat_Giroapp_Listener_ImportingAutogiroListenerService',
             'byrokrat\\giroapp\\Listener\\ImportingListener' => 'getByrokrat_Giroapp_Listener_ImportingListenerService',
             'byrokrat\\giroapp\\Listener\\ImportingXmlListener' => 'getByrokrat_Giroapp_Listener_ImportingXmlListenerService',
@@ -210,6 +212,12 @@ class ProjectServiceContainer extends Container
         $instance->addListener('DEBUG_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\OutputtingListener']) ? $this->services['byrokrat\giroapp\Listener\OutputtingListener'] : $this->get('byrokrat\giroapp\Listener\OutputtingListener')) && false ?: '_'};
         }, 1 => 'onDEBUGEVENT'), -10);
+        $instance->addListener('ERROR_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ExitStatusListener']) ? $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] : $this->get('byrokrat\giroapp\Listener\ExitStatusListener')) && false ?: '_'};
+        }, 1 => 'onFailure'));
+        $instance->addListener('WARNING_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ExitStatusListener']) ? $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] : $this->get('byrokrat\giroapp\Listener\ExitStatusListener')) && false ?: '_'};
+        }, 1 => 'onFailure'));
         $instance->addListener('IMPORT_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ImportingListener']) ? $this->services['byrokrat\giroapp\Listener\ImportingListener'] : $this->get('byrokrat\giroapp\Listener\ImportingListener')) && false ?: '_'};
         }, 1 => 'onIMPORTEVENT'), 9);
@@ -465,6 +473,16 @@ class ProjectServiceContainer extends Container
     protected function getByrokrat_Giroapp_Listener_CommittingListenerService()
     {
         return $this->services['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(${($_ = isset($this->services['db']) ? $this->services['db'] : $this->get('db')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Listener\ExitStatusListener' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Listener\ExitStatusListener
+     */
+    protected function getByrokrat_Giroapp_Listener_ExitStatusListenerService()
+    {
+        return $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] = new \byrokrat\giroapp\Listener\ExitStatusListener();
     }
 
     /**
