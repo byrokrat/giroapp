@@ -176,6 +176,17 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then the output matches :regexp
+     */
+    public function theOutputMatches2($regexp)
+    {
+        $output = trim($this->result->getOutput());
+        if (!preg_match($regexp, $output)) {
+            throw new \Exception("Unable to find $regexp in {$output}");
+        }
+    }
+
+    /**
      * @Then the output contains :string
      */
     public function theOutputContains($string)
