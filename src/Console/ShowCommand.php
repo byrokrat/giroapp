@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -56,18 +55,12 @@ class ShowCommand implements CommandInterface
     ];
 
     /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
-
-    /**
      * @var DonorSchema
      */
     private $donorSchema;
 
-    public function __construct(DonorMapper $donorMapper, DonorSchema $donorSchema)
+    public function __construct(DonorSchema $donorSchema)
     {
-        $this->donorMapper = $donorMapper;
         $this->donorSchema = $donorSchema;
     }
 
@@ -96,11 +89,7 @@ class ShowCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $content = $this->donorSchema->toArray(
-            self::getDonorUsingArgument($input, $this->donorMapper)
-        );
-
-        $showContent = $content;
+        $showContent = $content = $this->donorSchema->toArray($this->getDonor($input));
 
         foreach (self::$optionToSchemaMap as $option => $field) {
             if (!$input->getOption($option)) {

@@ -34,7 +34,12 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 trait DonorArgumentTrait
 {
-    protected static function configureDonorArgument(CommandWrapper $wrapper)
+    /**
+     * @var DonorMapper
+     */
+    private $donorMapper;
+
+    protected static function configureDonorArgument(CommandWrapper $wrapper): void
     {
         $wrapper->addArgument(
             'donor',
@@ -50,18 +55,29 @@ trait DonorArgumentTrait
         );
     }
 
-    protected static function getDonorUsingArgument(InputInterface $input, DonorMapper $donorMapper): Donor
+    /**
+     * @required
+     */
+    public function setDonorMapper(DonorMapper $donorMapper): void
+    {
+        $this->donorMapper = $donorMapper;
+    }
+
+    /**
+     * @throws \RuntimeException if Donor can not be found
+     */
+    public function getDonor(InputInterface $input): Donor
     {
         $key = $input->getArgument('donor');
 
-        if (!$input->getOption('force-payer-number') && $donorMapper->hasKey($key)) {
-            return $donorMapper->findByKey($key);
+        if (!$input->getOption('force-payer-number') && $this->donorMapper->hasKey($key)) {
+            return $this->donorMapper->findByKey($key);
         }
 
         try {
-            return $donorMapper->findByActivePayerNumber($key);
+            return $this->donorMapper->findByActivePayerNumber($key);
         } catch (\RuntimeException $e) {
-            foreach ($donorMapper->findByPayerNumber($key) as $donor) {
+            foreach ($this->donorMapper->findByPayerNumber($key) as $donor) {
                 return $donor;
             }
         }
