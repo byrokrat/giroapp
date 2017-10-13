@@ -40,5 +40,6 @@ $app->add(new CommandWrapper(InitCommand::CLASS));
 $app->add(new CommandWrapper(LsCommand::CLASS));
 $app->add(new CommandWrapper(RevokeCommand::CLASS));
 $app->add(new CommandWrapper(ShowCommand::CLASS));
+$app->add(new CommandWrapper(StatusCommand::CLASS));
 
 $app->run();
