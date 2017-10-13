@@ -29,4 +29,18 @@ class MandatePersistingListenerSpec extends ObjectBehavior
         $donorMapper->create($donor)->shouldBeCalled();
         $this->onMandateAddedEvent($event);
     }
+
+    function it_can_update_mandates($donorMapper, DonorEvent $event, Donor $donor)
+    {
+        $event->getDonor()->willReturn($donor);
+        $donorMapper->update($donor)->shouldBeCalled();
+        $this->onMandateUpdatedEvent($event);
+    }
+
+    function it_can_delete_mandates($donorMapper, DonorEvent $event, Donor $donor)
+    {
+        $event->getDonor()->willReturn($donor);
+        $donorMapper->delete($donor)->shouldBeCalled();
+        $this->onMandateDroppedEvent($event);
+    }
 }

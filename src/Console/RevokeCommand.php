@@ -67,8 +67,6 @@ class RevokeCommand implements CommandInterface
 
         $donor->setState(new RevokeMandateState);
 
-        $this->donorMapper->update($donor);
-
         $this->dispatcher->dispatch(
             Events::MANDATE_REVOKED_EVENT,
             new DonorEvent(

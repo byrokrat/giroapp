@@ -94,7 +94,12 @@ services:
     byrokrat\giroapp\Listener\MandatePersistingListener:
         class: ~
         tags:
-            - { name: event_listener, event: MANDATE_ADDED_EVENT, priority: 10 }
+            - { name: event_listener, event: MANDATE_ADDED_EVENT }
+            - { name: event_listener, event: MANDATE_DROPPED_EVENT }
+            - { name: event_listener, event: MANDATE_EDITED_EVENT, method: onMandateUpdatedEvent }
+            - { name: event_listener, event: MANDATE_APPROVED_EVENT, method: onMandateUpdatedEvent }
+            - { name: event_listener, event: MANDATE_REVOKED_EVENT, method: onMandateUpdatedEvent }
+            - { name: event_listener, event: MANDATE_INVALID_EVENT, method: onMandateUpdatedEvent }
 
     byrokrat\autogiro\Parser\ParserFactory: ~
 

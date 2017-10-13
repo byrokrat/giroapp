@@ -71,8 +71,6 @@ class DropCommand implements CommandInterface
             throw new \RuntimeException('Unable to drop mandate that is not inactive. Use -f to override.');
         }
 
-        $this->donorMapper->delete($donor);
-
         $this->dispatcher->dispatch(
             Events::MANDATE_DROPPED_EVENT,
             new DonorEvent(

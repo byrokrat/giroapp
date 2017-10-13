@@ -47,4 +47,14 @@ class MandatePersistingListener
     {
         $this->donorMapper->create($event->getDonor());
     }
+
+    public function onMandateUpdatedEvent(DonorEvent $event): void
+    {
+        $this->donorMapper->update($event->getDonor());
+    }
+
+    public function onMandateDroppedEvent(DonorEvent $event): void
+    {
+        $this->donorMapper->delete($event->getDonor());
+    }
 }

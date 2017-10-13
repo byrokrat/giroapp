@@ -176,8 +176,6 @@ class EditCommand implements CommandInterface
             $donor
         );
 
-        $this->donorMapper->update($donor);
-
         $this->dispatcher->dispatch(
             Events::MANDATE_EDITED_EVENT,
             new DonorEvent(
