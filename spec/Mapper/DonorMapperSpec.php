@@ -10,6 +10,7 @@ use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\FilterableInterface;
 use hanneskod\yaysondb\Expression\ExpressionInterface;
+use hanneskod\yaysondb\Operators as y;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -43,11 +44,44 @@ class DonorMapperSpec extends ObjectBehavior
 
     function it_can_save_donor($collection, $donorSchema, Donor $donor)
     {
-        $donor->getMandateKey()->willReturn('foobar');
-        $donorSchema->toArray($donor)->willReturn(['asdf']);
-        $collection->insert(['asdf'], 'foobar')->shouldBeCalled();
+        $donor->getMandateKey()->willReturn('mandate_key');
+        $donor->getPayerNumber()->willReturn('payer_number');
+
+        $search = new ExpressionToken;
+
+        $search->shouldMatch([
+            'payer_number' => 'payer_number',
+            'mandate_key' => '!mandate_key',
+            'state' => '!INACTIVE'
+        ]);
+
+        $search->shouldNotMatch([
+            'payer_number' => 'payer_number',
+            'mandate_key' => 'mandate_key',
+            'state' => '!INACTIVE'
+        ]);
+
+        $search->shouldNotMatch([
+            'payer_number' => 'payer_number',
+            'mandate_key' => '!mandate_key',
+            'state' => 'INACTIVE'
+        ]);
+
+        $collection->findOne($search)->shouldBeCalled()->willReturn([]);
+
+        $donorSchema->toArray($donor)->willReturn(['SCHEMA']);
+        $collection->insert(['SCHEMA'], 'mandate_key')->shouldBeCalled();
 
         $this->save($donor);
+    }
+
+    function it_fails_on_save_if_active_mandate_exists($collection, Donor $donor)
+    {
+        $donor->getMandateKey()->willReturn('');
+        $donor->getPayerNumber()->willReturn('');
+        $collection->findOne(new ExpressionToken)->shouldBeCalled()->willReturn(['NOT EMPTY']);
+
+        $this->shouldThrow(\RuntimeException::CLASS)->duringSave($donor);
     }
 
     function it_can_find_all($collection, $donorSchema, Donor $donor1, Donor $donor2)
@@ -56,48 +90,62 @@ class DonorMapperSpec extends ObjectBehavior
         $donorSchema->fromArray(['foo'])->willReturn($donor1);
         $donorSchema->fromArray(['bar'])->willReturn($donor2);
 
-        $this->findAll()->shouldReturn([$donor1, $donor2]);
+        $this->findAll()->shouldIterateAs([$donor1, $donor2]);
     }
 
-    function it_can_find_active_donor($collection, $donorSchema, Donor $donor, ExpressionInterface $expr)
+    function it_can_find_by_payer_number($collection, $donorSchema, Donor $donor, FilterableInterface $documents)
     {
-        $donorSchema->getPayerNumberSearchExpression('payer-number')->willReturn($expr);
-        $collection->findOne($expr)->willReturn(['SCHEMA_DOCUMENT']);
-        $donorSchema->fromArray(['SCHEMA_DOCUMENT'])->willReturn($donor);
+        $search = (new ExpressionToken)
+            ->shouldMatch(['payer_number' => 'payer-number'])
+            ->shouldNotMatch(['payer_number' => 'another-payer-number']);
+
+        $collection->find($search)->willReturn($documents);
+        $documents->getIterator()->willReturn(new \ArrayIterator([['foo'], ['bar']]));
+        $donorSchema->fromArray(['foo'])->willReturn($donor);
+        $donorSchema->fromArray(['bar'])->willReturn($donor);
+
+        $this->findByPayerNumber('payer-number')->shouldIterateAs([$donor, $donor]);
+    }
+
+    function it_can_find_by_active_payer_number($collection, $donorSchema, Donor $donor)
+    {
+        $search = new ExpressionToken;
+
+        $search->shouldMatch([
+            'payer_number' => 'payer-number',
+            'state' => 'ACTIVE'
+        ]);
+
+        $search->shouldNotMatch([
+            'payer_number' => 'another-payer-number',
+            'state' => 'ACTIVE'
+        ]);
+
+        $search->shouldNotMatch([
+            'payer_number' => 'payer-number',
+            'state' => 'INACTIVE'
+        ]);
+
+        $collection->findOne($search)->willReturn(['DOCUMENT']);
+        $donorSchema->fromArray(['DOCUMENT'])->willReturn($donor);
 
         $this->findByActivePayerNumber('payer-number')->shouldEqual($donor);
     }
 
-    function it_throws_on_erroneous_active_payernumber($collection, $donorSchema, ExpressionInterface $expr)
+    function it_fails_if_active_payer_number_does_not_exist($collection, Donor $donor)
     {
-        $donorSchema->getPayerNumberSearchExpression('payer-number')->willReturn($expr);
-        $collection->findOne($expr)->willReturn([]);
-
-        $this->shouldThrow(\RuntimeException::CLASS)->duringFindByActivePayerNumber('payer-number');
+        $collection->findOne(new ExpressionToken)->willReturn([]);
+        $this->shouldThrow(\RuntimeException::CLASS)->during('findByActivePayerNumber', ['']);
     }
 
-    function it_can_find_by_payer_number(
-        $collection,
-        $donorSchema,
-        Donor $donor1,
-        Donor $donor2,
-        FilterableInterface $documents,
-        ExpressionInterface $expr
-    ) {
-        $donorSchema->getPayerNumberSearchExpression('payer-number')->willReturn($expr);
-        $collection->find($expr)->willReturn($documents);
-        $documents->getIterator()->willReturn(new \ArrayIterator([['foo'], ['bar']]));
-        $donorSchema->fromArray(['foo'])->willReturn($donor1);
-        $donorSchema->fromArray(['bar'])->willReturn($donor2);
-
-        $this->findByPayerNumber('payer-number')->shouldReturn([$donor1, $donor2]);
-    }
-
-    function it_can_delete_donor($collection, $donorSchema, Donor $donor, ExpressionInterface $expr)
+    function it_can_delete_donor($collection, Donor $donor)
     {
+        $search = (new ExpressionToken)
+            ->shouldMatch(['mandate_key' => 'mandate-key'])
+            ->shouldNotMatch(['mandate_key' => 'another-mandate-key']);
+
         $donor->getMandateKey()->willReturn('mandate-key');
-        $donorSchema->getMandateKeySearchExpression('mandate-key')->willReturn($expr);
-        $collection->delete($expr)->shouldBeCalled();
+        $collection->delete($search)->shouldBeCalled();
 
         $this->delete($donor);
     }
@@ -105,14 +153,12 @@ class DonorMapperSpec extends ObjectBehavior
     function it_can_report_existing_donor($collection)
     {
         $collection->has('foobar')->willReturn(true);
-
         $this->hasKey('foobar')->shouldReturn(true);
     }
 
     function it_can_report_nonexisting_donor($collection)
     {
         $collection->has('foobar')->willReturn(false);
-
         $this->hasKey('foobar')->shouldReturn(false);
     }
 }

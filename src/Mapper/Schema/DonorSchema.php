@@ -111,14 +111,4 @@ class DonorSchema
             $doc['attributes'] ?? []
         );
     }
-
-    public function getPayerNumberSearchExpression(string $payerNumber): ExpressionInterface
-    {
-        return y::doc(['payer_number' => y::equals($payerNumber)]);
-    }
-
-    public function getMandateKeySearchExpression(string $mandateKey): ExpressionInterface
-    {
-        return y::doc(['mandate_key' => y::equals($mandateKey)]);
-    }
 }

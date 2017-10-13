@@ -142,46 +142,4 @@ class DonorSchemaSpec extends ObjectBehavior
 
         $this->toArray($donor)->shouldBeLike($this->schemaDocument);
     }
-
-    function it_can_create_payer_number_search_expressions()
-    {
-        $this->getPayerNumberSearchExpression('1234')->shouldMatchDocument([
-            'payer_number' => '1234'
-        ]);
-
-        $this->getPayerNumberSearchExpression('1234')->shouldNotMatchDocument([
-            'payer_number' => 'not-1234'
-        ]);
-
-        $this->getPayerNumberSearchExpression('1234')->shouldNotMatchDocument([
-            'not_payer_number' => '1234'
-        ]);
-    }
-
-    function it_can_create_mandate_key_search_expressions()
-    {
-        $this->getMandateKeySearchExpression('1234')->shouldMatchDocument([
-            'mandate_key' => '1234'
-        ]);
-
-        $this->getMandateKeySearchExpression('1234')->shouldNotMatchDocument([
-            'mandate_key' => 'not-1234'
-        ]);
-
-        $this->getMandateKeySearchExpression('1234')->shouldNotMatchDocument([
-            'not_mandate_key' => '1234'
-        ]);
-    }
-
-    function getMatchers()
-    {
-        return [
-            'matchDocument' => function (ExpressionInterface $expression, $doc) {
-                return $expression->evaluate($doc);
-            },
-            'notMatchDocument' => function (ExpressionInterface $expression, $doc) {
-                return !$expression->evaluate($doc);
-            }
-        ];
-    }
 }
