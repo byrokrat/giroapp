@@ -22,9 +22,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Mapper;
 
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
 use hanneskod\yaysondb\CollectionInterface;
+use hanneskod\yaysondb\Operators as y;
 
 /**
  * Maps donor objects to database collection
@@ -68,47 +70,36 @@ class DonorMapper
     }
 
     /**
-     * Save donor (insert or update)
-     */
-    public function save(Donor $donor)
-    {
-        $this->collection->insert(
-            $this->donorSchema->toArray($donor),
-            $donor->getMandateKey()
-        );
-    }
-
-    /**
      * Find all donors in storage
      *
-     * @return Donor[] Returns an array of Donor objects
+     * @return Donor[] An iterable containing Donor objects
      */
-    public function findAll(): array
+    public function findAll(): iterable
     {
-        $donors = [];
-
         foreach ($this->collection as $doc) {
-            $donors[] = $this->donorSchema->fromArray($doc);
+            yield $this->donorSchema->fromArray($doc);
         }
-
-        return $donors;
     }
 
     /**
      * Find active donor mandate identified by payer number.
      *
-     * @throws RunTimeException if collection does not contain a valid post.
+     * @throws RuntimeException if donor is not found
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
-        $post = $this->collection->findOne(
-            $this->donorSchema->getPayerNumberSearchExpression($payerNumber)
+        $doc = $this->collection->findOne(
+            y::doc([
+                'payer_number' => y::equals($payerNumber),
+                'state' => y::not(y::equals(States::INACTIVE))
+            ])
         );
 
-        if (!empty($post)) {
-            return $this->donorSchema->fromArray($post);
+        if (!$doc) {
+            throw new \RuntimeException("Unknown payer number: $payerNumber");
         }
-        throw new \RunTimeException("unknown payer number: $payerNumber");
+
+        return $this->donorSchema->fromArray($doc);
     }
 
     /**
@@ -116,26 +107,49 @@ class DonorMapper
      *
      * NOTE: This may include older deleted mandates.
      *
-     * @return Donor[] Returns an array of Donor objects
+     * @return Donor[] An iterable containing Donor objects
      */
-    public function findByPayerNumber(string $payerNumber): array
+    public function findByPayerNumber(string $payerNumber): iterable
     {
-        $donors = [];
+        foreach ($this->collection->find(y::doc(['payer_number' => y::equals($payerNumber)])) as $doc) {
+            yield $this->donorSchema->fromArray($doc);
+        }
+    }
 
-        foreach ($this->collection->find($this->donorSchema->getPayerNumberSearchExpression($payerNumber)) as $doc) {
-            $donors[] = $this->donorSchema->fromArray($doc);
+    /**
+     * Save donor (insert or update)
+     */
+    public function save(Donor $donor): void
+    {
+        $expr = y::doc([
+            'payer_number' => y::equals($donor->getPayerNumber()),
+            'mandate_key' => y::not(y::equals($donor->getMandateKey())),
+            'state' => y::not(y::equals(States::INACTIVE))
+        ]);
+
+        if ($this->collection->findOne($expr)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Unable to save donor %s, a mandate for payer number %s already exists',
+                    $donor->getMandateKey(),
+                    $donor->getPayerNumber()
+                )
+            );
         }
 
-        return $donors;
+        $this->collection->insert(
+            $this->donorSchema->toArray($donor),
+            $donor->getMandateKey()
+        );
     }
 
     /**
      * Delete donor from storage
      */
-    public function delete(Donor $donor)
+    public function delete(Donor $donor): void
     {
         $this->collection->delete(
-            $this->donorSchema->getMandateKeySearchExpression($donor->getMandateKey())
+            y::doc(['mandate_key' => y::equals($donor->getMandateKey())])
         );
     }
 }

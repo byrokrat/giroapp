@@ -58,6 +58,14 @@ trait DonorArgumentTrait
             return $donorMapper->findByKey($key);
         }
 
-        return $donorMapper->findByActivePayerNumber($key);
+        try {
+            return $donorMapper->findByActivePayerNumber($key);
+        } catch (\RuntimeException $e) {
+            foreach ($donorMapper->findByPayerNumber($key) as $donor) {
+                return $donor;
+            }
+        }
+
+        throw new \RuntimeException("Unable to find donor $key");
     }
 }
