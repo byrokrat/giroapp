@@ -11,8 +11,6 @@ use Symfony\Component\DependencyInjection\Exception\RuntimeException;
 use Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 
 /**
- * ProjectServiceContainer.
- *
  * This class has been auto-generated
  * by the Symfony Dependency Injection Component.
  *
@@ -23,9 +21,6 @@ class ProjectServiceContainer extends Container
     private $parameters;
     private $targetDirs = array();
 
-    /**
-     * Constructor.
-     */
     public function __construct()
     {
         $this->parameters = $this->getDefaultParameters();
@@ -51,6 +46,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\console\\lscommand' => 'byrokrat\\giroapp\\Console\\LsCommand',
             'byrokrat\\giroapp\\console\\revokecommand' => 'byrokrat\\giroapp\\Console\\RevokeCommand',
             'byrokrat\\giroapp\\console\\showcommand' => 'byrokrat\\giroapp\\Console\\ShowCommand',
+            'byrokrat\\giroapp\\console\\statuscommand' => 'byrokrat\\giroapp\\Console\\StatusCommand',
             'byrokrat\\giroapp\\di\\pluginloader' => 'byrokrat\\giroapp\\DI\\PluginLoader',
             'byrokrat\\giroapp\\listener\\committinglistener' => 'byrokrat\\giroapp\\Listener\\CommittingListener',
             'byrokrat\\giroapp\\listener\\exitstatuslistener' => 'byrokrat\\giroapp\\Listener\\ExitStatusListener',
@@ -105,6 +101,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\LsCommand' => 'getByrokrat_Giroapp_Console_LsCommandService',
             'byrokrat\\giroapp\\Console\\RevokeCommand' => 'getByrokrat_Giroapp_Console_RevokeCommandService',
             'byrokrat\\giroapp\\Console\\ShowCommand' => 'getByrokrat_Giroapp_Console_ShowCommandService',
+            'byrokrat\\giroapp\\Console\\StatusCommand' => 'getByrokrat_Giroapp_Console_StatusCommandService',
             'byrokrat\\giroapp\\DI\\PluginLoader' => 'getByrokrat_Giroapp_DI_PluginLoaderService',
             'byrokrat\\giroapp\\Listener\\CommittingListener' => 'getByrokrat_Giroapp_Listener_CommittingListenerService',
             'byrokrat\\giroapp\\Listener\\ExitStatusListener' => 'getByrokrat_Giroapp_Listener_ExitStatusListenerService',
@@ -453,6 +450,16 @@ class ProjectServiceContainer extends Container
     protected function getByrokrat_Giroapp_Console_ShowCommandService()
     {
         return $this->services['byrokrat\giroapp\Console\ShowCommand'] = new \byrokrat\giroapp\Console\ShowCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->get('byrokrat\giroapp\Mapper\DonorMapper')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema']) ? $this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema'] : $this->get('byrokrat\giroapp\Mapper\Schema\DonorSchema')) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\StatusCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\StatusCommand
+     */
+    protected function getByrokrat_Giroapp_Console_StatusCommandService()
+    {
+        return $this->services['byrokrat\giroapp\Console\StatusCommand'] = new \byrokrat\giroapp\Console\StatusCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->get('byrokrat\giroapp\Mapper\DonorMapper')) && false ?: '_'});
     }
 
     /**
