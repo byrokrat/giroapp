@@ -133,7 +133,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -149,7 +149,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -165,7 +165,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -181,7 +181,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -199,7 +199,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -215,7 +215,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -231,7 +231,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -247,7 +247,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -263,7 +263,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -279,7 +279,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -295,7 +295,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -311,7 +311,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -327,7 +327,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(MandateApprovedState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_APPROVED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -343,7 +343,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -359,7 +359,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -375,7 +375,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -391,7 +391,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(InactiveState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -407,7 +407,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -423,7 +423,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }
@@ -439,7 +439,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
         $donor->setState(Argument::type(ErrorState::CLASS))->shouldBeCalled();
         $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $donorMapper->save($donor)->shouldBeCalled();
+        $donorMapper->update($donor)->shouldBeCalled();
 
         $this->onMandateResponseEvent($event, '', $dispatcher);
     }

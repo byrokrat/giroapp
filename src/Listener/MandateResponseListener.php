@@ -161,6 +161,6 @@ class MandateResponseListener
                 return;
         }
 
-        $this->donorMapper->save($donor);
+        $this->donorMapper->update($donor);
     }
 }

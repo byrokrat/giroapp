@@ -117,9 +117,58 @@ class DonorMapper
     }
 
     /**
+     * Delete donor from storage
+     */
+    public function delete(Donor $donor): void
+    {
+        $this->collection->delete(
+            y::doc(['mandate_key' => y::equals($donor->getMandateKey())])
+        );
+    }
+
+    /**
+     * Save a new donor
+     *
+     * @throws \RuntimeException if mandate key already exists in database
+     */
+    public function create(Donor $donor): void
+    {
+        if ($this->hasKey($donor->getMandateKey())) {
+            throw new \RuntimeException(
+                sprintf(
+                    'A donor with ID %s and bank account %s already exists',
+                    $donor->getDonorId()->format('S-sk'),
+                    $donor->getAccount()->getNumber()
+                )
+            );
+        }
+
+        $this->save($donor);
+    }
+
+    /**
+     * Update an existing donor
+     *
+     * @throws \RuntimeException if mandate key does not exist in database
+     */
+    public function update(Donor $donor): void
+    {
+        if (!$this->hasKey($donor->getMandateKey())) {
+            throw new \RuntimeException(
+                sprintf(
+                    'Unable to update donor %s, does not exist in database',
+                    $donor->getMandateKey()
+                )
+            );
+        }
+
+        $this->save($donor);
+    }
+
+    /**
      * Save donor (insert or update)
      */
-    public function save(Donor $donor): void
+    private function save(Donor $donor): void
     {
         $expr = y::doc([
             'payer_number' => y::equals($donor->getPayerNumber()),
@@ -140,16 +189,6 @@ class DonorMapper
         $this->collection->insert(
             $this->donorSchema->toArray($donor),
             $donor->getMandateKey()
-        );
-    }
-
-    /**
-     * Delete donor from storage
-     */
-    public function delete(Donor $donor): void
-    {
-        $this->collection->delete(
-            y::doc(['mandate_key' => y::equals($donor->getMandateKey())])
         );
     }
 }
