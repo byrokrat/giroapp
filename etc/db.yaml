@@ -6,6 +6,7 @@ parameters:
 
 services:
     _defaults:
+        public: false
         autowire: true
 
     db:
@@ -23,6 +24,10 @@ services:
     byrokrat\giroapp\Mapper\SettingsMapper:
         class: ~
         arguments: ['@db_settings_collection']
+
+    db_settings_mapper:
+      alias: 'byrokrat\giroapp\Mapper\SettingsMapper'
+      public: true
 
     db_settings_collection:
         class: hanneskod\yaysondb\Collection
