@@ -165,12 +165,12 @@ class FeatureContext implements Context
         $regexes = explode("\n", (string)$string);
 
         if (count($output) != count($regexes)) {
-            throw new \Exception("Not the same number of regexes as lines in output");
+            throw new \Exception("Not the same number of regexes as lines in output '{$this->result->getOutput()}'");
         }
 
         foreach ($regexes as $lineNr => $regexp) {
             if (!preg_match("/^$regexp\s*$/", $output[$lineNr])) {
-                throw new \Exception("Unable to find $regexp in {$output[$lineNr]}");
+                throw new \Exception("Unable to find '$regexp' in '{$output[$lineNr]}'");
             }
         }
     }

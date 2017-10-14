@@ -24,7 +24,6 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\State\StateFactory;
@@ -54,19 +53,13 @@ class EditCommand implements CommandInterface
     private $dispatcher;
 
     /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
-
-    /**
      * @var StateFactory
      */
     private $stateFactory;
 
-    public function __construct(EventDispatcher $dispatcher, DonorMapper $donorMapper, StateFactory $stateFactory)
+    public function __construct(EventDispatcher $dispatcher, StateFactory $stateFactory)
     {
         $this->dispatcher = $dispatcher;
-        $this->donorMapper = $donorMapper;
         $this->stateFactory = $stateFactory;
     }
 
@@ -92,7 +85,7 @@ class EditCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $donor = self::getDonorUsingArgument($input, $this->donorMapper);
+        $donor = $this->getDonor($input);
 
         $output->writeln('Hash Id key: ' . $donor->getMandateKey());
         $output->writeln('Personal Id: ' . $donor->getDonorId());
@@ -175,8 +168,6 @@ class EditCommand implements CommandInterface
             $this->getProperty('comment', 'Comment', $donor->getComment(), $input, $output),
             $donor
         );
-
-        $this->donorMapper->save($donor);
 
         $this->dispatcher->dispatch(
             Events::MANDATE_EDITED_EVENT,

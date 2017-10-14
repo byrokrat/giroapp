@@ -7,10 +7,11 @@ namespace spec\byrokrat\giroapp\Mapper;
 use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\banking\AccountNumber;
+use byrokrat\id\Id;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\FilterableInterface;
 use hanneskod\yaysondb\Expression\ExpressionInterface;
-use hanneskod\yaysondb\Operators as y;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -42,7 +43,7 @@ class DonorMapperSpec extends ObjectBehavior
         $this->shouldThrow(\RuntimeException::CLASS)->during('findByKey', ['foobar']);
     }
 
-    function it_can_save_donor($collection, $donorSchema, Donor $donor)
+    function it_can_create_donor($collection, $donorSchema, Donor $donor)
     {
         $donor->getMandateKey()->willReturn('mandate_key');
         $donor->getPayerNumber()->willReturn('payer_number');
@@ -70,18 +71,52 @@ class DonorMapperSpec extends ObjectBehavior
         $collection->findOne($search)->shouldBeCalled()->willReturn([]);
 
         $donorSchema->toArray($donor)->willReturn(['SCHEMA']);
+
+        $collection->has('mandate_key')->willReturn(false);
         $collection->insert(['SCHEMA'], 'mandate_key')->shouldBeCalled();
 
-        $this->save($donor);
+        $this->create($donor);
     }
 
-    function it_fails_on_save_if_active_mandate_exists($collection, Donor $donor)
+    function it_fails_on_create_if_active_mandate_exists($collection, Donor $donor)
     {
-        $donor->getMandateKey()->willReturn('');
+        $donor->getMandateKey()->willReturn('mandate_key');
         $donor->getPayerNumber()->willReturn('');
+        $collection->has('mandate_key')->willReturn(false);
         $collection->findOne(new ExpressionToken)->shouldBeCalled()->willReturn(['NOT EMPTY']);
 
-        $this->shouldThrow(\RuntimeException::CLASS)->duringSave($donor);
+        $this->shouldThrow(\RuntimeException::CLASS)->duringCreate($donor);
+    }
+
+    function it_fails_on_create_if_mandate_key_exists($collection, Donor $donor, Id $id, AccountNumber $account)
+    {
+        $id->format('S-sk')->willReturn('');
+        $account->getNumber()->willReturn('');
+        $donor->getDonorId()->willReturn($id);
+        $donor->getAccount()->willReturn($account);
+        $donor->getMandateKey()->willReturn('mandate_key');
+        $collection->has('mandate_key')->willReturn(true);
+
+        $this->shouldThrow(\RuntimeException::CLASS)->duringCreate($donor);
+    }
+
+    function it_can_update_donor($collection, $donorSchema, Donor $donor)
+    {
+        $donor->getMandateKey()->willReturn('mandate_key');
+        $donor->getPayerNumber()->willReturn('payer_number');
+        $collection->findOne(new ExpressionToken)->shouldBeCalled()->willReturn([]);
+        $donorSchema->toArray($donor)->willReturn(['SCHEMA']);
+        $collection->has('mandate_key')->willReturn(true);
+        $collection->insert(['SCHEMA'], 'mandate_key')->shouldBeCalled();
+
+        $this->update($donor);
+    }
+
+    function it_fails_on_update_if_mandate_key_does_not_exist($collection, Donor $donor)
+    {
+        $donor->getMandateKey()->willReturn('mandate_key');
+        $collection->has('mandate_key')->willReturn(false);
+        $this->shouldThrow(\RuntimeException::CLASS)->duringUpdate($donor);
     }
 
     function it_can_find_all($collection, $donorSchema, Donor $donor1, Donor $donor2)

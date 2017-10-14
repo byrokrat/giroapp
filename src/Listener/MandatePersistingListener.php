@@ -43,27 +43,18 @@ class MandatePersistingListener
         $this->donorMapper = $donorMapper;
     }
 
-    public function onMandateAddedEvent(DonorEvent $event, string $name, EventDispatcherInterface $dispatcher)
+    public function onMandateAddedEvent(DonorEvent $event): void
     {
-        $donor = $event->getDonor();
+        $this->donorMapper->create($event->getDonor());
+    }
 
-        if ($this->donorMapper->hasKey($donor->getMandateKey())) {
-            $dispatcher->dispatch(
-                Events::WARNING_EVENT,
-                new LogEvent(
-                    sprintf(
-                        'A donor with ID %s and bank account %s already exists',
-                        $donor->getDonorId()->format('S-sk'),
-                        $donor->getAccount()->getNumber()
-                    )
-                )
-            );
+    public function onMandateUpdatedEvent(DonorEvent $event): void
+    {
+        $this->donorMapper->update($event->getDonor());
+    }
 
-            // stop processing if mandate exists
-            $event->stopPropagation();
-            return;
-        }
-
-        $this->donorMapper->save($donor);
+    public function onMandateDroppedEvent(DonorEvent $event): void
+    {
+        $this->donorMapper->delete($event->getDonor());
     }
 }

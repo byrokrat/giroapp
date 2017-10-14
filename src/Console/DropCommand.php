@@ -25,7 +25,6 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Mapper\DonorMapper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,15 +42,9 @@ class DropCommand implements CommandInterface
      */
     private $dispatcher;
 
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
-
-    public function __construct(EventDispatcher $dispatcher, DonorMapper $donorMapper)
+    public function __construct(EventDispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->donorMapper = $donorMapper;
     }
 
     public static function configure(CommandWrapper $wrapper)
@@ -65,13 +58,11 @@ class DropCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $donor = self::getDonorUsingArgument($input, $this->donorMapper);
+        $donor = $this->getDonor($input);
 
         if ($donor->getState()->getId() != States::INACTIVE && !$input->getOption('force')) {
             throw new \RuntimeException('Unable to drop mandate that is not inactive. Use -f to override.');
         }
-
-        $this->donorMapper->delete($donor);
 
         $this->dispatcher->dispatch(
             Events::MANDATE_DROPPED_EVENT,

@@ -158,9 +158,8 @@ class MandateResponseListener
                     )
                 );
                 $nodeEvent->stopPropagation();
-                return;
         }
 
-        $this->donorMapper->save($donor);
+        #$this->donorMapper->update($donor);
     }
 }

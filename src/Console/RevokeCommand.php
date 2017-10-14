@@ -24,7 +24,6 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\State\RevokeMandateState;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,15 +41,9 @@ class RevokeCommand implements CommandInterface
      */
     private $dispatcher;
 
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
-
-    public function __construct(EventDispatcher $dispatcher, DonorMapper $donorMapper)
+    public function __construct(EventDispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->donorMapper = $donorMapper;
     }
 
     public static function configure(CommandWrapper $wrapper)
@@ -63,11 +56,9 @@ class RevokeCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $donor = self::getDonorUsingArgument($input, $this->donorMapper);
+        $donor = $this->getDonor($input);
 
         $donor->setState(new RevokeMandateState);
-
-        $this->donorMapper->save($donor);
 
         $this->dispatcher->dispatch(
             Events::MANDATE_REVOKED_EVENT,

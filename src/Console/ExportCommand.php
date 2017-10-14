@@ -60,7 +60,7 @@ class ExportCommand implements CommandInterface
     {
         foreach ($this->donorMapper->findAll() as $donor) {
             $donor->exportToAutogiro($this->autogiroWriter);
-            $this->donorMapper->save($donor);
+            $this->donorMapper->update($donor);
         }
 
         $output->write($this->autogiroWriter->getContent());
