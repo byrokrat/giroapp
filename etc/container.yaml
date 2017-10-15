@@ -12,7 +12,18 @@ services:
         public: false
         autowire: true
 
-    output:
+    Symfony\Component\Console\Input\InputInterface:
+        class: ~
+        public: true
+        synthetic: true
+
+    Symfony\Component\Console\Output\OutputInterface:
+        class: ~
+        public: true
+        synthetic: true
+
+    Symfony\Component\Console\Helper\QuestionHelper:
+        class: ~
         public: true
         synthetic: true
 
@@ -50,7 +61,6 @@ services:
 
     byrokrat\giroapp\Listener\OutputtingListener:
         class: ~
-        arguments: ['@output']
         tags:
             - { name: event_listener, event: ERROR_EVENT, priority: -10 }
             - { name: event_listener, event: WARNING_EVENT, priority: -10 }

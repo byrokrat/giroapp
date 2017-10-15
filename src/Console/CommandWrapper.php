@@ -68,7 +68,9 @@ class CommandWrapper extends Command
     {
         $container = new ProjectServiceContainer;
 
-        $container->set('output', $this->discardOutputMessages ? new NullOutput : $output);
+        $container->set(InputInterface::CLASS, $input);
+        $container->set(OutputInterface::CLASS, $this->discardOutputMessages ? new NullOutput : $output);
+        $container->set('Symfony\Component\Console\Helper\QuestionHelper', $this->getHelper('question'));
 
         $dispatcher = $container->get('Symfony\Component\EventDispatcher\EventDispatcher');
 

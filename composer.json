@@ -35,6 +35,7 @@
         "byrokrat/id": "^1.0",
         "hanneskod/yaysondb": "^2.1.1",
         "hanneskod/classtools": "^1.1",
+        "hanneskod/clean" :"^2.0",
         "symfony/dependency-injection": "^3.3",
         "symfony/console": "^3.3",
         "symfony/event-dispatcher": "^3.3",
