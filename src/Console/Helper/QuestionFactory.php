@@ -33,6 +33,6 @@ class QuestionFactory
     {
         return is_null($default)
             ? new Question("$question: ")
-            : new Question("$question [$default]: ", $default);
+            : new Question("$question [<info>$default</info>]: ", $default);
     }
 }

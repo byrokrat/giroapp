@@ -23,6 +23,6 @@ class QuestionFactorySpec extends ObjectBehavior
 
     function it_creates_questions_with_default_values()
     {
-        $this->createQuestion('question', 'def')->shouldBeLike(new Question('question [def]: ', 'def'));
+        $this->createQuestion('question', 'def')->shouldBeLike(new Question('question [<info>def</info>]: ', 'def'));
     }
 }
