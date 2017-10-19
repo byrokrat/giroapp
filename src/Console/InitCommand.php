@@ -23,32 +23,21 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Mapper\SettingsMapper;
-use byrokrat\giroapp\Console\Helper\InputReader;
-use byrokrat\giroapp\Console\Helper\Validators;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * Command to initialize settings in database
  */
 class InitCommand implements CommandInterface
 {
+    use Traits\InputReaderTrait;
+
     /**
      * @var SettingsMapper
      */
     private $settingsMapper;
-
-    /**
-     * @var InputReader
-     */
-    private $inputReader;
-
-    /**
-     * @var Validators
-     */
-    private $validators;
 
     /**
      * @var array List of options, db keys and description messages
@@ -71,11 +60,9 @@ class InitCommand implements CommandInterface
         }
     }
 
-    public function __construct(SettingsMapper $settingsMapper, InputReader $inputReader, Validators $validators)
+    public function __construct(SettingsMapper $settingsMapper)
     {
         $this->settingsMapper = $settingsMapper;
-        $this->inputReader = $inputReader;
-        $this->validators = $validators;
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
@@ -92,7 +79,7 @@ class InitCommand implements CommandInterface
 
             $newVal = (string)$this->inputReader->readInput(
                 $option,
-                new Question("$desc [$currentVal]: ", $currentVal),
+                $this->questionFactory->createQuestion($desc, $currentVal),
                 $validators[$option]
             );
 

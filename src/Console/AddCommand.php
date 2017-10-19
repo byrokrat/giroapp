@@ -23,8 +23,6 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Builder\DonorBuilder;
-use byrokrat\giroapp\Console\Helper\InputReader;
-use byrokrat\giroapp\Console\Helper\Validators;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Model\Donor;
@@ -32,7 +30,6 @@ use byrokrat\giroapp\Model\PostalAddress;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -41,6 +38,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class AddCommand implements CommandInterface
 {
+    use Traits\InputReaderTrait;
+
     /**
      * @var array Maps option names to free text descriptions
      */
@@ -71,26 +70,10 @@ class AddCommand implements CommandInterface
      */
     private $donorBuilder;
 
-    /**
-     * @var InputReader
-     */
-    private $inputReader;
-
-    /**
-     * @var Validators
-     */
-    private $validators;
-
-    public function __construct(
-        EventDispatcher $dispatcher,
-        DonorBuilder $donorBuilder,
-        InputReader $inputReader,
-        Validators $validators
-    ) {
+    public function __construct(EventDispatcher $dispatcher, DonorBuilder $donorBuilder)
+    {
         $this->dispatcher = $dispatcher;
         $this->donorBuilder = $donorBuilder;
-        $this->inputReader = $inputReader;
-        $this->validators = $validators;
     }
 
     public static function configure(CommandWrapper $wrapper)
@@ -133,7 +116,7 @@ class AddCommand implements CommandInterface
         $this->donorBuilder->setId(
             $id = $this->inputReader->readInput(
                 'id',
-                new Question("{$descs['id']}: "),
+                $this->questionFactory->createQuestion($descs['id']),
                 $this->validators->getIdValidator()
             )
         );
@@ -141,7 +124,7 @@ class AddCommand implements CommandInterface
         $this->donorBuilder->setPayerNumber(
             $this->inputReader->readInput(
                 'payer-number',
-                new Question("{$descs['payer-number']} [{$id->format('Ssk')}]: ", $id->format('Ssk')),
+                $this->questionFactory->createQuestion($descs['payer-number'], $id->format('Ssk')),
                 $this->validators->getPayerNumberValidator()
             )
         );
@@ -149,7 +132,9 @@ class AddCommand implements CommandInterface
         $this->donorBuilder->setAccount(
             $this->inputReader->readInput(
                 'account',
-                (new Question("{$descs['account']}: "))->setAutocompleterValues(["3300,{$id->format('Ssk')}"]),
+                $this->questionFactory->createQuestion($descs['account'])->setAutocompleterValues(
+                    ["3300,{$id->format('Ssk')}"]
+                ),
                 $this->validators->getAccountValidator()
             )
         );
@@ -157,7 +142,7 @@ class AddCommand implements CommandInterface
         $this->donorBuilder->setName(
             $this->inputReader->readInput(
                 'name',
-                new Question("{$descs['name']}: "),
+                $this->questionFactory->createQuestion($descs['name']),
                 $this->validators->getRequiredStringValidator('Name')
             )
         );
@@ -165,7 +150,7 @@ class AddCommand implements CommandInterface
         $this->donorBuilder->setDonationAmount(
             $this->inputReader->readInput(
                 'amount',
-                new Question("{$descs['amount']}: "),
+                $this->questionFactory->createQuestion($descs['amount']),
                 $this->validators->getAmountValidator()
             )
         );
@@ -174,27 +159,27 @@ class AddCommand implements CommandInterface
             new PostalAddress(
                 $this->inputReader->readInput(
                     'address1',
-                    new Question("{$descs['address1']}: ", ''),
+                    $this->questionFactory->createQuestion($descs['address1'], ''),
                     $this->validators->getStringFilter()
                 ),
                 $this->inputReader->readInput(
                     'address2',
-                    new Question("{$descs['address2']}: ", ''),
+                    $this->questionFactory->createQuestion($descs['address2'], ''),
                     $this->validators->getStringFilter()
                 ),
                 $this->inputReader->readInput(
                     'address3',
-                    new Question("{$descs['address3']}: ", ''),
+                    $this->questionFactory->createQuestion($descs['address3'], ''),
                     $this->validators->getStringFilter()
                 ),
                 $this->inputReader->readInput(
                     'postal-code',
-                    new Question("{$descs['postal-code']}: ", ''),
+                    $this->questionFactory->createQuestion($descs['postal-code'], ''),
                     $this->validators->getPostalCodeValidator()
                 ),
                 $this->inputReader->readInput(
                     'postal-city',
-                    (new Question("{$descs['postal-city']}: ", ''))->setAutocompleterValues(
+                    $this->questionFactory->createQuestion($descs['postal-city'], '')->setAutocompleterValues(
                         $this->validators->getSuggestedCities()
                     ),
                     $this->validators->getStringFilter()
@@ -205,7 +190,7 @@ class AddCommand implements CommandInterface
         $this->donorBuilder->setEmail(
             $this->inputReader->readInput(
                 'email',
-                new Question("{$descs['email']}: ", ''),
+                $this->questionFactory->createQuestion($descs['email'], ''),
                 $this->validators->getEmailValidator()
             )
         );
@@ -213,7 +198,7 @@ class AddCommand implements CommandInterface
         $this->donorBuilder->setPhone(
             $this->inputReader->readInput(
                 'phone',
-                new Question("{$descs['phone']}: ", ''),
+                $this->questionFactory->createQuestion($descs['phone'], ''),
                 $this->validators->getPhoneValidator()
             )
         );
@@ -221,7 +206,7 @@ class AddCommand implements CommandInterface
         $this->donorBuilder->setComment(
             $this->inputReader->readInput(
                 'comment',
-                new Question("{$descs['comment']}: ", ''),
+                $this->questionFactory->createQuestion($descs['comment'], ''),
                 $this->validators->getStringFilter()
             )
         );

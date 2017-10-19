@@ -22,18 +22,13 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Console\Helper\InputReader;
-use byrokrat\giroapp\Console\Helper\Validators;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -41,7 +36,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class EditCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait;
+    use Traits\DonorArgumentTrait, Traits\InputReaderTrait;
 
     /**
      * @var array Maps option names to free text descriptions
@@ -65,21 +60,9 @@ class EditCommand implements CommandInterface
      */
     private $dispatcher;
 
-    /**
-     * @var InputReader
-     */
-    private $inputReader;
-
-    /**
-     * @var Validators
-     */
-    private $validators;
-
-    public function __construct(EventDispatcher $dispatcher, InputReader $inputReader, Validators $validators)
+    public function __construct(EventDispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
-        $this->inputReader = $inputReader;
-        $this->validators = $validators;
     }
 
     public static function configure(CommandWrapper $wrapper)
@@ -108,7 +91,7 @@ class EditCommand implements CommandInterface
         $donor->setName(
             $this->inputReader->readInput(
                 'name',
-                new Question("{$descs['name']} [{$donor->getName()}]: ", $donor->getName()),
+                $this->questionFactory->createQuestion($descs['name'], $donor->getName()),
                 $this->validators->getRequiredStringValidator('Name')
             )
         );
@@ -116,7 +99,7 @@ class EditCommand implements CommandInterface
         $donor->setState(
             $this->inputReader->readInput(
                 'state',
-                new Question("{$descs['state']} [{$donor->getState()->getId()}]: ", $donor->getState()->getId()),
+                $this->questionFactory->createQuestion($descs['state'], $donor->getState()->getId()),
                 $this->validators->getStateValidator()
             )
         );
@@ -124,10 +107,7 @@ class EditCommand implements CommandInterface
         $donor->setDonationAmount(
             $this->inputReader->readInput(
                 'amount',
-                new Question(
-                    "{$descs['amount']} [{$donor->getDonationAmount()->getAmount()}]: ",
-                    $donor->getDonationAmount()->getAmount()
-                ),
+                $this->questionFactory->createQuestion($descs['amount'], $donor->getDonationAmount()->getAmount()),
                 $this->validators->getAmountValidator()
             )
         );
@@ -136,44 +116,35 @@ class EditCommand implements CommandInterface
             new PostalAddress(
                 $this->inputReader->readInput(
                     'address1',
-                    new Question(
-                        "{$descs['address1']} [{$donor->getPostalAddress()->getLine1()}]: ",
-                        $donor->getPostalAddress()->getLine1()
-                    ),
+                    $this->questionFactory->createQuestion($descs['address1'], $donor->getPostalAddress()->getLine1()),
                     $this->validators->getStringFilter()
                 ),
                 $this->inputReader->readInput(
                     'address2',
-                    new Question(
-                        "{$descs['address2']} [{$donor->getPostalAddress()->getLine2()}]: ",
-                        $donor->getPostalAddress()->getLine2()
-                    ),
+                    $this->questionFactory->createQuestion($descs['address2'], $donor->getPostalAddress()->getLine2()),
                     $this->validators->getStringFilter()
                 ),
                 $this->inputReader->readInput(
                     'address3',
-                    new Question(
-                        "{$descs['address3']} [{$donor->getPostalAddress()->getLine3()}]: ",
-                        $donor->getPostalAddress()->getLine3()
-                    ),
+                    $this->questionFactory->createQuestion($descs['address3'], $donor->getPostalAddress()->getLine3()),
                     $this->validators->getStringFilter()
                 ),
                 $this->inputReader->readInput(
                     'postal-code',
-                    new Question(
-                        "{$descs['postal-code']} [{$donor->getPostalAddress()->getPostalCode()}]: ",
+                    $this->questionFactory->createQuestion(
+                        $descs['postal-code'],
                         $donor->getPostalAddress()->getPostalCode()
                     ),
                     $this->validators->getPostalCodeValidator()
                 ),
                 $this->inputReader->readInput(
                     'postal-city',
-                    (
-                        new Question(
-                            "{$descs['postal-city']} [{$donor->getPostalAddress()->getPostalCity()}]: ",
-                            $donor->getPostalAddress()->getPostalCity()
-                        )
-                    )->setAutocompleterValues($this->validators->getSuggestedCities()),
+                    $this->questionFactory->createQuestion(
+                        $descs['postal-city'],
+                        $donor->getPostalAddress()->getPostalCity()
+                    )->setAutocompleterValues(
+                        $this->validators->getSuggestedCities()
+                    ),
                     $this->validators->getStringFilter()
                 )
             )
@@ -182,7 +153,7 @@ class EditCommand implements CommandInterface
         $donor->setEmail(
             $this->inputReader->readInput(
                 'email',
-                new Question("{$descs['email']} [{$donor->getEmail()}]: ", $donor->getEmail()),
+                $this->questionFactory->createQuestion($descs['email'], $donor->getEmail()),
                 $this->validators->getEmailValidator()
             )
         );
@@ -190,7 +161,7 @@ class EditCommand implements CommandInterface
         $donor->setPhone(
             $this->inputReader->readInput(
                 'phone',
-                new Question("{$descs['phone']} [{$donor->getPhone()}]: ", $donor->getPhone()),
+                $this->questionFactory->createQuestion($descs['phone'], $donor->getPhone()),
                 $this->validators->getPhoneValidator()
             )
         );
@@ -198,7 +169,7 @@ class EditCommand implements CommandInterface
         $donor->setComment(
             $this->inputReader->readInput(
                 'comment',
-                new Question("{$descs['comment']} [{$donor->getComment()}]: ", $donor->getComment()),
+                $this->questionFactory->createQuestion($descs['comment'], $donor->getComment()),
                 $this->validators->getStringFilter()
             )
         );
