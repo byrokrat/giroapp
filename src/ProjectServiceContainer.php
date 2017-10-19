@@ -188,7 +188,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Console_EditCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\EditCommand'] = $instance = new \byrokrat\giroapp\Console\EditCommand(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getSymfony_Component_EventDispatcher_EventDispatcherService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\State\StateFactory']) ? $this->services['byrokrat\giroapp\State\StateFactory'] : $this->getByrokrat_Giroapp_State_StateFactoryService()) && false ?: '_'});
+        $this->services['byrokrat\giroapp\Console\EditCommand'] = $instance = new \byrokrat\giroapp\Console\EditCommand(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getSymfony_Component_EventDispatcher_EventDispatcherService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\InputReader']) ? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] : $this->get('byrokrat\giroapp\Console\Helper\InputReader')) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\Validators']) ? $this->services['byrokrat\giroapp\Console\Helper\Validators'] : $this->get('byrokrat\giroapp\Console\Helper\Validators')) && false ?: '_'});
 
         $instance->setDonorMapper(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getByrokrat_Giroapp_Mapper_DonorMapperService()) && false ?: '_'});
 
@@ -222,7 +222,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Console_Helper_ValidatorsService()
     {
-        return $this->services['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->getByrokrat_Banking_AccountFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\BankgiroFactory']) ? $this->services['byrokrat\banking\BankgiroFactory'] : $this->getByrokrat_Banking_BankgiroFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->getByrokrat_Id_IdFactoryService()) && false ?: '_'});
+        return $this->services['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->getByrokrat_Banking_AccountFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\BankgiroFactory']) ? $this->services['byrokrat\banking\BankgiroFactory'] : $this->getByrokrat_Banking_BankgiroFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->getByrokrat_Id_IdFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\State\StateFactory']) ? $this->services['byrokrat\giroapp\State\StateFactory'] : $this->getByrokrat_Giroapp_State_StateFactoryService()) && false ?: '_'});
     }
 
     /**

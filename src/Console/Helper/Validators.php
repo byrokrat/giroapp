@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console\Helper;
 
+use byrokrat\giroapp\State\StateFactory;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactory;
 use byrokrat\banking\BankgiroFactory;
@@ -48,11 +49,21 @@ class Validators
      */
     private $idFactory;
 
-    public function __construct(AccountFactory $accountFactory, BankgiroFactory $bankgiroFactory, IdFactory $idFactory)
-    {
+    /**
+     * @var StateFactory
+     */
+    private $stateFactory;
+
+    public function __construct(
+        AccountFactory $accountFactory,
+        BankgiroFactory $bankgiroFactory,
+        IdFactory $idFactory,
+        StateFactory $stateFactory
+    ) {
         $this->accountFactory = $accountFactory;
         $this->bankgiroFactory = $bankgiroFactory;
         $this->idFactory = $idFactory;
+        $this->stateFactory = $stateFactory;
     }
 
     public function getAmountValidator(): callable
@@ -77,6 +88,11 @@ class Validators
     public function getIdValidator(): callable
     {
         return (new Rule)->msg('Valid id required')->post([$this->idFactory, 'create']);
+    }
+
+    public function getStateValidator()
+    {
+        return (new Rule)->msg('Valid donor state required')->post([$this->stateFactory, 'createState']);
     }
 
     public function getBgcCustomerNumberValidator(): callable
@@ -126,7 +142,7 @@ class Validators
             return filter_var(
                 $val,
                 FILTER_UNSAFE_RAW,
-                FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_BACKTICK
+                FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_BACKTICK
             );
         });
     }
@@ -137,10 +153,40 @@ class Validators
             return filter_var(
                 $val,
                 FILTER_UNSAFE_RAW,
-                FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH | FILTER_FLAG_STRIP_BACKTICK
+                FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_BACKTICK
             );
         })->match(function ($val) {
             return !empty($val);
         });
+    }
+
+    public function getSuggestedCities(): array
+    {
+        return [
+            'Stockholm',
+            'Göteborg',
+            'Malmö',
+            'Uppsala',
+            'Västerås',
+            'Örebro',
+            'Linköping',
+            'Helsingborg',
+            'Norrköping',
+            'Jönköping',
+            'Lund',
+            'Umeå',
+            'stockholm',
+            'göteborg',
+            'malmö',
+            'uppsala',
+            'västerås',
+            'örebro',
+            'linköping',
+            'helsingborg',
+            'norrköping',
+            'jönköping',
+            'lund',
+            'umeå',
+        ];
     }
 }

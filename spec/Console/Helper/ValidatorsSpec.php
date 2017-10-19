@@ -5,6 +5,8 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\Console\Helper\Validators;
+use byrokrat\giroapp\State\StateFactory;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactory;
 use byrokrat\banking\AccountNumber;
@@ -18,9 +20,13 @@ use Prophecy\Argument;
 class ValidatorsSpec extends ObjectBehavior
 {
 
-    function let(AccountFactory $accountFactory, BankgiroFactory $bankgiroFactory, IdFactory $idFactory)
-    {
-        $this->beConstructedWith($accountFactory, $bankgiroFactory, $idFactory);
+    function let(
+        AccountFactory $accountFactory,
+        BankgiroFactory $bankgiroFactory,
+        IdFactory $idFactory,
+        StateFactory $stateFactory
+    ) {
+        $this->beConstructedWith($accountFactory, $bankgiroFactory, $idFactory, $stateFactory);
     }
 
     function it_is_initializable()
@@ -56,6 +62,14 @@ class ValidatorsSpec extends ObjectBehavior
         $idFactory->create('an-unvalid-id')->willThrow(\RuntimeException::CLASS);
         $this->getIdValidator()->shouldValidate('a-valid-id');
         $this->getIdValidator()->shouldNotValidate('an-unvalid-id');
+    }
+
+    function it_validates_donor_states($stateFactory, StateInterface $state)
+    {
+        $stateFactory->createState('a-valid-state')->willReturn($state);
+        $stateFactory->createState('an-unvalid-state')->willThrow(\RuntimeException::CLASS);
+        $this->getStateValidator()->shouldValidate('a-valid-state');
+        $this->getStateValidator()->shouldNotValidate('an-unvalid-state');
     }
 
     function it_validates_bgc_customer_numbers()
@@ -96,13 +110,20 @@ class ValidatorsSpec extends ObjectBehavior
     function it_validates_strings()
     {
         $this->getStringFilter()->shouldValidate(chr(1) . 'foobar', 'foobar');
+        $this->getStringFilter()->shouldValidate('malmö', 'malmö');
         $this->getStringFilter()->shouldValidate('');
     }
 
     function it_validates_required_strings()
     {
         $this->getRequiredStringValidator('field')->shouldValidate(chr(1) . 'foobar', 'foobar');
+        $this->getRequiredStringValidator('field')->shouldValidate('malmö', 'malmö');
         $this->getRequiredStringValidator('field')->shouldNotValidate('');
+    }
+
+    function it_contains_suggested_cities()
+    {
+        $this->getSuggestedCities()->shouldBeArray();
     }
 
     public function getMatchers(): array

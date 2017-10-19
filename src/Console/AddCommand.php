@@ -194,13 +194,9 @@ class AddCommand implements CommandInterface
                 ),
                 $this->inputReader->readInput(
                     'postal-city',
-                    (new Question("{$descs['postal-city']}: ", ''))->setAutocompleterValues([
-                        'Stockholm',
-                        'Göteborg',
-                        'Malmö',
-                        'Linköping',
-                        'Uppsala'
-                    ]),
+                    (new Question("{$descs['postal-city']}: ", ''))->setAutocompleterValues(
+                        $this->validators->getSuggestedCities()
+                    ),
                     $this->validators->getStringFilter()
                 )
             )
