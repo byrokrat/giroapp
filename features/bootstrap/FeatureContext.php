@@ -6,17 +6,19 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Behat\Tester\Exception\PendingException;
+use byrokrat\giroapp\Model\Donor;
 
 class FeatureContext implements Context
 {
     const DEFAULT_DONOR_ROW = [
+        'source' => Donor::MANDATE_SOURCE_PAPER,
         'payer-number' => '1',
         'state' => 'ACTIVE',
         'account' => '50001111116',
         'id' => '8203232775',
         'name' => 'name',
-        'email' => 'email',
-        'phone' => 'phone',
+        'email' => 'email@host.com',
+        'phone' => '1234',
         'amount' => '0',
         'comment' => 'comment'
     ];
@@ -37,39 +39,15 @@ class FeatureContext implements Context
     public function aFreshInstallation()
     {
         $this->app = new ApplicationWrapper;
-        $this->result = $this->app->init();
+        $this->iRun("init --org-name foo --org-number 8350000892 --bankgiro 58056201 --bgc-customer-number 123456");
     }
 
     /**
-     * @Given an orgnization :name with bankgiro :bg and bgc customer number :custNr
+     * @Given a payee with :setting :value
      */
-    public function anOrgnizationWithBankgiroAndBgcCustomerNumber($name, $bg, $custNr)
+    public function aPayeeWith($setting, $value)
     {
-        $this->result = $this->app->init("--org-name='$name' --bankgiro='$bg' --bgc-customer-number='$custNr'");
-    }
-
-    /**
-     * @Given an orgnization :name with bankgiro :bg and organization id :id
-     */
-    public function anOrgnizationWithBankgiroAndOrganizationId($name, $bg, $id)
-    {
-        $this->result = $this->app->init("--org-name='$name' --bankgiro='$bg' --org-number='$id'");
-    }
-
-    /**
-     * @Given the explicit payer number strategy
-     */
-    public function theExplicitPayerNumberStrategy()
-    {
-        $this->result = $this->app->init('--payer-number-strategy explicit');
-    }
-
-    /**
-     * @Given the ID payer number strategy
-     */
-    public function theIdPayerNumberStrategy()
-    {
-        $this->result = $this->app->init('--payer-number-strategy id');
+        $this->iRun("init --$setting='$value'");
     }
 
     /**
@@ -81,7 +59,8 @@ class FeatureContext implements Context
             $row = array_merge(self::DEFAULT_DONOR_ROW, $row);
 
             $this->iRun(sprintf(
-                'add --payer-number %s --account %s --id %s --name %s --email %s --phone %s --amount %s --comment %s',
+                'add --source %s --payer-number %s --account %s --id %s --name %s --email %s --phone %s --amount %s --comment %s',
+                $row['source'],
                 $row['payer-number'],
                 $row['account'],
                 $row['id'],

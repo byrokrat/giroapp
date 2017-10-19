@@ -5,7 +5,7 @@ Feature: Importing files
 
   Scenario: I import an online autogiro form
     Given a fresh installation
-    And an orgnization 'foo' with bankgiro '58056201' and organization id '835000-0892'
+    And a payee with 'org-number' '835000-0892'
     When I import:
         """
         <?xml version="1.0" encoding="utf-8"?>

@@ -5,7 +5,8 @@ Feature: Importing files
 
   Background:
     Given a fresh installation
-    And an orgnization 'foo' with bankgiro '58056201' and bgc customer number '123456'
+    And a payee with 'bankgiro' '58056201'
+    And a payee with 'bgc-customer-number' '123456'
 
   Scenario: I import an autogiro file with invalid payee bankgiro
     When I import:

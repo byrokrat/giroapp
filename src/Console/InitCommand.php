@@ -23,26 +23,32 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Mapper\SettingsMapper;
+use byrokrat\giroapp\Console\Helper\InputReader;
+use byrokrat\giroapp\Console\Helper\Validators;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * Command to initialize settings in database
  */
 class InitCommand implements CommandInterface
 {
-    use Traits\ValidatorsTrait;
-
     /**
      * @var SettingsMapper
      */
     private $settingsMapper;
 
     /**
-     * @var Option\OptionReader
+     * @var InputReader
      */
-    private $optionReader;
+    private $inputReader;
+
+    /**
+     * @var Validators
+     */
+    private $validators;
 
     /**
      * @var array List of options, db keys and description messages
@@ -65,31 +71,32 @@ class InitCommand implements CommandInterface
         }
     }
 
-    public function __construct(SettingsMapper $settingsMapper, Option\OptionReader $optionReader)
+    public function __construct(SettingsMapper $settingsMapper, InputReader $inputReader, Validators $validators)
     {
         $this->settingsMapper = $settingsMapper;
-        $this->optionReader = $optionReader;
+        $this->inputReader = $inputReader;
+        $this->validators = $validators;
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $validators = [
-            'org-number' => $this->getOrganizationNumberValidator(),
-            'bgc-customer-number' => $this->getBgcCustomerNumberValidator(),
-            'bankgiro' => $this->getBankgiroValidator()
+            'org-number' => $this->validators->getIdValidator(),
+            'org-name' => $this->validators->getRequiredStringValidator('Org-name'),
+            'bgc-customer-number' => $this->validators->getBgcCustomerNumberValidator(),
+            'bankgiro' => $this->validators->getBankgiroValidator()
         ];
 
         foreach (self::$options as $option => list($setting, $desc)) {
             $currentVal = $this->settingsMapper->findByKey($setting);
 
-            $newVal = (string)$this->optionReader->readOption(
+            $newVal = (string)$this->inputReader->readInput(
                 $option,
-                $desc,
-                $currentVal,
-                $validators[$option] ?? null
+                new Question("$desc [$currentVal]: ", $currentVal),
+                $validators[$option]
             );
 
-            if ($newVal != $currentVal) {
+            if (!empty($newVal) && $newVal != $currentVal) {
                 $this->settingsMapper->save($setting, $newVal);
                 $output->writeln("$desc set to: <info>$newVal</info>");
             }

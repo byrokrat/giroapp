@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console\Option;
+namespace byrokrat\giroapp\Console\Helper;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,7 +30,7 @@ use Symfony\Component\Console\Question\Question;
 /**
  * Read option or fallback to interactive question
  */
-class OptionReader
+class InputReader
 {
     /**
      * @var InputInterface
@@ -54,23 +54,20 @@ class OptionReader
         $this->questionHelper = $questionHelper;
     }
 
-    public function readOption(string $option, string $desc, string $default, callable $validator = null)
+    public function readInput(string $option, Question $question, callable $validator)
     {
-        $validator = $validator ?: function ($value) {
-            return $value;
-        };
+        $value = $this->input->getOption($option);
 
-        if ($value = $this->input->getOption($option)) {
+        if (!is_null($value)) {
             return $validator($value);
         }
 
-        $question = new Question("$desc [<info>$default</info>]: ", $default);
-        $question->setValidator($validator);
-
-        return $this->questionHelper->ask(
+        $value = $this->questionHelper->ask(
             $this->input,
             $this->output,
-            $question
+            $question->setValidator($validator)
         );
+
+        return $this->input->isInteractive() ? $value : $validator($value);
     }
 }
