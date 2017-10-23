@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console\Helper;
 
+use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
 /**
@@ -34,5 +35,14 @@ class QuestionFactory
         return is_null($default)
             ? new Question("$question: ")
             : new Question("$question [<info>$default</info>]: ", $default);
+    }
+
+    public function createChoiceQuestion(string $question, array $choices, $default): ChoiceQuestion
+    {
+        $defaultKey = array_search($default, $choices);
+        unset($choices[$defaultKey]);
+        $choices[strtoupper($defaultKey)] = $default;
+
+        return new ChoiceQuestion("$question: ", $choices, $default);
     }
 }

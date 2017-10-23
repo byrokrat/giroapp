@@ -64,13 +64,6 @@ class ValidatorsSpec extends ObjectBehavior
         $this->getIdValidator()->shouldNotValidate('an-unvalid-id');
     }
 
-    function it_validates_donor_states($stateFactory, StateInterface $state)
-    {
-        $stateFactory->createState('a-valid-state')->willReturn($state);
-        $stateFactory->createState('an-unvalid-state')->willThrow(\RuntimeException::CLASS);
-        $this->getStateValidator()->shouldValidate('a-valid-state');
-        $this->getStateValidator()->shouldNotValidate('an-unvalid-state');
-    }
 
     function it_validates_bgc_customer_numbers()
     {
@@ -119,6 +112,23 @@ class ValidatorsSpec extends ObjectBehavior
         $this->getRequiredStringValidator('field')->shouldValidate(chr(1) . 'foobar', 'foobar');
         $this->getRequiredStringValidator('field')->shouldValidate('malmö', 'malmö');
         $this->getRequiredStringValidator('field')->shouldNotValidate('');
+    }
+
+    function it_validates_choice_questions()
+    {
+        $this->getChoiceValidator(['key' => 'value'])->shouldValidate('key', 'value');
+        $this->getChoiceValidator(['key' => 'value'])->shouldValidate('KEY', 'value');
+        $this->getChoiceValidator(['key' => 'value'])->shouldValidate('value', 'value');
+        $this->getChoiceValidator(['key' => 'value'])->shouldNotValidate('something-else');
+    }
+
+    function it_validates_donor_states($stateFactory, StateInterface $state)
+    {
+        $stateFactory->createState('valid')->willReturn($state)->shouldBeCalled();
+        $stateFactory->createState('unvalid')->willThrow(\RuntimeException::CLASS)->shouldBeCalled();
+        $this->getStateValidator(['valid'])->shouldValidate('valid');
+        $this->getStateValidator(['valid'])->shouldNotValidate('unvalid');
+        $this->getStateValidator(['unvalid'])->shouldNotValidate('unvalid');
     }
 
     function it_contains_suggested_cities()

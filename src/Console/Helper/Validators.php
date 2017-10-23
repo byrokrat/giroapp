@@ -90,11 +90,6 @@ class Validators
         return (new Rule)->msg('Valid id required')->post([$this->idFactory, 'create']);
     }
 
-    public function getStateValidator()
-    {
-        return (new Rule)->msg('Valid donor state required')->post([$this->stateFactory, 'createState']);
-    }
-
     public function getBgcCustomerNumberValidator(): callable
     {
         return (new Rule)->msg('BGC customer number must be a 6 digit number')
@@ -188,5 +183,27 @@ class Validators
             'lund',
             'umeå',
         ];
+    }
+
+    public function getChoiceValidator(array $choices): callable
+    {
+        return function ($val) use ($choices) {
+            $lower = strtolower($val);
+
+            if (isset($choices[$lower])) {
+                return $choices[$lower];
+            }
+
+            if (in_array($val, $choices)) {
+                return $val;
+            }
+
+            throw new \RuntimeException("Invalid choice, please use one of " . implode('/', array_keys($choices)));
+        };
+    }
+
+    public function getStateValidator(array $choices): callable
+    {
+        return (new Rule)->pre($this->getChoiceValidator($choices))->post([$this->stateFactory, 'createState']);
     }
 }

@@ -30,7 +30,6 @@ use byrokrat\giroapp\Model\PostalAddress;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -44,7 +43,7 @@ class AddCommand implements CommandInterface
      * @var array Maps option names to free text descriptions
      */
     private static $descriptions = [
-        'source' => 'Mandate source (defaults to paper)',
+        'source' => 'Mandate source',
         'id' => 'Donor personal id',
         'payer-number' => 'Payer number',
         'account' => 'Donor account number',
@@ -93,23 +92,13 @@ class AddCommand implements CommandInterface
 
         $this->donorBuilder->reset();
 
-        $sources = [Donor::MANDATE_SOURCE_PAPER, Donor::MANDATE_SOURCE_ONLINE_FORM];
+        $sources = ['p' => Donor::MANDATE_SOURCE_PAPER, 'o' => Donor::MANDATE_SOURCE_ONLINE_FORM];
 
         $this->donorBuilder->setMandateSource(
             $this->inputReader->readInput(
                 'source',
-                new ChoiceQuestion($descs['source'], $sources, 0),
-                function ($val) use ($sources) {
-                    if (isset($sources[$val])) {
-                        return $sources[$val];
-                    }
-
-                    if (in_array($val, $sources)) {
-                        return $val;
-                    }
-
-                    throw new \RuntimeException("Invalid mandate source $val");
-                }
+                $this->questionFactory->createChoiceQuestion($descs['source'], $sources, Donor::MANDATE_SOURCE_PAPER),
+                $this->validators->getChoiceValidator($sources)
             )
         );
 

@@ -26,6 +26,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\States;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -96,11 +97,23 @@ class EditCommand implements CommandInterface
             )
         );
 
+        $states = [
+            'a' => States::ACTIVE,
+            'e' => States::ERROR,
+            'i' => States::INACTIVE,
+            'n' => States::NEW_MANDATE,
+            'd' => States::NEW_DIGITAL_MANDATE,
+            'ns' => States::MANDATE_SENT,
+            'p' => States::MANDATE_APPROVED,
+            'r' => States::REVOKE_MANDATE,
+            'rs' => States::REVOCATION_SENT,
+        ];
+
         $donor->setState(
             $this->inputReader->readInput(
                 'state',
-                $this->questionFactory->createQuestion($descs['state'], $donor->getState()->getId()),
-                $this->validators->getStateValidator()
+                $this->questionFactory->createChoiceQuestion($descs['state'], $states, $donor->getState()->getId()),
+                $this->validators->getStateValidator($states)
             )
         );
 
