@@ -68,7 +68,8 @@ class Validators
 
     public function getAmountValidator(): callable
     {
-        return (new Rule)->msg('Amount must be a numerical value')
+        return (new Rule)
+            ->msg('Amount must be a numerical value')
             ->match('ctype_digit')
             ->post(function ($val) {
                 return new SEK($val);
@@ -77,22 +78,38 @@ class Validators
 
     public function getAccountValidator(): callable
     {
-        return (new Rule)->msg('Valid account number required')->post([$this->accountFactory, 'createAccount']);
+        return (new Rule)
+            ->msg('Valid account number required')
+            ->match(function ($val) {
+                return preg_match('/^[0-9., -]+$/', $val);
+            })
+            ->post([$this->accountFactory, 'createAccount']);
     }
 
     public function getBankgiroValidator(): callable
     {
-        return (new Rule)->msg('Valid bankgiro number required')->post([$this->bankgiroFactory, 'createAccount']);
+        return (new Rule)
+            ->msg('Valid bankgiro number required')
+            ->match(function ($val) {
+                return preg_match('/^[0-9., -]+$/', $val);
+            })
+            ->post([$this->bankgiroFactory, 'createAccount']);
     }
 
     public function getIdValidator(): callable
     {
-        return (new Rule)->msg('Valid id required')->post([$this->idFactory, 'create']);
+        return (new Rule)
+            ->msg('Valid id required')
+            ->match(function ($val) {
+                return preg_match('/^[0-9.,+ -]+$/', $val);
+            })
+            ->post([$this->idFactory, 'create']);
     }
 
     public function getBgcCustomerNumberValidator(): callable
     {
-        return (new Rule)->msg('BGC customer number must be a 6 digit number')
+        return (new Rule)
+            ->msg('BGC customer number must be a 6 digit number')
             ->match('ctype_digit')
             ->match(function ($val) {
                 return strlen($val) == 6;
@@ -101,7 +118,8 @@ class Validators
 
     public function getPayerNumberValidator(): callable
     {
-        return (new Rule)->msg('Payer number must be numerical and max 16 digits')
+        return (new Rule)
+            ->msg('Payer number must be numerical and max 16 digits')
             ->match('ctype_digit')
             ->match(function ($val) {
                 return strlen($val) <= 16;
@@ -198,7 +216,9 @@ class Validators
                 return $val;
             }
 
-            throw new \RuntimeException("Invalid choice, please use one of " . implode('/', array_keys($choices)));
+            throw new \RuntimeException(
+                "Invalid choice, please use one of " . implode('/', array_keys($choices))
+            );
         };
     }
 

@@ -42,26 +42,26 @@ class ValidatorsSpec extends ObjectBehavior
 
     function it_validates_accounts($accountFactory, AccountNumber $accountNumber)
     {
-        $accountFactory->createAccount('a-valid-account')->willReturn($accountNumber);
-        $accountFactory->createAccount('an-unvalid-account')->willThrow(\RuntimeException::CLASS);
-        $this->getAccountValidator()->shouldValidate('a-valid-account');
-        $this->getAccountValidator()->shouldNotValidate('an-unvalid-account');
+        $accountFactory->createAccount('123')->willReturn($accountNumber);
+        $accountFactory->createAccount('456')->willThrow(\RuntimeException::CLASS);
+        $this->getAccountValidator()->shouldValidate('123');
+        $this->getAccountValidator()->shouldNotValidate('456');
     }
 
     function it_validates_bankgiro_accounts($bankgiroFactory, Bankgiro $bankgiro)
     {
-        $bankgiroFactory->createAccount('a-valid-account')->willReturn($bankgiro);
-        $bankgiroFactory->createAccount('an-unvalid-account')->willThrow(\RuntimeException::CLASS);
-        $this->getBankgiroValidator()->shouldValidate('a-valid-account');
-        $this->getBankgiroValidator()->shouldNotValidate('an-unvalid-account');
+        $bankgiroFactory->createAccount('123')->willReturn($bankgiro);
+        $bankgiroFactory->createAccount('456')->willThrow(\RuntimeException::CLASS);
+        $this->getBankgiroValidator()->shouldValidate('123');
+        $this->getBankgiroValidator()->shouldNotValidate('456');
     }
 
     function it_validates_ids($idFactory, Id $id)
     {
-        $idFactory->create('a-valid-id')->willReturn($id);
-        $idFactory->create('an-unvalid-id')->willThrow(\RuntimeException::CLASS);
-        $this->getIdValidator()->shouldValidate('a-valid-id');
-        $this->getIdValidator()->shouldNotValidate('an-unvalid-id');
+        $idFactory->create('123')->willReturn($id);
+        $idFactory->create('456')->willThrow(\RuntimeException::CLASS);
+        $this->getIdValidator()->shouldValidate('123');
+        $this->getIdValidator()->shouldNotValidate('456');
     }
 
 
