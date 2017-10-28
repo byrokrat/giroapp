@@ -26,8 +26,8 @@ Feature: Editing donors
   Scenario: I edit a donor and set a lot of values
     Given a fresh installation
     And there are donors:
-      | payer-number | name | email | phone | amount | comment |
-      | 1            | foo  | foo   | foo   | 0      | foo     |
+      | payer-number | name | email          | phone | amount | comment |
+      | 1            | foo  | foo@host.com   | 123   | 0      | foo     |
     When I run "edit 1 --name=bar --email=hej@hoj.se --phone=789 --amount=100 --comment=updated"
     Then there is no error
     And the database contains donor "1" with "name" matching "bar"
@@ -41,6 +41,6 @@ Feature: Editing donors
     And there are donors:
       | payer-number | state        |
       | 1            | MANDATE_SENT |
-    When I run "edit 1 --state active"
+    When I run "edit 1 --state ACTIVE"
     Then there is no error
     And the database contains donor "1" with "state" matching "ACTIVE"

@@ -26,69 +26,67 @@ use byrokrat\giroapp\Mapper\SettingsMapper;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\Question;
 
 /**
  * Command to initialize settings in database
  */
 class InitCommand implements CommandInterface
 {
-    /**
-     * @var CommandWrapper
-     */
-    private static $wrapper;
+    use Traits\InputReaderTrait;
 
     /**
      * @var SettingsMapper
      */
     private $settingsMapper;
 
+    /**
+     * @var array List of options, db keys and description messages
+     */
+    private static $options = [
+        'org-name' => ['org_name', 'Name of organization'],
+        'org-number' => ['org_number', 'Organization id number'],
+        'bgc-customer-number' => ['bgc_customer_number', 'BGC customer number'],
+        'bankgiro' => ['bankgiro', 'Bankgiro number']
+    ];
+
+    public static function configure(CommandWrapper $wrapper)
+    {
+        $wrapper->setName('init');
+        $wrapper->setDescription('Initialize the database');
+        $wrapper->setHelp('Initialize giroapp installation');
+
+        foreach (self::$options as $option => list(, $desc)) {
+            $wrapper->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
+        }
+    }
+
     public function __construct(SettingsMapper $settingsMapper)
     {
         $this->settingsMapper = $settingsMapper;
     }
 
-    public static function configure(CommandWrapper $wrapper)
-    {
-        self::$wrapper = $wrapper;
-        $wrapper->setName('init');
-        $wrapper->setDescription('Initialize the database');
-        $wrapper->setHelp('Initialize giroapp installation');
-        $wrapper->addOption('org-name', null, InputOption::VALUE_REQUIRED, 'Name of organization');
-        $wrapper->addOption('org-number', null, InputOption::VALUE_REQUIRED, 'Organization id number');
-        $wrapper->addOption('bgc-customer-number', null, InputOption::VALUE_REQUIRED, 'BGC customer number');
-        $wrapper->addOption('bankgiro', null, InputOption::VALUE_REQUIRED, 'Bankgiro number');
-    }
-
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->updateSetting('org_name', 'Name of organization', $input, $output);
-        $this->updateSetting('org_number', 'Organization id number', $input, $output);
-        $this->updateSetting('bgc_customer_number', 'BGC customer number', $input, $output);
-        $this->updateSetting('bankgiro', 'Bankgiro number', $input, $output);
-    }
+        $validators = [
+            'org-number' => $this->validators->getIdValidator(),
+            'org-name' => $this->validators->getRequiredStringValidator('Org-name'),
+            'bgc-customer-number' => $this->validators->getBgcCustomerNumberValidator(),
+            'bankgiro' => $this->validators->getBankgiroValidator()
+        ];
 
-    private function updateSetting(
-        string $key,
-        string $desc,
-        InputInterface $input,
-        OutputInterface $output
-    ) {
-        $currentValue = $this->settingsMapper->findByKey($key);
+        foreach (self::$options as $option => list($setting, $desc)) {
+            $currentVal = $this->settingsMapper->findByKey($setting);
 
-        $newValue = $input->getOption(str_replace('_', '-', $key));
-
-        if (!$newValue) {
-            $newValue = self::$wrapper->getHelper('question')->ask(
-                $input,
-                $output,
-                new Question("$desc [<info>$currentValue</info>]: ", $currentValue)
+            $newVal = (string)$this->inputReader->readInput(
+                $option,
+                $this->questionFactory->createQuestion($desc, $currentVal),
+                $validators[$option]
             );
-        }
 
-        if ($newValue != $currentValue) {
-            $this->settingsMapper->save($key, $newValue);
-            $output->writeln("$desc set to: <info>$newValue</info>");
+            if (!empty($newVal) && $newVal != $currentVal) {
+                $this->settingsMapper->save($setting, $newVal);
+                $output->writeln("$desc set to: <info>$newVal</info>");
+            }
         }
     }
 }
