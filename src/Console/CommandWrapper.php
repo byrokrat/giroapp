@@ -29,6 +29,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\NullOutput;
+use Symfony\Component\Console\Output\StreamOutput;
 
 /**
  * Wrapper of giroapp console commands
@@ -69,7 +70,8 @@ class CommandWrapper extends Command
         $container = new ProjectServiceContainer;
 
         $container->set(InputInterface::CLASS, $input);
-        $container->set(OutputInterface::CLASS, $this->discardOutputMessages ? new NullOutput : $output);
+        $container->set('std_out', $this->discardOutputMessages ? new NullOutput : $output);
+        $container->set('err_out', new StreamOutput(fopen('php://stderr', 'w'), $output->getVerbosity()));
         $container->set('Symfony\Component\Console\Helper\QuestionHelper', $this->getHelper('question'));
 
         $dispatcher = $container->get('Symfony\Component\EventDispatcher\EventDispatcher');

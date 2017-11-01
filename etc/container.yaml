@@ -17,10 +17,18 @@ services:
         public: true
         synthetic: true
 
-    Symfony\Component\Console\Output\OutputInterface:
-        class: ~
+    std_out:
+        class: Symfony\Component\Console\Output\OutputInterface
         public: true
         synthetic: true
+
+    err_out:
+        class: Symfony\Component\Console\Output\OutputInterface
+        public: true
+        synthetic: true
+
+    Symfony\Component\Console\Output\OutputInterface:
+        alias: 'std_out'
 
     Symfony\Component\Console\Helper\QuestionHelper:
         class: ~
@@ -61,6 +69,7 @@ services:
 
     byrokrat\giroapp\Listener\OutputtingListener:
         class: ~
+        arguments: ['@std_out', '@err_out']
         tags:
             - { name: event_listener, event: ERROR_EVENT, priority: -10 }
             - { name: event_listener, event: WARNING_EVENT, priority: -10 }

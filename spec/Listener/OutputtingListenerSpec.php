@@ -12,9 +12,9 @@ use Prophecy\Argument;
 
 class OutputtingListenerSpec extends ObjectBehavior
 {
-    function let(OutputInterface $output)
+    function let(OutputInterface $stdout, OutputInterface $errout)
     {
-        $this->beConstructedWith($output);
+        $this->beConstructedWith($stdout, $errout);
     }
 
     function it_is_initializable()
@@ -22,43 +22,43 @@ class OutputtingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(OutputtingListener::CLASS);
     }
 
-    function it_writes_error_messages(LogEvent $event, $output)
+    function it_writes_error_messages(LogEvent $event, $errout)
     {
         $event->getMessage()->willReturn('foobar');
         $this->onErrorEvent($event);
-        $output->writeln('<error>ERROR: foobar</error>')->shouldHaveBeenCalled();
+        $errout->writeln('<error>ERROR: foobar</error>')->shouldHaveBeenCalled();
     }
 
-    function it_writes_warning_messages(LogEvent $event, $output)
+    function it_writes_warning_messages(LogEvent $event, $errout)
     {
         $event->getMessage()->willReturn('foobar');
         $this->onWarningEvent($event);
-        $output->writeln('<question>WARNING: foobar</question>')->shouldHaveBeenCalled();
+        $errout->writeln('<question>WARNING: foobar</question>')->shouldHaveBeenCalled();
     }
 
-    function it_writes_info_messages(LogEvent $event, $output)
+    function it_writes_info_messages(LogEvent $event, $stdout)
     {
         $event->getMessage()->willReturn('foobar');
         $this->onInfoEvent($event);
-        $output->writeln('foobar')->shouldHaveBeenCalled();
+        $stdout->writeln('foobar')->shouldHaveBeenCalled();
     }
 
-    function it_writes_debug_message_if_output_is_verbose(LogEvent $event, $output)
+    function it_writes_debug_message_if_output_is_verbose(LogEvent $event, $stdout)
     {
         $event->getMessage()->willReturn('foobar');
 
-        $output->isVerbose()->willReturn(true);
-        $output->writeln('foobar')->shouldBeCalled();
+        $stdout->isVerbose()->willReturn(true);
+        $stdout->writeln('foobar')->shouldBeCalled();
 
         $this->onDebugEvent($event);
     }
 
-    function it_discards_debug_message_if_output_is_not_verbose(LogEvent $event, $output)
+    function it_discards_debug_message_if_output_is_not_verbose(LogEvent $event, $stdout)
     {
         $event->getMessage()->willReturn('foobar');
 
-        $output->isVerbose()->willReturn(false);
-        $output->writeln('foobar')->shouldNotBeCalled();
+        $stdout->isVerbose()->willReturn(false);
+        $stdout->writeln('foobar')->shouldNotBeCalled();
 
         $this->onDebugEvent($event);
     }

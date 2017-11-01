@@ -33,32 +33,38 @@ class OutputtingListener
     /**
      * @var OutputInterface
      */
-    private $output;
+    private $stdout;
 
-    public function __construct(OutputInterface $output)
+    /**
+     * @var OutputInterface
+     */
+    private $errout;
+
+    public function __construct(OutputInterface $stdout, OutputInterface $errout)
     {
-        $this->output = $output;
+        $this->stdout = $stdout;
+        $this->errout = $errout;
     }
 
     public function onErrorEvent(LogEvent $event)
     {
-        $this->output->writeln("<error>ERROR: {$event->getMessage()}</error>");
+        $this->errout->writeln("<error>ERROR: {$event->getMessage()}</error>");
     }
 
     public function onWarningEvent(LogEvent $event)
     {
-        $this->output->writeln("<question>WARNING: {$event->getMessage()}</question>");
+        $this->errout->writeln("<question>WARNING: {$event->getMessage()}</question>");
     }
 
     public function onInfoEvent(LogEvent $event)
     {
-        $this->output->writeln($event->getMessage());
+        $this->stdout->writeln($event->getMessage());
     }
 
     public function onDebugEvent(LogEvent $event)
     {
-        if ($this->output->isVerbose()) {
-            $this->output->writeln($event->getMessage());
+        if ($this->stdout->isVerbose()) {
+            $this->stdout->writeln($event->getMessage());
         }
     }
 }
