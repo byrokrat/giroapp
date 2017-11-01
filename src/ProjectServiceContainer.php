@@ -60,7 +60,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\id\\idfactory' => 'byrokrat\\id\\IdFactory',
             'symfony\\component\\console\\helper\\questionhelper' => 'Symfony\\Component\\Console\\Helper\\QuestionHelper',
             'symfony\\component\\console\\input\\inputinterface' => 'Symfony\\Component\\Console\\Input\\InputInterface',
-            'symfony\\component\\console\\output\\outputinterface' => 'Symfony\\Component\\Console\\Output\\OutputInterface',
             'symfony\\component\\eventdispatcher\\eventdispatcher' => 'Symfony\\Component\\EventDispatcher\\EventDispatcher',
         );
         $this->methodMap = array(
@@ -223,7 +222,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Console_Helper_InputReaderService()
     {
-        return $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(${($_ = isset($this->services['Symfony\Component\Console\Input\InputInterface']) ? $this->services['Symfony\Component\Console\Input\InputInterface'] : $this->get('Symfony\Component\Console\Input\InputInterface')) && false ?: '_'}, ${($_ = isset($this->services['Symfony\Component\Console\Output\OutputInterface']) ? $this->services['Symfony\Component\Console\Output\OutputInterface'] : $this->get('Symfony\Component\Console\Output\OutputInterface')) && false ?: '_'}, ${($_ = isset($this->services['Symfony\Component\Console\Helper\QuestionHelper']) ? $this->services['Symfony\Component\Console\Helper\QuestionHelper'] : $this->get('Symfony\Component\Console\Helper\QuestionHelper')) && false ?: '_'});
+        return $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(${($_ = isset($this->services['Symfony\Component\Console\Input\InputInterface']) ? $this->services['Symfony\Component\Console\Input\InputInterface'] : $this->get('Symfony\Component\Console\Input\InputInterface')) && false ?: '_'}, ${($_ = isset($this->services['std_out']) ? $this->services['std_out'] : $this->get('std_out')) && false ?: '_'}, ${($_ = isset($this->services['Symfony\Component\Console\Helper\QuestionHelper']) ? $this->services['Symfony\Component\Console\Helper\QuestionHelper'] : $this->get('Symfony\Component\Console\Helper\QuestionHelper')) && false ?: '_'});
     }
 
     /**
@@ -567,7 +566,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Listener_OutputtingListenerService()
     {
-        return $this->services['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(${($_ = isset($this->services['Symfony\Component\Console\Output\OutputInterface']) ? $this->services['Symfony\Component\Console\Output\OutputInterface'] : $this->get('Symfony\Component\Console\Output\OutputInterface')) && false ?: '_'});
+        return $this->services['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(${($_ = isset($this->services['std_out']) ? $this->services['std_out'] : $this->get('std_out')) && false ?: '_'}, ${($_ = isset($this->services['err_out']) ? $this->services['err_out'] : $this->get('err_out')) && false ?: '_'});
     }
 
     /**
