@@ -26,7 +26,7 @@ use byrokrat\giroapp\States;
 
 class ActiveState extends AbstractState
 {
-    public function getId(): string
+    public function getStateId(): string
     {
         return States::ACTIVE;
     }

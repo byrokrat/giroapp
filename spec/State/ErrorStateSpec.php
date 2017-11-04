@@ -26,7 +26,12 @@ class ErrorStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(States::ERROR);
+        $this->getStateId()->shouldEqual(States::ERROR);
+    }
+
+    function it_contains_next_id()
+    {
+        $this->getNextStateId()->shouldEqual(States::ERROR);
     }
 
     function it_contains_a_description()
@@ -36,7 +41,7 @@ class ErrorStateSpec extends ObjectBehavior
 
     function it_is_not_exportable()
     {
-        $this->isExportable()->shouldBe(false);
+        $this->shouldNotBeExportable();
     }
 
     function it_can_be_exported(Donor $donor, Writer $writer)

@@ -24,9 +24,10 @@ namespace byrokrat\giroapp\Builder;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\NewMandateState;
-use byrokrat\giroapp\State\NewDigitalMandateState;
+use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\id\Id;
 use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
@@ -40,6 +41,16 @@ class DonorBuilder
      * @var MandateKeyBuilder
      */
     private $keyBuilder;
+
+    /**
+     * @var StatePool;
+     */
+    private $statePool;
+
+    /**
+     * @var SystemClock
+     */
+    private $systemClock;
 
     /**
      * @var string
@@ -60,11 +71,6 @@ class DonorBuilder
      * @var AccountNumber
      */
     private $account;
-
-    /**
-     * @var StateInterface
-     */
-    private $state;
 
     /**
      * @var string
@@ -101,9 +107,11 @@ class DonorBuilder
      */
     private $donationAmount;
 
-    public function __construct(MandateKeyBuilder $keyBuilder)
+    public function __construct(MandateKeyBuilder $keyBuilder, StatePool $statePool, SystemClock $systemClock)
     {
         $this->keyBuilder = $keyBuilder;
+        $this->statePool= $statePool;
+        $this->systemClock = $systemClock;
     }
 
     /**
@@ -115,7 +123,6 @@ class DonorBuilder
         unset($this->payerNumber);
         unset($this->id);
         unset($this->account);
-        unset($this->state);
         unset($this->name);
         unset($this->postalAddress);
         $this->email = '';
@@ -243,16 +250,12 @@ class DonorBuilder
 
     private function getState(): StateInterface
     {
-        if (isset($this->state)) {
-            return $this->state;
-        }
-
         switch ($this->getMandateSource()) {
             case Donor::MANDATE_SOURCE_PAPER:
             case Donor::MANDATE_SOURCE_ONLINE_FORM:
-                return new NewMandateState;
+                return $this->statePool->getState(States::NEW_MANDATE);
             case Donor::MANDATE_SOURCE_DIGITAL:
-                return new NewDigitalMandateState;
+                return $this->statePool->getState(States::NEW_DIGITAL_MANDATE);
         }
 
         throw new \RuntimeException('Unable to build donor, invalid donor state');

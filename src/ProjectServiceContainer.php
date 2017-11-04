@@ -56,7 +56,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\listener\\outputtinglistener' => 'byrokrat\\giroapp\\Listener\\OutputtingListener',
             'byrokrat\\giroapp\\mapper\\donormapper' => 'byrokrat\\giroapp\\Mapper\\DonorMapper',
             'byrokrat\\giroapp\\mapper\\schema\\donorschema' => 'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema',
-            'byrokrat\\giroapp\\state\\statefactory' => 'byrokrat\\giroapp\\State\\StateFactory',
+            'byrokrat\\giroapp\\state\\statepool' => 'byrokrat\\giroapp\\State\\StatePool',
+            'byrokrat\\giroapp\\utils\\systemclock' => 'byrokrat\\giroapp\\Utils\\SystemClock',
             'byrokrat\\id\\idfactory' => 'byrokrat\\id\\IdFactory',
             'symfony\\component\\console\\helper\\questionhelper' => 'Symfony\\Component\\Console\\Helper\\QuestionHelper',
             'symfony\\component\\console\\input\\inputinterface' => 'Symfony\\Component\\Console\\Input\\InputInterface',
@@ -93,7 +94,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\OutputtingListener' => 'getByrokrat_Giroapp_Listener_OutputtingListenerService',
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => 'getByrokrat_Giroapp_Mapper_DonorMapperService',
             'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => 'getByrokrat_Giroapp_Mapper_Schema_DonorSchemaService',
-            'byrokrat\\giroapp\\State\\StateFactory' => 'getByrokrat_Giroapp_State_StateFactoryService',
+            'byrokrat\\giroapp\\State\\StatePool' => 'getByrokrat_Giroapp_State_StatePoolService',
+            'byrokrat\\giroapp\\Utils\\SystemClock' => 'getByrokrat_Giroapp_Utils_SystemClockService',
             'byrokrat\\id\\IdFactory' => 'getByrokrat_Id_IdFactoryService',
             'db_donor_engine' => 'getDbDonorEngineService',
             'db_log_engine' => 'getDbLogEngineService',
@@ -120,7 +122,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\OutputtingListener' => true,
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => true,
-            'byrokrat\\giroapp\\State\\StateFactory' => true,
+            'byrokrat\\giroapp\\State\\StatePool' => true,
+            'byrokrat\\giroapp\\Utils\\SystemClock' => true,
             'byrokrat\\id\\IdFactory' => true,
             'db_donor_engine' => true,
             'db_log_engine' => true,
@@ -212,7 +215,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Console_ExportCommandService()
     {
-        return $this->services['byrokrat\giroapp\Console\ExportCommand'] = new \byrokrat\giroapp\Console\ExportCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getByrokrat_Giroapp_Mapper_DonorMapperService()) && false ?: '_'}, call_user_func(array(new \byrokrat\autogiro\Writer\WriterFactory(), 'createWriter'), ${($_ = isset($this->services['db_settings_mapper']) ? $this->services['db_settings_mapper'] : $this->get('db_settings_mapper')) && false ?: '_'}->findByKey("bgc_customer_number"), ${($_ = isset($this->services['organization_bg']) ? $this->services['organization_bg'] : $this->getOrganizationBgService()) && false ?: '_'}));
+        return $this->services['byrokrat\giroapp\Console\ExportCommand'] = new \byrokrat\giroapp\Console\ExportCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getByrokrat_Giroapp_Mapper_DonorMapperService()) && false ?: '_'}, call_user_func(array(new \byrokrat\autogiro\Writer\WriterFactory(), 'createWriter'), ${($_ = isset($this->services['db_settings_mapper']) ? $this->services['db_settings_mapper'] : $this->get('db_settings_mapper')) && false ?: '_'}->findByKey("bgc_customer_number"), ${($_ = isset($this->services['organization_bg']) ? $this->services['organization_bg'] : $this->getOrganizationBgService()) && false ?: '_'}), ${($_ = isset($this->services['byrokrat\giroapp\State\StatePool']) ? $this->services['byrokrat\giroapp\State\StatePool'] : $this->getByrokrat_Giroapp_State_StatePoolService()) && false ?: '_'});
     }
 
     /**
@@ -242,7 +245,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Console_Helper_ValidatorsService()
     {
-        return $this->services['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->getByrokrat_Banking_AccountFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\BankgiroFactory']) ? $this->services['byrokrat\banking\BankgiroFactory'] : $this->getByrokrat_Banking_BankgiroFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->getByrokrat_Id_IdFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\State\StateFactory']) ? $this->services['byrokrat\giroapp\State\StateFactory'] : $this->getByrokrat_Giroapp_State_StateFactoryService()) && false ?: '_'});
+        return $this->services['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->getByrokrat_Banking_AccountFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\BankgiroFactory']) ? $this->services['byrokrat\banking\BankgiroFactory'] : $this->getByrokrat_Banking_BankgiroFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->getByrokrat_Id_IdFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\State\StatePool']) ? $this->services['byrokrat\giroapp\State\StatePool'] : $this->getByrokrat_Giroapp_State_StatePoolService()) && false ?: '_'});
     }
 
     /**
@@ -464,7 +467,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Builder_DonorBuilderService()
     {
-        return $this->services['byrokrat\giroapp\Builder\DonorBuilder'] = new \byrokrat\giroapp\Builder\DonorBuilder(new \byrokrat\giroapp\Builder\MandateKeyBuilder());
+        return $this->services['byrokrat\giroapp\Builder\DonorBuilder'] = new \byrokrat\giroapp\Builder\DonorBuilder(new \byrokrat\giroapp\Builder\MandateKeyBuilder(), ${($_ = isset($this->services['byrokrat\giroapp\State\StatePool']) ? $this->services['byrokrat\giroapp\State\StatePool'] : $this->getByrokrat_Giroapp_State_StatePoolService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Utils\SystemClock']) ? $this->services['byrokrat\giroapp\Utils\SystemClock'] : $this->getByrokrat_Giroapp_Utils_SystemClockService()) && false ?: '_'});
     }
 
     /**
@@ -556,7 +559,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Listener_MandateResponseListenerService()
     {
-        return $this->services['byrokrat\giroapp\Listener\MandateResponseListener'] = new \byrokrat\giroapp\Listener\MandateResponseListener(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getByrokrat_Giroapp_Mapper_DonorMapperService()) && false ?: '_'});
+        return $this->services['byrokrat\giroapp\Listener\MandateResponseListener'] = new \byrokrat\giroapp\Listener\MandateResponseListener(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getByrokrat_Giroapp_Mapper_DonorMapperService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\State\StatePool']) ? $this->services['byrokrat\giroapp\State\StatePool'] : $this->getByrokrat_Giroapp_State_StatePoolService()) && false ?: '_'});
     }
 
     /**
@@ -586,17 +589,27 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Mapper_Schema_DonorSchemaService()
     {
-        return $this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema'] = new \byrokrat\giroapp\Mapper\Schema\DonorSchema(new \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema(), ${($_ = isset($this->services['byrokrat\giroapp\State\StateFactory']) ? $this->services['byrokrat\giroapp\State\StateFactory'] : $this->getByrokrat_Giroapp_State_StateFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->getByrokrat_Banking_AccountFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->getByrokrat_Id_IdFactoryService()) && false ?: '_'});
+        return $this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema'] = new \byrokrat\giroapp\Mapper\Schema\DonorSchema(new \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema(), ${($_ = isset($this->services['byrokrat\giroapp\State\StatePool']) ? $this->services['byrokrat\giroapp\State\StatePool'] : $this->getByrokrat_Giroapp_State_StatePoolService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->getByrokrat_Banking_AccountFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->getByrokrat_Id_IdFactoryService()) && false ?: '_'});
     }
 
     /**
-     * Gets the private 'byrokrat\giroapp\State\StateFactory' shared autowired service.
+     * Gets the private 'byrokrat\giroapp\State\StatePool' shared autowired service.
      *
-     * @return \byrokrat\giroapp\State\StateFactory
+     * @return \byrokrat\giroapp\State\StatePool
      */
-    protected function getByrokrat_Giroapp_State_StateFactoryService()
+    protected function getByrokrat_Giroapp_State_StatePoolService()
     {
-        return $this->services['byrokrat\giroapp\State\StateFactory'] = new \byrokrat\giroapp\State\StateFactory();
+        return $this->services['byrokrat\giroapp\State\StatePool'] = new \byrokrat\giroapp\State\StatePool(new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\Builder\DateBuilder(${($_ = isset($this->services['byrokrat\giroapp\Utils\SystemClock']) ? $this->services['byrokrat\giroapp\Utils\SystemClock'] : $this->getByrokrat_Giroapp_Utils_SystemClockService()) && false ?: '_'})), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState());
+    }
+
+    /**
+     * Gets the private 'byrokrat\giroapp\Utils\SystemClock' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Utils\SystemClock
+     */
+    protected function getByrokrat_Giroapp_Utils_SystemClockService()
+    {
+        return $this->services['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock();
     }
 
     /**

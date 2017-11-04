@@ -60,7 +60,7 @@ class DropCommand implements CommandInterface
     {
         $donor = $this->getDonor($input);
 
-        if ($donor->getState()->getId() != States::INACTIVE && !$input->getOption('force')) {
+        if ($donor->getState()->getStateId() != States::INACTIVE && !$input->getOption('force')) {
             throw new \RuntimeException('Unable to drop mandate that is not inactive. Use -f to override.');
         }
 

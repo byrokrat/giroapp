@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Builder;
 
+use byrokrat\giroapp\Utils\SystemClock;
+
 /**
  * Calculate the date of next possible transaction date based on requested day of month
  */
@@ -38,9 +40,9 @@ class DateBuilder
     const DEFAULT_MIN_DAYS_IN_FUTURE = 4;
 
     /**
-     * @var \DateTimeInterface
+     * @var SystemClock
      */
-    private $currentDate;
+    private $systemClock;
 
     /**
      * @var int
@@ -52,14 +54,9 @@ class DateBuilder
      */
     private $minDaysInFuture;
 
-    /**
-     * Set date to use as base when calculating next date
-     */
-    public function setCurrentDate(\DateTimeInterface $currentDate): self
+    public function __construct(SystemClock $systemClock)
     {
-        $this->currentDate = $currentDate;
-
-        return $this;
+        $this->systemClock = $systemClock;
     }
 
     /**
@@ -87,7 +84,7 @@ class DateBuilder
      */
     public function buildDate(): \DateTimeInterface
     {
-        $currentDate = $this->getCurrentDate();
+        $currentDate = $this->systemClock->getNow();
 
         $createdDate =  new \DateTime($currentDate->format('Ym') . $this->getDayOfMonth());
 
@@ -96,11 +93,6 @@ class DateBuilder
         }
 
         return $createdDate;
-    }
-
-    private function getCurrentDate(): \DateTimeInterface
-    {
-        return $this->currentDate ?: new \DateTime;
     }
 
     private function getDayOfMonth(): int

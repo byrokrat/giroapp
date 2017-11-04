@@ -31,7 +31,12 @@ interface StateInterface
     /**
      * Get state identifier
      */
-    public function getId(): string;
+    public function getStateId(): string;
+
+    /**
+     * Get identifier of next state in a state chain (eg. after export)
+     */
+    public function getNextStateId(): string;
 
     /**
      * Get free text state description
@@ -45,8 +50,6 @@ interface StateInterface
 
     /**
      * Export to autogiro and possibly perform state transition
-     *
-     * @return void
      */
-    public function export(Donor $donor, Writer $writer);
+    public function export(Donor $donor, Writer $writer): void;
 }

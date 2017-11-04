@@ -20,19 +20,15 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\State;
+namespace byrokrat\giroapp\Utils;
 
-use byrokrat\giroapp\States;
-
-class RevocationSentState extends AbstractState
+/**
+ * Create datetime objects
+ */
+class SystemClock
 {
-    public function getStateId(): string
+    public function getNow(): \DateTimeInterface
     {
-        return States::REVOCATION_SENT;
-    }
-
-    public function getDescription(): string
-    {
-        return 'Revocation request has been sent to the bank';
+        return new \DateTimeImmutable;
     }
 }

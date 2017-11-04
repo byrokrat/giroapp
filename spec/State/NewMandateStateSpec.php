@@ -6,7 +6,6 @@ namespace spec\byrokrat\giroapp\State;
 
 use byrokrat\giroapp\State\NewMandateState;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\MandateSentState;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
@@ -29,7 +28,12 @@ class NewMandateStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(States::NEW_MANDATE);
+        $this->getStateId()->shouldEqual(States::NEW_MANDATE);
+    }
+
+    function it_contains_next_id()
+    {
+        $this->getNextStateId()->shouldEqual(States::MANDATE_SENT);
     }
 
     function it_contains_a_description()
@@ -39,7 +43,7 @@ class NewMandateStateSpec extends ObjectBehavior
 
     function it_is_exportable()
     {
-        $this->isExportable()->shouldBe(true);
+        $this->shouldBeExportable();
     }
 
     function it_can_be_exported(Donor $donor, Writer $writer, AccountNumber $account, Id $id)
@@ -47,11 +51,7 @@ class NewMandateStateSpec extends ObjectBehavior
         $donor->getPayerNumber()->willReturn('foobar');
         $donor->getAccount()->willReturn($account);
         $donor->getDonorId()->willReturn($id);
-
-        $donor->setState(Argument::type(MandateSentState::CLASS))->shouldBeCalled();
-
         $this->export($donor, $writer);
-
         $writer->addNewMandate('foobar', $account, $id)->shouldHaveBeenCalled();
     }
 }

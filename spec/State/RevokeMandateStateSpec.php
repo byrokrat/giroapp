@@ -6,7 +6,6 @@ namespace spec\byrokrat\giroapp\State;
 
 use byrokrat\giroapp\State\RevokeMandateState;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\RevocationSentState;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
@@ -27,7 +26,12 @@ class RevokeMandateStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(States::REVOKE_MANDATE);
+        $this->getStateId()->shouldEqual(States::REVOKE_MANDATE);
+    }
+
+    function it_contains_next_id()
+    {
+        $this->getNextStateId()->shouldEqual(States::REVOCATION_SENT);
     }
 
     function it_contains_a_description()
@@ -37,16 +41,13 @@ class RevokeMandateStateSpec extends ObjectBehavior
 
     function it_is_exportable()
     {
-        $this->isExportable()->shouldBe(true);
+        $this->shouldBeExportable();
     }
 
     function it_can_be_exported(Donor $donor, Writer $writer)
     {
         $donor->getPayerNumber()->willReturn('foobar');
-        $donor->setState(Argument::type(RevocationSentState::CLASS))->shouldBeCalled();
-
         $this->export($donor, $writer);
-
         $writer->deleteMandate('foobar')->shouldHaveBeenCalled();
     }
 }

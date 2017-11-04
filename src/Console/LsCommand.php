@@ -66,7 +66,7 @@ class LsCommand implements CommandInterface
                 $donor->getMandateKey(),
                 $donor->getPayerNumber(),
                 $donor->getName(),
-                $donor->getState()->getId(),
+                $donor->getState()->getStateId(),
                 $donor->getState()->isExportable() ? 'yes' : 'no'
             ]);
         }

@@ -26,7 +26,7 @@ use byrokrat\giroapp\States;
 
 class ErrorState extends AbstractState
 {
-    public function getId(): string
+    public function getStateId(): string
     {
         return States::ERROR;
     }

@@ -112,7 +112,11 @@ class EditCommand implements CommandInterface
         $donor->setState(
             $this->inputReader->readInput(
                 'state',
-                $this->questionFactory->createChoiceQuestion($descs['state'], $states, $donor->getState()->getId()),
+                $this->questionFactory->createChoiceQuestion(
+                    $descs['state'],
+                    $states,
+                    $donor->getState()->getStateId()
+                ),
                 $this->validators->getStateValidator($states)
             )
         );

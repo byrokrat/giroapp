@@ -46,6 +46,9 @@ services:
     byrokrat\giroapp\State\:
         resource: '../src/State/*'
 
+    byrokrat\giroapp\Utils\:
+        resource: '../src/Utils/*'
+
     Symfony\Component\EventDispatcher\EventDispatcher:
         class: ~
         configurator: 'byrokrat\giroapp\DI\PluginLoader:loadPlugins'

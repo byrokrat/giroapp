@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\Console\Helper\Validators;
-use byrokrat\giroapp\State\StateFactory;
+use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactory;
@@ -24,9 +24,9 @@ class ValidatorsSpec extends ObjectBehavior
         AccountFactory $accountFactory,
         BankgiroFactory $bankgiroFactory,
         IdFactory $idFactory,
-        StateFactory $stateFactory
+        StatePool $statePool
     ) {
-        $this->beConstructedWith($accountFactory, $bankgiroFactory, $idFactory, $stateFactory);
+        $this->beConstructedWith($accountFactory, $bankgiroFactory, $idFactory, $statePool);
     }
 
     function it_is_initializable()
@@ -122,10 +122,10 @@ class ValidatorsSpec extends ObjectBehavior
         $this->getChoiceValidator(['key' => 'value'])->shouldNotValidate('something-else');
     }
 
-    function it_validates_donor_states($stateFactory, StateInterface $state)
+    function it_validates_donor_states($statePool, StateInterface $state)
     {
-        $stateFactory->createState('valid')->willReturn($state)->shouldBeCalled();
-        $stateFactory->createState('unvalid')->willThrow(\RuntimeException::CLASS)->shouldBeCalled();
+        $statePool->getState('valid')->willReturn($state)->shouldBeCalled();
+        $statePool->getState('unvalid')->willThrow(\RuntimeException::CLASS)->shouldBeCalled();
         $this->getStateValidator(['valid'])->shouldValidate('valid');
         $this->getStateValidator(['valid'])->shouldNotValidate('unvalid');
         $this->getStateValidator(['unvalid'])->shouldNotValidate('unvalid');

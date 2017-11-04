@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp\Mapper\Schema;
 
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
-use byrokrat\giroapp\State\StateFactory;
+use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\ActiveState;
 use byrokrat\giroapp\Model\PostalAddress;
@@ -59,13 +59,13 @@ class DonorSchemaSpec extends ObjectBehavior
 
     function let(
         PostalAddressSchema $postalAddressSchema,
-        StateFactory $stateFactory,
+        StatePool $statePool,
         AccountFactory $accountFactory,
         IdFactory $idFactory
     ) {
         $this->beConstructedWith(
             $postalAddressSchema,
-            $stateFactory,
+            $statePool,
             $accountFactory,
             $idFactory
         );
@@ -78,7 +78,7 @@ class DonorSchemaSpec extends ObjectBehavior
 
     function it_can_create_donor(
         $postalAddressSchema,
-        $stateFactory,
+        $statePool,
         $accountFactory,
         $idFactory,
         StateInterface $state,
@@ -87,7 +87,7 @@ class DonorSchemaSpec extends ObjectBehavior
         PostalAddress $address
     ) {
         $postalAddressSchema->fromArray([self::ADDRESS])->willReturn($address);
-        $stateFactory->createState(self::STATE)->willReturn($state);
+        $statePool->getState(self::STATE)->willReturn($state);
         $accountFactory->createAccount(self::ACCOUNT)->willReturn($account);
         $idFactory->create(self::ID)->willReturn($id);
 
@@ -119,7 +119,7 @@ class DonorSchemaSpec extends ObjectBehavior
         SEK $amount
     ) {
         $postalAddressSchema->toArray($address)->willReturn([self::ADDRESS]);
-        $state->getId()->willReturn(self::STATE);
+        $state->getStateId()->willReturn(self::STATE);
         $account->getNumber()->willReturn(self::ACCOUNT);
         $id->format('S-sk')->willReturn(self::ID);
         $amount->getAmount()->willReturn(self::AMOUNT);

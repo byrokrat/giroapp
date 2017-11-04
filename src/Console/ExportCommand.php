@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\State\StatePool;
 use byrokrat\autogiro\Writer\Writer;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -42,10 +43,16 @@ class ExportCommand implements CommandInterface
      */
     private $autogiroWriter;
 
-    public function __construct(DonorMapper $donorMapper, Writer $autogiroWriter)
+    /**
+     * @var StatePool
+     */
+    private $statePool;
+
+    public function __construct(DonorMapper $donorMapper, Writer $autogiroWriter, StatePool $statePool)
     {
         $this->donorMapper = $donorMapper;
         $this->autogiroWriter = $autogiroWriter;
+        $this->statePool = $statePool;
     }
 
     public static function configure(CommandWrapper $wrapper)
@@ -59,8 +66,11 @@ class ExportCommand implements CommandInterface
     public function execute(InputInterface $input, OutputInterface $output)
     {
         foreach ($this->donorMapper->findAll() as $donor) {
-            $donor->exportToAutogiro($this->autogiroWriter);
-            $this->donorMapper->update($donor);
+            if ($donor->getState()->isExportable()) {
+                $donor->exportToAutogiro($this->autogiroWriter);
+                $donor->setState($this->statePool->getState($donor->getState()->getNextStateId()));
+                $this->donorMapper->update($donor);
+            }
         }
 
         $output->write($this->autogiroWriter->getContent());
