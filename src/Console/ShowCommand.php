@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -34,35 +33,23 @@ class ShowCommand implements CommandInterface
 {
     use Traits\DonorArgumentTrait;
 
-    /**
-     * @var array Map of option names to donor schema fields
-     */
-    private static $optionToSchemaMap = [
-        'type'           => 'type',
-        'mandate-key'    => 'mandate_key',
-        'mandate-source' => 'mandate_source',
-        'payer-number'   => 'payer_number',
-        'state'          => 'state',
-        'account'        => 'account',
-        'id'             => 'donor_id',
-        'name'           => 'name',
-        'address'        => 'address',
-        'email'          => 'email',
-        'phone'          => 'phone',
-        'amount'         => 'donation_amount',
-        'comment'        => 'comment',
-        'attributes'     => 'attributes'
+    private static $options = [
+        'mandate-key'    => 'Show mandate key',
+        'mandate-source' => 'Show mandate source',
+        'payer-number'   => 'Show payer number',
+        'state'          => 'Show payer state',
+        'account'        => 'Show payer account',
+        'id'             => 'Show payer state id',
+        'name'           => 'Show payer name',
+        'address'        => 'Show postal address',
+        'email'          => 'Show email address',
+        'phone'          => 'Show phone number',
+        'amount'         => 'Show monthly donation amount',
+        'comment'        => 'Show comment',
+        'created'        => 'Show created date',
+        'updated'        => 'Show updated date',
+        'attributes'     => 'Show attributes'
     ];
-
-    /**
-     * @var DonorSchema
-     */
-    private $donorSchema;
-
-    public function __construct(DonorSchema $donorSchema)
-    {
-        $this->donorSchema = $donorSchema;
-    }
 
     public static function configure(CommandWrapper $wrapper)
     {
@@ -71,29 +58,42 @@ class ShowCommand implements CommandInterface
         $wrapper->setHelp('Display information on individual donors');
         self::configureDonorArgument($wrapper);
         $wrapper->discardOutputMessages();
-        $wrapper->addOption('type', null, InputOption::VALUE_NONE, 'Show donor type identifier');
-        $wrapper->addOption('mandate-key', null, InputOption::VALUE_NONE, 'Show mandate key');
-        $wrapper->addOption('mandate-source', null, InputOption::VALUE_NONE, 'Show mandate source');
-        $wrapper->addOption('payer-number', null, InputOption::VALUE_NONE, 'Show payer number');
-        $wrapper->addOption('state', null, InputOption::VALUE_NONE, 'Show payer state');
-        $wrapper->addOption('account', null, InputOption::VALUE_NONE, 'Show payer account');
-        $wrapper->addOption('id', null, InputOption::VALUE_NONE, 'Show payer state id');
-        $wrapper->addOption('name', null, InputOption::VALUE_NONE, 'Show payer name');
-        $wrapper->addOption('address', null, InputOption::VALUE_NONE, 'Show postal address');
-        $wrapper->addOption('email', null, InputOption::VALUE_NONE, 'Show email address');
-        $wrapper->addOption('phone', null, InputOption::VALUE_NONE, 'Show phone number');
-        $wrapper->addOption('amount', null, InputOption::VALUE_NONE, 'Show monthly donation amount');
-        $wrapper->addOption('comment', null, InputOption::VALUE_NONE, 'Show comment');
-        $wrapper->addOption('attributes', null, InputOption::VALUE_NONE, 'Show attributes');
+        foreach (self::$options as $option => $desc) {
+            $wrapper->addOption($option, null, InputOption::VALUE_NONE, $desc);
+        }
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $showContent = $content = $this->donorSchema->toArray($this->getDonor($input));
+        $donor = $this->getDonor($input);
 
-        foreach (self::$optionToSchemaMap as $option => $field) {
+        $showContent = $content = [
+            'mandate-key' => $donor->getMandateKey(),
+            'state' => $donor->getState()->getStateId(),
+            'mandate-source' => $donor->getMandateSource(),
+            'payer-number' => $donor->getPayerNumber(),
+            'account' => $donor->getAccount()->getNumber(),
+            'id' => $donor->getDonorId()->format('S-sk'),
+            'name' => $donor->getName(),
+            'address' => [
+                'line1' => $donor->getPostalAddress()->getLine1(),
+                'line2' => $donor->getPostalAddress()->getLine2(),
+                'line3' => $donor->getPostalAddress()->getLine3(),
+                'postal_code' => $donor->getPostalAddress()->getPostalCode(),
+                'postal_city' => $donor->getPostalAddress()->getPostalCity()
+            ],
+            'email' => $donor->getEmail(),
+            'phone' => $donor->getPhone(),
+            'amount' => $donor->getDonationAmount()->getAmount(),
+            'comment' => $donor->getComment(),
+            'created' => $donor->getCreated()->format(\DateTime::W3C),
+            'updated' => $donor->getUpdated()->format(\DateTime::W3C),
+            'attributes' => $donor->getAttributes()
+        ];
+
+        foreach (array_keys(self::$options) as $option) {
             if (!$input->getOption($option)) {
-                unset($showContent[$field]);
+                unset($showContent[$option]);
             }
         }
 

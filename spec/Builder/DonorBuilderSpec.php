@@ -30,11 +30,13 @@ class DonorBuilderSpec extends ObjectBehavior
         AccountNumber $account,
         StatePool $statePool,
         StateInterface $state,
-        SystemClock $systemClock
+        SystemClock $systemClock,
+        \DateTime $datetime
     ) {
         $id->format('Ssk')->willReturn(self::PAYER_NUMBER);
         $keyBuilder->buildKey($id, $account)->willReturn(self::MANDATE_KEY);
         $statePool->getState(Argument::any())->willReturn($state);
+        $systemClock->getNow()->willReturn($datetime);
         $this->beConstructedWith($keyBuilder, $statePool, $systemClock);
     }
 
@@ -110,7 +112,7 @@ class DonorBuilderSpec extends ObjectBehavior
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
     }
 
-    function it_uses_default_values($id, $account, $statePool, $state)
+    function it_uses_default_values($id, $account, $statePool, $state, $datetime)
     {
         $statePool->getState(States::NEW_MANDATE)->shouldBeCalled()->willReturn($state);
         $this->setId($id)
@@ -131,12 +133,14 @@ class DonorBuilderSpec extends ObjectBehavior
                     '',
                     '',
                     new SEK('0'),
-                    ''
+                    '',
+                    $datetime->getWrappedObject(),
+                    $datetime->getWrappedObject()
                 )
             );
     }
 
-    function it_can_set_values($id, $account, PostalAddress $postalAddress, SEK $amount, $statePool, $state)
+    function it_can_set_values($id, $account, PostalAddress $postalAddress, SEK $amount, $statePool, $state, $datetime)
     {
         $createdDonor = $this->setId($id)
             ->setAccount($account)
@@ -168,6 +172,8 @@ class DonorBuilderSpec extends ObjectBehavior
                 'phone',
                 $amount->getWrappedObject(),
                 'comment',
+                $datetime->getWrappedObject(),
+                $datetime->getWrappedObject(),
                 [
                     'foo' => 'bar',
                     'baz' => 'bal'

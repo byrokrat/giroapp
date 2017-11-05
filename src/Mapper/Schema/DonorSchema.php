@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Mapper\Schema;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
 use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\IdFactory;
 use byrokrat\amount\Currency\SEK;
@@ -61,16 +62,23 @@ class DonorSchema
      */
     private $idFactory;
 
+    /**
+     * @var SystemClock
+     */
+    private $systemClock;
+
     public function __construct(
         PostalAddressSchema $postalAddressSchema,
         StatePool $statePool,
         AccountFactory $accountFactory,
-        IdFactory $idFactory
+        IdFactory $idFactory,
+        SystemClock $systemClock
     ) {
         $this->addressSchema = $postalAddressSchema;
         $this->statePool = $statePool;
         $this->accountFactory = $accountFactory;
         $this->idFactory = $idFactory;
+        $this->systemClock = $systemClock;
     }
 
     public function toArray(Donor $donor): array
@@ -89,6 +97,8 @@ class DonorSchema
             'phone' => $donor->getPhone(),
             'donation_amount' => $donor->getDonationAmount()->getAmount(),
             'comment' => $donor->getComment(),
+            'created' => $donor->getCreated()->format(\DateTime::W3C),
+            'updated' => $donor->getUpdated()->format(\DateTime::W3C),
             'attributes' => $donor->getAttributes()
         ];
     }
@@ -108,6 +118,8 @@ class DonorSchema
             $doc['phone'],
             new SEK($doc['donation_amount']),
             $doc['comment'],
+            isset($doc['created']) ? new \DateTimeImmutable($doc['created']) : $this->systemClock->getNow(),
+            isset($doc['updated']) ? new \DateTimeImmutable($doc['updated']) : $this->systemClock->getNow(),
             $doc['attributes'] ?? []
         );
     }

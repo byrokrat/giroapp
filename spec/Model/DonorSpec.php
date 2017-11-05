@@ -30,7 +30,9 @@ class DonorSpec extends ObjectBehavior
         AccountNumber $account,
         PersonalId $donorId,
         PostalAddress $address,
-        SEK $donationAmount
+        SEK $donationAmount,
+        \DateTime $created,
+        \DateTime $updated
     ) {
         $this->beConstructedWith(
             self::MANDATE_KEY,
@@ -45,6 +47,8 @@ class DonorSpec extends ObjectBehavior
             self::PHONE,
             $donationAmount,
             self::COMMENT,
+            $created,
+            $updated,
             [self::ATTR_KEY => self::ATTR_VALUE]
         );
     }
@@ -168,6 +172,22 @@ class DonorSpec extends ObjectBehavior
         $newComment = 'some comment...';
         $this->setComment($newComment);
         $this->getComment()->shouldEqual($newComment);
+    }
+
+    function it_contains_a_created_date($created)
+    {
+        $this->getCreated()->shouldEqual($created);
+    }
+
+    function it_contains_an_updated_date($updated)
+    {
+        $this->getUpdated()->shouldEqual($updated);
+    }
+
+    function it_can_set_updated_date(\DateTime $newUpdated)
+    {
+        $this->setUpdated($newUpdated);
+        $this->getUpdated()->shouldEqual($newUpdated);
     }
 
     function it_is_exportable_to_autogiro($state, Writer $writer)

@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Mapper;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Utils\SystemClock;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
 
@@ -43,10 +44,16 @@ class DonorMapper
      */
     private $donorSchema;
 
-    public function __construct(CollectionInterface $collection, DonorSchema $donorSchema)
+    /**
+     * @var SystemClock
+     */
+    private $systemClock;
+
+    public function __construct(CollectionInterface $collection, DonorSchema $donorSchema, SystemClock $systemClock)
     {
         $this->collection = $collection;
         $this->donorSchema = $donorSchema;
+        $this->systemClock = $systemClock;
     }
 
     /**
@@ -162,6 +169,7 @@ class DonorMapper
             );
         }
 
+        $donor->setUpdated($this->systemClock->getNow());
         $this->save($donor);
     }
 

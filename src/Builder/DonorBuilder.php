@@ -217,6 +217,8 @@ class DonorBuilder
             $this->phone,
             $this->getDonationAmount(),
             $this->comment,
+            $this->systemClock->getNow(),
+            $this->systemClock->getNow(),
             $this->attributes
         );
     }

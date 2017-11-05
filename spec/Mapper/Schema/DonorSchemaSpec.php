@@ -11,6 +11,7 @@ use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\ActiveState;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\banking\AccountFactory;
 use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
@@ -34,6 +35,7 @@ class DonorSchemaSpec extends ObjectBehavior
     const PHONE = 'phone';
     const AMOUNT = '100';
     const COMMENT = 'comment';
+    const FORMATTED_DATE = '2017-11-04T13:25:19+01:00';
     const ATTR_KEY = 'ATTR_KEY';
     const ATTR_VALUE = 'ATTR_VALUE';
 
@@ -54,20 +56,44 @@ class DonorSchemaSpec extends ObjectBehavior
         'phone' => self::PHONE,
         'donation_amount' => self::AMOUNT,
         'comment' => self::COMMENT,
+        'created' => self::FORMATTED_DATE,
+        'updated' => self::FORMATTED_DATE,
         'attributes' => [self::ATTR_KEY => self::ATTR_VALUE]
     ];
 
     function let(
         PostalAddressSchema $postalAddressSchema,
+        PostalAddress $address,
         StatePool $statePool,
+        StateInterface $state,
         AccountFactory $accountFactory,
-        IdFactory $idFactory
+        AccountNumber $account,
+        IdFactory $idFactory,
+        PersonalId $id,
+        SystemClock $systemClock,
+        \DateTime $datetime
     ) {
+        $postalAddressSchema->fromArray([self::ADDRESS])->willReturn($address);
+        $postalAddressSchema->toArray($address)->willReturn([self::ADDRESS]);
+
+        $statePool->getState(self::STATE)->willReturn($state);
+        $state->getStateId()->willReturn(self::STATE);
+
+        $accountFactory->createAccount(self::ACCOUNT)->willReturn($account);
+        $account->getNumber()->willReturn(self::ACCOUNT);
+
+        $idFactory->create(self::ID)->willReturn($id);
+        $id->format('S-sk')->willReturn(self::ID);
+
+        $systemClock->getNow()->willReturn($datetime);
+        $datetime->format(\DateTime::W3C)->willReturn(self::FORMATTED_DATE);
+
         $this->beConstructedWith(
             $postalAddressSchema,
             $statePool,
             $accountFactory,
-            $idFactory
+            $idFactory,
+            $systemClock
         );
     }
 
@@ -76,21 +102,8 @@ class DonorSchemaSpec extends ObjectBehavior
         $this->shouldHaveType(DonorSchema::CLASS);
     }
 
-    function it_can_create_donor(
-        $postalAddressSchema,
-        $statePool,
-        $accountFactory,
-        $idFactory,
-        StateInterface $state,
-        AccountNumber $account,
-        PersonalId $id,
-        PostalAddress $address
-    ) {
-        $postalAddressSchema->fromArray([self::ADDRESS])->willReturn($address);
-        $statePool->getState(self::STATE)->willReturn($state);
-        $accountFactory->createAccount(self::ACCOUNT)->willReturn($account);
-        $idFactory->create(self::ID)->willReturn($id);
-
+    function it_can_create_donors($state, $account, $id, $address)
+    {
         $this->fromArray($this->schemaDocument)->shouldBeLike(
             new Donor(
                 self::MANDATE_KEY,
@@ -105,23 +118,24 @@ class DonorSchemaSpec extends ObjectBehavior
                 self::PHONE,
                 new SEK(self::AMOUNT),
                 self::COMMENT,
+                new \DateTimeImmutable(self::FORMATTED_DATE),
+                new \DateTimeImmutable(self::FORMATTED_DATE),
                 [self::ATTR_KEY => self::ATTR_VALUE]
             )
         );
     }
 
-    function it_can_create_array(
-        $postalAddressSchema,
-        AccountNumber $account,
-        PersonalId $id,
-        PostalAddress $address,
-        StateInterface $state,
-        SEK $amount
-    ) {
-        $postalAddressSchema->toArray($address)->willReturn([self::ADDRESS]);
-        $state->getStateId()->willReturn(self::STATE);
-        $account->getNumber()->willReturn(self::ACCOUNT);
-        $id->format('S-sk')->willReturn(self::ID);
+    function it_can_create_donors_without_optional_fields($state, $account, $id, $address)
+    {
+        $schemaWithoutOptionalFields = $this->schemaDocument;
+        unset($schemaWithoutOptionalFields['created']);
+        unset($schemaWithoutOptionalFields['updated']);
+        unset($schemaWithoutOptionalFields['attributes']);
+        $this->fromArray($schemaWithoutOptionalFields)->shouldHaveType(Donor::CLASS);
+    }
+
+    function it_can_create_arrays($account, $id, $address, $state, $datetime, SEK $amount)
+    {
         $amount->getAmount()->willReturn(self::AMOUNT);
 
         $donor = new Donor(
@@ -137,6 +151,8 @@ class DonorSchemaSpec extends ObjectBehavior
             self::PHONE,
             $amount->getWrappedObject(),
             self::COMMENT,
+            $datetime->getWrappedObject(),
+            $datetime->getWrappedObject(),
             [self::ATTR_KEY => self::ATTR_VALUE]
         );
 

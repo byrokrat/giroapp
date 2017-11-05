@@ -7,6 +7,7 @@ namespace spec\byrokrat\giroapp\Mapper;
 use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\Id;
 use hanneskod\yaysondb\CollectionInterface;
@@ -17,9 +18,9 @@ use Prophecy\Argument;
 
 class DonorMapperSpec extends ObjectBehavior
 {
-    function let(CollectionInterface $collection, DonorSchema $donorSchema)
+    function let(CollectionInterface $collection, DonorSchema $donorSchema, SystemClock $systemClock)
     {
-        $this->beConstructedWith($collection, $donorSchema);
+        $this->beConstructedWith($collection, $donorSchema, $systemClock);
     }
 
     function it_is_initializable()
@@ -100,7 +101,7 @@ class DonorMapperSpec extends ObjectBehavior
         $this->shouldThrow(\RuntimeException::CLASS)->duringCreate($donor);
     }
 
-    function it_can_update_donor($collection, $donorSchema, Donor $donor)
+    function it_can_update_donor($collection, $donorSchema, $systemClock, Donor $donor, \DateTime $date)
     {
         $donor->getMandateKey()->willReturn('mandate_key');
         $donor->getPayerNumber()->willReturn('payer_number');
@@ -108,6 +109,8 @@ class DonorMapperSpec extends ObjectBehavior
         $donorSchema->toArray($donor)->willReturn(['SCHEMA']);
         $collection->has('mandate_key')->willReturn(true);
         $collection->insert(['SCHEMA'], 'mandate_key')->shouldBeCalled();
+        $systemClock->getNow()->willReturn($date);
+        $donor->setUpdated($date)->shouldBeCalled();
 
         $this->update($donor);
     }
