@@ -27,9 +27,8 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\NodeEvent;
-use byrokrat\giroapp\State\MandateApprovedState;
-use byrokrat\giroapp\State\InactiveState;
-use byrokrat\giroapp\State\ErrorState;
+use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\States;
 use byrokrat\autogiro\Messages;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -43,9 +42,15 @@ class MandateResponseListener
      */
     private $donorMapper;
 
-    public function __construct(DonorMapper $donorMapper)
+    /**
+     * @var StatePool
+     */
+    private $statePool;
+
+    public function __construct(DonorMapper $donorMapper, StatePool $statePool)
     {
         $this->donorMapper = $donorMapper;
+        $this->statePool = $statePool;
     }
 
     public function onMandateResponseEvent(NodeEvent $nodeEvent, string $name, EventDispatcherInterface $dispatcher)
@@ -120,12 +125,12 @@ class MandateResponseListener
             case Messages::STATUS_MANDATE_DELETED_DUE_TO_CLOSED_PAYER_BG:
             case Messages::STATUS_MANDATE_DELETED_BY_BANK:
             case Messages::STATUS_MANDATE_DELETED_BY_BGC:
-                $donor->setState(new InactiveState);
+                $donor->setState($this->statePool->getState(States::INACTIVE));
                 $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, $donorEvent);
                 break;
 
             case Messages::STATUS_MANDATE_CREATED:
-                $donor->setState(new MandateApprovedState);
+                $donor->setState($this->statePool->getState(States::MANDATE_APPROVED));
                 $dispatcher->dispatch(Events::MANDATE_APPROVED_EVENT, $donorEvent);
                 break;
 
@@ -142,7 +147,7 @@ class MandateResponseListener
             case Messages::STATUS_MANDATE_BLOCKED_BY_PAYER:
             case Messages::STATUS_MANDATE_BLOCK_REMOVED:
             case Messages::STATUS_MANDATE_MAX_AMOUNT_NOT_ALLOWED:
-                $donor->setState(new ErrorState);
+                $donor->setState($this->statePool->getState(States::ERROR));
                 $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, $donorEvent);
                 break;
 

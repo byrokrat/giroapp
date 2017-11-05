@@ -7,9 +7,11 @@ namespace spec\byrokrat\giroapp\Builder;
 use byrokrat\giroapp\Builder\DonorBuilder;
 use byrokrat\giroapp\Builder\MandateKeyBuilder;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\NewMandateState;
-use byrokrat\giroapp\State\NewDigitalMandateState;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\id\Id;
 use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
@@ -22,11 +24,20 @@ class DonorBuilderSpec extends ObjectBehavior
 
     const PAYER_NUMBER = 'payer-number';
 
-    function let(MandateKeyBuilder $keyBuilder, Id $id, AccountNumber $account)
-    {
+    function let(
+        MandateKeyBuilder $keyBuilder,
+        Id $id,
+        AccountNumber $account,
+        StatePool $statePool,
+        StateInterface $state,
+        SystemClock $systemClock,
+        \DateTime $datetime
+    ) {
         $id->format('Ssk')->willReturn(self::PAYER_NUMBER);
         $keyBuilder->buildKey($id, $account)->willReturn(self::MANDATE_KEY);
-        $this->beConstructedWith($keyBuilder);
+        $statePool->getState(Argument::any())->willReturn($state);
+        $systemClock->getNow()->willReturn($datetime);
+        $this->beConstructedWith($keyBuilder, $statePool, $systemClock);
     }
 
     function it_is_initializable()
@@ -101,8 +112,9 @@ class DonorBuilderSpec extends ObjectBehavior
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
     }
 
-    function it_uses_default_values($id, $account)
+    function it_uses_default_values($id, $account, $statePool, $state, $datetime)
     {
+        $statePool->getState(States::NEW_MANDATE)->shouldBeCalled()->willReturn($state);
         $this->setId($id)
             ->setAccount($account)
             ->setName('name')
@@ -111,7 +123,7 @@ class DonorBuilderSpec extends ObjectBehavior
             ->shouldBeLike(
                 new Donor(
                     self::MANDATE_KEY,
-                    new NewMandateState,
+                    $state->getWrappedObject(),
                     Donor::MANDATE_SOURCE_PAPER,
                     self::PAYER_NUMBER,
                     $account->getWrappedObject(),
@@ -121,12 +133,14 @@ class DonorBuilderSpec extends ObjectBehavior
                     '',
                     '',
                     new SEK('0'),
-                    ''
+                    '',
+                    $datetime->getWrappedObject(),
+                    $datetime->getWrappedObject()
                 )
             );
     }
 
-    function it_can_set_values($id, $account, PostalAddress $postalAddress, SEK $amount)
+    function it_can_set_values($id, $account, PostalAddress $postalAddress, SEK $amount, $statePool, $state, $datetime)
     {
         $createdDonor = $this->setId($id)
             ->setAccount($account)
@@ -142,10 +156,12 @@ class DonorBuilderSpec extends ObjectBehavior
             ->setAttribute('baz', 'bal')
             ->buildDonor();
 
+        $statePool->getState(States::NEW_DIGITAL_MANDATE)->shouldBeCalled()->willReturn($state);
+
         $createdDonor->shouldBeLike(
             new Donor(
                 self::MANDATE_KEY,
-                new NewDigitalMandateState,
+                $state->getWrappedObject(),
                 Donor::MANDATE_SOURCE_DIGITAL,
                 'payer-number',
                 $account->getWrappedObject(),
@@ -156,6 +172,8 @@ class DonorBuilderSpec extends ObjectBehavior
                 'phone',
                 $amount->getWrappedObject(),
                 'comment',
+                $datetime->getWrappedObject(),
+                $datetime->getWrappedObject(),
                 [
                     'foo' => 'bar',
                     'baz' => 'bal'

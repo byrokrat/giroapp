@@ -6,7 +6,6 @@ namespace spec\byrokrat\giroapp\State;
 
 use byrokrat\giroapp\State\NewDigitalMandateState;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\MandateSentState;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
@@ -27,7 +26,12 @@ class NewDigitalMandateStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getId()->shouldEqual(States::NEW_DIGITAL_MANDATE);
+        $this->getStateId()->shouldEqual(States::NEW_DIGITAL_MANDATE);
+    }
+
+    function it_contains_next_id()
+    {
+        $this->getNextStateId()->shouldEqual(States::MANDATE_SENT);
     }
 
     function it_contains_a_description()
@@ -37,16 +41,13 @@ class NewDigitalMandateStateSpec extends ObjectBehavior
 
     function it_is_exportable()
     {
-        $this->isExportable()->shouldBe(true);
+        $this->shouldBeExportable();
     }
 
     function it_can_be_exported(Donor $donor, Writer $writer)
     {
         $donor->getPayerNumber()->willReturn('foobar');
-        $donor->setState(Argument::type(MandateSentState::CLASS))->shouldBeCalled();
-
         $this->export($donor, $writer);
-
         $writer->acceptDigitalMandate('foobar')->shouldHaveBeenCalled();
     }
 }

@@ -24,7 +24,8 @@ namespace byrokrat\giroapp\Mapper\Schema;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
-use byrokrat\giroapp\State\StateFactory;
+use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\IdFactory;
 use byrokrat\amount\Currency\SEK;
@@ -47,9 +48,9 @@ class DonorSchema
     private $addressSchema;
 
     /**
-     * @var StateFactory
+     * @var StatePool
      */
-    private $stateFactory;
+    private $statePool;
 
     /**
      * @var AccountFactory
@@ -61,16 +62,23 @@ class DonorSchema
      */
     private $idFactory;
 
+    /**
+     * @var SystemClock
+     */
+    private $systemClock;
+
     public function __construct(
         PostalAddressSchema $postalAddressSchema,
-        StateFactory $stateFactory,
+        StatePool $statePool,
         AccountFactory $accountFactory,
-        IdFactory $idFactory
+        IdFactory $idFactory,
+        SystemClock $systemClock
     ) {
         $this->addressSchema = $postalAddressSchema;
-        $this->stateFactory = $stateFactory;
+        $this->statePool = $statePool;
         $this->accountFactory = $accountFactory;
         $this->idFactory = $idFactory;
+        $this->systemClock = $systemClock;
     }
 
     public function toArray(Donor $donor): array
@@ -78,7 +86,7 @@ class DonorSchema
         return [
             'type' => self::TYPE,
             'mandate_key' => $donor->getMandateKey(),
-            'state' => $donor->getState()->getId(),
+            'state' => $donor->getState()->getStateId(),
             'mandate_source' => $donor->getMandateSource(),
             'payer_number' => $donor->getPayerNumber(),
             'account' => $donor->getAccount()->getNumber(),
@@ -89,6 +97,8 @@ class DonorSchema
             'phone' => $donor->getPhone(),
             'donation_amount' => $donor->getDonationAmount()->getAmount(),
             'comment' => $donor->getComment(),
+            'created' => $donor->getCreated()->format(\DateTime::W3C),
+            'updated' => $donor->getUpdated()->format(\DateTime::W3C),
             'attributes' => $donor->getAttributes()
         ];
     }
@@ -97,7 +107,7 @@ class DonorSchema
     {
         return new Donor(
             $doc['mandate_key'],
-            $this->stateFactory->createState($doc['state']),
+            $this->statePool->getState($doc['state']),
             $doc['mandate_source'],
             $doc['payer_number'],
             $this->accountFactory->createAccount($doc['account']),
@@ -108,6 +118,8 @@ class DonorSchema
             $doc['phone'],
             new SEK($doc['donation_amount']),
             $doc['comment'],
+            isset($doc['created']) ? new \DateTimeImmutable($doc['created']) : $this->systemClock->getNow(),
+            isset($doc['updated']) ? new \DateTimeImmutable($doc['updated']) : $this->systemClock->getNow(),
             $doc['attributes'] ?? []
         );
     }

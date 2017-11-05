@@ -109,6 +109,16 @@ class Donor
     private $comment;
 
     /**
+     * @var \DateTimeInterface
+     */
+    private $created;
+
+    /**
+     * @var \DateTimeInterface
+     */
+    private $updated;
+
+    /**
      * @var array Loaded attributes
      */
     private $attributes;
@@ -126,6 +136,8 @@ class Donor
         string $phone,
         SEK $donationAmount,
         string $comment,
+        \DateTimeInterface $created,
+        \DateTimeInterface $updated,
         array $attributes = []
     ) {
         $this->mandateKey = $mandateKey;
@@ -140,6 +152,8 @@ class Donor
         $this->setPhone($phone);
         $this->setDonationAmount($donationAmount);
         $this->setComment($comment);
+        $this->created = $created;
+        $this->setUpdated($updated);
         $this->attributes = $attributes;
     }
 
@@ -153,7 +167,7 @@ class Donor
         return $this->state;
     }
 
-    public function setState(StateInterface $state)
+    public function setState(StateInterface $state): void
     {
         $this->state = $state;
     }
@@ -188,7 +202,7 @@ class Donor
         return $this->name;
     }
 
-    public function setName(string $name)
+    public function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -198,7 +212,7 @@ class Donor
         return $this->address;
     }
 
-    public function setPostalAddress(PostalAddress $address)
+    public function setPostalAddress(PostalAddress $address): void
     {
         $this->address = $address;
     }
@@ -208,7 +222,7 @@ class Donor
         return $this->email;
     }
 
-    public function setEmail(string $email)
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
@@ -218,7 +232,7 @@ class Donor
         return $this->phone;
     }
 
-    public function setPhone(string $phone)
+    public function setPhone(string $phone): void
     {
         $this->phone = $phone;
     }
@@ -228,7 +242,7 @@ class Donor
         return $this->donationAmount;
     }
 
-    public function setDonationAmount(SEK $donationAmount)
+    public function setDonationAmount(SEK $donationAmount): void
     {
         $this->donationAmount = $donationAmount;
     }
@@ -238,12 +252,27 @@ class Donor
         return $this->comment;
     }
 
-    public function setComment(string $comment)
+    public function setComment(string $comment): void
     {
         $this->comment = $comment;
     }
 
-    public function exportToAutogiro(Writer $writer)
+    public function getCreated(): \DateTimeInterface
+    {
+        return $this->created;
+    }
+
+    public function getUpdated(): \DateTimeInterface
+    {
+        return $this->updated;
+    }
+
+    public function setUpdated(\DateTimeInterface $updated): void
+    {
+        $this->updated = $updated;
+    }
+
+    public function exportToAutogiro(Writer $writer): void
     {
         $this->getState()->export($this, $writer);
     }
@@ -259,7 +288,7 @@ class Donor
     /**
      * Set an attribute
      */
-    public function setAttribute(string $key, string $value)
+    public function setAttribute(string $key, string $value): void
     {
         $this->attributes[$key] = $value;
     }

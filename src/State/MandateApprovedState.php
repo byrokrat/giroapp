@@ -34,14 +34,9 @@ class MandateApprovedState extends AbstractState
      */
     private $dateBuilder;
 
-    public function __construct(DateBuilder $dateBuilder = null)
+    public function __construct(DateBuilder $dateBuilder)
     {
-        $this->dateBuilder = $dateBuilder ?: new DateBuilder;
-    }
-
-    public function getId(): string
-    {
-        return States::MANDATE_APPROVED;
+        $this->dateBuilder = $dateBuilder;
     }
 
     public function getDescription(): string
@@ -49,12 +44,17 @@ class MandateApprovedState extends AbstractState
         return 'Mandate has been approved by the bank';
     }
 
-    public function isExportable(): bool
+    public function getStateId(): string
     {
-        return true;
+        return States::MANDATE_APPROVED;
     }
 
-    public function export(Donor $donor, Writer $writer)
+    public function getNextStateId(): string
+    {
+        return States::ACTIVE;
+    }
+
+    public function export(Donor $donor, Writer $writer): void
     {
         if ($donor->getDonationAmount()->isPositive()) {
             $writer->addMonthlyTransaction(
@@ -63,8 +63,6 @@ class MandateApprovedState extends AbstractState
                 $this->dateBuilder->buildDate(),
                 $donor->getMandateKey()
             );
-
-            $donor->setState(new ActiveState);
         }
     }
 }

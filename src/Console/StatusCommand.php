@@ -68,7 +68,7 @@ class StatusCommand implements CommandInterface
         foreach ($this->donorMapper->findAll() as $donor) {
             $counts['donor-count']++;
 
-            if ($donor->getState()->getId() == States::ACTIVE) {
+            if ($donor->getState()->getStateId() == States::ACTIVE) {
                 $counts['monthly-amount'] = $counts['monthly-amount']->add($donor->getDonationAmount());
                 $counts['active-donor-count']++;
             }

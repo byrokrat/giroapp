@@ -28,24 +28,23 @@ use byrokrat\autogiro\Writer\Writer;
 
 class RevokeMandateState extends AbstractState
 {
-    public function getId(): string
-    {
-        return States::REVOKE_MANDATE;
-    }
-
     public function getDescription(): string
     {
         return 'Mandate is awaiting revocation';
     }
 
-    public function isExportable(): bool
+    public function getStateId(): string
     {
-        return true;
+        return States::REVOKE_MANDATE;
     }
 
-    public function export(Donor $donor, Writer $writer)
+    public function getNextStateId(): string
+    {
+        return States::REVOCATION_SENT;
+    }
+
+    public function export(Donor $donor, Writer $writer): void
     {
         $writer->deleteMandate($donor->getPayerNumber());
-        $donor->setState(new RevocationSentState);
     }
 }

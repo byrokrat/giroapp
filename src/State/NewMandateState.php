@@ -28,24 +28,23 @@ use byrokrat\autogiro\Writer\Writer;
 
 class NewMandateState extends AbstractState
 {
-    public function getId(): string
-    {
-        return States::NEW_MANDATE;
-    }
-
     public function getDescription(): string
     {
         return 'A mandate has been received from the donor';
     }
 
-    public function isExportable(): bool
+    public function getStateId(): string
     {
-        return true;
+        return States::NEW_MANDATE;
     }
 
-    public function export(Donor $donor, Writer $writer)
+    public function getNextStateId(): string
+    {
+        return States::MANDATE_SENT;
+    }
+
+    public function export(Donor $donor, Writer $writer): void
     {
         $writer->addNewMandate($donor->getPayerNumber(), $donor->getAccount(), $donor->getDonorId());
-        $donor->setState(new MandateSentState);
     }
 }
