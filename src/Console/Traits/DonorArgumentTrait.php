@@ -49,7 +49,7 @@ trait DonorArgumentTrait
 
         $wrapper->addOption(
             'force-payer-number',
-            false,
+            null,
             InputOption::VALUE_NONE,
             'Use donor payer number for identification'
         );

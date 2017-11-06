@@ -77,9 +77,7 @@ class DonorMapper
     }
 
     /**
-     * Find all donors in storage
-     *
-     * @return Donor[] An iterable containing Donor objects
+     * Get an iterable containing all Donor objects in storage
      */
     public function findAll(): iterable
     {
@@ -102,7 +100,7 @@ class DonorMapper
             ])
         );
 
-        if (!$doc) {
+        if (empty($doc)) {
             throw new \RuntimeException("Unknown payer number: $payerNumber");
         }
 
@@ -110,11 +108,9 @@ class DonorMapper
     }
 
     /**
-     * Find donor mandates identified by payer number
+     * Get an iterable containing all donor objects identified by payer number
      *
      * NOTE: This may include older deleted mandates.
-     *
-     * @return Donor[] An iterable containing Donor objects
      */
     public function findByPayerNumber(string $payerNumber): iterable
     {

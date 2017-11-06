@@ -34,22 +34,22 @@ class ApplicationMonitor implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::IMPORT_EVENT           => ['dispatchInfo',    10],
-            Events::MANDATE_ADDED_EVENT    => ['dispatchInfo',    10],
-            Events::MANDATE_EDITED_EVENT   => ['dispatchInfo',    10],
-            Events::MANDATE_APPROVED_EVENT => ['dispatchInfo',    10],
-            Events::MANDATE_REVOKED_EVENT  => ['dispatchInfo',    10],
-            Events::MANDATE_DROPPED_EVENT  => ['dispatchInfo',    10],
+            Events::IMPORT_EVENT           => ['dispatchInfo', 10],
+            Events::MANDATE_ADDED_EVENT    => ['dispatchInfo', 10],
+            Events::MANDATE_EDITED_EVENT   => ['dispatchInfo', 10],
+            Events::MANDATE_APPROVED_EVENT => ['dispatchInfo', 10],
+            Events::MANDATE_REVOKED_EVENT  => ['dispatchInfo', 10],
+            Events::MANDATE_DROPPED_EVENT  => ['dispatchInfo', 10],
             Events::MANDATE_INVALID_EVENT  => ['dispatchWarning', 10],
         ];
     }
 
-    public function dispatchInfo(LogEvent $event, $name, EventDispatcherInterface $dispatcher)
+    public function dispatchInfo(LogEvent $event, $eventName, EventDispatcherInterface $dispatcher)
     {
         $dispatcher->dispatch(Events::INFO_EVENT, $event);
     }
 
-    public function dispatchWarning(LogEvent $event, $name, EventDispatcherInterface $dispatcher)
+    public function dispatchWarning(LogEvent $event, $eventName, EventDispatcherInterface $dispatcher)
     {
         $dispatcher->dispatch(Events::WARNING_EVENT, $event);
     }

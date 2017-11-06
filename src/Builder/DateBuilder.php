@@ -86,7 +86,7 @@ class DateBuilder
     {
         $currentDate = $this->systemClock->getNow();
 
-        $createdDate =  new \DateTime($currentDate->format('Ym') . $this->getDayOfMonth());
+        $createdDate = new \DateTime($currentDate->format('Ym') . $this->getDayOfMonth());
 
         if ($createdDate->diff($currentDate)->format('%d') < $this->getMinDaysInFuture()) {
             $createdDate->add(new \DateInterval('P1M'));
