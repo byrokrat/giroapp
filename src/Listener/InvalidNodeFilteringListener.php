@@ -50,10 +50,7 @@ class InvalidNodeFilteringListener
         $this->settingsMapper = $settingsMapper;
     }
 
-    /**
-     * @scrutinizer ignore-unused $name Passed by dispatcher
-     */
-    public function onMandateResponseEvent(NodeEvent $event, string $name, EventDispatcherInterface $dispatcher)
+    public function onMandateResponseEvent(NodeEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
     {
         $appBg = $this->bankgiroFactory->createAccount($this->settingsMapper->findByKey('bankgiro'));
         $nodeBg = $event->getNode()->getChild('payee_bankgiro')->getAttribute('account');
