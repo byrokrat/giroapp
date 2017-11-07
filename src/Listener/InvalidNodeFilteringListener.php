@@ -27,7 +27,6 @@ use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Mapper\SettingsMapper;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\BankgiroFactory;
 
 /**

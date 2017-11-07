@@ -110,7 +110,7 @@ class DonorBuilder
     public function __construct(MandateKeyBuilder $keyBuilder, StatePool $statePool, SystemClock $systemClock)
     {
         $this->keyBuilder = $keyBuilder;
-        $this->statePool= $statePool;
+        $this->statePool = $statePool;
         $this->systemClock = $systemClock;
     }
 

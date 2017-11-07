@@ -30,7 +30,7 @@ use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\States;
 use byrokrat\autogiro\Messages;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
  * Add or reject mandates based on autogiro response
@@ -53,7 +53,7 @@ class MandateResponseListener
         $this->statePool = $statePool;
     }
 
-    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $name, EventDispatcherInterface $dispatcher)
+    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $eventName, Dispatcher $dispatcher)
     {
         $node = $nodeEvent->getNode();
 
@@ -164,7 +164,5 @@ class MandateResponseListener
                 );
                 $nodeEvent->stopPropagation();
         }
-
-        #$this->donorMapper->update($donor);
     }
 }
