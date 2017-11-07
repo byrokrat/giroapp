@@ -53,7 +53,10 @@ class MandateResponseListener
         $this->statePool = $statePool;
     }
 
-    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $eventName, Dispatcher $dispatcher)
+    /**
+     * @scrutinizer ignore-unused $name Passed by dispatcher
+     */
+    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $name, Dispatcher $dispatcher)
     {
         $node = $nodeEvent->getNode();
 
