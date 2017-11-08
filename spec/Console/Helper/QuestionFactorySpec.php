@@ -38,7 +38,7 @@ class QuestionFactorySpec extends ObjectBehavior
         $question->shouldContainChoices(['b' => 'bar', 'A' => 'foo']);
     }
 
-    public function getMatchers()
+    public function getMatchers(): array
     {
         return [
             'containQuestion' => function (Question $subject, string $question) {
