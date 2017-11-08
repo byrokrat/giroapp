@@ -40,7 +40,8 @@
         "symfony/console": "^3.3",
         "symfony/event-dispatcher": "^3.3",
         "symfony/finder": "^3.3",
-        "hashids/hashids": "^2"
+        "hashids/hashids": "^2",
+        "fzaninotto/Streamer": "0.*"
     },
     "require-dev": {
         "symfony/config": "^3.3",
