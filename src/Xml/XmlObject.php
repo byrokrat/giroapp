@@ -40,7 +40,7 @@ class XmlObject
     public function __construct(string $content)
     {
         try {
-            $this->xml = new \SimpleXMLElement($content);
+            $this->xml = @new \SimpleXMLElement($content);
         } catch (\Exception $e) {
             throw new InvalidXmlException($e->getMessage());
         }

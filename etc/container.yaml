@@ -27,6 +27,10 @@ services:
         public: true
         synthetic: true
 
+    std_in:
+        public: true
+        synthetic: true
+
     Symfony\Component\Console\Output\OutputInterface:
         alias: 'std_out'
 
@@ -42,6 +46,11 @@ services:
         public: true
         resource: '../src/Console/*'
         exclude: '../src/Console/CommandWrapper.php'
+
+    byrokrat\giroapp\Console\ImportCommand:
+        class: ~
+        public: true
+        arguments: ['@Symfony\Component\EventDispatcher\EventDispatcher', '@std_in']
 
     byrokrat\giroapp\State\:
         resource: '../src/State/*'

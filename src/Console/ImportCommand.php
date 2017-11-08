@@ -28,6 +28,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Streamer\Stream;
 
 /**
  * Command to import a file from autogirot
@@ -39,9 +40,15 @@ class ImportCommand implements CommandInterface
      */
     private $dispatcher;
 
-    public function __construct(EventDispatcher $dispatcher)
+    /**
+     * @var Stream
+     */
+    private $stdin;
+
+    public function __construct(EventDispatcher $dispatcher, Stream $stdin)
     {
         $this->dispatcher = $dispatcher;
+        $this->stdin = $stdin;
     }
 
     public static function configure(CommandWrapper $wrapper)
@@ -49,21 +56,25 @@ class ImportCommand implements CommandInterface
         $wrapper->setName('import');
         $wrapper->setDescription('Import a file from autogirot');
         $wrapper->setHelp('Import a file with data from autogirot');
-        $wrapper->addArgument('filename', InputArgument::REQUIRED, 'The name of the file to import');
+        $wrapper->addArgument('filename', InputArgument::OPTIONAL, 'The name of the file to import');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        if (!is_readable($input->getArgument('filename')) || !is_file($input->getArgument('filename'))) {
-            throw new \RuntimeException("Unable to read file {$input->getArgument('filename')}");
+        $content = '';
+
+        if ($filename = $input->getArgument('filename')) {
+            if (!is_readable($filename) || !is_file($filename)) {
+                throw new \RuntimeException("Unable to read file {$filename}");
+            }
+            $content = file_get_contents($filename);
         }
 
-        $this->dispatcher->dispatch(
-            Events::IMPORT_EVENT,
-            new FileEvent(
-                $input->getArgument('filename'),
-                file_get_contents($input->getArgument('filename'))
-            )
-        );
+        if (!$content) {
+            $filename = 'STDIN';
+            $content = $this->stdin->getContent();
+        }
+
+        $this->dispatcher->dispatch(Events::IMPORT_EVENT, new FileEvent($filename, $content));
     }
 }
