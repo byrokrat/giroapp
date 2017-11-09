@@ -29,7 +29,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Monitor events and dispatch new log events where applicable
  */
-class ApplicationMonitor implements EventSubscriberInterface {
+class ApplicationMonitor implements EventSubscriberInterface
+{
     public static function getSubscribedEvents()
     {
         return [
