@@ -7,8 +7,8 @@
 
 Command line app for managing autogiro donations.
 
-Installation
-------------
+## Installation
+
 1. Download the [composer](https://getcomposer.org/) dependency manager.
 
 2. `cd` to the desired installation directory (for example `cd /opt`).
@@ -35,8 +35,8 @@ for example be better from a security perspective).
 Change the user directory path by creating a `GIROAPP_PATH` environment variable
 pointing to the desired directory.
 
-Writing plugins
----------------
+## Writing plugins
+
 Giroapp plugins are Symfony event subscribers in the user directory under `plugins/`.
 
 Here is an example plugin that notifies someone on application error:
@@ -105,3 +105,20 @@ to `10`. This means that if you set a plugin priority to a value higher than `10
 it will be executed before the event is handled internally (and you may stop
 event propagation if needed). If you set a plugin priority to a value lower than
 `-10` the plugin will be executed after the event has been handled internally.
+
+## Testing
+
+Phpgiro uses [bob](https://github.com/CHH/bob) to run tests and build artifacts.
+To complete a build you must first install some development dependencies.
+
+```shell
+composer global require chh/bob:^1.0@alpha phpspec/phpspec:^4 behat/behat:^3.3 squizlabs/php_codesniffer:^3
+```
+
+Make sure to have the global composer bin directory in your path.
+
+```shell
+export PATH=$PATH:~/.composer/vendor/bin/
+```
+
+Build project using `bob` from the project directory.
