@@ -55,6 +55,10 @@ fileTask('vendor/autoload.php', ['vendor/autoload.php'], function() {
     sh('composer install');
 });
 
-task('load_dependencies', ['vendor/autoload.php'], function () {
+fileTask('composer.lock', ['composer.json'], function() {
+    sh('composer update');
+});
+
+task('load_dependencies', ['vendor/autoload.php', 'composer.lock'], function () {
     require 'vendor/autoload.php';
 });

@@ -2,6 +2,7 @@
     "ignore": [
         "features/*",
         "spec/*",
-        "src/ProjectServiceContainer.php"
+        "src/ProjectServiceContainer.php",
+        "bob_config.php"
     ]
 }
