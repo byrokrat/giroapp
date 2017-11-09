@@ -28,8 +28,10 @@ services:
         synthetic: true
 
     std_in:
+        class: Streamer\Stream
         public: true
         synthetic: true
+        autowire: false
 
     Symfony\Component\Console\Output\OutputInterface:
         alias: 'std_out'
