@@ -1,0 +1,7 @@
+{
+    "ignore": [
+        "features/*",
+        "spec/*",
+        "src/ProjectServiceContainer.php"
+    ]
+}
