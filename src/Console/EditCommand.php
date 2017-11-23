@@ -194,10 +194,7 @@ class EditCommand implements CommandInterface
         $this->dispatcher->dispatch(
             Events::MANDATE_EDITED_EVENT,
             new DonorEvent(
-                sprintf(
-                    'Updated mandate <info>%s</info>',
-                    $donor->getMandateKey()
-                ),
+                "Updated mandate <info>{$donor->getMandateKey()}</info>",
                 $donor
             )
         );
