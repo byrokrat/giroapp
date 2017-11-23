@@ -22,9 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\autogiro\Writer\Writer;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -48,11 +51,21 @@ class ExportCommand implements CommandInterface
      */
     private $statePool;
 
-    public function __construct(DonorMapper $donorMapper, Writer $autogiroWriter, StatePool $statePool)
-    {
+    /**
+     * @var EventDispatcher
+     */
+    private $dispatcher;
+
+    public function __construct(
+        DonorMapper $donorMapper,
+        Writer $autogiroWriter,
+        StatePool $statePool,
+        EventDispatcher $dispatcher
+    ) {
         $this->donorMapper = $donorMapper;
         $this->autogiroWriter = $autogiroWriter;
         $this->statePool = $statePool;
+        $this->dispatcher = $dispatcher;
     }
 
     public static function configure(CommandWrapper $wrapper)
@@ -69,7 +82,13 @@ class ExportCommand implements CommandInterface
             if ($donor->getState()->isExportable()) {
                 $donor->exportToAutogiro($this->autogiroWriter);
                 $donor->setState($this->statePool->getState($donor->getState()->getNextStateId()));
-                $this->donorMapper->update($donor);
+                $this->dispatcher->dispatch(
+                    Events::MANDATE_EDITED_EVENT,
+                    new DonorEvent(
+                        "Exported mandate <info>{$donor->getMandateKey()}</info>",
+                        $donor
+                    )
+                );
             }
         }
 
