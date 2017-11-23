@@ -41,6 +41,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\console\\importcommand' => 'byrokrat\\giroapp\\Console\\ImportCommand',
             'byrokrat\\giroapp\\console\\initcommand' => 'byrokrat\\giroapp\\Console\\InitCommand',
             'byrokrat\\giroapp\\console\\lscommand' => 'byrokrat\\giroapp\\Console\\LsCommand',
+            'byrokrat\\giroapp\\console\\migratecommand' => 'byrokrat\\giroapp\\Console\\MigrateCommand',
             'byrokrat\\giroapp\\console\\revokecommand' => 'byrokrat\\giroapp\\Console\\RevokeCommand',
             'byrokrat\\giroapp\\console\\showcommand' => 'byrokrat\\giroapp\\Console\\ShowCommand',
             'byrokrat\\giroapp\\console\\statuscommand' => 'byrokrat\\giroapp\\Console\\StatusCommand',
@@ -78,6 +79,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\ImportCommand' => 'getByrokrat_Giroapp_Console_ImportCommandService',
             'byrokrat\\giroapp\\Console\\InitCommand' => 'getByrokrat_Giroapp_Console_InitCommandService',
             'byrokrat\\giroapp\\Console\\LsCommand' => 'getByrokrat_Giroapp_Console_LsCommandService',
+            'byrokrat\\giroapp\\Console\\MigrateCommand' => 'getByrokrat_Giroapp_Console_MigrateCommandService',
             'byrokrat\\giroapp\\Console\\RevokeCommand' => 'getByrokrat_Giroapp_Console_RevokeCommandService',
             'byrokrat\\giroapp\\Console\\ShowCommand' => 'getByrokrat_Giroapp_Console_ShowCommandService',
             'byrokrat\\giroapp\\Console\\StatusCommand' => 'getByrokrat_Giroapp_Console_StatusCommandService',
@@ -279,6 +281,16 @@ class ProjectServiceContainer extends Container
     protected function getByrokrat_Giroapp_Console_LsCommandService()
     {
         return $this->services['byrokrat\giroapp\Console\LsCommand'] = new \byrokrat\giroapp\Console\LsCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getByrokrat_Giroapp_Mapper_DonorMapperService()) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\MigrateCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\MigrateCommand
+     */
+    protected function getByrokrat_Giroapp_Console_MigrateCommandService()
+    {
+        return $this->services['byrokrat\giroapp\Console\MigrateCommand'] = new \byrokrat\giroapp\Console\MigrateCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getByrokrat_Giroapp_Mapper_DonorMapperService()) && false ?: '_'}, ${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getSymfony_Component_EventDispatcher_EventDispatcherService()) && false ?: '_'});
     }
 
     /**
