@@ -1,0 +1,75 @@
+<?php
+/**
+ * This file is part of byrokrat\giroapp.
+ *
+ * byrokrat\giroapp is free software: you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * byrokrat\giroapp is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright 2016-17 Hannes Forsgård
+ */
+
+declare(strict_types = 1);
+
+namespace byrokrat\giroapp\Console;
+
+use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\DonorEvent;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
+/**
+ * Command to create autogiro files
+ */
+class MigrateCommand implements CommandInterface
+{
+    /**
+     * @var DonorMapper
+     */
+    private $donorMapper;
+
+    /**
+     * @var EventDispatcher
+     */
+    private $dispatcher;
+
+    public function __construct(DonorMapper $donorMapper, EventDispatcher $dispatcher)
+    {
+        $this->donorMapper = $donorMapper;
+        $this->dispatcher = $dispatcher;
+    }
+
+    public static function configure(CommandWrapper $wrapper)
+    {
+        $wrapper->setName('migrate');
+        $wrapper->setDescription('Update database schema');
+        $wrapper->setHelp('Ensure that the database schema is up to date by triggering a rewrite of all donors');
+    }
+
+    public function execute(InputInterface $input, OutputInterface $output)
+    {
+        foreach ($this->donorMapper->findAll() as $donor) {
+            $this->dispatcher->dispatch(
+                Events::MANDATE_EDITED_EVENT,
+                new DonorEvent(
+                    sprintf(
+                        'Updated mandate <info>%s</info>',
+                        $donor->getMandateKey()
+                    ),
+                    $donor
+                )
+            );
+        }
+    }
+}
