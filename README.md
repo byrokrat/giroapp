@@ -35,7 +35,7 @@ for example be better from a security perspective).
 Change the user directory path by creating a `GIROAPP_PATH` environment variable
 pointing to the desired directory.
 
-## Testing
+## Building
 
 Phpgiro uses [bob](https://github.com/CHH/bob) to run tests and build artifacts.
 
@@ -45,13 +45,17 @@ To complete a build you must first install some development dependencies.
 composer global require chh/bob:^1.0@alpha phpspec/phpspec:^4 behat/behat:^3.3 squizlabs/php_codesniffer:^3
 ```
 
-Make sure to have the global composer bin directory in your path.
+Make sure to have the global composer bin directory in your include path.
 
 ```shell
 export PATH=$PATH:~/.composer/vendor/bin/
 ```
 
-Build project using `bob` from the project directory.
+Build project from within the project directory tree
+
+```shell
+bob
+```
 
 Or for more information run
 

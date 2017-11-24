@@ -11,20 +11,17 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 task('default', ['test', 'sniff']);
 
-desc('Build dependency injection container');
-task('dic', ['load_dependencies', 'src/ProjectServiceContainer.php']);
-
 desc('Run unit and feature tests');
 task('test', ['phpspec', 'behat']);
 
 desc('Run phpspec unit tests');
-task('phpspec', ['dic'], function() {
+task('phpspec', ['update_container'], function() {
     sh('phpspec run', null, ['failOnError' => true]);
     println('Phpspec unit tests passed');
 });
 
 desc('Run behat feature tests');
-task('behat', ['dic'], function() {
+task('behat', ['update_container'], function() {
     sh('behat --stop-on-failure', null, ['failOnError' => true]);
     println('Behat feature tests passed');
 });
@@ -37,19 +34,27 @@ task('sniff', function() {
     println('Syntax checker on spec/ passed');
 });
 
+desc('Build dependency injection container');
+task('container', ['load_dependencies'], __NAMESPACE__.'\build_container');
+
+task('update_container', ['load_dependencies', 'src/ProjectServiceContainer.php']);
+
 $containerFiles = fileList('*.yaml')->in([__DIR__ . '/etc']);
 
-fileTask('src/ProjectServiceContainer.php', $containerFiles, function($task) {
+fileTask('src/ProjectServiceContainer.php', $containerFiles, __NAMESPACE__.'\build_container');
+
+function build_container()
+{
     $dic = new ContainerBuilder;
     (new YamlFileLoader($dic, new FileLocator(__DIR__ . '/etc')))->load(basename('container.yaml'));
     $dic->addCompilerPass(new RegisterListenersPass(EventDispatcher::CLASS, 'event_listener', 'event_subscriber'));
     $dic->compile();
-    file_put_contents($task->name, (new PhpDumper($dic))->dump([
+    file_put_contents('src/ProjectServiceContainer.php', (new PhpDumper($dic))->dump([
         'namespace' => 'byrokrat\giroapp',
-        'class' => pathinfo($task->name, PATHINFO_FILENAME)
+        'class' => 'ProjectServiceContainer'
     ]));
     println('Generated dependency injection container');
-});
+}
 
 fileTask('vendor/autoload.php', ['vendor/autoload.php'], function() {
     sh('composer install');
@@ -60,5 +65,5 @@ fileTask('composer.lock', ['composer.json'], function() {
 });
 
 task('load_dependencies', ['vendor/autoload.php', 'composer.lock'], function () {
-    require 'vendor/autoload.php';
+    require_once 'vendor/autoload.php';
 });
