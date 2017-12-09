@@ -6,14 +6,16 @@ namespace spec\byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\Utils\File;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class FileEventSpec extends ObjectBehavior
 {
-    function let()
+    function let(File $file)
     {
-        $this->beConstructedWith('', '');
+        $file->getFilename()->willReturn('filename');
+        $this->beConstructedWith($file);
     }
 
     function it_is_initializable()
@@ -26,27 +28,13 @@ class FileEventSpec extends ObjectBehavior
         $this->shouldHaveType(LogEvent::CLASS);
     }
 
-    function it_contains_content()
+    function it_contains_a_file($file)
     {
-        $this->beConstructedWith('filename', 'content');
-        $this->getContents()->shouldBeLike('content');
+        $this->getFile()->shouldReturn($file);
     }
 
-    function it_contains_a_filename()
+    function it_contains_a_message($file)
     {
-        $this->beConstructedWith('filename', 'content');
-        $this->getFilename()->shouldBeLike('filename');
-    }
-
-    function it_contains_a_message()
-    {
-        $this->beConstructedWith('filename', 'content');
         $this->getMessage()->shouldContain('filename');
-    }
-
-    function it_contains_a_context()
-    {
-        $this->beConstructedWith('filename', 'content');
-        $this->getContext()->shouldBeLike(['filename' => 'filename']);
     }
 }

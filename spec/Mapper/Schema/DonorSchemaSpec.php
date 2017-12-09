@@ -158,4 +158,9 @@ class DonorSchemaSpec extends ObjectBehavior
 
         $this->toArray($donor)->shouldBeLike($this->schemaDocument);
     }
+
+    function it_contains_json_schema()
+    {
+        $this->getJsonSchema()->shouldBeObject();
+    }
 }

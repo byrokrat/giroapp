@@ -123,4 +123,12 @@ class DonorSchema
             $doc['attributes'] ?? []
         );
     }
+
+    /**
+     * @return object json schema describing the donor schema
+     */
+    public function getJsonSchema()
+    {
+        return json_decode(file_get_contents(__DIR__ . '/donor_schema.json'));
+    }
 }

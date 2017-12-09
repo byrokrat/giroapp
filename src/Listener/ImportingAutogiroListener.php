@@ -55,6 +55,6 @@ class ImportingAutogiroListener
 
         // TODO dispatch events on all autogiro nodes
 
-        $enum->enumerate($this->parser->parse($event->getContents()));
+        $enum->enumerate($this->parser->parse($event->getFile()->getContent()));
     }
 }

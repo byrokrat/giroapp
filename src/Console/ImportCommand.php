@@ -24,6 +24,8 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\Utils\FileReader;
+use byrokrat\giroapp\Utils\File;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -41,13 +43,19 @@ class ImportCommand implements CommandInterface
     private $dispatcher;
 
     /**
+     * @var FileReader
+     */
+    private $fileReader;
+
+    /**
      * @var Stream
      */
     private $stdin;
 
-    public function __construct(EventDispatcher $dispatcher, Stream $stdin)
+    public function __construct(EventDispatcher $dispatcher, FileReader $fileReader, Stream $stdin)
     {
         $this->dispatcher = $dispatcher;
+        $this->fileReader = $fileReader;
         $this->stdin = $stdin;
     }
 
@@ -61,20 +69,13 @@ class ImportCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $content = '';
-
-        if ($filename = $input->getArgument('filename')) {
-            if (!is_readable($filename) || !is_file($filename)) {
-                throw new \RuntimeException("Unable to read file {$filename}");
-            }
-            $content = file_get_contents($filename);
-        }
-
-        if (!$content) {
-            $filename = 'STDIN';
-            $content = $this->stdin->getContent();
-        }
-
-        $this->dispatcher->dispatch(Events::IMPORT_EVENT, new FileEvent($filename, $content));
+        $this->dispatcher->dispatch(
+            Events::IMPORT_EVENT,
+            new FileEvent(
+                ($filename = $input->getArgument('filename'))
+                    ? $this->fileReader->readFile($filename)
+                    : new File('STDIN', $this->stdin->getContent())
+            )
+        );
     }
 }

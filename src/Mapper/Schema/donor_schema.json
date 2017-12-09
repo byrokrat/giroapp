@@ -1,0 +1,151 @@
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "Donors",
+    "description": "A collection of donors in the giroapp database",
+    "type": "object",
+    "patternProperties": {
+        "^[a-zA-Z0-9]{16}$": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "description": "Schema type identifyer",
+                    "type": "string",
+                    "pattern": "giroapp\/donor:[A-Za-z0-9.-]+"
+                },
+                "mandate_key": {
+                    "description": "Key identifying mandate",
+                    "type": "string",
+                    "pattern": "^[a-zA-Z0-9]{16}$"
+                },
+                "state": {
+                    "description": "Mandate state descriptor",
+                    "type": "string",
+                    "pattern": "[A-Z_]+"
+                },
+                "mandate_source": {
+                    "description": "Mandate source descriptor",
+                    "type": "string",
+                    "pattern": "[A-Z_]+"
+                },
+                "payer_number": {
+                    "description": "Payer number identifying donor",
+                    "type": "string",
+                    "pattern": "^[0-9]{1,16}$"
+                },
+                "account": {
+                    "description": "Donor account number",
+                    "type": "string",
+                    "pattern": "[0-9,-]+"
+                },
+                "donor_id": {
+                    "description": "Donor state id number",
+                    "type": "string",
+                    "pattern": "[0-9-]+"
+                },
+                "name": {
+                    "description": "Name of donor",
+                    "type": "string",
+                    "pattern": ".+"
+                },
+                "address": {
+                    "description": "Donor postal address",
+                    "type": "object",
+                    "properties": {
+                        "type": {
+                            "description": "Schema type identifyer",
+                            "type": "string",
+                            "pattern": "giroapp\/postaladdress:[A-Za-z0-9.-]+"
+                        },
+                        "line1": {
+                            "description": "First line of address",
+                            "type": "string"
+                        },
+                        "line2": {
+                            "description": "Second line of address",
+                            "type": "string"
+                        },
+                        "line3": {
+                            "description": "Third line of address",
+                            "type": "string"
+                        },
+                        "postal_code": {
+                            "description": "Address postal code",
+                            "type": "string"
+                        },
+                        "postal_city": {
+                            "description": "Address city",
+                            "type": "string"
+                        }
+                    }
+                },
+                "email": {
+                    "description": "Donor e-mail address",
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "Donor phone number",
+                    "type": "string"
+                },
+                "donation_amount": {
+                    "description": "Monthly donation amoun",
+                    "type": "string",
+                    "pattern": "^[0-9]{1,10}$"
+                },
+                "comment": {
+                    "description": "Free text comment",
+                    "type": "string"
+                },
+                "created": {
+                    "description": "Donor creation date",
+                    "type": {
+                        "$ref": "#/definitions/date"
+                    }
+                },
+                "updated": {
+                    "description": "Donor updated date",
+                    "type": {
+                        "$ref": "#/definitions/date"
+                    }
+                },
+                "attributes": {
+                    "description": "List of attribues",
+                    "type": ["array", "object"],
+                    "patternProperties": {
+                        "[A-Za-z0-9.-_]+": {
+                            "type": "string"
+                        }
+                    },
+                    "additionalProperties": false,
+                    "items": {
+                        "type": "null"
+                    }
+                }
+            },
+            "required": [
+                "type",
+                "mandate_key",
+                "state",
+                "mandate_source",
+                "payer_number",
+                "account",
+                "donor_id",
+                "name",
+                "address",
+                "email",
+                "phone",
+                "donation_amount",
+                "comment",
+                "created",
+                "updated",
+                "attributes"
+            ]
+        }
+    },
+    "additionalProperties": false,
+    "definitions": {
+        "date" : {
+            "type": "string",
+            "pattern": "^\\d{4}-\\d{2}-\\d{2}[T ]\\d{2}:\\d{2}:\\d{2}\\+\\d{2}:\\d{2}$"
+        }
+    }
+}

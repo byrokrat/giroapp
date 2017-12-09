@@ -20,29 +20,36 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
-
-use byrokrat\giroapp\Xml\XmlObject;
-use byrokrat\giroapp\Utils\File;
+namespace byrokrat\giroapp\Utils;
 
 /**
- * Dispatched when an xml file is imported
+ * Simple file wrapper
  */
-class XmlEvent extends FileEvent
+class File
 {
     /**
-     * @var XmlObject
+     * @var string
      */
-    private $xml;
+    private $filename;
 
-    public function __construct(File $file, XmlObject $xml)
+    /**
+     * @var string
+     */
+    private $content;
+
+    public function __construct(string $filename, string $content)
     {
-        parent::__construct($file);
-        $this->xml = $xml;
+        $this->filename = $filename;
+        $this->content = $content;
     }
 
-    public function getXmlObject(): XmlObject
+    public function getFilename(): string
     {
-        return $this->xml;
+        return $this->filename;
+    }
+
+    public function getContent(): string
+    {
+        return $this->content;
     }
 }

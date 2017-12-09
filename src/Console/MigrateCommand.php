@@ -30,7 +30,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Command to create autogiro files
+ * Command to update database schema
  */
 class MigrateCommand implements CommandInterface
 {

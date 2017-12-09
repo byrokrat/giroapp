@@ -20,29 +20,34 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\Utils;
 
-use byrokrat\giroapp\Xml\XmlObject;
-use byrokrat\giroapp\Utils\File;
+use League\Flysystem\Filesystem;
 
 /**
- * Dispatched when an xml file is imported
+ * Helper to read file content
  */
-class XmlEvent extends FileEvent
+class FileReader
 {
     /**
-     * @var XmlObject
+     * @var Filesystem
      */
-    private $xml;
+    private $filesystem;
 
-    public function __construct(File $file, XmlObject $xml)
+    public function __construct(Filesystem $filesystem)
     {
-        parent::__construct($file);
-        $this->xml = $xml;
+        $this->filesystem = $filesystem;
     }
 
-    public function getXmlObject(): XmlObject
+    /**
+     * @throws \RuntimeException if file does not exist
+     */
+    public function readFile(string $filename): File
     {
-        return $this->xml;
+        if (!$this->filesystem->has($filename)) {
+            throw new \RuntimeException("Unable to read {$filename}");
+        }
+
+        return new File($filename, $this->filesystem->read($filename));
     }
 }

@@ -40,8 +40,8 @@ class ImportingListener
             $dispatcher->dispatch(
                 Events::IMPORT_XML_EVENT,
                 new XmlEvent(
-                    $event->getFilename(),
-                    new XmlObject($event->getContents())
+                    $event->getFile(),
+                    new XmlObject($event->getFile()->getContent())
                 )
             );
         } catch (InvalidXmlException $e) {
