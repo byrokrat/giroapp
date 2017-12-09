@@ -45,6 +45,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\console\\revokecommand' => 'byrokrat\\giroapp\\Console\\RevokeCommand',
             'byrokrat\\giroapp\\console\\showcommand' => 'byrokrat\\giroapp\\Console\\ShowCommand',
             'byrokrat\\giroapp\\console\\statuscommand' => 'byrokrat\\giroapp\\Console\\StatusCommand',
+            'byrokrat\\giroapp\\console\\validatecommand' => 'byrokrat\\giroapp\\Console\\ValidateCommand',
             'byrokrat\\giroapp\\listener\\committinglistener' => 'byrokrat\\giroapp\\Listener\\CommittingListener',
             'byrokrat\\giroapp\\listener\\exitstatuslistener' => 'byrokrat\\giroapp\\Listener\\ExitStatusListener',
             'byrokrat\\giroapp\\listener\\importingautogirolistener' => 'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener',
@@ -56,6 +57,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\listener\\mandateresponselistener' => 'byrokrat\\giroapp\\Listener\\MandateResponseListener',
             'byrokrat\\giroapp\\listener\\outputtinglistener' => 'byrokrat\\giroapp\\Listener\\OutputtingListener',
             'byrokrat\\giroapp\\mapper\\donormapper' => 'byrokrat\\giroapp\\Mapper\\DonorMapper',
+            'byrokrat\\giroapp\\mapper\\schema\\donorschema' => 'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema',
             'byrokrat\\giroapp\\state\\statepool' => 'byrokrat\\giroapp\\State\\StatePool',
             'byrokrat\\giroapp\\utils\\systemclock' => 'byrokrat\\giroapp\\Utils\\SystemClock',
             'byrokrat\\id\\idfactory' => 'byrokrat\\id\\IdFactory',
@@ -83,6 +85,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\RevokeCommand' => 'getByrokrat_Giroapp_Console_RevokeCommandService',
             'byrokrat\\giroapp\\Console\\ShowCommand' => 'getByrokrat_Giroapp_Console_ShowCommandService',
             'byrokrat\\giroapp\\Console\\StatusCommand' => 'getByrokrat_Giroapp_Console_StatusCommandService',
+            'byrokrat\\giroapp\\Console\\ValidateCommand' => 'getByrokrat_Giroapp_Console_ValidateCommandService',
             'byrokrat\\giroapp\\Listener\\CommittingListener' => 'getByrokrat_Giroapp_Listener_CommittingListenerService',
             'byrokrat\\giroapp\\Listener\\ExitStatusListener' => 'getByrokrat_Giroapp_Listener_ExitStatusListenerService',
             'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener' => 'getByrokrat_Giroapp_Listener_ImportingAutogiroListenerService',
@@ -94,6 +97,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\MandateResponseListener' => 'getByrokrat_Giroapp_Listener_MandateResponseListenerService',
             'byrokrat\\giroapp\\Listener\\OutputtingListener' => 'getByrokrat_Giroapp_Listener_OutputtingListenerService',
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => 'getByrokrat_Giroapp_Mapper_DonorMapperService',
+            'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => 'getByrokrat_Giroapp_Mapper_Schema_DonorSchemaService',
             'byrokrat\\giroapp\\State\\StatePool' => 'getByrokrat_Giroapp_State_StatePoolService',
             'byrokrat\\giroapp\\Utils\\SystemClock' => 'getByrokrat_Giroapp_Utils_SystemClockService',
             'byrokrat\\id\\IdFactory' => 'getByrokrat_Id_IdFactoryService',
@@ -101,7 +105,7 @@ class ProjectServiceContainer extends Container
             'db_log_engine' => 'getDbLogEngineService',
             'db_settings_engine' => 'getDbSettingsEngineService',
             'db_settings_mapper' => 'getDbSettingsMapperService',
-            'filesystem' => 'getFilesystemService',
+            'fs_user_dir' => 'getFsUserDirService',
             'organization_bg' => 'getOrganizationBgService',
         );
         $this->privates = array(
@@ -121,13 +125,14 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\MandateResponseListener' => true,
             'byrokrat\\giroapp\\Listener\\OutputtingListener' => true,
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => true,
+            'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => true,
             'byrokrat\\giroapp\\State\\StatePool' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
             'byrokrat\\id\\IdFactory' => true,
             'db_donor_engine' => true,
             'db_log_engine' => true,
             'db_settings_engine' => true,
-            'filesystem' => true,
+            'fs_user_dir' => true,
             'organization_bg' => true,
         );
 
@@ -254,7 +259,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Console_ImportCommandService()
     {
-        return $this->services['byrokrat\giroapp\Console\ImportCommand'] = new \byrokrat\giroapp\Console\ImportCommand(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getSymfony_Component_EventDispatcher_EventDispatcherService()) && false ?: '_'}, ${($_ = isset($this->services['std_in']) ? $this->services['std_in'] : $this->get('std_in')) && false ?: '_'});
+        return $this->services['byrokrat\giroapp\Console\ImportCommand'] = new \byrokrat\giroapp\Console\ImportCommand(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getSymfony_Component_EventDispatcher_EventDispatcherService()) && false ?: '_'}, new \byrokrat\giroapp\Utils\FileReader(new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local('.'))), ${($_ = isset($this->services['std_in']) ? $this->services['std_in'] : $this->get('std_in')) && false ?: '_'});
     }
 
     /**
@@ -329,6 +334,16 @@ class ProjectServiceContainer extends Container
     protected function getByrokrat_Giroapp_Console_StatusCommandService()
     {
         return $this->services['byrokrat\giroapp\Console\StatusCommand'] = new \byrokrat\giroapp\Console\StatusCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getByrokrat_Giroapp_Mapper_DonorMapperService()) && false ?: '_'});
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\ValidateCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\ValidateCommand
+     */
+    protected function getByrokrat_Giroapp_Console_ValidateCommandService()
+    {
+        return $this->services['byrokrat\giroapp\Console\ValidateCommand'] = new \byrokrat\giroapp\Console\ValidateCommand(new \byrokrat\giroapp\Utils\FileReader(${($_ = isset($this->services['fs_user_dir']) ? $this->services['fs_user_dir'] : $this->getFsUserDirService()) && false ?: '_'}), ${($_ = isset($this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema']) ? $this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema'] : $this->getByrokrat_Giroapp_Mapper_Schema_DonorSchemaService()) && false ?: '_'}->getJsonSchema(), new \JsonSchema\Validator());
     }
 
     /**
@@ -434,7 +449,7 @@ class ProjectServiceContainer extends Container
         $instance->addListener('MANDATE_INVALID_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\ApplicationMonitor']) ? $this->services['byrokrat\giroapp\ApplicationMonitor'] : $this->getByrokrat_Giroapp_ApplicationMonitorService()) && false ?: '_'};
         }, 1 => 'dispatchWarning'), 10);
-        (new \byrokrat\giroapp\DI\PluginLoader($this->getEnv('GIROAPP_PATH').'/plugins', ${($_ = isset($this->services['filesystem']) ? $this->services['filesystem'] : $this->getFilesystemService()) && false ?: '_'}))->loadPlugins($instance);
+        (new \byrokrat\giroapp\DI\PluginLoader($this->getEnv('GIROAPP_PATH').'/plugins', ${($_ = isset($this->services['fs_user_dir']) ? $this->services['fs_user_dir'] : $this->getFsUserDirService()) && false ?: '_'}))->loadPlugins($instance);
 
         return $instance;
     }
@@ -486,7 +501,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Listener_CommittingListenerService()
     {
-        return $this->services['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(array('settings' => ${($_ = isset($this->services['db_settings_engine']) ? $this->services['db_settings_engine'] : $this->getDbSettingsEngineService()) && false ?: '_'}, 'donors' => ${($_ = isset($this->services['db_donor_engine']) ? $this->services['db_donor_engine'] : $this->getDbDonorEngineService()) && false ?: '_'}, 'transactions' => new \hanneskod\yaysondb\Engine\FlysystemEngine('data/transactions.json', ${($_ = isset($this->services['filesystem']) ? $this->services['filesystem'] : $this->getFilesystemService()) && false ?: '_'}), 'log' => ${($_ = isset($this->services['db_log_engine']) ? $this->services['db_log_engine'] : $this->getDbLogEngineService()) && false ?: '_'})));
+        return $this->services['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(array('settings' => ${($_ = isset($this->services['db_settings_engine']) ? $this->services['db_settings_engine'] : $this->getDbSettingsEngineService()) && false ?: '_'}, 'donors' => ${($_ = isset($this->services['db_donor_engine']) ? $this->services['db_donor_engine'] : $this->getDbDonorEngineService()) && false ?: '_'}, 'transactions' => new \hanneskod\yaysondb\Engine\FlysystemEngine('data/transactions.json', ${($_ = isset($this->services['fs_user_dir']) ? $this->services['fs_user_dir'] : $this->getFsUserDirService()) && false ?: '_'}), 'log' => ${($_ = isset($this->services['db_log_engine']) ? $this->services['db_log_engine'] : $this->getDbLogEngineService()) && false ?: '_'})));
     }
 
     /**
@@ -588,9 +603,17 @@ class ProjectServiceContainer extends Container
      */
     protected function getByrokrat_Giroapp_Mapper_DonorMapperService()
     {
-        $a = ${($_ = isset($this->services['byrokrat\giroapp\Utils\SystemClock']) ? $this->services['byrokrat\giroapp\Utils\SystemClock'] : $this->getByrokrat_Giroapp_Utils_SystemClockService()) && false ?: '_'};
+        return $this->services['byrokrat\giroapp\Mapper\DonorMapper'] = new \byrokrat\giroapp\Mapper\DonorMapper(new \hanneskod\yaysondb\Collection(${($_ = isset($this->services['db_donor_engine']) ? $this->services['db_donor_engine'] : $this->getDbDonorEngineService()) && false ?: '_'}), ${($_ = isset($this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema']) ? $this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema'] : $this->getByrokrat_Giroapp_Mapper_Schema_DonorSchemaService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Utils\SystemClock']) ? $this->services['byrokrat\giroapp\Utils\SystemClock'] : $this->getByrokrat_Giroapp_Utils_SystemClockService()) && false ?: '_'});
+    }
 
-        return $this->services['byrokrat\giroapp\Mapper\DonorMapper'] = new \byrokrat\giroapp\Mapper\DonorMapper(new \hanneskod\yaysondb\Collection(${($_ = isset($this->services['db_donor_engine']) ? $this->services['db_donor_engine'] : $this->getDbDonorEngineService()) && false ?: '_'}), new \byrokrat\giroapp\Mapper\Schema\DonorSchema(new \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema(), ${($_ = isset($this->services['byrokrat\giroapp\State\StatePool']) ? $this->services['byrokrat\giroapp\State\StatePool'] : $this->getByrokrat_Giroapp_State_StatePoolService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->getByrokrat_Banking_AccountFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->getByrokrat_Id_IdFactoryService()) && false ?: '_'}, $a), $a);
+    /**
+     * Gets the private 'byrokrat\giroapp\Mapper\Schema\DonorSchema' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Mapper\Schema\DonorSchema
+     */
+    protected function getByrokrat_Giroapp_Mapper_Schema_DonorSchemaService()
+    {
+        return $this->services['byrokrat\giroapp\Mapper\Schema\DonorSchema'] = new \byrokrat\giroapp\Mapper\Schema\DonorSchema(new \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema(), ${($_ = isset($this->services['byrokrat\giroapp\State\StatePool']) ? $this->services['byrokrat\giroapp\State\StatePool'] : $this->getByrokrat_Giroapp_State_StatePoolService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\banking\AccountFactory']) ? $this->services['byrokrat\banking\AccountFactory'] : $this->getByrokrat_Banking_AccountFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\id\IdFactory']) ? $this->services['byrokrat\id\IdFactory'] : $this->getByrokrat_Id_IdFactoryService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Utils\SystemClock']) ? $this->services['byrokrat\giroapp\Utils\SystemClock'] : $this->getByrokrat_Giroapp_Utils_SystemClockService()) && false ?: '_'});
     }
 
     /**
@@ -630,7 +653,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getDbDonorEngineService()
     {
-        return $this->services['db_donor_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/donors.json', ${($_ = isset($this->services['filesystem']) ? $this->services['filesystem'] : $this->getFilesystemService()) && false ?: '_'});
+        return $this->services['db_donor_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/donors.json', ${($_ = isset($this->services['fs_user_dir']) ? $this->services['fs_user_dir'] : $this->getFsUserDirService()) && false ?: '_'});
     }
 
     /**
@@ -650,17 +673,17 @@ class ProjectServiceContainer extends Container
      */
     protected function getDbSettingsEngineService()
     {
-        return $this->services['db_settings_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/settings.json', ${($_ = isset($this->services['filesystem']) ? $this->services['filesystem'] : $this->getFilesystemService()) && false ?: '_'});
+        return $this->services['db_settings_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/settings.json', ${($_ = isset($this->services['fs_user_dir']) ? $this->services['fs_user_dir'] : $this->getFsUserDirService()) && false ?: '_'});
     }
 
     /**
-     * Gets the private 'filesystem' shared service.
+     * Gets the private 'fs_user_dir' shared service.
      *
      * @return \League\Flysystem\Filesystem
      */
-    protected function getFilesystemService()
+    protected function getFsUserDirService()
     {
-        $this->services['filesystem'] = $instance = new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getEnv('GIROAPP_PATH')));
+        $this->services['fs_user_dir'] = $instance = new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getEnv('GIROAPP_PATH')));
 
         (new \byrokrat\giroapp\DI\FilesystemConfigurator(array(0 => 'data/settings.json', 1 => 'data/donors.json', 2 => 'data/transactions.json', 3 => 'var/log'), array(0 => 'plugins')))->createFiles($instance);
 

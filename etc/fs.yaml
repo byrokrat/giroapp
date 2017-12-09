@@ -2,12 +2,16 @@ services:
     _defaults:
         public: false
 
-    filesystem:
+    fs_user_dir_reader:
+        class: byrokrat\giroapp\Utils\FileReader
+        arguments: ['@fs_user_dir']
+
+    fs_user_dir:
         class: League\Flysystem\Filesystem
-        arguments: ['@filesystem_adapter']
+        arguments: ['@fs_user_dir_adapter']
         configurator: 'byrokrat\giroapp\DI\FilesystemConfigurator:createFiles'
 
-    filesystem_adapter:
+    fs_user_dir_adapter:
         class: League\Flysystem\Adapter\Local
         arguments: ['%user.dir%']
 
@@ -21,3 +25,15 @@ services:
                 - '%db.log%'
             -
                 - '%plugins.dir%'
+
+    fs_cwd_reader:
+        class: byrokrat\giroapp\Utils\FileReader
+        arguments: ['@fs_cwd']
+
+    fs_cwd:
+        class: League\Flysystem\Filesystem
+        arguments: ['@fs_cwd_adapter']
+
+    fs_cwd_adapter:
+        class: League\Flysystem\Adapter\Local
+        arguments: ['.']

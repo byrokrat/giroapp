@@ -52,7 +52,17 @@ services:
     byrokrat\giroapp\Console\ImportCommand:
         class: ~
         public: true
-        arguments: ['@Symfony\Component\EventDispatcher\EventDispatcher', '@std_in']
+        arguments:
+            - '@Symfony\Component\EventDispatcher\EventDispatcher'
+            - '@fs_cwd_reader'
+            - '@std_in'
+
+    byrokrat\giroapp\Console\ValidateCommand:
+        class: ~
+        public: true
+        arguments:
+            - '@fs_user_dir_reader'
+            - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
 
     byrokrat\giroapp\State\:
         resource: '../src/State/*'
@@ -66,7 +76,7 @@ services:
 
     byrokrat\giroapp\DI\PluginLoader:
         class: ~
-        arguments: ['%user.dir%/%plugins.dir%', '@filesystem']
+        arguments: ['%user.dir%/%plugins.dir%', '@fs_user_dir']
 
     byrokrat\giroapp\ApplicationMonitor:
         class: ~
@@ -181,3 +191,5 @@ services:
         class: byrokrat\banking\Bankgiro
         factory: 'byrokrat\banking\BankgiroFactory:createAccount'
         arguments: ["@=service('db_settings_mapper').findByKey('bankgiro')"]
+
+    JsonSchema\Validator: ~

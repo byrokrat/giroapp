@@ -41,7 +41,8 @@
         "symfony/event-dispatcher": "^3.3",
         "symfony/finder": "^3.3",
         "hashids/hashids": "^2",
-        "fzaninotto/Streamer": "0.*"
+        "fzaninotto/Streamer": "0.*",
+        "justinrainbow/json-schema": "^5"
     },
     "require-dev": {
         "symfony/config": "^3.3",
