@@ -22,44 +22,29 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event;
 
+use byrokrat\giroapp\Utils\File;
+
 /**
  * Dispatched when a file is imported
  */
 class FileEvent extends LogEvent
 {
     /**
-     * @var string
+     * @var File
      */
-    private $filename;
+    private $file;
 
-    /**
-     * @var string
-     */
-    private $contents;
-
-    /**
-     * Load content to import
-     */
-    public function __construct(string $filename, string $contents)
+    public function __construct(File $file)
     {
-        parent::__construct("Importing file <info>$filename</info>", ['filename' => 'filename']);
-        $this->filename = $filename;
-        $this->contents = $contents;
+        parent::__construct("Importing file <info>{$file->getFilename()}</info>");
+        $this->file = $file;
     }
 
     /**
-     * Get name of file to import
+     * Get file to import
      */
-    public function getFilename(): string
+    public function getFile(): File
     {
-        return $this->filename;
-    }
-
-    /**
-     * Get content to import
-     */
-    public function getContents(): string
-    {
-        return $this->contents;
+        return $this->file;
     }
 }

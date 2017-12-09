@@ -8,6 +8,7 @@ use byrokrat\giroapp\Listener\ImportingAutogiroListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\NodeEvent;
+use byrokrat\giroapp\Utils\File;
 use byrokrat\autogiro\Parser\Parser;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Tree\FileNode;
@@ -37,23 +38,27 @@ class ImportingAutogiroListenerSpec extends ObjectBehavior
 
     function it_parses_content(
         FileEvent $event,
+        File $file,
         Parser $parser,
         FileNode $fileNode,
         EventDispatcherInterface $dispatcher
     ) {
-        $event->getContents()->willReturn('foobar');
+        $event->getFile()->willReturn($file);
+        $file->getContent()->willReturn('foobar');
         $parser->parse('foobar')->willReturn($this->a_tree($fileNode));
         $this->onImportAutogiroEvent($event, '', $dispatcher);
     }
 
     function it_dispatches_approved_mandate_events(
         FileEvent $event,
+        File $file,
         Parser $parser,
         FileNode $fileNode,
         EventDispatcherInterface $dispatcher,
         Node $node
     ) {
-        $event->getContents()->willReturn('foobar');
+        $event->getFile()->willReturn($file);
+        $file->getContent()->willReturn('foobar');
 
         $parser->parse('foobar')->willReturn(
             $this->a_tree(

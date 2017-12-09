@@ -5,35 +5,33 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Utils;
 
 use byrokrat\giroapp\Utils\FileReader;
+use byrokrat\giroapp\Utils\File;
+use League\Flysystem\Filesystem;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class FileReaderSpec extends ObjectBehavior
 {
+    function let(Filesystem $filesystem)
+    {
+        $this->beConstructedWith($filesystem);
+    }
+
     function it_is_initializable()
     {
         $this->shouldHaveType(FileReader::CLASS);
     }
 
-    function it_fails_if_file_does_not_exist()
+    function it_fails_if_file_does_not_exist($filesystem)
     {
-        $this->shouldThrow(\RuntimeException::CLASS)->duringSetFilename('does-not-exist');
+        $filesystem->has('does-not-exist')->willReturn(false);
+        $this->shouldThrow(\RuntimeException::CLASS)->duringReadFile('does-not-exist');
     }
 
-    function it_fails_if_no_file_is_set()
+    function it_can_read_content($filesystem)
     {
-        $this->shouldThrow(\RuntimeException::CLASS)->duringGetContents();
-    }
-
-    function it_can_read_content()
-    {
-        $this->setFilename(__FILE__);
-        $this->getContents()->shouldMatch('/it_can_read_content/');
-    }
-
-    function it_can_set_name_during_construct()
-    {
-        $this->beConstructedWith(__FILE__);
-        $this->getContents()->shouldMatch('/it_can_read_content/');
+        $filesystem->has('filename')->willReturn(true);
+        $filesystem->read('filename')->willReturn('foobar');
+        $this->readFile('filename')->shouldBeLike(new File('filename', 'foobar'));
     }
 }

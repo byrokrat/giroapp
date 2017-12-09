@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Utils\FileReader;
+use byrokrat\giroapp\Utils\File;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -68,18 +69,13 @@ class ImportCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        $content = '';
-
-        if ($filename = $input->getArgument('filename')) {
-            $this->fileReader->setFilename($input->getArgument('filename'));
-            $content = $this->fileReader->getContents();
-        }
-
-        if (!$content) {
-            $filename = 'STDIN';
-            $content = $this->stdin->getContent();
-        }
-
-        $this->dispatcher->dispatch(Events::IMPORT_EVENT, new FileEvent($filename, $content));
+        $this->dispatcher->dispatch(
+            Events::IMPORT_EVENT,
+            new FileEvent(
+                ($filename = $input->getArgument('filename'))
+                    ? $this->fileReader->readFile($filename)
+                    : new File('STDIN', $this->stdin->getContent())
+            )
+        );
     }
 }
