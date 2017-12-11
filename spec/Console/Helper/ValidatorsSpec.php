@@ -19,7 +19,6 @@ use Prophecy\Argument;
 
 class ValidatorsSpec extends ObjectBehavior
 {
-
     function let(
         AccountFactory $accountFactory,
         BankgiroFactory $bankgiroFactory,
@@ -32,6 +31,12 @@ class ValidatorsSpec extends ObjectBehavior
     function it_is_initializable()
     {
         $this->shouldHaveType(Validators::CLASS);
+    }
+
+    function it_validates_donor_keys()
+    {
+        $this->getDonorKeyValidator()->shouldValidate('dhHjduey67839287');
+        $this->getDonorKeyValidator()->shouldNotValidate('a.a');
     }
 
     function it_validates_amounts()

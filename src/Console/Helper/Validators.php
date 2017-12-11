@@ -66,6 +66,15 @@ class Validators
         $this->statePool = $statePool;
     }
 
+    public function getDonorKeyValidator(): callable
+    {
+        return (new Rule)
+            ->msg('Valid donor key required')
+            ->match(function ($val) {
+                return preg_match('/^[a-zA-Z0-9]{1,16}$/', $val);
+            });
+    }
+
     public function getAmountValidator(): callable
     {
         return (new Rule)

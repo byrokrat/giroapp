@@ -27,35 +27,20 @@ use byrokrat\giroapp\Console\Helper\Validators;
 use byrokrat\giroapp\Console\Helper\QuestionFactory;
 
 /**
- * Dependencies for reading user input
+ * Load validator dependencies
  */
-trait InputReaderTrait
+trait ValidatorsTrait
 {
-    use ValidatorsTrait;
-
     /**
-     * @var InputReader
+     * @var Validators
      */
-    protected $inputReader;
-
-    /**
-     * @var QuestionFactory
-     */
-    protected $questionFactory;
+    protected $validators;
 
     /**
      * @required
      */
-    public function setInputReader(InputReader $inputReader)
+    public function setValidators(Validators $validators)
     {
-        $this->inputReader = $inputReader;
-    }
-
-    /**
-     * @required
-     */
-    public function setQuestionFactory(QuestionFactory $questionFactory)
-    {
-        $this->questionFactory = $questionFactory;
+        $this->validators = $validators;
     }
 }
