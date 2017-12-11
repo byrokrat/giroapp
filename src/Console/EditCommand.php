@@ -37,7 +37,9 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class EditCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait, Traits\InputReaderTrait;
+    use Traits\DonorArgumentTrait, Traits\InputReaderTrait {
+        Traits\DonorArgumentTrait::setValidators insteadof Traits\InputReaderTrait;
+    }
 
     /**
      * @var array Maps option names to free text descriptions

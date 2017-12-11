@@ -52,12 +52,9 @@ class CustomdataTranslator
     public function writeValue(DonorBuilder $donorBuilder, string $formId, string $key, string $value)
     {
         $map = $this->getMap($formId);
-
-        if (isset($map[$key])) {
-            return (unset)$map[$key]($donorBuilder, $value);
-        }
-
-        return (unset)$donorBuilder->setAttribute($key, $value);
+        isset($map[$key])
+            ? $map[$key]($donorBuilder, $value)
+            : $donorBuilder->setAttribute($key, $value);
     }
 
     /**

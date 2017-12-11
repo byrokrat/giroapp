@@ -10,7 +10,7 @@
                 "type": {
                     "description": "Schema type identifyer",
                     "type": "string",
-                    "pattern": "giroapp\/donor:[A-Za-z0-9.-]+"
+                    "pattern": "^giroapp\/donor:[A-Za-z0-9.-]+$"
                 },
                 "mandate_key": {
                     "description": "Key identifying mandate",
@@ -20,12 +20,12 @@
                 "state": {
                     "description": "Mandate state descriptor",
                     "type": "string",
-                    "pattern": "[A-Z_]+"
+                    "pattern": "^[A-Z_]+$"
                 },
                 "mandate_source": {
                     "description": "Mandate source descriptor",
                     "type": "string",
-                    "pattern": "[A-Z_]+"
+                    "pattern": "^[A-Z_]+$"
                 },
                 "payer_number": {
                     "description": "Payer number identifying donor",
@@ -35,17 +35,17 @@
                 "account": {
                     "description": "Donor account number",
                     "type": "string",
-                    "pattern": "[0-9,-]+"
+                    "pattern": "^[0-9, -]+$"
                 },
                 "donor_id": {
                     "description": "Donor state id number",
                     "type": "string",
-                    "pattern": "[0-9-]+"
+                    "pattern": "^[0-9-]+$"
                 },
                 "name": {
                     "description": "Name of donor",
                     "type": "string",
-                    "pattern": ".+"
+                    "pattern": "^.+$"
                 },
                 "address": {
                     "description": "Donor postal address",
@@ -54,7 +54,7 @@
                         "type": {
                             "description": "Schema type identifyer",
                             "type": "string",
-                            "pattern": "giroapp\/postaladdress:[A-Za-z0-9.-]+"
+                            "pattern": "^giroapp\/postaladdress:[A-Za-z0-9.-]+$"
                         },
                         "line1": {
                             "description": "First line of address",
@@ -111,7 +111,7 @@
                     "description": "List of attribues",
                     "type": ["array", "object"],
                     "patternProperties": {
-                        "[A-Za-z0-9.-_]+": {
+                        "^.+$": {
                             "type": "string"
                         }
                     },

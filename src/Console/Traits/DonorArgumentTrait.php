@@ -34,6 +34,8 @@ use Symfony\Component\Console\Input\InputInterface;
  */
 trait DonorArgumentTrait
 {
+    use ValidatorsTrait;
+
     /**
      * @var DonorMapper
      */
@@ -68,7 +70,7 @@ trait DonorArgumentTrait
      */
     public function getDonor(InputInterface $input): Donor
     {
-        $key = $input->getArgument('donor');
+        $key = $this->validators->getDonorKeyValidator()($input->getArgument('donor'));
 
         if (!$input->getOption('force-payer-number') && $this->donorMapper->hasKey($key)) {
             return $this->donorMapper->findByKey($key);
