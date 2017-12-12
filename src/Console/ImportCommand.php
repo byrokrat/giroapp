@@ -29,6 +29,7 @@ use byrokrat\giroapp\Utils\File;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Streamer\Stream;
 
@@ -65,12 +66,13 @@ class ImportCommand implements CommandInterface
         $wrapper->setDescription('Import a file from autogirot');
         $wrapper->setHelp('Import a file with data from autogirot');
         $wrapper->addArgument('filename', InputArgument::OPTIONAL, 'The name of the file to import');
+        $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import even if a pre-condition fails.');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $this->dispatcher->dispatch(
-            Events::IMPORT_EVENT,
+            $input->getOption('force') ? Events::FORCE_IMPORT_EVENT : Events::IMPORT_EVENT,
             new FileEvent(
                 ($filename = $input->getArgument('filename'))
                     ? $this->fileReader->readFile($filename)

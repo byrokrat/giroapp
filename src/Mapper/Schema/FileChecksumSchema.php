@@ -20,41 +20,39 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Mapper\Schema;
+
+use byrokrat\giroapp\Model\FileChecksum;
 
 /**
- * Simple file wrapper
+ * Maps FileChecksum objects to arrays
  */
-class File
+class FileChecksumSchema
 {
     /**
-     * @var string
+     * Schema type identifier
      */
-    private $filename;
+    const TYPE = 'giroapp/filechecksum:alpha2';
 
     /**
-     * @var string
+     * @return string[] Returns FileChecksum as string array
      */
-    private $content;
-
-    public function __construct(string $filename, string $content)
+    public function toArray(FileChecksum $checksum) : array
     {
-        $this->filename = $filename;
-        $this->content = $content;
+        return [
+            'type' => self::TYPE,
+            'filename' => $checksum->getFilename(),
+            'checksum' => $checksum->getChecksum(),
+            'datetime' => $checksum->getDatetime()->format(\DateTime::W3C)
+        ];
     }
 
-    public function getFilename(): string
+    public function fromArray(array $doc) : FileChecksum
     {
-        return $this->filename;
-    }
-
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    public function getChecksum(): string
-    {
-        return hash('sha256', $this->content);
+        return new FileChecksum(
+            $doc['filename'],
+            $doc['checksum'],
+            new \DateTimeImmutable($doc['datetime'])
+        );
     }
 }

@@ -32,4 +32,9 @@ class FileSpec extends ObjectBehavior
     {
         $this->getContent()->shouldEqual(self::CONTENT);
     }
+
+    function it_can_compute_a_content_hash()
+    {
+        $this->getChecksum()->shouldEqual(hash('sha256', self::CONTENT));
+    }
 }

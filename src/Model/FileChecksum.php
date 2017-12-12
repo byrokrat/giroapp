@@ -20,12 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Model;
 
 /**
- * Simple file wrapper
+ * Models a file checksum entity
  */
-class File
+class FileChecksum
 {
     /**
      * @var string
@@ -35,12 +35,18 @@ class File
     /**
      * @var string
      */
-    private $content;
+    private $checksum;
 
-    public function __construct(string $filename, string $content)
+    /**
+     * @var \DateTimeInterface
+     */
+    private $datetime;
+
+    public function __construct(string $filename, string $checksum, \DateTimeInterface $datetime)
     {
         $this->filename = $filename;
-        $this->content = $content;
+        $this->checksum = $checksum;
+        $this->datetime = $datetime;
     }
 
     public function getFilename(): string
@@ -48,13 +54,13 @@ class File
         return $this->filename;
     }
 
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
     public function getChecksum(): string
     {
-        return hash('sha256', $this->content);
+        return $this->checksum;
+    }
+
+    public function getDatetime(): \DateTimeInterface
+    {
+        return $this->datetime;
     }
 }

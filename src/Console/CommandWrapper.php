@@ -80,7 +80,7 @@ class CommandWrapper extends Command
 
         $dispatcher->dispatch(
             Events::DEBUG_EVENT,
-            new LogEvent("User directory: <info>{$container->getParameter('user.dir')}</info>")
+            new LogEvent("User directory: <info>{$container->getParameter('fs.user_dir')}</info>")
         );
 
         try {

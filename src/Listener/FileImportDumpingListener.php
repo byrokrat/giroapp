@@ -20,41 +20,37 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Listener;
 
-/**
- * Simple file wrapper
- */
-class File
+use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\Utils\SystemClock;
+use League\Flysystem\Filesystem;
+
+class FileImportDumpingListener
 {
     /**
-     * @var string
+     * @var Filesystem
      */
-    private $filename;
+    private $filesystem;
 
     /**
-     * @var string
+     * @var SystemClock
      */
-    private $content;
+    private $systemClock;
 
-    public function __construct(string $filename, string $content)
+    public function __construct(Filesystem $filesystem, SystemClock $systemClock)
     {
-        $this->filename = $filename;
-        $this->content = $content;
+        $this->filesystem = $filesystem;
+        $this->systemClock = $systemClock;
     }
 
-    public function getFilename(): string
+    public function onImportEvent(FileEvent $event): void
     {
-        return $this->filename;
-    }
+        $file = $event->getFile();
 
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    public function getChecksum(): string
-    {
-        return hash('sha256', $this->content);
+        $this->filesystem->write(
+            "{$this->systemClock->getNow()->format('Ymd\TH:i:s')}_{$file->getFilename()}",
+            $file->getContent()
+        );
     }
 }

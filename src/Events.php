@@ -41,6 +41,11 @@ interface Events
     const IMPORT_EVENT = 'IMPORT_EVENT';
 
     /**
+     * A file forcefully imported, expects an FileEvent
+     */
+    const FORCE_IMPORT_EVENT = 'FORCE_IMPORT_EVENT';
+
+    /**
      * An autogiro file imported, expects an FileEvent
      */
     const IMPORT_AUTOGIRO_EVENT = 'IMPORT_AUTOGIRO_EVENT';

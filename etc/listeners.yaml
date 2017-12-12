@@ -1,0 +1,81 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+
+    byrokrat\giroapp\Listener\LoggingListener:
+        class: ~
+        arguments: ['@db_log_collection']
+        tags:
+            - { name: event_listener, event: ERROR_EVENT, method: onLogEvent, priority: 10 }
+            - { name: event_listener, event: WARNING_EVENT, method: onLogEvent, priority: 10 }
+            - { name: event_listener, event: INFO_EVENT, method: onLogEvent, priority: 10 }
+
+    byrokrat\giroapp\Listener\OutputtingListener:
+        class: ~
+        arguments: ['@std_out', '@err_out']
+        tags:
+            - { name: event_listener, event: ERROR_EVENT, priority: -10 }
+            - { name: event_listener, event: WARNING_EVENT, priority: -10 }
+            - { name: event_listener, event: INFO_EVENT, priority: -10 }
+            - { name: event_listener, event: DEBUG_EVENT, priority: -10 }
+
+    byrokrat\giroapp\Listener\ExitStatusListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: ERROR_EVENT, method: onFailure }
+            - { name: event_listener, event: WARNING_EVENT, method: onFailure }
+
+    byrokrat\giroapp\Listener\FileImportChecksumListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: IMPORT_EVENT, priority: 10 }
+
+    byrokrat\giroapp\Listener\FileImportDumpingListener:
+        class: ~
+        arguments: ['@fs_imports']
+        tags:
+            - { name: event_listener, event: IMPORT_EVENT, priority: -10 }
+            - { name: event_listener, event: FORCE_IMPORT_EVENT, method: onImportEvent, priority: -10 }
+
+    byrokrat\giroapp\Listener\ImportingListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: IMPORT_EVENT }
+            - { name: event_listener, event: FORCE_IMPORT_EVENT, method: onImportEvent }
+
+    byrokrat\giroapp\Listener\ImportingAutogiroListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: IMPORT_AUTOGIRO_EVENT }
+
+    byrokrat\giroapp\Listener\ImportingXmlListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: IMPORT_XML_EVENT }
+
+    byrokrat\giroapp\Listener\InvalidNodeFilteringListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 10 }
+
+    byrokrat\giroapp\Listener\CommittingListener:
+        class: ~
+        arguments: ['@db']
+        tags:
+            - { name: event_listener, event: EXECUTION_END_EVENT }
+
+    byrokrat\giroapp\Listener\MandateResponseListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: MANDATE_RESPONSE_EVENT }
+
+    byrokrat\giroapp\Listener\MandatePersistingListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: MANDATE_ADDED_EVENT }
+            - { name: event_listener, event: MANDATE_DROPPED_EVENT }
+            - { name: event_listener, event: MANDATE_EDITED_EVENT, method: onMandateUpdatedEvent }
+            - { name: event_listener, event: MANDATE_APPROVED_EVENT, method: onMandateUpdatedEvent }
+            - { name: event_listener, event: MANDATE_REVOKED_EVENT, method: onMandateUpdatedEvent }
+            - { name: event_listener, event: MANDATE_INVALID_EVENT, method: onMandateUpdatedEvent }
