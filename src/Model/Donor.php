@@ -182,7 +182,7 @@ class Donor
         return $this->payerNumber;
     }
 
-    public function setPayerNumber(string $payerNumber)
+    public function setPayerNumber(string $payerNumber): void
     {
         $this->payerNumber = $payerNumber;
     }

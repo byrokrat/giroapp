@@ -46,7 +46,7 @@ trait InputReaderTrait
     /**
      * @required
      */
-    public function setInputReader(InputReader $inputReader)
+    public function setInputReader(InputReader $inputReader): void
     {
         $this->inputReader = $inputReader;
     }
@@ -54,7 +54,7 @@ trait InputReaderTrait
     /**
      * @required
      */
-    public function setQuestionFactory(QuestionFactory $questionFactory)
+    public function setQuestionFactory(QuestionFactory $questionFactory): void
     {
         $this->questionFactory = $questionFactory;
     }

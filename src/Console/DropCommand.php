@@ -47,7 +47,7 @@ class DropCommand implements CommandInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('drop');
         $wrapper->setDescription('Drop a donor mandate');
@@ -56,7 +56,7 @@ class DropCommand implements CommandInterface
         self::configureDonorArgument($wrapper);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $donor = $this->getDonor($input);
 

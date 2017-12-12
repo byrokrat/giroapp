@@ -46,7 +46,7 @@ class RevokeCommand implements CommandInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('revoke');
         $wrapper->setDescription('Revoke a donor mandate');
@@ -54,7 +54,7 @@ class RevokeCommand implements CommandInterface
         self::configureDonorArgument($wrapper);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $donor = $this->getDonor($input);
 

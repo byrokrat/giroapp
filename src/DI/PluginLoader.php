@@ -45,7 +45,7 @@ class PluginLoader
         $this->pluginDir = $pluginDir;
     }
 
-    public function loadPlugins(EventDispatcherInterface $dispatcher)
+    public function loadPlugins(EventDispatcherInterface $dispatcher): void
     {
         $classIterator = new ClassIterator((new Finder)->in($this->pluginDir));
 

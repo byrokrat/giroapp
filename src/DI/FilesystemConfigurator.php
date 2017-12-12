@@ -52,7 +52,7 @@ class FilesystemConfigurator
     /**
      * Create required files if they dont exist
      */
-    public function createFiles(Filesystem $filesystem)
+    public function createFiles(Filesystem $filesystem): void
     {
         foreach ($this->requiredFiles as $filename) {
             if (!$filesystem->has($filename)) {

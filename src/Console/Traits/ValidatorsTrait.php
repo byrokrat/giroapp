@@ -39,7 +39,7 @@ trait ValidatorsTrait
     /**
      * @required
      */
-    public function setValidators(Validators $validators)
+    public function setValidators(Validators $validators): void
     {
         $this->validators = $validators;
     }

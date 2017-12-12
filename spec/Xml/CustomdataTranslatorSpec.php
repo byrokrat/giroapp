@@ -27,8 +27,8 @@ class CustomdataTranslatorSpec extends ObjectBehavior
     function it_sets_attribute_if_key_is_not_migrated($migrationMap, DonorBuilder $donorBuilder)
     {
         $migrationMap->getXmlMigrationMap('formId')->willReturn([]);
+        $donorBuilder->setAttribute('key', 'value')->shouldBeCalled();
         $this->writeValue($donorBuilder, 'formId', 'key', 'value');
-        $donorBuilder->setAttribute('key', 'value')->shouldHaveBeenCalled();
     }
 
     function it_throws_exception_on_invalid_migration_map($migrationMap, DonorBuilder $donorBuilder)
@@ -41,12 +41,13 @@ class CustomdataTranslatorSpec extends ObjectBehavior
     {
         $migrationMap->getXmlMigrationMap('formId')->willReturn([
             'foo' => function (DonorBuilder $donorBuilder, string $value) {
-                $donorBuilder->setAttribute('bar', 'this-is-my-cool-callable-action');
+                $donorBuilder->setAttribute('bar', 'callable-action');
             }
         ]);
 
+        $donorBuilder->setAttribute('bar', 'callable-action')->shouldBeCalled();
+
         $this->writeValue($donorBuilder, 'formId', 'foo', 'ignored...');
-        $donorBuilder->setAttribute('bar', 'this-is-my-cool-callable-action')->shouldHaveBeenCalled();
     }
 
     function it_sets_phone_numbers($migrationMap, DonorBuilder $donorBuilder)

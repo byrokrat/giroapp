@@ -51,7 +51,7 @@ class ShowCommand implements CommandInterface
         'attributes'     => 'Show attributes'
     ];
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('show');
         $wrapper->setDescription('Display donor information');
@@ -63,7 +63,7 @@ class ShowCommand implements CommandInterface
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $donor = $this->getDonor($input);
 

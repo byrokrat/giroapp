@@ -27,14 +27,14 @@ use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\XmlEvent;
 use byrokrat\giroapp\Xml\XmlObject;
 use byrokrat\giroapp\Exception\InvalidXmlException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
  * Generic file import listener, dispatch events based on file type
  */
 class ImportingListener
 {
-    public function onImportEvent(FileEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onImportEvent(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
         try {
             $dispatcher->dispatch(

@@ -26,7 +26,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Mapper\SettingsMapper;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use byrokrat\banking\BankgiroFactory;
 
 /**
@@ -50,7 +50,7 @@ class InvalidNodeFilteringListener
         $this->settingsMapper = $settingsMapper;
     }
 
-    public function onMandateResponseEvent(NodeEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onMandateResponseEvent(NodeEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
         $appBg = $this->bankgiroFactory->createAccount($this->settingsMapper->findByKey('bankgiro'));
         $nodeBg = $event->getNode()->getChild('payee_bankgiro')->getAttribute('account');

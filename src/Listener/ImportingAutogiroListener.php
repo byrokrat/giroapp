@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Listener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\NodeEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use byrokrat\autogiro\Parser\Parser;
 use byrokrat\autogiro\Enumerator;
 use byrokrat\autogiro\Tree\Node;
@@ -45,7 +45,7 @@ class ImportingAutogiroListener
         $this->parser = $parser;
     }
 
-    public function onImportAutogiroEvent(FileEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onImportAutogiroEvent(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
         $enum = new Enumerator;
 

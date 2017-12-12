@@ -56,12 +56,12 @@ class CommandWrapper extends Command
     /**
      * Instruct wrapper to ignore messages written to standard out
      */
-    public function discardOutputMessages()
+    public function discardOutputMessages(): void
     {
         $this->discardOutputMessages = true;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->commandClass::configure($this);
     }

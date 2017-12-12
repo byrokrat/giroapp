@@ -44,12 +44,12 @@ class ApplicationMonitor implements EventSubscriberInterface
         ];
     }
 
-    public function dispatchInfo(LogEvent $event, $eventName, EventDispatcherInterface $dispatcher)
+    public function dispatchInfo(LogEvent $event, $eventName, EventDispatcherInterface $dispatcher): void
     {
         $dispatcher->dispatch(Events::INFO_EVENT, $event);
     }
 
-    public function dispatchWarning(LogEvent $event, $eventName, EventDispatcherInterface $dispatcher)
+    public function dispatchWarning(LogEvent $event, $eventName, EventDispatcherInterface $dispatcher): void
     {
         $dispatcher->dispatch(Events::WARNING_EVENT, $event);
     }

@@ -26,7 +26,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\XmlEvent;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Xml\XmlMandateParser;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
  * Parse an xml mandate file and fire event
@@ -43,7 +43,7 @@ class ImportingXmlListener
         $this->parser = $parser;
     }
 
-    public function onImportXmlEvent(XmlEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onImportXmlEvent(XmlEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
         foreach ($this->parser->parse($event->getXmlObject()) as $donor) {
             $dispatcher->dispatch(

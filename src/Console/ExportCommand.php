@@ -68,7 +68,7 @@ class ExportCommand implements CommandInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('export');
         $wrapper->setDescription('Export a file to autogirot');
@@ -76,7 +76,7 @@ class ExportCommand implements CommandInterface
         $wrapper->discardOutputMessages();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($donor->getState()->isExportable()) {

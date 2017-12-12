@@ -75,7 +75,7 @@ class AddCommand implements CommandInterface
         $this->donorBuilder = $donorBuilder;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('add');
         $wrapper->setDescription('Add a new donor');
@@ -86,7 +86,7 @@ class AddCommand implements CommandInterface
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $descs = self::$descriptions;
 

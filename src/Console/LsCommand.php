@@ -42,14 +42,14 @@ class LsCommand implements CommandInterface
         $this->donorMapper = $donorMapper;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('ls');
         $wrapper->setDescription('List donors');
         $wrapper->setHelp('List donors in database');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $table = new Table($output);
 

@@ -44,7 +44,7 @@ class StatusCommand implements CommandInterface
         $this->donorMapper = $donorMapper;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('status');
         $wrapper->setDescription('Show current status');
@@ -56,7 +56,7 @@ class StatusCommand implements CommandInterface
         $wrapper->addOption('monthly-amount', null, InputOption::VALUE_NONE, 'Show only monthly amount');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $counts = [
             'donor-count' => 0,

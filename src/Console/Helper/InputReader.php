@@ -54,6 +54,9 @@ class InputReader
         $this->questionHelper = $questionHelper;
     }
 
+    /**
+     * @return mixed Whatever is read and processed by the validator
+     */
     public function readInput(string $option, Question $question, callable $validator)
     {
         $value = $this->input->getOption($option);

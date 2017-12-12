@@ -58,7 +58,7 @@ class MandateKeyBuilder
     /**
      * Set internal hash engine (must create keys of the desired length!)
      */
-    public function setHashEngine(Hashids $hashEngine)
+    public function setHashEngine(Hashids $hashEngine): void
     {
         $this->hashEngine = $hashEngine;
     }

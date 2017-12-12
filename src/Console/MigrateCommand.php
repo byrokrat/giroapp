@@ -50,14 +50,14 @@ class MigrateCommand implements CommandInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('migrate');
         $wrapper->setDescription('Update database schema');
         $wrapper->setHelp('Ensure that the database schema is up to date by triggering a rewrite of all donors');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         foreach ($this->donorMapper->findAll() as $donor) {
             $this->dispatcher->dispatch(

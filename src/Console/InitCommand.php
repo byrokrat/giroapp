@@ -49,7 +49,7 @@ class InitCommand implements CommandInterface
         'bankgiro' => ['bankgiro', 'Bankgiro number']
     ];
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('init');
         $wrapper->setDescription('Initialize the database');
@@ -65,7 +65,7 @@ class InitCommand implements CommandInterface
         $this->settingsMapper = $settingsMapper;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $validators = [
             'org-number' => $this->validators->getIdValidator(),

@@ -53,7 +53,7 @@ class MandateResponseListener
         $this->statePool = $statePool;
     }
 
-    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $eventName, Dispatcher $dispatcher)
+    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $eventName, Dispatcher $dispatcher): void
     {
         $node = $nodeEvent->getNode();
 

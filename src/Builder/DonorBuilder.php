@@ -196,7 +196,7 @@ class DonorBuilder
         return $this;
     }
 
-    public function setAttribute(string $key, string $value)
+    public function setAttribute(string $key, string $value): self
     {
         $this->attributes[$key] = $value;
         return $this;

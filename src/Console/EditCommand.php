@@ -68,7 +68,7 @@ class EditCommand implements CommandInterface
         $this->dispatcher = $dispatcher;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         self::configureDonorArgument($wrapper);
         $wrapper->setName('edit');
@@ -80,7 +80,7 @@ class EditCommand implements CommandInterface
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $descs = self::$descriptions;
 
