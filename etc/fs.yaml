@@ -1,3 +1,11 @@
+parameters:
+    env(GIROAPP_PATH): 'giroapp'
+    fs.user_dir: '%env(GIROAPP_PATH)%'
+    fs.internal_data_dir: 'data'
+    fs.external_data_dir: 'var'
+    fs.plugins_dir: 'plugins'
+    fs.imports_dir: '%fs.external_data_dir%/imports'
+
 services:
     _defaults:
         public: false
@@ -13,7 +21,7 @@ services:
 
     fs_user_dir_adapter:
         class: League\Flysystem\Adapter\Local
-        arguments: ['%user.dir%']
+        arguments: ['%fs.user_dir%']
 
     byrokrat\giroapp\DI\FilesystemConfigurator:
         class: ~
@@ -23,8 +31,17 @@ services:
                 - '%db.donors%'
                 - '%db.transactions%'
                 - '%db.log%'
+                - '%db.imports%'
             -
-                - '%plugins.dir%'
+                - '%fs.plugins_dir%'
+
+    fs_imports:
+        class: League\Flysystem\Filesystem
+        arguments: ['@fs_imports_adapter']
+
+    fs_imports_adapter:
+        class: League\Flysystem\Adapter\Local
+        arguments: ['%fs.user_dir%/%fs.imports_dir%']
 
     fs_cwd_reader:
         class: byrokrat\giroapp\Utils\FileReader

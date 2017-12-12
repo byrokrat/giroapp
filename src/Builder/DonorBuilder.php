@@ -103,7 +103,7 @@ class DonorBuilder
     private $attributes = [];
 
     /**
-     * @var SEK
+     * @var ?SEK
      */
     private $donationAmount;
 
@@ -129,7 +129,7 @@ class DonorBuilder
         $this->phone = '';
         $this->comment = '';
         $this->attributes = [];
-        unset($this->donationAmount);
+        $this->donationAmount = null;
         return $this;
     }
 

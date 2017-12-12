@@ -1,8 +1,9 @@
 parameters:
-    db.settings: 'data/settings.json'
-    db.donors: 'data/donors.json'
-    db.transactions: 'data/transactions.json'
-    db.log: 'var/log'
+    db.settings: '%fs.internal_data_dir%/settings.json'
+    db.donors: '%fs.internal_data_dir%/donors.json'
+    db.transactions: '%fs.internal_data_dir%/transactions.json'
+    db.log: '%fs.external_data_dir%/log'
+    db.imports: '%fs.internal_data_dir%/imports.json'
 
 services:
     _defaults:
@@ -16,6 +17,7 @@ services:
                 settings: '@db_settings_engine'
                 donors: '@db_donor_engine'
                 transactions: '@db_transaction_engine'
+                imports: '@db_import_engine'
                 log: '@db_log_engine'
 
     byrokrat\giroapp\Mapper\:
@@ -67,4 +69,16 @@ services:
 
     db_log_engine:
         class: hanneskod\yaysondb\Engine\LogEngine
-        arguments: ['%user.dir%/%db.log%']
+        arguments: ['%fs.user_dir%/%db.log%']
+
+    byrokrat\giroapp\Mapper\FileChecksumMapper:
+        class: ~
+        arguments: ['@db_import_collection']
+
+    db_import_collection:
+        class: hanneskod\yaysondb\Collection
+        arguments: ['@db_import_engine']
+
+    db_import_engine:
+        class: hanneskod\yaysondb\Engine\FlysystemEngine
+        arguments: ['%db.imports%', '@fs_user_dir']

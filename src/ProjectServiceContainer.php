@@ -48,6 +48,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\console\\validatecommand' => 'byrokrat\\giroapp\\Console\\ValidateCommand',
             'byrokrat\\giroapp\\listener\\committinglistener' => 'byrokrat\\giroapp\\Listener\\CommittingListener',
             'byrokrat\\giroapp\\listener\\exitstatuslistener' => 'byrokrat\\giroapp\\Listener\\ExitStatusListener',
+            'byrokrat\\giroapp\\listener\\fileimportchecksumlistener' => 'byrokrat\\giroapp\\Listener\\FileImportChecksumListener',
+            'byrokrat\\giroapp\\listener\\fileimportdumpinglistener' => 'byrokrat\\giroapp\\Listener\\FileImportDumpingListener',
             'byrokrat\\giroapp\\listener\\importingautogirolistener' => 'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener',
             'byrokrat\\giroapp\\listener\\importinglistener' => 'byrokrat\\giroapp\\Listener\\ImportingListener',
             'byrokrat\\giroapp\\listener\\importingxmllistener' => 'byrokrat\\giroapp\\Listener\\ImportingXmlListener',
@@ -95,6 +97,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\ValidateCommand' => 'getValidateCommandService',
             'byrokrat\\giroapp\\Listener\\CommittingListener' => 'getCommittingListenerService',
             'byrokrat\\giroapp\\Listener\\ExitStatusListener' => 'getExitStatusListenerService',
+            'byrokrat\\giroapp\\Listener\\FileImportChecksumListener' => 'getFileImportChecksumListenerService',
+            'byrokrat\\giroapp\\Listener\\FileImportDumpingListener' => 'getFileImportDumpingListenerService',
             'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener' => 'getImportingAutogiroListenerService',
             'byrokrat\\giroapp\\Listener\\ImportingListener' => 'getImportingListenerService',
             'byrokrat\\giroapp\\Listener\\ImportingXmlListener' => 'getImportingXmlListenerService',
@@ -109,6 +113,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Utils\\SystemClock' => 'getSystemClockService',
             'byrokrat\\id\\IdFactory' => 'getIdFactoryService',
             'db_donor_engine' => 'getDbDonorEngineService',
+            'db_import_engine' => 'getDbImportEngineService',
             'db_log_engine' => 'getDbLogEngineService',
             'db_settings_engine' => 'getDbSettingsEngineService',
             'db_settings_mapper' => 'getDbSettingsMapperService',
@@ -123,6 +128,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Builder\\DonorBuilder' => true,
             'byrokrat\\giroapp\\Listener\\CommittingListener' => true,
             'byrokrat\\giroapp\\Listener\\ExitStatusListener' => true,
+            'byrokrat\\giroapp\\Listener\\FileImportChecksumListener' => true,
+            'byrokrat\\giroapp\\Listener\\FileImportDumpingListener' => true,
             'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener' => true,
             'byrokrat\\giroapp\\Listener\\ImportingListener' => true,
             'byrokrat\\giroapp\\Listener\\ImportingXmlListener' => true,
@@ -137,6 +144,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
             'byrokrat\\id\\IdFactory' => true,
             'db_donor_engine' => true,
+            'db_import_engine' => true,
             'db_log_engine' => true,
             'db_settings_engine' => true,
             'fs_user_dir' => true,
@@ -168,6 +176,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\DI\\PluginLoader' => true,
             'byrokrat\\giroapp\\Listener\\CommittingListener' => true,
             'byrokrat\\giroapp\\Listener\\ExitStatusListener' => true,
+            'byrokrat\\giroapp\\Listener\\FileImportChecksumListener' => true,
+            'byrokrat\\giroapp\\Listener\\FileImportDumpingListener' => true,
             'byrokrat\\giroapp\\Listener\\ImportingAutogiroListener' => true,
             'byrokrat\\giroapp\\Listener\\ImportingListener' => true,
             'byrokrat\\giroapp\\Listener\\ImportingXmlListener' => true,
@@ -177,7 +187,9 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\MandateResponseListener' => true,
             'byrokrat\\giroapp\\Listener\\OutputtingListener' => true,
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => true,
+            'byrokrat\\giroapp\\Mapper\\FileChecksumMapper' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => true,
+            'byrokrat\\giroapp\\Mapper\\Schema\\FileChecksumSchema' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\PostalAddressSchema' => true,
             'byrokrat\\giroapp\\Mapper\\SettingsMapper' => true,
             'byrokrat\\giroapp\\Mapper\\TransactionMapper' => true,
@@ -202,6 +214,8 @@ class ProjectServiceContainer extends Container
             'db' => true,
             'db_donor_collection' => true,
             'db_donor_engine' => true,
+            'db_import_collection' => true,
+            'db_import_engine' => true,
             'db_log_collection' => true,
             'db_log_engine' => true,
             'db_settings_collection' => true,
@@ -211,6 +225,8 @@ class ProjectServiceContainer extends Container
             'fs_cwd' => true,
             'fs_cwd_adapter' => true,
             'fs_cwd_reader' => true,
+            'fs_imports' => true,
+            'fs_imports_adapter' => true,
             'fs_user_dir' => true,
             'fs_user_dir_adapter' => true,
             'fs_user_dir_reader' => true,
@@ -467,6 +483,12 @@ class ProjectServiceContainer extends Container
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ExitStatusListener']) ? $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] : $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] = new \byrokrat\giroapp\Listener\ExitStatusListener()) && false ?: '_'};
         }, 1 => 'onFailure'));
         $instance->addListener('IMPORT_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\FileImportChecksumListener']) ? $this->services['byrokrat\giroapp\Listener\FileImportChecksumListener'] : $this->getFileImportChecksumListenerService()) && false ?: '_'};
+        }, 1 => 'onIMPORTEVENT'), 10);
+        $instance->addListener('IMPORT_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\FileImportDumpingListener']) ? $this->services['byrokrat\giroapp\Listener\FileImportDumpingListener'] : $this->getFileImportDumpingListenerService()) && false ?: '_'};
+        }, 1 => 'onIMPORTEVENT'), -10);
+        $instance->addListener('IMPORT_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ImportingListener']) ? $this->services['byrokrat\giroapp\Listener\ImportingListener'] : $this->services['byrokrat\giroapp\Listener\ImportingListener'] = new \byrokrat\giroapp\Listener\ImportingListener()) && false ?: '_'};
         }, 1 => 'onIMPORTEVENT'));
         $instance->addListener('IMPORT_AUTOGIRO_EVENT', array(0 => function () {
@@ -575,7 +597,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getCommittingListenerService()
     {
-        return $this->services['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(array('settings' => ${($_ = isset($this->services['db_settings_engine']) ? $this->services['db_settings_engine'] : $this->getDbSettingsEngineService()) && false ?: '_'}, 'donors' => ${($_ = isset($this->services['db_donor_engine']) ? $this->services['db_donor_engine'] : $this->getDbDonorEngineService()) && false ?: '_'}, 'transactions' => new \hanneskod\yaysondb\Engine\FlysystemEngine('data/transactions.json', ${($_ = isset($this->services['fs_user_dir']) ? $this->services['fs_user_dir'] : $this->getFsUserDirService()) && false ?: '_'}), 'log' => ${($_ = isset($this->services['db_log_engine']) ? $this->services['db_log_engine'] : $this->services['db_log_engine'] = new \hanneskod\yaysondb\Engine\LogEngine($this->getEnv('string:GIROAPP_PATH').'/var/log')) && false ?: '_'})));
+        return $this->services['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(array('settings' => ${($_ = isset($this->services['db_settings_engine']) ? $this->services['db_settings_engine'] : $this->getDbSettingsEngineService()) && false ?: '_'}, 'donors' => ${($_ = isset($this->services['db_donor_engine']) ? $this->services['db_donor_engine'] : $this->getDbDonorEngineService()) && false ?: '_'}, 'transactions' => new \hanneskod\yaysondb\Engine\FlysystemEngine('data/transactions.json', ${($_ = isset($this->services['fs_user_dir']) ? $this->services['fs_user_dir'] : $this->getFsUserDirService()) && false ?: '_'}), 'imports' => ${($_ = isset($this->services['db_import_engine']) ? $this->services['db_import_engine'] : $this->getDbImportEngineService()) && false ?: '_'}, 'log' => ${($_ = isset($this->services['db_log_engine']) ? $this->services['db_log_engine'] : $this->services['db_log_engine'] = new \hanneskod\yaysondb\Engine\LogEngine($this->getEnv('string:GIROAPP_PATH').'/var/log')) && false ?: '_'})));
     }
 
     /**
@@ -586,6 +608,26 @@ class ProjectServiceContainer extends Container
     protected function getExitStatusListenerService()
     {
         return $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] = new \byrokrat\giroapp\Listener\ExitStatusListener();
+    }
+
+    /**
+     * Gets the private 'byrokrat\giroapp\Listener\FileImportChecksumListener' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Listener\FileImportChecksumListener
+     */
+    protected function getFileImportChecksumListenerService()
+    {
+        return $this->services['byrokrat\giroapp\Listener\FileImportChecksumListener'] = new \byrokrat\giroapp\Listener\FileImportChecksumListener(new \byrokrat\giroapp\Mapper\FileChecksumMapper(new \hanneskod\yaysondb\Collection(${($_ = isset($this->services['db_import_engine']) ? $this->services['db_import_engine'] : $this->getDbImportEngineService()) && false ?: '_'}), new \byrokrat\giroapp\Mapper\Schema\FileChecksumSchema()), ${($_ = isset($this->services['byrokrat\giroapp\Utils\SystemClock']) ? $this->services['byrokrat\giroapp\Utils\SystemClock'] : $this->services['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()) && false ?: '_'});
+    }
+
+    /**
+     * Gets the private 'byrokrat\giroapp\Listener\FileImportDumpingListener' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Listener\FileImportDumpingListener
+     */
+    protected function getFileImportDumpingListenerService()
+    {
+        return $this->services['byrokrat\giroapp\Listener\FileImportDumpingListener'] = new \byrokrat\giroapp\Listener\FileImportDumpingListener(new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getEnv('string:GIROAPP_PATH').'/var/imports')), ${($_ = isset($this->services['byrokrat\giroapp\Utils\SystemClock']) ? $this->services['byrokrat\giroapp\Utils\SystemClock'] : $this->services['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()) && false ?: '_'});
     }
 
     /**
@@ -731,6 +773,16 @@ class ProjectServiceContainer extends Container
     }
 
     /**
+     * Gets the private 'db_import_engine' shared autowired service.
+     *
+     * @return \hanneskod\yaysondb\Engine\FlysystemEngine
+     */
+    protected function getDbImportEngineService()
+    {
+        return $this->services['db_import_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/imports.json', ${($_ = isset($this->services['fs_user_dir']) ? $this->services['fs_user_dir'] : $this->getFsUserDirService()) && false ?: '_'});
+    }
+
+    /**
      * Gets the private 'db_log_engine' shared autowired service.
      *
      * @return \hanneskod\yaysondb\Engine\LogEngine
@@ -759,7 +811,7 @@ class ProjectServiceContainer extends Container
     {
         $this->services['fs_user_dir'] = $instance = new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getEnv('GIROAPP_PATH')));
 
-        (new \byrokrat\giroapp\DI\FilesystemConfigurator(array(0 => 'data/settings.json', 1 => 'data/donors.json', 2 => 'data/transactions.json', 3 => 'var/log'), array(0 => 'plugins')))->createFiles($instance);
+        (new \byrokrat\giroapp\DI\FilesystemConfigurator(array(0 => 'data/settings.json', 1 => 'data/donors.json', 2 => 'data/transactions.json', 3 => 'var/log', 4 => 'data/imports.json'), array(0 => 'plugins')))->createFiles($instance);
 
         return $instance;
     }
@@ -816,7 +868,7 @@ class ProjectServiceContainer extends Container
     }
 
     private $loadedDynamicParameters = array(
-        'user.dir' => false,
+        'fs.user_dir' => false,
     );
     private $dynamicParameters = array();
 
@@ -832,7 +884,7 @@ class ProjectServiceContainer extends Container
     private function getDynamicParameter($name)
     {
         switch ($name) {
-            case 'user.dir': $value = $this->getEnv('GIROAPP_PATH'); break;
+            case 'fs.user_dir': $value = $this->getEnv('GIROAPP_PATH'); break;
             default: throw new InvalidArgumentException(sprintf('The dynamic parameter "%s" must be defined.', $name));
         }
         $this->loadedDynamicParameters[$name] = true;
@@ -866,12 +918,16 @@ class ProjectServiceContainer extends Container
     protected function getDefaultParameters()
     {
         return array(
+            'env(GIROAPP_PATH)' => 'giroapp',
+            'fs.internal_data_dir' => 'data',
+            'fs.external_data_dir' => 'var',
+            'fs.plugins_dir' => 'plugins',
+            'fs.imports_dir' => 'var/imports',
             'db.settings' => 'data/settings.json',
             'db.donors' => 'data/donors.json',
             'db.transactions' => 'data/transactions.json',
             'db.log' => 'var/log',
-            'env(GIROAPP_PATH)' => 'giroapp',
-            'plugins.dir' => 'plugins',
+            'db.imports' => 'data/imports.json',
         );
     }
 }

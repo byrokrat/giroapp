@@ -49,7 +49,7 @@ class FileImportDumpingListener
         $file = $event->getFile();
 
         $this->filesystem->write(
-            "{$this->systemClock->getNow()->format('Ymd')}_{$file->getFilename()}",
+            "{$this->systemClock->getNow()->format('Ymd\TH:i:s')}_{$file->getFilename()}",
             $file->getContent()
         );
     }

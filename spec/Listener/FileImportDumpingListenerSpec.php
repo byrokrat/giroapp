@@ -32,9 +32,9 @@ class FileImportDumpingListenerSpec extends ObjectBehavior
         $file->getContent()->willReturn('foobar');
 
         $systemClock->getNow()->willReturn($date);
-        $date->format('Ymd')->willReturn('20171212');
+        $date->format('Ymd\TH:i:s')->willReturn('20171212T14:47:30');
 
-        $filesystem->write('20171212_fname', 'foobar')->shouldBeCalled();
+        $filesystem->write('20171212T14:47:30_fname', 'foobar')->shouldBeCalled();
 
         $this->onImportEvent($event);
     }
