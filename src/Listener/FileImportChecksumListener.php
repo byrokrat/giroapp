@@ -51,7 +51,7 @@ class FileImportChecksumListener
         $this->systemClock = $systemClock;
     }
 
-    public function onImportEvent(FileEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onImportEvent(FileEvent $event, string $eventName, EventDispatcherInterface $dispatcher): void
     {
         $file = $event->getFile();
 
