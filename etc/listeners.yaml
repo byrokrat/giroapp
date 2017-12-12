@@ -36,11 +36,13 @@ services:
         arguments: ['@fs_imports']
         tags:
             - { name: event_listener, event: IMPORT_EVENT, priority: -10 }
+            - { name: event_listener, event: FORCE_IMPORT_EVENT, method: onImportEvent, priority: -10 }
 
     byrokrat\giroapp\Listener\ImportingListener:
         class: ~
         tags:
             - { name: event_listener, event: IMPORT_EVENT }
+            - { name: event_listener, event: FORCE_IMPORT_EVENT, method: onImportEvent }
 
     byrokrat\giroapp\Listener\ImportingAutogiroListener:
         class: ~

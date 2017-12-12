@@ -488,9 +488,15 @@ class ProjectServiceContainer extends Container
         $instance->addListener('IMPORT_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\FileImportDumpingListener']) ? $this->services['byrokrat\giroapp\Listener\FileImportDumpingListener'] : $this->getFileImportDumpingListenerService()) && false ?: '_'};
         }, 1 => 'onIMPORTEVENT'), -10);
+        $instance->addListener('FORCE_IMPORT_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\FileImportDumpingListener']) ? $this->services['byrokrat\giroapp\Listener\FileImportDumpingListener'] : $this->getFileImportDumpingListenerService()) && false ?: '_'};
+        }, 1 => 'onImportEvent'), -10);
         $instance->addListener('IMPORT_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ImportingListener']) ? $this->services['byrokrat\giroapp\Listener\ImportingListener'] : $this->services['byrokrat\giroapp\Listener\ImportingListener'] = new \byrokrat\giroapp\Listener\ImportingListener()) && false ?: '_'};
         }, 1 => 'onIMPORTEVENT'));
+        $instance->addListener('FORCE_IMPORT_EVENT', array(0 => function () {
+            return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ImportingListener']) ? $this->services['byrokrat\giroapp\Listener\ImportingListener'] : $this->services['byrokrat\giroapp\Listener\ImportingListener'] = new \byrokrat\giroapp\Listener\ImportingListener()) && false ?: '_'};
+        }, 1 => 'onImportEvent'));
         $instance->addListener('IMPORT_AUTOGIRO_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\ImportingAutogiroListener']) ? $this->services['byrokrat\giroapp\Listener\ImportingAutogiroListener'] : $this->getImportingAutogiroListenerService()) && false ?: '_'};
         }, 1 => 'onIMPORTAUTOGIROEVENT'));

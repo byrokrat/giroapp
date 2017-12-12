@@ -66,7 +66,7 @@ class FileImportChecksumListener
             $dispatcher->dispatch(
                 Events::ERROR_EVENT,
                 new LogEvent(sprintf(
-                    'Unable to import %s, file has been previously imported at %s',
+                    'Unable to import %s, file has been previously imported at %s (use --force to override)',
                     $file->getFilename(),
                     $oldImport->getDatetime()->format('Y-m-d')
                 ))
