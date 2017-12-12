@@ -52,4 +52,9 @@ class File
     {
         return $this->content;
     }
+
+    public function getChecksum(): string
+    {
+        return hash('sha256', $this->content);
+    }
 }
