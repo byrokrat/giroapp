@@ -1,0 +1,10 @@
+parameters:
+	excludes_analyse:
+		- src/ProjectServiceContainer.php
+	ignoreErrors:
+		- '/Call to an undefined method byrokrat\\autogiro\\Enumerator::on[a-zA-Z0-9\\_]+\(\)/'
+		- '/Call to an undefined method object::getExitStatus\(\)/'
+		- '/Call to an undefined method object::execute\(\)/'
+		- '/Result of method byrokrat\\id\\IdFactory::create\(\) \(void\) is used/'
+		- '/Call to an undefined method hanneskod\\classtools\\Iterator\\Filter::where\(\)/'
+		- '/expects byrokrat\\id\\Id, void given/'

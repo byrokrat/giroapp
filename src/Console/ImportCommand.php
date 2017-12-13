@@ -30,7 +30,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Streamer\Stream;
 
 /**
@@ -38,10 +37,7 @@ use Streamer\Stream;
  */
 class ImportCommand implements CommandInterface
 {
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
+    use Traits\DispatcherTrait;
 
     /**
      * @var FileReader
@@ -53,9 +49,8 @@ class ImportCommand implements CommandInterface
      */
     private $stdin;
 
-    public function __construct(EventDispatcher $dispatcher, FileReader $fileReader, Stream $stdin)
+    public function __construct(FileReader $fileReader, Stream $stdin)
     {
-        $this->dispatcher = $dispatcher;
         $this->fileReader = $fileReader;
         $this->stdin = $stdin;
     }

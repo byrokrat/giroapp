@@ -65,7 +65,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\id\\idfactory' => 'byrokrat\\id\\IdFactory',
             'symfony\\component\\console\\helper\\questionhelper' => 'Symfony\\Component\\Console\\Helper\\QuestionHelper',
             'symfony\\component\\console\\input\\inputinterface' => 'Symfony\\Component\\Console\\Input\\InputInterface',
-            'symfony\\component\\eventdispatcher\\eventdispatcher' => 'Symfony\\Component\\EventDispatcher\\EventDispatcher',
+            'symfony\\component\\eventdispatcher\\eventdispatcherinterface' => 'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface',
         );
         $this->syntheticIds = array(
             'Symfony\\Component\\Console\\Helper\\QuestionHelper' => true,
@@ -75,7 +75,7 @@ class ProjectServiceContainer extends Container
             'std_out' => true,
         );
         $this->methodMap = array(
-            'Symfony\\Component\\EventDispatcher\\EventDispatcher' => 'getEventDispatcherService',
+            'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => 'getEventDispatcherInterfaceService',
             'byrokrat\\banking\\AccountFactory' => 'getAccountFactoryService',
             'byrokrat\\banking\\BankgiroFactory' => 'getBankgiroFactoryService',
             'byrokrat\\giroapp\\ApplicationMonitor' => 'getApplicationMonitorService',
@@ -121,7 +121,7 @@ class ProjectServiceContainer extends Container
             'organization_bg' => 'getOrganizationBgService',
         );
         $this->privates = array(
-            'Symfony\\Component\\EventDispatcher\\EventDispatcher' => true,
+            'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => true,
             'byrokrat\\banking\\AccountFactory' => true,
             'byrokrat\\banking\\BankgiroFactory' => true,
             'byrokrat\\giroapp\\ApplicationMonitor' => true,
@@ -161,7 +161,7 @@ class ProjectServiceContainer extends Container
             'Psr\\Container\\ContainerInterface' => true,
             'Symfony\\Component\\Console\\Output\\OutputInterface' => true,
             'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
-            'Symfony\\Component\\EventDispatcher\\EventDispatcher' => true,
+            'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => true,
             'byrokrat\\autogiro\\Parser\\Parser' => true,
             'byrokrat\\autogiro\\Parser\\ParserFactory' => true,
             'byrokrat\\autogiro\\Writer\\Writer' => true,
@@ -259,11 +259,12 @@ class ProjectServiceContainer extends Container
      */
     protected function getAddCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\AddCommand'] = $instance = new \byrokrat\giroapp\Console\AddCommand(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getEventDispatcherService()) && false ?: '_'}, ${($_ = isset($this->services['byrokrat\giroapp\Builder\DonorBuilder']) ? $this->services['byrokrat\giroapp\Builder\DonorBuilder'] : $this->getDonorBuilderService()) && false ?: '_'});
+        $this->services['byrokrat\giroapp\Console\AddCommand'] = $instance = new \byrokrat\giroapp\Console\AddCommand(${($_ = isset($this->services['byrokrat\giroapp\Builder\DonorBuilder']) ? $this->services['byrokrat\giroapp\Builder\DonorBuilder'] : $this->getDonorBuilderService()) && false ?: '_'});
 
         $instance->setInputReader(${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\InputReader']) ? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] : $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(${($_ = isset($this->services['Symfony\Component\Console\Input\InputInterface']) ? $this->services['Symfony\Component\Console\Input\InputInterface'] : $this->get('Symfony\Component\Console\Input\InputInterface')) && false ?: '_'}, ${($_ = isset($this->services['std_out']) ? $this->services['std_out'] : $this->get('std_out')) && false ?: '_'}, ${($_ = isset($this->services['Symfony\Component\Console\Helper\QuestionHelper']) ? $this->services['Symfony\Component\Console\Helper\QuestionHelper'] : $this->get('Symfony\Component\Console\Helper\QuestionHelper')) && false ?: '_'})) && false ?: '_'});
         $instance->setQuestionFactory(${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\QuestionFactory']) ? $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] : $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory()) && false ?: '_'});
         $instance->setValidators(${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\Validators']) ? $this->services['byrokrat\giroapp\Console\Helper\Validators'] : $this->getValidatorsService()) && false ?: '_'});
+        $instance->setEventDispatcher(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] : $this->getEventDispatcherInterfaceService()) && false ?: '_'});
 
         return $instance;
     }
@@ -275,10 +276,11 @@ class ProjectServiceContainer extends Container
      */
     protected function getDropCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\DropCommand'] = $instance = new \byrokrat\giroapp\Console\DropCommand(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getEventDispatcherService()) && false ?: '_'});
+        $this->services['byrokrat\giroapp\Console\DropCommand'] = $instance = new \byrokrat\giroapp\Console\DropCommand();
 
         $instance->setDonorMapper(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getDonorMapperService()) && false ?: '_'});
         $instance->setValidators(${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\Validators']) ? $this->services['byrokrat\giroapp\Console\Helper\Validators'] : $this->getValidatorsService()) && false ?: '_'});
+        $instance->setEventDispatcher(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] : $this->getEventDispatcherInterfaceService()) && false ?: '_'});
 
         return $instance;
     }
@@ -290,10 +292,11 @@ class ProjectServiceContainer extends Container
      */
     protected function getEditCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\EditCommand'] = $instance = new \byrokrat\giroapp\Console\EditCommand(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getEventDispatcherService()) && false ?: '_'});
+        $this->services['byrokrat\giroapp\Console\EditCommand'] = $instance = new \byrokrat\giroapp\Console\EditCommand();
 
         $instance->setDonorMapper(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getDonorMapperService()) && false ?: '_'});
         $instance->setValidators(${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\Validators']) ? $this->services['byrokrat\giroapp\Console\Helper\Validators'] : $this->getValidatorsService()) && false ?: '_'});
+        $instance->setEventDispatcher(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] : $this->getEventDispatcherInterfaceService()) && false ?: '_'});
         $instance->setInputReader(${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\InputReader']) ? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] : $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(${($_ = isset($this->services['Symfony\Component\Console\Input\InputInterface']) ? $this->services['Symfony\Component\Console\Input\InputInterface'] : $this->get('Symfony\Component\Console\Input\InputInterface')) && false ?: '_'}, ${($_ = isset($this->services['std_out']) ? $this->services['std_out'] : $this->get('std_out')) && false ?: '_'}, ${($_ = isset($this->services['Symfony\Component\Console\Helper\QuestionHelper']) ? $this->services['Symfony\Component\Console\Helper\QuestionHelper'] : $this->get('Symfony\Component\Console\Helper\QuestionHelper')) && false ?: '_'})) && false ?: '_'});
         $instance->setQuestionFactory(${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\QuestionFactory']) ? $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] : $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory()) && false ?: '_'});
 
@@ -307,7 +310,11 @@ class ProjectServiceContainer extends Container
      */
     protected function getExportCommandService()
     {
-        return $this->services['byrokrat\giroapp\Console\ExportCommand'] = new \byrokrat\giroapp\Console\ExportCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getDonorMapperService()) && false ?: '_'}, call_user_func(array(new \byrokrat\autogiro\Writer\WriterFactory(), 'createWriter'), ${($_ = isset($this->services['db_settings_mapper']) ? $this->services['db_settings_mapper'] : $this->getDbSettingsMapperService()) && false ?: '_'}->findByKey("bgc_customer_number"), ${($_ = isset($this->services['organization_bg']) ? $this->services['organization_bg'] : $this->getOrganizationBgService()) && false ?: '_'}), ${($_ = isset($this->services['byrokrat\giroapp\State\StatePool']) ? $this->services['byrokrat\giroapp\State\StatePool'] : $this->getStatePoolService()) && false ?: '_'}, ${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getEventDispatcherService()) && false ?: '_'});
+        $this->services['byrokrat\giroapp\Console\ExportCommand'] = $instance = new \byrokrat\giroapp\Console\ExportCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getDonorMapperService()) && false ?: '_'}, call_user_func(array(new \byrokrat\autogiro\Writer\WriterFactory(), 'createWriter'), ${($_ = isset($this->services['db_settings_mapper']) ? $this->services['db_settings_mapper'] : $this->getDbSettingsMapperService()) && false ?: '_'}->findByKey("bgc_customer_number"), ${($_ = isset($this->services['organization_bg']) ? $this->services['organization_bg'] : $this->getOrganizationBgService()) && false ?: '_'}), ${($_ = isset($this->services['byrokrat\giroapp\State\StatePool']) ? $this->services['byrokrat\giroapp\State\StatePool'] : $this->getStatePoolService()) && false ?: '_'});
+
+        $instance->setEventDispatcher(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] : $this->getEventDispatcherInterfaceService()) && false ?: '_'});
+
+        return $instance;
     }
 
     /**
@@ -347,7 +354,11 @@ class ProjectServiceContainer extends Container
      */
     protected function getImportCommandService()
     {
-        return $this->services['byrokrat\giroapp\Console\ImportCommand'] = new \byrokrat\giroapp\Console\ImportCommand(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getEventDispatcherService()) && false ?: '_'}, new \byrokrat\giroapp\Utils\FileReader(new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local('.'))), ${($_ = isset($this->services['std_in']) ? $this->services['std_in'] : $this->get('std_in')) && false ?: '_'});
+        $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(new \byrokrat\giroapp\Utils\FileReader(new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local('.'))), ${($_ = isset($this->services['std_in']) ? $this->services['std_in'] : $this->get('std_in')) && false ?: '_'});
+
+        $instance->setEventDispatcher(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] : $this->getEventDispatcherInterfaceService()) && false ?: '_'});
+
+        return $instance;
     }
 
     /**
@@ -383,7 +394,11 @@ class ProjectServiceContainer extends Container
      */
     protected function getMigrateCommandService()
     {
-        return $this->services['byrokrat\giroapp\Console\MigrateCommand'] = new \byrokrat\giroapp\Console\MigrateCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getDonorMapperService()) && false ?: '_'}, ${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getEventDispatcherService()) && false ?: '_'});
+        $this->services['byrokrat\giroapp\Console\MigrateCommand'] = $instance = new \byrokrat\giroapp\Console\MigrateCommand(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getDonorMapperService()) && false ?: '_'});
+
+        $instance->setEventDispatcher(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] : $this->getEventDispatcherInterfaceService()) && false ?: '_'});
+
+        return $instance;
     }
 
     /**
@@ -393,10 +408,11 @@ class ProjectServiceContainer extends Container
      */
     protected function getRevokeCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\RevokeCommand'] = $instance = new \byrokrat\giroapp\Console\RevokeCommand(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcher']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] : $this->getEventDispatcherService()) && false ?: '_'});
+        $this->services['byrokrat\giroapp\Console\RevokeCommand'] = $instance = new \byrokrat\giroapp\Console\RevokeCommand();
 
         $instance->setDonorMapper(${($_ = isset($this->services['byrokrat\giroapp\Mapper\DonorMapper']) ? $this->services['byrokrat\giroapp\Mapper\DonorMapper'] : $this->getDonorMapperService()) && false ?: '_'});
         $instance->setValidators(${($_ = isset($this->services['byrokrat\giroapp\Console\Helper\Validators']) ? $this->services['byrokrat\giroapp\Console\Helper\Validators'] : $this->getValidatorsService()) && false ?: '_'});
+        $instance->setEventDispatcher(${($_ = isset($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface']) ? $this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] : $this->getEventDispatcherInterfaceService()) && false ?: '_'});
 
         return $instance;
     }
@@ -447,13 +463,13 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'Symfony\Component\EventDispatcher\EventDispatcher' shared autowired service.
+     * Gets the private 'Symfony\Component\EventDispatcher\EventDispatcherInterface' shared autowired service.
      *
      * @return \Symfony\Component\EventDispatcher\EventDispatcher
      */
-    protected function getEventDispatcherService()
+    protected function getEventDispatcherInterfaceService()
     {
-        $this->services['Symfony\Component\EventDispatcher\EventDispatcher'] = $instance = new \Symfony\Component\EventDispatcher\EventDispatcher();
+        $this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] = $instance = new \Symfony\Component\EventDispatcher\EventDispatcher();
 
         $instance->addListener('ERROR_EVENT', array(0 => function () {
             return ${($_ = isset($this->services['byrokrat\giroapp\Listener\LoggingListener']) ? $this->services['byrokrat\giroapp\Listener\LoggingListener'] : $this->getLoggingListenerService()) && false ?: '_'};

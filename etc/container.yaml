@@ -49,7 +49,6 @@ services:
         class: ~
         public: true
         arguments:
-            - '@Symfony\Component\EventDispatcher\EventDispatcher'
             - '@fs_cwd_reader'
             - '@std_in'
 
@@ -66,8 +65,8 @@ services:
     byrokrat\giroapp\Utils\:
         resource: '../src/Utils/*'
 
-    Symfony\Component\EventDispatcher\EventDispatcher:
-        class: ~
+    Symfony\Component\EventDispatcher\EventDispatcherInterface:
+        class: 'Symfony\Component\EventDispatcher\EventDispatcher'
         configurator: 'byrokrat\giroapp\DI\PluginLoader:loadPlugins'
 
     byrokrat\giroapp\DI\PluginLoader:

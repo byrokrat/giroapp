@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 task('default', ['test', 'sniff']);
 
@@ -34,6 +34,12 @@ task('sniff', function() {
     println('Syntax checker on spec/ passed');
 });
 
+desc('Run statical analysis using phpstan feature tests');
+task('phpstan', function() {
+    sh('phpstan analyze -c phpstan.neon -l 7 src', null, ['failOnError' => true]);
+    println('Phpstan analysis passed');
+});
+
 desc('Build dependency injection container');
 task('container', ['load_dependencies'], __NAMESPACE__.'\build_container');
 
@@ -47,7 +53,7 @@ function build_container()
 {
     $dic = new ContainerBuilder;
     (new YamlFileLoader($dic, new FileLocator(__DIR__ . '/etc')))->load(basename('container.yaml'));
-    $dic->addCompilerPass(new RegisterListenersPass(EventDispatcher::CLASS, 'event_listener', 'event_subscriber'));
+    $dic->addCompilerPass(new RegisterListenersPass(Dispatcher::CLASS, 'event_listener', 'event_subscriber'));
     $dic->compile();
     file_put_contents('src/ProjectServiceContainer.php', (new PhpDumper($dic))->dump([
         'namespace' => 'byrokrat\giroapp',

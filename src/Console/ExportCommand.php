@@ -27,7 +27,6 @@ use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\autogiro\Writer\Writer;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -36,6 +35,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ExportCommand implements CommandInterface
 {
+    use Traits\DispatcherTrait;
+
     /**
      * @var DonorMapper
      */
@@ -51,21 +52,11 @@ class ExportCommand implements CommandInterface
      */
     private $statePool;
 
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    public function __construct(
-        DonorMapper $donorMapper,
-        Writer $autogiroWriter,
-        StatePool $statePool,
-        EventDispatcher $dispatcher
-    ) {
+    public function __construct(DonorMapper $donorMapper, Writer $autogiroWriter, StatePool $statePool)
+    {
         $this->donorMapper = $donorMapper;
         $this->autogiroWriter = $autogiroWriter;
         $this->statePool = $statePool;
-        $this->dispatcher = $dispatcher;
     }
 
     public static function configure(CommandWrapper $wrapper): void

@@ -27,24 +27,13 @@ use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\State\RevokeMandateState;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to revoke a mandate
  */
 class RevokeCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait;
-
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    public function __construct(EventDispatcher $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
-    }
+    use Traits\DonorArgumentTrait, Traits\DispatcherTrait;
 
     public static function configure(CommandWrapper $wrapper): void
     {

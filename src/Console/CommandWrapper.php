@@ -76,7 +76,8 @@ class CommandWrapper extends Command
         $container->set('std_in', new Stream(fopen('php://stdin', 'r')));
         $container->set('Symfony\Component\Console\Helper\QuestionHelper', $this->getHelper('question'));
 
-        $dispatcher = $container->get('Symfony\Component\EventDispatcher\EventDispatcher');
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
+        $dispatcher = $container->get('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $dispatcher->dispatch(
             Events::DEBUG_EVENT,

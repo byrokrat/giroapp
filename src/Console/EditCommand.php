@@ -30,14 +30,13 @@ use byrokrat\giroapp\States;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to edit an existing mandate
  */
 class EditCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait, Traits\InputReaderTrait {
+    use Traits\DonorArgumentTrait, Traits\DispatcherTrait, Traits\InputReaderTrait {
         Traits\DonorArgumentTrait::setValidators insteadof Traits\InputReaderTrait;
     }
 
@@ -57,16 +56,6 @@ class EditCommand implements CommandInterface
         'phone' => 'Donor contact phone number',
         'comment' => 'Comment'
     ];
-
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    public function __construct(EventDispatcher $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
-    }
 
     public static function configure(CommandWrapper $wrapper): void
     {

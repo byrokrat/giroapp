@@ -28,24 +28,13 @@ use byrokrat\giroapp\Event\DonorEvent;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to drop a mandate (remove from database)
  */
 class DropCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait;
-
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    public function __construct(EventDispatcher $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
-    }
+    use Traits\DonorArgumentTrait, Traits\DispatcherTrait;
 
     public static function configure(CommandWrapper $wrapper): void
     {

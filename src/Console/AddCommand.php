@@ -30,14 +30,13 @@ use byrokrat\giroapp\Model\PostalAddress;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to add a new mandate
  */
 class AddCommand implements CommandInterface
 {
-    use Traits\InputReaderTrait;
+    use Traits\InputReaderTrait, Traits\DispatcherTrait;
 
     /**
      * @var array Maps option names to free text descriptions
@@ -60,18 +59,12 @@ class AddCommand implements CommandInterface
     ];
 
     /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    /**
      * @var DonorBuilder
      */
     private $donorBuilder;
 
-    public function __construct(EventDispatcher $dispatcher, DonorBuilder $donorBuilder)
+    public function __construct(DonorBuilder $donorBuilder)
     {
-        $this->dispatcher = $dispatcher;
         $this->donorBuilder = $donorBuilder;
     }
 
