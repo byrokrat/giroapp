@@ -72,8 +72,8 @@ class CommandWrapper extends Command
 
         $container->set(InputInterface::CLASS, $input);
         $container->set('std_out', $this->discardOutputMessages ? new NullOutput : $output);
-        $container->set('err_out', new StreamOutput(fopen('php://stderr', 'w'), $output->getVerbosity()));
-        $container->set('std_in', new Stream(fopen('php://stdin', 'r')));
+        $container->set('err_out', new StreamOutput(STDERR, $output->getVerbosity()));
+        $container->set('std_in', new Stream(STDIN));
         $container->set('Symfony\Component\Console\Helper\QuestionHelper', $this->getHelper('question'));
 
         /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
