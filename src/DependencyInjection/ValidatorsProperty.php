@@ -20,28 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp;
+namespace byrokrat\giroapp\DependencyInjection;
 
-use hanneskod\yaysondb\Engine\DecoderInterface;
+use byrokrat\giroapp\Console\Helper\Validators;
 
 /**
- * Formats log messages
+ * Use this trait to automatically inject validators
  */
-class LogFormatter implements DecoderInterface
+trait ValidatorsProperty
 {
-    public function encode(array $docs): string
-    {
-        return sprintf(
-            '[%s] %s: %s %s',
-            (string)date(DATE_RFC2822),
-            $docs['severity'],
-            $docs['message'],
-            json_encode((object)$docs['context'])
-        );
-    }
+    /**
+     * @var Validators
+     */
+    protected $validators;
 
-    public function decode(string $source): array
+    /**
+     * @required
+     */
+    public function setValidators(Validators $validators): void
     {
-        return [];
+        $this->validators = $validators;
     }
 }

@@ -1,6 +1,6 @@
 parameters:
 	excludes_analyse:
-		- src/ProjectServiceContainer.php
+		- src/DependencyInjection/ProjectServiceContainer.php
 	ignoreErrors:
 		- '/Call to an undefined method byrokrat\\autogiro\\Enumerator::on[a-zA-Z0-9\\_]+\(\)/'
 		- '/Call to an undefined method object::getExitStatus\(\)/'

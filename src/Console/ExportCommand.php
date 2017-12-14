@@ -22,9 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\autogiro\Writer\Writer;
 use Symfony\Component\Console\Input\InputInterface;
@@ -35,12 +36,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ExportCommand implements CommandInterface
 {
-    use Traits\DispatcherTrait;
-
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
+    use DonorMapperProperty, DispatcherProperty;
 
     /**
      * @var Writer
@@ -52,9 +48,8 @@ class ExportCommand implements CommandInterface
      */
     private $statePool;
 
-    public function __construct(DonorMapper $donorMapper, Writer $autogiroWriter, StatePool $statePool)
+    public function __construct(Writer $autogiroWriter, StatePool $statePool)
     {
-        $this->donorMapper = $donorMapper;
         $this->autogiroWriter = $autogiroWriter;
         $this->statePool = $statePool;
     }

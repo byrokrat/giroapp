@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\DI;
+namespace spec\byrokrat\giroapp\Setup;
 
-use byrokrat\giroapp\DI\PluginLoader;
+use byrokrat\giroapp\Setup\PluginLoader;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use PhpSpec\ObjectBehavior;

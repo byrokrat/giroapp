@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\States;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,15 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class StatusCommand implements CommandInterface
 {
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
-
-    public function __construct(DonorMapper $donorMapper)
-    {
-        $this->donorMapper = $donorMapper;
-    }
+    use DonorMapperProperty;
 
     public static function configure(CommandWrapper $wrapper): void
     {

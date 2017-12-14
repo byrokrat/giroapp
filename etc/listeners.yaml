@@ -3,6 +3,18 @@ services:
         public: false
         autowire: true
 
+    byrokrat\giroapp\Listener\MonitoringListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: IMPORT_EVENT,           method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: FORCE_IMPORT_EVENT,     method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_ADDED_EVENT,    method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_EDITED_EVENT,   method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_APPROVED_EVENT, method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_REVOKED_EVENT,  method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_DROPPED_EVENT,  method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_INVALID_EVENT,  method: dispatchWarning, priority: 10 }
+
     byrokrat\giroapp\Listener\LoggingListener:
         class: ~
         arguments: ['@db_log_collection']
@@ -22,6 +34,7 @@ services:
 
     byrokrat\giroapp\Listener\ExitStatusListener:
         class: ~
+        public: true
         tags:
             - { name: event_listener, event: ERROR_EVENT, method: onFailure }
             - { name: event_listener, event: WARNING_EVENT, method: onFailure }

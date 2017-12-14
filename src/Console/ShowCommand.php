@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ShowCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait;
+    use Helper\DonorArgument;
 
     private static $options = [
         'mandate-key'    => 'Show mandate key',

@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Utils\FileReader;
@@ -37,7 +38,7 @@ use Streamer\Stream;
  */
 class ImportCommand implements CommandInterface
 {
-    use Traits\DispatcherTrait;
+    use DispatcherProperty;
 
     /**
      * @var FileReader

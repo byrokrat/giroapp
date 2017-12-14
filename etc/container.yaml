@@ -67,16 +67,12 @@ services:
 
     Symfony\Component\EventDispatcher\EventDispatcherInterface:
         class: 'Symfony\Component\EventDispatcher\EventDispatcher'
-        configurator: 'byrokrat\giroapp\DI\PluginLoader:loadPlugins'
+        public: true
+        configurator: 'byrokrat\giroapp\Setup\PluginLoader:loadPlugins'
 
-    byrokrat\giroapp\DI\PluginLoader:
+    byrokrat\giroapp\Setup\PluginLoader:
         class: ~
         arguments: ['%fs.user_dir%/%fs.plugins_dir%', '@fs_user_dir']
-
-    byrokrat\giroapp\ApplicationMonitor:
-        class: ~
-        tags:
-            - { name: event_subscriber }
 
     byrokrat\autogiro\Parser\ParserFactory: ~
 

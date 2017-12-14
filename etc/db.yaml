@@ -69,7 +69,10 @@ services:
 
     db_log_engine:
         class: hanneskod\yaysondb\Engine\LogEngine
-        arguments: ['%fs.user_dir%/%db.log%']
+        arguments: ['%fs.user_dir%/%db.log%', '@byrokrat\giroapp\Setup\LogFormatter']
+
+    byrokrat\giroapp\Setup\LogFormatter:
+        class: ~
 
     byrokrat\giroapp\Mapper\FileChecksumMapper:
         class: ~

@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DI;
+namespace byrokrat\giroapp\Setup;
 
 use League\Flysystem\Filesystem;
 

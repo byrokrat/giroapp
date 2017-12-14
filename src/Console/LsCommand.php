@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
@@ -32,15 +32,7 @@ use Symfony\Component\Console\Helper\Table;
  */
 class LsCommand implements CommandInterface
 {
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
-
-    public function __construct(DonorMapper $donorMapper)
-    {
-        $this->donorMapper = $donorMapper;
-    }
+    use DonorMapperProperty;
 
     public static function configure(CommandWrapper $wrapper): void
     {

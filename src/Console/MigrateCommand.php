@@ -22,7 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,17 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MigrateCommand implements CommandInterface
 {
-    use Traits\DispatcherTrait;
-
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
-
-    public function __construct(DonorMapper $donorMapper)
-    {
-        $this->donorMapper = $donorMapper;
-    }
+    use DispatcherProperty, DonorMapperProperty;
 
     public static function configure(CommandWrapper $wrapper): void
     {

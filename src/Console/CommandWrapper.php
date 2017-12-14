@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\ProjectServiceContainer;
+use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
 use Symfony\Component\Console\Command\Command;

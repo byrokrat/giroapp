@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
@@ -36,9 +38,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class EditCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait, Traits\DispatcherTrait, Traits\InputReaderTrait {
-        Traits\DonorArgumentTrait::setValidators insteadof Traits\InputReaderTrait;
-    }
+    use Helper\DonorArgument, DispatcherProperty, InputReaderProperty;
 
     /**
      * @var array Maps option names to free text descriptions

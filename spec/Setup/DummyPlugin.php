@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\DI;
+namespace spec\byrokrat\giroapp\Setup;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

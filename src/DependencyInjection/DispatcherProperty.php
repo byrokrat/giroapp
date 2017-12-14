@@ -20,27 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console\Traits;
+namespace byrokrat\giroapp\DependencyInjection;
 
-use byrokrat\giroapp\Console\Helper\InputReader;
-use byrokrat\giroapp\Console\Helper\Validators;
-use byrokrat\giroapp\Console\Helper\QuestionFactory;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Load validator dependencies
+ * Use this trait to automatically inject an event dispatcher
  */
-trait ValidatorsTrait
+trait DispatcherProperty
 {
     /**
-     * @var Validators
+     * @var EventDispatcherInterface
      */
-    protected $validators;
+    protected $dispatcher;
 
     /**
      * @required
      */
-    public function setValidators(Validators $validators): void
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
     {
-        $this->validators = $validators;
+        $this->dispatcher = $dispatcher;
     }
 }

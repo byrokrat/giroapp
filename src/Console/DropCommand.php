@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Event\DonorEvent;
@@ -34,7 +35,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class DropCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait, Traits\DispatcherTrait;
+    use Helper\DonorArgument, DispatcherProperty;
 
     public static function configure(CommandWrapper $wrapper): void
     {

@@ -20,25 +20,39 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console\Traits;
+namespace byrokrat\giroapp\DependencyInjection;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use byrokrat\giroapp\Console\Helper\InputReader;
+use byrokrat\giroapp\Console\Helper\QuestionFactory;
 
 /**
- * Load event dispatcher
+ * Use this trait to automatically inject dependencies for reading user input
  */
-trait DispatcherTrait
+trait InputReaderProperty
 {
     /**
-     * @var EventDispatcherInterface
+     * @var InputReader
      */
-    protected $dispatcher;
+    protected $inputReader;
+
+    /**
+     * @var QuestionFactory
+     */
+    protected $questionFactory;
 
     /**
      * @required
      */
-    public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
+    public function setInputReader(InputReader $inputReader): void
     {
-        $this->dispatcher = $dispatcher;
+        $this->inputReader = $inputReader;
+    }
+
+    /**
+     * @required
+     */
+    public function setQuestionFactory(QuestionFactory $questionFactory): void
+    {
+        $this->questionFactory = $questionFactory;
     }
 }

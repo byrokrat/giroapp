@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
+use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Mapper\SettingsMapper;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class InitCommand implements CommandInterface
 {
-    use Traits\InputReaderTrait;
+    use InputReaderProperty, ValidatorsProperty;
 
     /**
      * @var SettingsMapper
