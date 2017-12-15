@@ -53,7 +53,7 @@ class MandateResponseListener
         $this->statePool = $statePool;
     }
 
-    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $eventName, Dispatcher $dispatcher)
+    public function onMandateResponseReceived(NodeEvent $nodeEvent, string $eventName, Dispatcher $dispatcher): void
     {
         $node = $nodeEvent->getNode();
 
@@ -68,7 +68,7 @@ class MandateResponseListener
 
             if ($donor->getDonorId()->format('S-sk') != $nodeId->format('S-sk')) {
                 $dispatcher->dispatch(
-                    Events::WARNING_EVENT,
+                    Events::WARNING,
                     new LogEvent(
                         sprintf(
                             "Invalid mandate response for payer number '%s', found donor id '%s', expecting '%s'",
@@ -92,7 +92,7 @@ class MandateResponseListener
 
             if (!$donor->getAccount()->equals($nodeAccount)) {
                 $dispatcher->dispatch(
-                    Events::WARNING_EVENT,
+                    Events::WARNING,
                     new LogEvent(
                         sprintf(
                             "Invalid mandate response for payer number '%s', found account '%s', expecting '%s'",
@@ -126,12 +126,12 @@ class MandateResponseListener
             case Messages::STATUS_MANDATE_DELETED_BY_BANK:
             case Messages::STATUS_MANDATE_DELETED_BY_BGC:
                 $donor->setState($this->statePool->getState(States::INACTIVE));
-                $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, $donorEvent);
+                $dispatcher->dispatch(Events::MANDATE_REVOKED, $donorEvent);
                 break;
 
             case Messages::STATUS_MANDATE_CREATED:
                 $donor->setState($this->statePool->getState(States::MANDATE_APPROVED));
-                $dispatcher->dispatch(Events::MANDATE_APPROVED_EVENT, $donorEvent);
+                $dispatcher->dispatch(Events::MANDATE_APPROVED, $donorEvent);
                 break;
 
             case Messages::STATUS_MANDATE_ACCOUNT_NOT_ALLOWED:
@@ -148,12 +148,12 @@ class MandateResponseListener
             case Messages::STATUS_MANDATE_BLOCK_REMOVED:
             case Messages::STATUS_MANDATE_MAX_AMOUNT_NOT_ALLOWED:
                 $donor->setState($this->statePool->getState(States::ERROR));
-                $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, $donorEvent);
+                $dispatcher->dispatch(Events::MANDATE_INVALIDATED, $donorEvent);
                 break;
 
             default:
                 $dispatcher->dispatch(
-                    Events::WARNING_EVENT,
+                    Events::WARNING,
                     new LogEvent(
                         sprintf(
                             '%s: invalid mandate status code: %s',

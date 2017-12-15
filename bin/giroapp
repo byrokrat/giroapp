@@ -32,13 +32,13 @@ $version = trim(file_get_contents(__DIR__ . '/../version'));
 $app = new Application('GiroApp', $version);
 
 $app->add(new CommandWrapper(AddCommand::CLASS));
-$app->add(new CommandWrapper(DropCommand::CLASS));
 $app->add(new CommandWrapper(EditCommand::CLASS));
 $app->add(new CommandWrapper(ExportCommand::CLASS));
 $app->add(new CommandWrapper(ImportCommand::CLASS));
 $app->add(new CommandWrapper(InitCommand::CLASS));
 $app->add(new CommandWrapper(LsCommand::CLASS));
 $app->add(new CommandWrapper(MigrateCommand::CLASS));
+$app->add(new CommandWrapper(RemoveCommand::CLASS));
 $app->add(new CommandWrapper(RevokeCommand::CLASS));
 $app->add(new CommandWrapper(ShowCommand::CLASS));
 $app->add(new CommandWrapper(StatusCommand::CLASS));

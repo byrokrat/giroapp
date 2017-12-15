@@ -25,28 +25,28 @@
         }
     },
     "require": {
-        "php": "^7.1",
+        "php": ">=7.1",
         "ext-mbstring": "*",
         "ext-bcmath": "*",
         "ext-simplexml": "*",
-        "byrokrat/amount": "^1.0",
+        "byrokrat/amount": "^2",
         "byrokrat/autogiro": "dev-master",
         "byrokrat/banking": "^1.4",
         "byrokrat/id": "^1.0",
         "hanneskod/yaysondb": "^2.1.2",
         "hanneskod/classtools": "^1.1",
-        "hanneskod/clean" :"^2.0",
-        "symfony/dependency-injection": "^3.3",
-        "symfony/console": "^3.3",
-        "symfony/event-dispatcher": "^3.3",
-        "symfony/finder": "^3.3",
+        "hanneskod/clean" :"^2",
+        "symfony/dependency-injection": "^4",
+        "symfony/console": "^4",
+        "symfony/event-dispatcher": "^4",
+        "symfony/finder": "^4",
         "hashids/hashids": "^2",
         "fzaninotto/Streamer": "0.*",
         "justinrainbow/json-schema": "^5"
     },
     "require-dev": {
-        "symfony/config": "^3.3",
-        "symfony/yaml": "^3.3",
-        "symfony/expression-language": "^3.3"
+        "symfony/config": "^4",
+        "symfony/yaml": "^4",
+        "symfony/expression-language": "^4"
     }
 }

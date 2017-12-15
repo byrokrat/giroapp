@@ -22,12 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\autogiro\Writer\Writer;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -36,10 +36,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class ExportCommand implements CommandInterface
 {
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
+    use DonorMapperProperty, DispatcherProperty;
 
     /**
      * @var Writer
@@ -51,24 +48,13 @@ class ExportCommand implements CommandInterface
      */
     private $statePool;
 
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    public function __construct(
-        DonorMapper $donorMapper,
-        Writer $autogiroWriter,
-        StatePool $statePool,
-        EventDispatcher $dispatcher
-    ) {
-        $this->donorMapper = $donorMapper;
+    public function __construct(Writer $autogiroWriter, StatePool $statePool)
+    {
         $this->autogiroWriter = $autogiroWriter;
         $this->statePool = $statePool;
-        $this->dispatcher = $dispatcher;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('export');
         $wrapper->setDescription('Export a file to autogirot');
@@ -76,14 +62,14 @@ class ExportCommand implements CommandInterface
         $wrapper->discardOutputMessages();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($donor->getState()->isExportable()) {
                 $donor->exportToAutogiro($this->autogiroWriter);
                 $donor->setState($this->statePool->getState($donor->getState()->getNextStateId()));
                 $this->dispatcher->dispatch(
-                    Events::MANDATE_EDITED_EVENT,
+                    Events::DONOR_UPDATED,
                     new DonorEvent(
                         "Exported mandate <info>{$donor->getMandateKey()}</info>",
                         $donor

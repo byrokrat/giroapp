@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DI;
+namespace byrokrat\giroapp\Setup;
 
 use League\Flysystem\Filesystem;
 
@@ -52,7 +52,7 @@ class FilesystemConfigurator
     /**
      * Create required files if they dont exist
      */
-    public function createFiles(Filesystem $filesystem)
+    public function createFiles(Filesystem $filesystem): void
     {
         foreach ($this->requiredFiles as $filename) {
             if (!$filesystem->has($filename)) {

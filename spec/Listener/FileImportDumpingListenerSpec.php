@@ -36,6 +36,6 @@ class FileImportDumpingListenerSpec extends ObjectBehavior
 
         $filesystem->write('20171212T14:47:30_fname', 'foobar')->shouldBeCalled();
 
-        $this->onImportEvent($event);
+        $this->onFileImported($event);
     }
 }

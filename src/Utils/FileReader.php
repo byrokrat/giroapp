@@ -48,6 +48,6 @@ class FileReader
             throw new \RuntimeException("Unable to read {$filename}");
         }
 
-        return new File($filename, $this->filesystem->read($filename));
+        return new File($filename, (string)$this->filesystem->read($filename));
     }
 }

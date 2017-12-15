@@ -46,22 +46,22 @@ class OutputtingListener
         $this->errout = $errout;
     }
 
-    public function onErrorEvent(LogEvent $event)
+    public function onError(LogEvent $event): void
     {
         $this->errout->writeln("<error>ERROR: {$event->getMessage()}</error>");
     }
 
-    public function onWarningEvent(LogEvent $event)
+    public function onWarning(LogEvent $event): void
     {
         $this->errout->writeln("<question>WARNING: {$event->getMessage()}</question>");
     }
 
-    public function onInfoEvent(LogEvent $event)
+    public function onInfo(LogEvent $event): void
     {
         $this->stdout->writeln($event->getMessage());
     }
 
-    public function onDebugEvent(LogEvent $event)
+    public function onDebug(LogEvent $event): void
     {
         if ($this->stdout->isVerbose()) {
             $this->stdout->writeln($event->getMessage());

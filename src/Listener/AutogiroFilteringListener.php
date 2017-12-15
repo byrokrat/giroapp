@@ -26,13 +26,13 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Mapper\SettingsMapper;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use byrokrat\banking\BankgiroFactory;
 
 /**
  * Filter NodeEvents where payee information does not match local registry
  */
-class InvalidNodeFilteringListener
+class AutogiroFilteringListener
 {
     /**
      * @var BankgiroFactory
@@ -50,14 +50,14 @@ class InvalidNodeFilteringListener
         $this->settingsMapper = $settingsMapper;
     }
 
-    public function onMandateResponseEvent(NodeEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onMandateResponseReceived(NodeEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
         $appBg = $this->bankgiroFactory->createAccount($this->settingsMapper->findByKey('bankgiro'));
         $nodeBg = $event->getNode()->getChild('payee_bankgiro')->getAttribute('account');
 
         if (!$nodeBg->equals($appBg)) {
             $dispatcher->dispatch(
-                Events::ERROR_EVENT,
+                Events::ERROR,
                 new LogEvent(
                     'File contains invalid payee bankgiro account number',
                     ['bankgiro' => (string)$nodeBg]

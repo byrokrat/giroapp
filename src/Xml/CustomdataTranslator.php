@@ -49,7 +49,7 @@ class CustomdataTranslator
     /**
      * Write value to donorBuilder using migration map as translation key
      */
-    public function writeValue(DonorBuilder $donorBuilder, string $formId, string $key, string $value)
+    public function writeValue(DonorBuilder $donorBuilder, string $formId, string $key, string $value): void
     {
         $map = $this->getMap($formId);
         isset($map[$key])

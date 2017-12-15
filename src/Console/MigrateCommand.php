@@ -22,10 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -34,34 +34,20 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MigrateCommand implements CommandInterface
 {
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
+    use DispatcherProperty, DonorMapperProperty;
 
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    public function __construct(DonorMapper $donorMapper, EventDispatcher $dispatcher)
-    {
-        $this->donorMapper = $donorMapper;
-        $this->dispatcher = $dispatcher;
-    }
-
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('migrate');
         $wrapper->setDescription('Update database schema');
         $wrapper->setHelp('Ensure that the database schema is up to date by triggering a rewrite of all donors');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         foreach ($this->donorMapper->findAll() as $donor) {
             $this->dispatcher->dispatch(
-                Events::MANDATE_EDITED_EVENT,
+                Events::DONOR_UPDATED,
                 new DonorEvent(
                     "Updated mandate <info>{$donor->getMandateKey()}</info>",
                     $donor

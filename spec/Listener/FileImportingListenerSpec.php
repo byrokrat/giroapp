@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Listener\ImportingListener;
+use byrokrat\giroapp\Listener\FileImportingListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\XmlEvent;
@@ -13,23 +13,23 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class ImportingListenerSpec extends ObjectBehavior
+class FileImportingListenerSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(ImportingListener::CLASS);
+        $this->shouldHaveType(FileImportingListener::CLASS);
     }
 
-    function it_dispatches_import_xml_event(FileEvent $event, File $file, EventDispatcherInterface $dispatcher)
+    function it_dispatches_XML_FILE_IMPORTED(FileEvent $event, File $file, EventDispatcherInterface $dispatcher)
     {
         $event->getFile()->willReturn($file);
 
         $file->getFilename()->willReturn('');
         $file->getContent()->willReturn('<xml></xml>');
 
-        $dispatcher->dispatch(Events::IMPORT_XML_EVENT, Argument::type(XmlEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::XML_FILE_IMPORTED, Argument::type(XmlEvent::CLASS))->shouldBeCalled();
 
-        $this->onImportEvent($event, '', $dispatcher);
+        $this->onFileImported($event, '', $dispatcher);
     }
 
     function it_dispatches_import_autogiro_event(FileEvent $event, File $file, EventDispatcherInterface $dispatcher)
@@ -39,8 +39,8 @@ class ImportingListenerSpec extends ObjectBehavior
         $file->getFilename()->willReturn('');
         $file->getContent()->willReturn('this-is-not-valid-xml');
 
-        $dispatcher->dispatch(Events::IMPORT_AUTOGIRO_EVENT, $event)->shouldBeCalled();
+        $dispatcher->dispatch(Events::AUTOGIRO_FILE_IMPORTED, $event)->shouldBeCalled();
 
-        $this->onImportEvent($event, '', $dispatcher);
+        $this->onFileImported($event, '', $dispatcher);
     }
 }

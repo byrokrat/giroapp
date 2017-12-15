@@ -37,9 +37,14 @@ class QuestionFactory
             : new Question("$question [<info>$default</info>]: ", $default);
     }
 
-    public function createChoiceQuestion(string $question, array $choices, $default): ChoiceQuestion
+    public function createChoiceQuestion(string $question, array $choices, string $default): ChoiceQuestion
     {
         $defaultKey = array_search($default, $choices);
+
+        if (false === $defaultKey) {
+            throw new \LogicException("Invalid default answer $default");
+        }
+
         unset($choices[$defaultKey]);
         $choices[strtoupper($defaultKey)] = $default;
 

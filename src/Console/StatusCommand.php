@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\States;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,17 +34,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class StatusCommand implements CommandInterface
 {
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
+    use DonorMapperProperty;
 
-    public function __construct(DonorMapper $donorMapper)
-    {
-        $this->donorMapper = $donorMapper;
-    }
-
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('status');
         $wrapper->setDescription('Show current status');
@@ -56,7 +48,7 @@ class StatusCommand implements CommandInterface
         $wrapper->addOption('monthly-amount', null, InputOption::VALUE_NONE, 'Show only monthly amount');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $counts = [
             'donor-count' => 0,

@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Utils\FileReader;
@@ -30,7 +31,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Streamer\Stream;
 
 /**
@@ -38,10 +38,7 @@ use Streamer\Stream;
  */
 class ImportCommand implements CommandInterface
 {
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
+    use DispatcherProperty;
 
     /**
      * @var FileReader
@@ -53,14 +50,13 @@ class ImportCommand implements CommandInterface
      */
     private $stdin;
 
-    public function __construct(EventDispatcher $dispatcher, FileReader $fileReader, Stream $stdin)
+    public function __construct(FileReader $fileReader, Stream $stdin)
     {
-        $this->dispatcher = $dispatcher;
         $this->fileReader = $fileReader;
         $this->stdin = $stdin;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('import');
         $wrapper->setDescription('Import a file from autogirot');
@@ -69,10 +65,10 @@ class ImportCommand implements CommandInterface
         $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import even if a pre-condition fails.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $this->dispatcher->dispatch(
-            $input->getOption('force') ? Events::FORCE_IMPORT_EVENT : Events::IMPORT_EVENT,
+            $input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
             new FileEvent(
                 ($filename = $input->getArgument('filename'))
                     ? $this->fileReader->readFile($filename)

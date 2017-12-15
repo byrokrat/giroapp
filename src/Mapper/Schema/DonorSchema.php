@@ -129,6 +129,6 @@ class DonorSchema
      */
     public function getJsonSchema()
     {
-        return json_decode(file_get_contents(__DIR__ . '/donor_schema.json'));
+        return json_decode((string)file_get_contents(__DIR__ . '/donor_schema.json'));
     }
 }

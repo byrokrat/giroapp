@@ -20,10 +20,11 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console\Traits;
+namespace byrokrat\giroapp\Console\Helper;
 
+use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
+use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Console\CommandWrapper;
-use byrokrat\giroapp\Mapper\DonorMapper;
 use byrokrat\giroapp\Model\Donor;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,14 +33,9 @@ use Symfony\Component\Console\Input\InputInterface;
 /**
  * Methods for fetching donors based on command line argument
  */
-trait DonorArgumentTrait
+trait DonorArgument
 {
-    use ValidatorsTrait;
-
-    /**
-     * @var DonorMapper
-     */
-    private $donorMapper;
+    use DonorMapperProperty, ValidatorsProperty;
 
     protected static function configureDonorArgument(CommandWrapper $wrapper): void
     {
@@ -55,14 +51,6 @@ trait DonorArgumentTrait
             InputOption::VALUE_NONE,
             'Use donor payer number for identification'
         );
-    }
-
-    /**
-     * @required
-     */
-    public function setDonorMapper(DonorMapper $donorMapper): void
-    {
-        $this->donorMapper = $donorMapper;
     }
 
     /**

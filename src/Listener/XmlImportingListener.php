@@ -23,38 +23,40 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Event\NodeEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use byrokrat\autogiro\Parser\Parser;
-use byrokrat\autogiro\Enumerator;
-use byrokrat\autogiro\Tree\Node;
+use byrokrat\giroapp\Event\XmlEvent;
+use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Xml\XmlMandateParser;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
- * Parse an autogiro file and fire events based on content
+ * Parse an xml mandate file and fire event
  */
-class ImportingAutogiroListener
+class XmlImportingListener
 {
     /**
-     * @var Parser
+     * @var XmlMandateParser
      */
     private $parser;
 
-    public function __construct(Parser $parser)
+    public function __construct(XmlMandateParser $parser)
     {
         $this->parser = $parser;
     }
 
-    public function onImportAutogiroEvent(FileEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    public function onXmlFileImported(XmlEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
-        $enum = new Enumerator;
-
-        $enum->onMandateResponseNode(function (Node $node) use ($dispatcher) {
-            $dispatcher->dispatch(Events::MANDATE_RESPONSE_EVENT, new NodeEvent($node));
-        });
-
-        // TODO dispatch events on all autogiro nodes
-
-        $enum->enumerate($this->parser->parse($event->getFile()->getContent()));
+        foreach ($this->parser->parse($event->getXmlObject()) as $donor) {
+            $dispatcher->dispatch(
+                Events::DONOR_ADDED,
+                new DonorEvent(
+                    sprintf(
+                        'Added xml mandate for donor <info>%s</info> with mandate key <info>%s</info>',
+                        $donor->getName(),
+                        $donor->getMandateKey()
+                    ),
+                    $donor
+                )
+            );
+        }
     }
 }

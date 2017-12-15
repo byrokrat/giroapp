@@ -37,7 +37,7 @@ class ExitStatusListener
         return $this->status;
     }
 
-    public function onFailure()
+    public function onFailure(): void
     {
         $this->status = 1;
     }

@@ -46,7 +46,7 @@ class MandateKeyBuilder
      */
     public function buildKey(Id $id, AccountNumber $account): string
     {
-        $key = $this->getHashEngine()->encode($id->format('Ss') . substr($account->get16(), 0, -1));
+        $key = $this->getHashEngine()->encode($id->format('Ss') . (string)substr($account->get16(), 0, -1));
 
         if (strlen($key) != self::KEY_LENGTH) {
             throw new \LogicException('Mandate key of wrong key size, this is an internal error.');
@@ -58,7 +58,7 @@ class MandateKeyBuilder
     /**
      * Set internal hash engine (must create keys of the desired length!)
      */
-    public function setHashEngine(Hashids $hashEngine)
+    public function setHashEngine(Hashids $hashEngine): void
     {
         $this->hashEngine = $hashEngine;
     }

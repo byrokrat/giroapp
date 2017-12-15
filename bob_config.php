@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 task('default', ['test', 'sniff']);
 
@@ -28,29 +28,35 @@ task('behat', ['update_container'], function() {
 
 desc('Run php code sniffer');
 task('sniff', function() {
-    sh('phpcs src --standard=PSR2 --ignore=src/ProjectServiceContainer.php', null, ['failOnError' => true]);
+    sh('phpcs src --standard=PSR2 --ignore=src/DependencyInjection/ProjectServiceContainer.php', null, ['failOnError' => true]);
     println('Syntax checker on src/ passed');
     sh('phpcs spec --standard=spec/ruleset.xml', null, ['failOnError' => true]);
     println('Syntax checker on spec/ passed');
 });
 
+desc('Run statical analysis using phpstan feature tests');
+task('phpstan', function() {
+    sh('phpstan analyze -c phpstan.neon -l 7 src', null, ['failOnError' => true]);
+    println('Phpstan analysis passed');
+});
+
 desc('Build dependency injection container');
 task('container', ['load_dependencies'], __NAMESPACE__.'\build_container');
 
-task('update_container', ['load_dependencies', 'src/ProjectServiceContainer.php']);
+task('update_container', ['load_dependencies', 'src/DependencyInjection/ProjectServiceContainer.php']);
 
 $containerFiles = fileList('*.yaml')->in([__DIR__ . '/etc']);
 
-fileTask('src/ProjectServiceContainer.php', $containerFiles, __NAMESPACE__.'\build_container');
+fileTask('src/DependencyInjection/ProjectServiceContainer.php', $containerFiles, __NAMESPACE__.'\build_container');
 
 function build_container()
 {
     $dic = new ContainerBuilder;
     (new YamlFileLoader($dic, new FileLocator(__DIR__ . '/etc')))->load(basename('container.yaml'));
-    $dic->addCompilerPass(new RegisterListenersPass(EventDispatcher::CLASS, 'event_listener', 'event_subscriber'));
+    $dic->addCompilerPass(new RegisterListenersPass(Dispatcher::CLASS, 'event_listener', 'event_subscriber'));
     $dic->compile();
-    file_put_contents('src/ProjectServiceContainer.php', (new PhpDumper($dic))->dump([
-        'namespace' => 'byrokrat\giroapp',
+    file_put_contents('src/DependencyInjection/ProjectServiceContainer.php', (new PhpDumper($dic))->dump([
+        'namespace' => 'byrokrat\giroapp\DependencyInjection',
         'class' => 'ProjectServiceContainer'
     ]));
     println('Generated dependency injection container');

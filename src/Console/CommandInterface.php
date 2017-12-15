@@ -33,10 +33,10 @@ interface CommandInterface
     /**
      * Configure command
      */
-    public static function configure(CommandWrapper $wrapper);
+    public static function configure(CommandWrapper $wrapper): void;
 
     /**
      * Execute command
      */
-    public function execute(InputInterface $input, OutputInterface $output);
+    public function execute(InputInterface $input, OutputInterface $output): void;
 }

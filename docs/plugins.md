@@ -14,7 +14,7 @@ class ErrorNotifyingPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::ERROR_EVENT => ['onError', 100]
+            Events::ERROR => ['onError', 100]
         ];
     }
 
@@ -40,7 +40,7 @@ class DonorMailingPlugin implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::MANDATE_APPROVED_EVENT => 'onApprovedDonor'
+            Events::MANDATE_APPROVED => 'onApprovedDonor'
         ];
     }
 

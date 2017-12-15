@@ -17,13 +17,13 @@ services:
     fs_user_dir:
         class: League\Flysystem\Filesystem
         arguments: ['@fs_user_dir_adapter']
-        configurator: 'byrokrat\giroapp\DI\FilesystemConfigurator:createFiles'
+        configurator: 'byrokrat\giroapp\Setup\FilesystemConfigurator:createFiles'
 
     fs_user_dir_adapter:
         class: League\Flysystem\Adapter\Local
         arguments: ['%fs.user_dir%']
 
-    byrokrat\giroapp\DI\FilesystemConfigurator:
+    byrokrat\giroapp\Setup\FilesystemConfigurator:
         class: ~
         arguments:
             -

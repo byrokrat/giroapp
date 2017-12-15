@@ -20,39 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DI;
+namespace byrokrat\giroapp\DependencyInjection;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Finder\Finder;
-use hanneskod\classtools\Iterator\ClassIterator;
 
 /**
- * Load plugins from filesystem
+ * Use this trait to automatically inject an event dispatcher
  */
-class PluginLoader
+trait DispatcherProperty
 {
     /**
-     * @var string
+     * @var EventDispatcherInterface
      */
-    private $pluginDir;
+    protected $dispatcher;
 
     /**
-     * Set directory to scan for plugins
+     * @required
      */
-    public function __construct(string $pluginDir)
+    public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
     {
-        $this->pluginDir = $pluginDir;
-    }
-
-    public function loadPlugins(EventDispatcherInterface $dispatcher)
-    {
-        $classIterator = new ClassIterator((new Finder)->in($this->pluginDir));
-
-        $classIterator->enableAutoloading();
-
-        foreach ($classIterator->type(EventSubscriberInterface::CLASS)->where('isInstantiable') as $reflectionClass) {
-            $dispatcher->addSubscriber($reflectionClass->newInstance());
-        }
+        $this->dispatcher = $dispatcher;
     }
 }

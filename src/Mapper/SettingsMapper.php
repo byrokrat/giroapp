@@ -50,7 +50,7 @@ class SettingsMapper
     /**
      * Save setting key-value pair
      */
-    public function save(string $key, string $value)
+    public function save(string $key, string $value): void
     {
         $this->collection->insert(['value' => $value], $key);
     }

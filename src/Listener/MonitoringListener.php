@@ -20,42 +20,24 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console\Traits;
+namespace byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Console\Helper\InputReader;
-use byrokrat\giroapp\Console\Helper\Validators;
-use byrokrat\giroapp\Console\Helper\QuestionFactory;
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\LogEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
- * Dependencies for reading user input
+ * Methods for dispatching log events
  */
-trait InputReaderTrait
+class MonitoringListener
 {
-    use ValidatorsTrait;
-
-    /**
-     * @var InputReader
-     */
-    protected $inputReader;
-
-    /**
-     * @var QuestionFactory
-     */
-    protected $questionFactory;
-
-    /**
-     * @required
-     */
-    public function setInputReader(InputReader $inputReader)
+    public function dispatchInfo(LogEvent $event, $eventName, Dispatcher $dispatcher): void
     {
-        $this->inputReader = $inputReader;
+        $dispatcher->dispatch(Events::INFO, $event);
     }
 
-    /**
-     * @required
-     */
-    public function setQuestionFactory(QuestionFactory $questionFactory)
+    public function dispatchWarning(LogEvent $event, $eventName, Dispatcher $dispatcher): void
     {
-        $this->questionFactory = $questionFactory;
+        $dispatcher->dispatch(Events::WARNING, $event);
     }
 }

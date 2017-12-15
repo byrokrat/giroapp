@@ -182,6 +182,9 @@ class Validators
         });
     }
 
+    /**
+     * @return string[]
+     */
     public function getSuggestedCities(): array
     {
         return [

@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\ProjectServiceContainer;
+use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
 use Symfony\Component\Console\Command\Command;
@@ -56,12 +56,12 @@ class CommandWrapper extends Command
     /**
      * Instruct wrapper to ignore messages written to standard out
      */
-    public function discardOutputMessages()
+    public function discardOutputMessages(): void
     {
         $this->discardOutputMessages = true;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this->commandClass::configure($this);
     }
@@ -72,24 +72,25 @@ class CommandWrapper extends Command
 
         $container->set(InputInterface::CLASS, $input);
         $container->set('std_out', $this->discardOutputMessages ? new NullOutput : $output);
-        $container->set('err_out', new StreamOutput(fopen('php://stderr', 'w'), $output->getVerbosity()));
-        $container->set('std_in', new Stream(fopen('php://stdin', 'r')));
+        $container->set('err_out', new StreamOutput(STDERR, $output->getVerbosity()));
+        $container->set('std_in', new Stream(STDIN));
         $container->set('Symfony\Component\Console\Helper\QuestionHelper', $this->getHelper('question'));
 
-        $dispatcher = $container->get('Symfony\Component\EventDispatcher\EventDispatcher');
+        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
+        $dispatcher = $container->get('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $dispatcher->dispatch(
-            Events::DEBUG_EVENT,
+            Events::DEBUG,
             new LogEvent("User directory: <info>{$container->getParameter('fs.user_dir')}</info>")
         );
 
         try {
-            $dispatcher->dispatch(Events::EXECUTION_START_EVENT);
+            $dispatcher->dispatch(Events::EXECUTION_STARTED);
             $container->get($this->commandClass)->execute($input, $output);
-            $dispatcher->dispatch(Events::EXECUTION_END_EVENT);
+            $dispatcher->dispatch(Events::EXECUTION_STOPED);
         } catch (\Exception $e) {
             $dispatcher->dispatch(
-                Events::ERROR_EVENT,
+                Events::ERROR,
                 new LogEvent(
                     "[EXCEPTION] {$e->getMessage()}",
                     [

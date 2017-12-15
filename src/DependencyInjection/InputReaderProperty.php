@@ -20,28 +20,39 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp;
+namespace byrokrat\giroapp\DependencyInjection;
 
-use hanneskod\yaysondb\Engine\DecoderInterface;
+use byrokrat\giroapp\Console\Helper\InputReader;
+use byrokrat\giroapp\Console\Helper\QuestionFactory;
 
 /**
- * Formats log messages
+ * Use this trait to automatically inject dependencies for reading user input
  */
-class LogFormatter implements DecoderInterface
+trait InputReaderProperty
 {
-    public function encode(array $docs): string
+    /**
+     * @var InputReader
+     */
+    protected $inputReader;
+
+    /**
+     * @var QuestionFactory
+     */
+    protected $questionFactory;
+
+    /**
+     * @required
+     */
+    public function setInputReader(InputReader $inputReader): void
     {
-        return sprintf(
-            '[%s] %s: %s %s',
-            date(DATE_RFC2822),
-            $docs['severity'],
-            $docs['message'],
-            json_encode((object)$docs['context'])
-        );
+        $this->inputReader = $inputReader;
     }
 
-    public function decode(string $source): array
+    /**
+     * @required
+     */
+    public function setQuestionFactory(QuestionFactory $questionFactory): void
     {
-        return [];
+        $this->questionFactory = $questionFactory;
     }
 }

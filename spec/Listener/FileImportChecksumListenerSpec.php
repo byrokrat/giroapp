@@ -46,23 +46,23 @@ class FileImportChecksumListenerSpec extends ObjectBehavior
         $fileChecksumMapper->findByKey(self::CHECKSUM)->willReturn($oldImport);
         $oldImport->getDatetime()->willReturn($date);
 
-        $dispatcher->dispatch(Events::ERROR_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::ERROR, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
         $fileChecksumMapper->insert(Argument::any())->shouldNotBeCalled();
 
-        $this->onImportEvent($event, '', $dispatcher);
+        $this->onFileImported($event, '', $dispatcher);
     }
 
     function it_inserts_checksums($fileChecksumMapper, $date, $event, Dispatcher $dispatcher)
     {
         $fileChecksumMapper->hasKey(self::CHECKSUM)->willReturn(false);
 
-        $dispatcher->dispatch(Events::ERROR_EVENT, Argument::type(LogEvent::CLASS))->shouldNotBeCalled();
+        $dispatcher->dispatch(Events::ERROR, Argument::type(LogEvent::CLASS))->shouldNotBeCalled();
         $event->stopPropagation()->shouldNotBeCalled();
 
         $fileChecksum = new FileChecksum(self::FILENAME, self::CHECKSUM, $date->getWrappedObject());
         $fileChecksumMapper->insert($fileChecksum)->shouldBeCalled();
 
-        $this->onImportEvent($event, '', $dispatcher);
+        $this->onFileImported($event, '', $dispatcher);
     }
 }

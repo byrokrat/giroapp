@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
@@ -30,16 +32,13 @@ use byrokrat\giroapp\States;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to edit an existing mandate
  */
 class EditCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait, Traits\InputReaderTrait {
-        Traits\DonorArgumentTrait::setValidators insteadof Traits\InputReaderTrait;
-    }
+    use Helper\DonorArgument, DispatcherProperty, InputReaderProperty;
 
     /**
      * @var array Maps option names to free text descriptions
@@ -58,17 +57,7 @@ class EditCommand implements CommandInterface
         'comment' => 'Comment'
     ];
 
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    public function __construct(EventDispatcher $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
-    }
-
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         self::configureDonorArgument($wrapper);
         $wrapper->setName('edit');
@@ -80,14 +69,14 @@ class EditCommand implements CommandInterface
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $descs = self::$descriptions;
 
         $donor = $this->getDonor($input);
 
         $this->dispatcher->dispatch(
-            Events::INFO_EVENT,
+            Events::INFO,
             new LogEvent("Editing mandate <info>{$donor->getMandateKey()}</info>")
         );
 
@@ -194,7 +183,7 @@ class EditCommand implements CommandInterface
         );
 
         $this->dispatcher->dispatch(
-            Events::MANDATE_EDITED_EVENT,
+            Events::DONOR_UPDATED,
             new DonorEvent(
                 "Updated mandate <info>{$donor->getMandateKey()}</info>",
                 $donor

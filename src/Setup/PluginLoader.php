@@ -20,32 +20,39 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Setup;
 
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Event\XmlEvent;
-use byrokrat\giroapp\Xml\XmlObject;
-use byrokrat\giroapp\Exception\InvalidXmlException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Finder\Finder;
+use hanneskod\classtools\Iterator\ClassIterator;
 
 /**
- * Generic file import listener, dispatch events based on file type
+ * Load plugins from filesystem
  */
-class ImportingListener
+class PluginLoader
 {
-    public function onImportEvent(FileEvent $event, string $eventName, EventDispatcherInterface $dispatcher)
+    /**
+     * @var string
+     */
+    private $pluginDir;
+
+    /**
+     * Set directory to scan for plugins
+     */
+    public function __construct(string $pluginDir)
     {
-        try {
-            $dispatcher->dispatch(
-                Events::IMPORT_XML_EVENT,
-                new XmlEvent(
-                    $event->getFile(),
-                    new XmlObject($event->getFile()->getContent())
-                )
-            );
-        } catch (InvalidXmlException $e) {
-            $dispatcher->dispatch(Events::IMPORT_AUTOGIRO_EVENT, $event);
+        $this->pluginDir = $pluginDir;
+    }
+
+    public function loadPlugins(EventDispatcherInterface $dispatcher): void
+    {
+        $classIterator = new ClassIterator((new Finder)->in($this->pluginDir));
+
+        $classIterator->enableAutoloading();
+
+        foreach ($classIterator->type(EventSubscriberInterface::CLASS)->where('isInstantiable') as $reflectionClass) {
+            $dispatcher->addSubscriber($reflectionClass->newInstance());
         }
     }
 }

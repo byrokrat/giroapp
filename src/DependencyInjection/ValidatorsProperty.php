@@ -20,16 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console\Traits;
+namespace byrokrat\giroapp\DependencyInjection;
 
-use byrokrat\giroapp\Console\Helper\InputReader;
 use byrokrat\giroapp\Console\Helper\Validators;
-use byrokrat\giroapp\Console\Helper\QuestionFactory;
 
 /**
- * Load validator dependencies
+ * Use this trait to automatically inject validators
  */
-trait ValidatorsTrait
+trait ValidatorsProperty
 {
     /**
      * @var Validators
@@ -39,7 +37,7 @@ trait ValidatorsTrait
     /**
      * @required
      */
-    public function setValidators(Validators $validators)
+    public function setValidators(Validators $validators): void
     {
         $this->validators = $validators;
     }

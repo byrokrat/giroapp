@@ -44,7 +44,7 @@ class FileImportDumpingListener
         $this->systemClock = $systemClock;
     }
 
-    public function onImportEvent(FileEvent $event): void
+    public function onFileImported(FileEvent $event): void
     {
         $file = $event->getFile();
 

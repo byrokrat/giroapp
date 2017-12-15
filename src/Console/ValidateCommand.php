@@ -59,14 +59,14 @@ class ValidateCommand implements CommandInterface
         $this->validator = $validator;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('validate');
         $wrapper->setDescription('Validate database schema');
         $wrapper->setHelp('Validate that the database schema is up to date for all items');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $donorData = json_decode($this->fileReader->readFile('data/donors.json')->getContent());
         $this->validator->validate($donorData, $this->donorSchema);

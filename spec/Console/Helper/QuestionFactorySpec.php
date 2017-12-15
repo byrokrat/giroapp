@@ -38,6 +38,11 @@ class QuestionFactorySpec extends ObjectBehavior
         $question->shouldContainChoices(['b' => 'bar', 'A' => 'foo']);
     }
 
+    function it_fails_on_invalid_default_choice()
+    {
+        $this->shouldThrow(\LogicException::CLASS)->duringCreateChoiceQuestion('', [], 'does-not-exist');
+    }
+
     public function getMatchers(): array
     {
         return [

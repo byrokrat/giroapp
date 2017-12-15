@@ -22,31 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\State\RevokeMandateState;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to revoke a mandate
  */
 class RevokeCommand implements CommandInterface
 {
-    use Traits\DonorArgumentTrait;
+    use Helper\DonorArgument, DispatcherProperty;
 
-    /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    public function __construct(EventDispatcher $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
-    }
-
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('revoke');
         $wrapper->setDescription('Revoke a donor mandate');
@@ -54,14 +44,14 @@ class RevokeCommand implements CommandInterface
         self::configureDonorArgument($wrapper);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $donor = $this->getDonor($input);
 
         $donor->setState(new RevokeMandateState);
 
         $this->dispatcher->dispatch(
-            Events::MANDATE_REVOKED_EVENT,
+            Events::MANDATE_REVOKED,
             new DonorEvent(
                 sprintf(
                     'Revoked mandate <info>%s</info>',

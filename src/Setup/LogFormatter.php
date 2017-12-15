@@ -20,34 +20,28 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Setup;
 
-use byrokrat\giroapp\Event\LogEvent;
-use hanneskod\yaysondb\Collection;
+use hanneskod\yaysondb\Engine\DecoderInterface;
 
 /**
- * Write events to log
+ * Formats log messages
  */
-class LoggingListener
+class LogFormatter implements DecoderInterface
 {
-    /**
-     * @var Collection
-     */
-    private $log;
-
-    public function __construct(Collection $log)
+    public function encode(array $docs): string
     {
-        $this->log = $log;
+        return sprintf(
+            '[%s] %s: %s %s',
+            (string)date(DATE_RFC2822),
+            $docs['severity'],
+            $docs['message'],
+            json_encode((object)$docs['context'])
+        );
     }
 
-    public function onLogEvent(LogEvent $event, string $eventName): void
+    public function decode(string $source): array
     {
-        $this->log->insert([
-            'message' => $event->getMessage(),
-            'severity' => $eventName,
-            'context' => $event->getContext()
-        ]);
-
-        $this->log->commit();
+        return [];
     }
 }

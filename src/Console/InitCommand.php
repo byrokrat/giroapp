@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
+use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Mapper\SettingsMapper;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class InitCommand implements CommandInterface
 {
-    use Traits\InputReaderTrait;
+    use InputReaderProperty, ValidatorsProperty;
 
     /**
      * @var SettingsMapper
@@ -49,7 +51,7 @@ class InitCommand implements CommandInterface
         'bankgiro' => ['bankgiro', 'Bankgiro number']
     ];
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('init');
         $wrapper->setDescription('Initialize the database');
@@ -65,7 +67,7 @@ class InitCommand implements CommandInterface
         $this->settingsMapper = $settingsMapper;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $validators = [
             'org-number' => $this->validators->getIdValidator(),

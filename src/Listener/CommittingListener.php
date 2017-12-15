@@ -39,7 +39,7 @@ class CommittingListener
         $this->db = $db;
     }
 
-    public function onExecutionEndEvent()
+    public function onExecutionStoped(): void
     {
         $this->db->commit();
     }

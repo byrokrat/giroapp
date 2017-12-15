@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Listener\InvalidNodeFilteringListener;
+use byrokrat\giroapp\Listener\AutogiroFilteringListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Event\LogEvent;
@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class InvalidNodeFilteringListenerSpec extends ObjectBehavior
+class AutogiroFilteringListenerSpec extends ObjectBehavior
 {
     function let(BankgiroFactory $bankgiroFactory, SettingsMapper $settingsMapper)
     {
@@ -27,7 +27,7 @@ class InvalidNodeFilteringListenerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(InvalidNodeFilteringListener::CLASS);
+        $this->shouldHaveType(AutogiroFilteringListener::CLASS);
     }
 
     function it_ignores_valid_nodes(
@@ -49,7 +49,7 @@ class InvalidNodeFilteringListenerSpec extends ObjectBehavior
 
         $event->getNode()->willReturn($parentNode);
 
-        $this->onMandateResponseEvent($event, '', $dispatcher);
+        $this->onMandateResponseReceived($event, '', $dispatcher);
     }
 
     function it_dies_on_invalid_nodes(
@@ -74,8 +74,8 @@ class InvalidNodeFilteringListenerSpec extends ObjectBehavior
 
         $bankgiro->__toString()->willReturn('');
 
-        $dispatcher->dispatch(Events::ERROR_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::ERROR, Argument::type(LogEvent::CLASS))->shouldBeCalled();
 
-        $this->onMandateResponseEvent($event, '', $dispatcher);
+        $this->onMandateResponseReceived($event, '', $dispatcher);
     }
 }

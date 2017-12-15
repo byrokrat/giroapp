@@ -22,32 +22,36 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Event\LogEvent;
-use hanneskod\yaysondb\Collection;
+use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\Event\DonorEvent;
 
 /**
- * Write events to log
+ * Manipulate donor persistent storage
  */
-class LoggingListener
+class DonorPersistingListener
 {
     /**
-     * @var Collection
+     * @var DonorMapper
      */
-    private $log;
+    private $donorMapper;
 
-    public function __construct(Collection $log)
+    public function __construct(DonorMapper $donorMapper)
     {
-        $this->log = $log;
+        $this->donorMapper = $donorMapper;
     }
 
-    public function onLogEvent(LogEvent $event, string $eventName): void
+    public function onDonorAdded(DonorEvent $event): void
     {
-        $this->log->insert([
-            'message' => $event->getMessage(),
-            'severity' => $eventName,
-            'context' => $event->getContext()
-        ]);
+        $this->donorMapper->create($event->getDonor());
+    }
 
-        $this->log->commit();
+    public function onDonorUpdated(DonorEvent $event): void
+    {
+        $this->donorMapper->update($event->getDonor());
+    }
+
+    public function onDonorRemoved(DonorEvent $event): void
+    {
+        $this->donorMapper->delete($event->getDonor());
     }
 }

@@ -23,6 +23,9 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Builder\DonorBuilder;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
+use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Model\Donor;
@@ -30,14 +33,13 @@ use byrokrat\giroapp\Model\PostalAddress;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Command to add a new mandate
  */
 class AddCommand implements CommandInterface
 {
-    use Traits\InputReaderTrait;
+    use DispatcherProperty, InputReaderProperty, ValidatorsProperty;
 
     /**
      * @var array Maps option names to free text descriptions
@@ -60,22 +62,16 @@ class AddCommand implements CommandInterface
     ];
 
     /**
-     * @var EventDispatcher
-     */
-    private $dispatcher;
-
-    /**
      * @var DonorBuilder
      */
     private $donorBuilder;
 
-    public function __construct(EventDispatcher $dispatcher, DonorBuilder $donorBuilder)
+    public function __construct(DonorBuilder $donorBuilder)
     {
-        $this->dispatcher = $dispatcher;
         $this->donorBuilder = $donorBuilder;
     }
 
-    public static function configure(CommandWrapper $wrapper)
+    public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('add');
         $wrapper->setDescription('Add a new donor');
@@ -86,7 +82,7 @@ class AddCommand implements CommandInterface
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $descs = self::$descriptions;
 
@@ -203,7 +199,7 @@ class AddCommand implements CommandInterface
         $donor = $this->donorBuilder->buildDonor();
 
         $this->dispatcher->dispatch(
-            Events::MANDATE_ADDED_EVENT,
+            Events::DONOR_ADDED,
             new DonorEvent(
                 sprintf(
                     'Added donor <info>%s</info> with mandate key <info>%s</info>',
