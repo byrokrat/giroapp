@@ -31,18 +31,18 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Command to drop a mandate (remove from database)
+ * Command to completely remove a donor
  */
-class DropCommand implements CommandInterface
+class RemoveCommand implements CommandInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
 
     public static function configure(CommandWrapper $wrapper): void
     {
-        $wrapper->setName('drop');
-        $wrapper->setDescription('Drop a donor mandate');
-        $wrapper->setHelp('Remove a mandate completely from the database');
-        $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force drop');
+        $wrapper->setName('remove');
+        $wrapper->setDescription('Remove a donor');
+        $wrapper->setHelp('Remove a donor completely from the database');
+        $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force remove');
         self::configureDonorArgument($wrapper);
     }
 
@@ -51,14 +51,14 @@ class DropCommand implements CommandInterface
         $donor = $this->getDonor($input);
 
         if ($donor->getState()->getStateId() != States::INACTIVE && !$input->getOption('force')) {
-            throw new \RuntimeException('Unable to drop mandate that is not inactive. Use -f to override.');
+            throw new \RuntimeException('Unable to remove donor that is not inactive. Use -f to override.');
         }
 
         $this->dispatcher->dispatch(
-            Events::MANDATE_DROPPED_EVENT,
+            Events::DONOR_REMOVED,
             new DonorEvent(
                 sprintf(
-                    'Dropped mandate <info>%s</info>',
+                    'Removed mandate <info>%s</info>',
                     $donor->getMandateKey()
                 ),
                 $donor

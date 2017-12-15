@@ -23,29 +23,40 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\XmlEvent;
-use byrokrat\giroapp\Xml\XmlObject;
-use byrokrat\giroapp\Exception\InvalidXmlException;
+use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Xml\XmlMandateParser;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
- * Generic file import listener, dispatch events based on file type
+ * Parse an xml mandate file and fire event
  */
-class ImportingListener
+class XmlImportingListener
 {
-    public function onImportEvent(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
+    /**
+     * @var XmlMandateParser
+     */
+    private $parser;
+
+    public function __construct(XmlMandateParser $parser)
     {
-        try {
+        $this->parser = $parser;
+    }
+
+    public function onXmlFileImported(XmlEvent $event, string $eventName, Dispatcher $dispatcher): void
+    {
+        foreach ($this->parser->parse($event->getXmlObject()) as $donor) {
             $dispatcher->dispatch(
-                Events::IMPORT_XML_EVENT,
-                new XmlEvent(
-                    $event->getFile(),
-                    new XmlObject($event->getFile()->getContent())
+                Events::DONOR_ADDED,
+                new DonorEvent(
+                    sprintf(
+                        'Added xml mandate for donor <info>%s</info> with mandate key <info>%s</info>',
+                        $donor->getName(),
+                        $donor->getMandateKey()
+                    ),
+                    $donor
                 )
             );
-        } catch (InvalidXmlException $e) {
-            $dispatcher->dispatch(Events::IMPORT_AUTOGIRO_EVENT, $event);
         }
     }
 }

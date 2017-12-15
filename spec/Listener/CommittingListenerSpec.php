@@ -24,6 +24,6 @@ class CommittingListenerSpec extends ObjectBehavior
     function it_commits_database($db)
     {
         $db->commit()->shouldBeCalled();
-        $this->onExecutionEndEvent();
+        $this->onExecutionStoped();
     }
 }

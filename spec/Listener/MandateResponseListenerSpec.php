@@ -87,10 +87,10 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $nodeId->format('S-sk')->willReturn('foo');
         $donorId->format('S-sk')->willReturn('NOT-foo');
 
-        $disp->dispatch(Events::WARNING_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $disp->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
 
-        $this->onMandateResponseEvent($event, '', $disp);
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function it_fails_if_node_contains_invalid_account(
@@ -111,50 +111,50 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $nodeAccount->getNumber()->willReturn('');
         $donorAccount->getNumber()->willReturn('');
 
-        $disp->dispatch(Events::WARNING_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $disp->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
 
-        $this->onMandateResponseEvent($event, '', $disp);
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function it_fails_on_unknown_response_code($event, $statusNode, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn('this-is-not-a-valid-autogiro-reposnose-code');
-        $disp->dispatch(Events::WARNING_EVENT, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $disp->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_inactive_on_mandate_deleted_by_payer($event, $statusNode, $donor, $inactiveState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_DELETED_BY_PAYER);
         $donor->setState($inactiveState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_REVOKED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_account_not_allowed($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_ACCOUNT_NOT_ALLOWED);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_mandate_does_not_exist($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_DOES_NOT_EXIST);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_invalid_account_or_id($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_INVALID_ACCOUNT_OR_ID);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_inactive_on_mandate_del_unanswered_request(
@@ -168,127 +168,127 @@ class MandateResponseListenerSpec extends ObjectBehavior
             Messages::STATUS_MANDATE_DELETED_DUE_TO_UNANSWERED_ACCOUNT_REQUEST
         );
         $donor->setState($inactiveState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_REVOKED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_payer_number_does_not_exist($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_PAYER_NUMBER_DOES_NOT_EXIST);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_mandate_already_exists($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_ALREADY_EXISTS);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_invalid_id_or_bg_not_allowed($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_INVALID_ID_OR_BG_NOT_ALLOWED);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_invalid_payer_number($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_INVALID_PAYER_NUMBER);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_invalid_account($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_INVALID_ACCOUNT);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_invalid_payee_account($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_INVALID_PAYEE_ACCOUNT);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_inactive_payee_account($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_INACTIVE_PAYEE_ACCOUNT);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_approved_on_mandate_created($event, $statusNode, $donor, $approvedState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_CREATED);
         $donor->setState($approvedState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_APPROVED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_APPROVED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_inactive_on_mandate_deleted($event, $statusNode, $donor, $inactiveState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_DELETED);
         $donor->setState($inactiveState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_REVOKED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_inactive_on_mandate_del_closed_payer_bg($event, $statusNode, $donor, $inactiveState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_DELETED_DUE_TO_CLOSED_PAYER_BG);
         $donor->setState($inactiveState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_REVOKED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_inactive_on_mandate_deleted_by_bank($event, $statusNode, $donor, $inactiveState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_DELETED_BY_BANK);
         $donor->setState($inactiveState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_REVOKED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_inactive_on_mandate_deleted_by_bgc($event, $statusNode, $donor, $inactiveState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_DELETED_BY_BGC);
         $donor->setState($inactiveState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_REVOKED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_REVOKED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_mandate_blocked_by_payer($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_BLOCKED_BY_PAYER);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_mandate_block_removed($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_BLOCK_REMOVED);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 
     function its_error_on_mandate_max_amount_not_allowed($event, $statusNode, $donor, $errorState, Dispatcher $disp)
     {
         $statusNode->getAttribute('message_id')->willReturn(Messages::STATUS_MANDATE_MAX_AMOUNT_NOT_ALLOWED);
         $donor->setState($errorState)->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALID_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseEvent($event, '', $disp);
+        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $this->onMandateResponseReceived($event, '', $disp);
     }
 }

@@ -76,7 +76,7 @@ class EditCommand implements CommandInterface
         $donor = $this->getDonor($input);
 
         $this->dispatcher->dispatch(
-            Events::INFO_EVENT,
+            Events::INFO,
             new LogEvent("Editing mandate <info>{$donor->getMandateKey()}</info>")
         );
 
@@ -183,7 +183,7 @@ class EditCommand implements CommandInterface
         );
 
         $this->dispatcher->dispatch(
-            Events::MANDATE_EDITED_EVENT,
+            Events::DONOR_UPDATED,
             new DonorEvent(
                 "Updated mandate <info>{$donor->getMandateKey()}</info>",
                 $donor

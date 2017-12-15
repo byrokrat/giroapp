@@ -47,7 +47,7 @@ class MigrateCommand implements CommandInterface
     {
         foreach ($this->donorMapper->findAll() as $donor) {
             $this->dispatcher->dispatch(
-                Events::MANDATE_EDITED_EVENT,
+                Events::DONOR_UPDATED,
                 new DonorEvent(
                     "Updated mandate <info>{$donor->getMandateKey()}</info>",
                     $donor

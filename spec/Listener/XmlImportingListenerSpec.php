@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Listener\ImportingXmlListener;
+use byrokrat\giroapp\Listener\XmlImportingListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\XmlEvent;
 use byrokrat\giroapp\Event\DonorEvent;
@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class ImportingXmlListenerSpec extends ObjectBehavior
+class XmlImportingListenerSpec extends ObjectBehavior
 {
     function let(XmlMandateParser $parser)
     {
@@ -24,7 +24,7 @@ class ImportingXmlListenerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ImportingXmlListener::CLASS);
+        $this->shouldHaveType(XmlImportingListener::CLASS);
     }
 
     function it_dispatches_added_mandates(
@@ -39,8 +39,8 @@ class ImportingXmlListenerSpec extends ObjectBehavior
         $donor->getName()->willReturn('');
         $donor->getMandateKey()->willReturn('');
 
-        $dispatcher->dispatch(Events::MANDATE_ADDED_EVENT, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::DONOR_ADDED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
 
-        $this->onImportXmlEvent($event, '', $dispatcher);
+        $this->onXmlFileImported($event, '', $dispatcher);
     }
 }

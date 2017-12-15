@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Listener\ImportingAutogiroListener;
+use byrokrat\giroapp\Listener\AutogiroImportingListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\NodeEvent;
@@ -16,7 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class ImportingAutogiroListenerSpec extends ObjectBehavior
+class AutogiroImportingListenerSpec extends ObjectBehavior
 {
     function let(Parser $parser)
     {
@@ -25,7 +25,7 @@ class ImportingAutogiroListenerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ImportingAutogiroListener::CLASS);
+        $this->shouldHaveType(AutogiroImportingListener::CLASS);
     }
 
     function a_tree(Node $node, $type = '', ...$children)
@@ -46,7 +46,7 @@ class ImportingAutogiroListenerSpec extends ObjectBehavior
         $event->getFile()->willReturn($file);
         $file->getContent()->willReturn('foobar');
         $parser->parse('foobar')->willReturn($this->a_tree($fileNode));
-        $this->onImportAutogiroEvent($event, '', $dispatcher);
+        $this->onAutogiroFileImported($event, '', $dispatcher);
     }
 
     function it_dispatches_approved_mandate_events(
@@ -68,8 +68,8 @@ class ImportingAutogiroListenerSpec extends ObjectBehavior
             )
         );
 
-        $dispatcher->dispatch(Events::MANDATE_RESPONSE_EVENT, Argument::type(NodeEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::MANDATE_RESPONSE_RECEIVED, Argument::type(NodeEvent::CLASS))->shouldBeCalled();
 
-        $this->onImportAutogiroEvent($event, '', $dispatcher);
+        $this->onAutogiroFileImported($event, '', $dispatcher);
     }
 }

@@ -21,12 +21,12 @@ class MonitoringListenerSpec extends ObjectBehavior
     function it_dispatches_info(LogEvent $event, EventDispatcherInterface $dispatcher)
     {
         $this->dispatchInfo($event, '', $dispatcher);
-        $dispatcher->dispatch(Events::INFO_EVENT, $event)->shouldHaveBeenCalled();
+        $dispatcher->dispatch(Events::INFO, $event)->shouldHaveBeenCalled();
     }
 
     function it_dispatches_warning(LogEvent $event, EventDispatcherInterface $dispatcher)
     {
         $this->dispatchWarning($event, '', $dispatcher);
-        $dispatcher->dispatch(Events::WARNING_EVENT, $event)->shouldHaveBeenCalled();
+        $dispatcher->dispatch(Events::WARNING, $event)->shouldHaveBeenCalled();
     }
 }

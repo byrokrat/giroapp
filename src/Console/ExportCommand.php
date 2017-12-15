@@ -69,7 +69,7 @@ class ExportCommand implements CommandInterface
                 $donor->exportToAutogiro($this->autogiroWriter);
                 $donor->setState($this->statePool->getState($donor->getState()->getNextStateId()));
                 $this->dispatcher->dispatch(
-                    Events::MANDATE_EDITED_EVENT,
+                    Events::DONOR_UPDATED,
                     new DonorEvent(
                         "Exported mandate <info>{$donor->getMandateKey()}</info>",
                         $donor

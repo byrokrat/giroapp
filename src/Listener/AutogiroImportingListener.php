@@ -33,7 +33,7 @@ use byrokrat\autogiro\Tree\Node;
 /**
  * Parse an autogiro file and fire events based on content
  */
-class ImportingAutogiroListener
+class AutogiroImportingListener
 {
     /**
      * @var Parser
@@ -45,12 +45,12 @@ class ImportingAutogiroListener
         $this->parser = $parser;
     }
 
-    public function onImportAutogiroEvent(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
+    public function onAutogiroFileImported(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
         $enum = new Enumerator;
 
         $enum->onMandateResponseNode(function (Node $node) use ($dispatcher) {
-            $dispatcher->dispatch(Events::MANDATE_RESPONSE_EVENT, new NodeEvent($node));
+            $dispatcher->dispatch(Events::MANDATE_RESPONSE_RECEIVED, new NodeEvent($node));
         });
 
         // TODO dispatch events on all autogiro nodes

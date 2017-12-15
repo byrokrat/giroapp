@@ -25,21 +25,21 @@ class OutputtingListenerSpec extends ObjectBehavior
     function it_writes_error_messages(LogEvent $event, $errout)
     {
         $event->getMessage()->willReturn('foobar');
-        $this->onErrorEvent($event);
+        $this->onError($event);
         $errout->writeln('<error>ERROR: foobar</error>')->shouldHaveBeenCalled();
     }
 
     function it_writes_warning_messages(LogEvent $event, $errout)
     {
         $event->getMessage()->willReturn('foobar');
-        $this->onWarningEvent($event);
+        $this->onWarning($event);
         $errout->writeln('<question>WARNING: foobar</question>')->shouldHaveBeenCalled();
     }
 
     function it_writes_info_messages(LogEvent $event, $stdout)
     {
         $event->getMessage()->willReturn('foobar');
-        $this->onInfoEvent($event);
+        $this->onInfo($event);
         $stdout->writeln('foobar')->shouldHaveBeenCalled();
     }
 
@@ -50,7 +50,7 @@ class OutputtingListenerSpec extends ObjectBehavior
         $stdout->isVerbose()->willReturn(true);
         $stdout->writeln('foobar')->shouldBeCalled();
 
-        $this->onDebugEvent($event);
+        $this->onDebug($event);
     }
 
     function it_discards_debug_message_if_output_is_not_verbose(LogEvent $event, $stdout)
@@ -60,6 +60,6 @@ class OutputtingListenerSpec extends ObjectBehavior
         $stdout->isVerbose()->willReturn(false);
         $stdout->writeln('foobar')->shouldNotBeCalled();
 
-        $this->onDebugEvent($event);
+        $this->onDebug($event);
     }
 }

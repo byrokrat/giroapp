@@ -33,11 +33,11 @@ class MonitoringListener
 {
     public function dispatchInfo(LogEvent $event, $eventName, Dispatcher $dispatcher): void
     {
-        $dispatcher->dispatch(Events::INFO_EVENT, $event);
+        $dispatcher->dispatch(Events::INFO, $event);
     }
 
     public function dispatchWarning(LogEvent $event, $eventName, Dispatcher $dispatcher): void
     {
-        $dispatcher->dispatch(Events::WARNING_EVENT, $event);
+        $dispatcher->dispatch(Events::WARNING, $event);
     }
 }

@@ -80,17 +80,17 @@ class CommandWrapper extends Command
         $dispatcher = $container->get('Symfony\Component\EventDispatcher\EventDispatcherInterface');
 
         $dispatcher->dispatch(
-            Events::DEBUG_EVENT,
+            Events::DEBUG,
             new LogEvent("User directory: <info>{$container->getParameter('fs.user_dir')}</info>")
         );
 
         try {
-            $dispatcher->dispatch(Events::EXECUTION_START_EVENT);
+            $dispatcher->dispatch(Events::EXECUTION_STARTED);
             $container->get($this->commandClass)->execute($input, $output);
-            $dispatcher->dispatch(Events::EXECUTION_END_EVENT);
+            $dispatcher->dispatch(Events::EXECUTION_STOPED);
         } catch (\Exception $e) {
             $dispatcher->dispatch(
-                Events::ERROR_EVENT,
+                Events::ERROR,
                 new LogEvent(
                     "[EXCEPTION] {$e->getMessage()}",
                     [

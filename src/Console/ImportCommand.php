@@ -68,7 +68,7 @@ class ImportCommand implements CommandInterface
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         $this->dispatcher->dispatch(
-            $input->getOption('force') ? Events::FORCE_IMPORT_EVENT : Events::IMPORT_EVENT,
+            $input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
             new FileEvent(
                 ($filename = $input->getArgument('filename'))
                     ? $this->fileReader->readFile($filename)

@@ -23,15 +23,12 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Mapper\DonorMapper;
-use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Event\LogEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Manipulate mandate persistent storage
+ * Manipulate donor persistent storage
  */
-class MandatePersistingListener
+class DonorPersistingListener
 {
     /**
      * @var DonorMapper
@@ -43,17 +40,17 @@ class MandatePersistingListener
         $this->donorMapper = $donorMapper;
     }
 
-    public function onMandateAddedEvent(DonorEvent $event): void
+    public function onDonorAdded(DonorEvent $event): void
     {
         $this->donorMapper->create($event->getDonor());
     }
 
-    public function onMandateUpdatedEvent(DonorEvent $event): void
+    public function onDonorUpdated(DonorEvent $event): void
     {
         $this->donorMapper->update($event->getDonor());
     }
 
-    public function onMandateDroppedEvent(DonorEvent $event): void
+    public function onDonorRemoved(DonorEvent $event): void
     {
         $this->donorMapper->delete($event->getDonor());
     }

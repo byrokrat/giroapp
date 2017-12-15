@@ -51,7 +51,7 @@ class FileImportChecksumListener
         $this->systemClock = $systemClock;
     }
 
-    public function onImportEvent(FileEvent $event, string $eventName, EventDispatcherInterface $dispatcher): void
+    public function onFileImported(FileEvent $event, string $eventName, EventDispatcherInterface $dispatcher): void
     {
         $file = $event->getFile();
 
@@ -64,7 +64,7 @@ class FileImportChecksumListener
         if ($this->fileChecksumMapper->hasKey($fileChecksum->getChecksum())) {
             $oldImport = $this->fileChecksumMapper->findByKey($fileChecksum->getChecksum());
             $dispatcher->dispatch(
-                Events::ERROR_EVENT,
+                Events::ERROR,
                 new LogEvent(sprintf(
                     'Unable to import %s, file has been previously imported at %s (use --force to override)',
                     $file->getFilename(),

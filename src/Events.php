@@ -28,85 +28,85 @@ interface Events
     /**
      * Execution about to start
      */
-    const EXECUTION_START_EVENT = 'EXECUTION_START_EVENT';
+    const EXECUTION_STARTED = 'EXECUTION_STARTED';
 
     /**
      * Execution about to end
      */
-    const EXECUTION_END_EVENT = 'EXECUTION_END_EVENT';
+    const EXECUTION_STOPED = 'EXECUTION_STOPED';
 
     /**
      * A file imported, expects an FileEvent
      */
-    const IMPORT_EVENT = 'IMPORT_EVENT';
+    const FILE_IMPORTED = 'FILE_IMPORTED';
 
     /**
      * A file forcefully imported, expects an FileEvent
      */
-    const FORCE_IMPORT_EVENT = 'FORCE_IMPORT_EVENT';
+    const FILE_FORCEFULLY_IMPORTED = 'FILE_FORCEFULLY_IMPORTED';
 
     /**
      * An autogiro file imported, expects an FileEvent
      */
-    const IMPORT_AUTOGIRO_EVENT = 'IMPORT_AUTOGIRO_EVENT';
+    const AUTOGIRO_FILE_IMPORTED = 'AUTOGIRO_FILE_IMPORTED';
 
     /**
      * An XML file imported, expects an XmlEvent
      */
-    const IMPORT_XML_EVENT = 'IMPORT_XML_EVENT';
+    const XML_FILE_IMPORTED = 'XML_FILE_IMPORTED';
+
+    /**
+     * A donor added, expects a DonorEvent
+     */
+    const DONOR_ADDED = 'DONOR_ADDED';
+
+    /**
+     * A donor updated, expects a DonorEvent
+     */
+    const DONOR_UPDATED = 'DONOR_UPDATED';
+
+    /**
+     * A donor removed, expects a DonorEvent
+     */
+    const DONOR_REMOVED = 'DONOR_REMOVED';
 
     /**
      * A mandate response received from bank, expects a NodeEvent
      */
-    const MANDATE_RESPONSE_EVENT = 'MANDATE_RESPONSE_EVENT';
+    const MANDATE_RESPONSE_RECEIVED = 'MANDATE_RESPONSE_RECEIVED';
 
     /**
-     * A mandate has been added, expects a DonorEvent
+     * A mandate approved by the bank, expects a DonorEvent
      */
-    const MANDATE_ADDED_EVENT = 'MANDATE_ADDED_EVENT';
+    const MANDATE_APPROVED = 'MANDATE_APPROVED';
 
     /**
-     * A mandate has been edited, expects a DonorEvent
+     * A mandate revoked, expects a DonorEvent
      */
-    const MANDATE_EDITED_EVENT = 'MANDATE_EDITED_EVENT';
-
-    /**
-     * A mandate has been approved by the bank, expects a DonorEvent
-     */
-    const MANDATE_APPROVED_EVENT = 'MANDATE_APPROVED_EVENT';
-
-    /**
-     * A mandate has been revoked, expects a DonorEvent
-     */
-    const MANDATE_REVOKED_EVENT = 'MANDATE_REVOKED_EVENT';
-
-    /**
-     * A mandate has been dropped, expects a DonorEvent
-     */
-    const MANDATE_DROPPED_EVENT = 'MANDATE_DROPPED_EVENT';
+    const MANDATE_REVOKED = 'MANDATE_REVOKED';
 
     /**
      * A mandate is invalid and could not be approved, expects a DonorEvent
      */
-    const MANDATE_INVALID_EVENT = 'MANDATE_INVALID_EVENT';
+    const MANDATE_INVALIDATED = 'MANDATE_INVALIDATED';
 
     /**
      * An unexpected and unrecoverable error, expects a LogEvent
      */
-    const ERROR_EVENT = 'ERROR_EVENT';
+    const ERROR = 'ERROR';
 
     /**
      * An unexpected but recoverable situation, expects a LogEvent
      */
-    const WARNING_EVENT = 'WARNING_EVENT';
+    const WARNING = 'WARNING';
 
     /**
      * Present information to user, expects a LogEvent
      */
-    const INFO_EVENT = 'INFO_EVENT';
+    const INFO = 'INFO';
 
     /**
      * Present debug information to user, expects a LogEvent
      */
-    const DEBUG_EVENT = 'DEBUG_EVENT';
+    const DEBUG = 'DEBUG';
 }

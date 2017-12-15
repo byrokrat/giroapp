@@ -15,7 +15,7 @@ Feature: Plugins
             public static function getSubscribedEvents()
             {
                 return [
-                    Events::EXECUTION_START_EVENT => 'onExecutionStart'
+                    Events::EXECUTION_STARTED => 'onExecutionStart'
                 ];
             }
 

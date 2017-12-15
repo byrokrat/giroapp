@@ -199,7 +199,7 @@ class AddCommand implements CommandInterface
         $donor = $this->donorBuilder->buildDonor();
 
         $this->dispatcher->dispatch(
-            Events::MANDATE_ADDED_EVENT,
+            Events::DONOR_ADDED,
             new DonorEvent(
                 sprintf(
                     'Added donor <info>%s</info> with mandate key <info>%s</info>',

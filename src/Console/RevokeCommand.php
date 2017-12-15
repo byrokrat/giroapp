@@ -51,7 +51,7 @@ class RevokeCommand implements CommandInterface
         $donor->setState(new RevokeMandateState);
 
         $this->dispatcher->dispatch(
-            Events::MANDATE_REVOKED_EVENT,
+            Events::MANDATE_REVOKED,
             new DonorEvent(
                 sprintf(
                     'Revoked mandate <info>%s</info>',
