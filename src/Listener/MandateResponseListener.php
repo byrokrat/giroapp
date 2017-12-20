@@ -63,7 +63,7 @@ class MandateResponseListener
 
         // validate id if present in node
         if ($node->getChild('id')->hasAttribute('id')) {
-            /** @var \byrokrat\id\Id */
+            /** @var \byrokrat\id\IdInterface */
             $nodeId = $node->getChild('id')->getAttribute('id');
 
             if ($donor->getDonorId()->format('S-sk') != $nodeId->format('S-sk')) {

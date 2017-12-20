@@ -15,7 +15,7 @@ use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactory;
 use byrokrat\banking\AccountNumber;
 use byrokrat\banking\Bankgiro;
-use byrokrat\id\Id;
+use byrokrat\id\IdInterface;
 use byrokrat\id\IdFactory;
 use byrokrat\id\OrganizationId;
 use PhpSpec\ObjectBehavior;
@@ -78,7 +78,7 @@ class XmlMandateParserSpec extends ObjectBehavior
         $accountFactory,
         AccountNumber $account,
         $idFactory,
-        Id $id,
+        IdInterface $id,
         XmlObject $xmlCustom,
         $translator,
         Donor $donor
@@ -109,7 +109,7 @@ class XmlMandateParserSpec extends ObjectBehavior
         $builder->setAccount($account)->willReturn($builder)->shouldBeCalled();
 
         $xmlMandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr')->willReturn('id');
-        $idFactory->create('id')->willReturn($id);
+        $idFactory->createId('id')->willReturn($id);
         $builder->setId($id)->willReturn($builder)->shouldBeCalled();
 
         $xmlMandate->readElement('/MedgivandeViaHemsida/Verifieringstid')->willReturn('time');

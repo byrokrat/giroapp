@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Builder;
 
-use byrokrat\id\Id;
+use byrokrat\id\IdInterface;
 use byrokrat\banking\AccountNumber;
 use Hashids\Hashids;
 
@@ -44,7 +44,7 @@ class MandateKeyBuilder
     /**
      * Create a unique key based on input
      */
-    public function buildKey(Id $id, AccountNumber $account): string
+    public function buildKey(IdInterface $id, AccountNumber $account): string
     {
         $key = $this->getHashEngine()->encode($id->format('Ss') . (string)substr($account->get16(), 0, -1));
 

@@ -112,7 +112,7 @@ class Validators
             ->match(function ($val) {
                 return preg_match('/^[0-9.,+ -]+$/', $val);
             })
-            ->post([$this->idFactory, 'create']);
+            ->post([$this->idFactory, 'createId']);
     }
 
     public function getBgcCustomerNumberValidator(): callable

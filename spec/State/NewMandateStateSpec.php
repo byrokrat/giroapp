@@ -10,7 +10,7 @@ use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\Writer;
 use byrokrat\banking\AccountNumber;
-use byrokrat\id\Id;
+use byrokrat\id\IdInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -46,7 +46,7 @@ class NewMandateStateSpec extends ObjectBehavior
         $this->shouldBeExportable();
     }
 
-    function it_can_be_exported(Donor $donor, Writer $writer, AccountNumber $account, Id $id)
+    function it_can_be_exported(Donor $donor, Writer $writer, AccountNumber $account, IdInterface $id)
     {
         $donor->getPayerNumber()->willReturn('foobar');
         $donor->getAccount()->willReturn($account);

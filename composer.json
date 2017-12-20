@@ -32,7 +32,7 @@
         "byrokrat/amount": "^2",
         "byrokrat/autogiro": "dev-master",
         "byrokrat/banking": "^1.4",
-        "byrokrat/id": "^1.0",
+        "byrokrat/id": "^1.1",
         "hanneskod/yaysondb": "^2.1.2",
         "hanneskod/classtools": "^1.1",
         "hanneskod/clean" :"^2",
