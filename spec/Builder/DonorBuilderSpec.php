@@ -12,7 +12,7 @@ use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Utils\SystemClock;
-use byrokrat\id\Id;
+use byrokrat\id\IdInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
@@ -26,7 +26,7 @@ class DonorBuilderSpec extends ObjectBehavior
 
     function let(
         MandateKeyBuilder $keyBuilder,
-        Id $id,
+        IdInterface $id,
         AccountNumber $account,
         StatePool $statePool,
         StateInterface $state,

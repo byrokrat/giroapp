@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\banking\AccountNumber;
-use byrokrat\id\Id;
+use byrokrat\id\IdInterface;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\autogiro\Writer\Writer;
 
@@ -74,7 +74,7 @@ class Donor
     private $account;
 
     /**
-     * @var Id
+     * @var IdInterface
      */
     private $donorId;
 
@@ -129,7 +129,7 @@ class Donor
         string $mandateSource,
         string $payerNumber,
         AccountNumber $account,
-        Id $donorId,
+        IdInterface $donorId,
         string $name,
         PostalAddress $address,
         string $email,
@@ -192,7 +192,7 @@ class Donor
         return $this->account;
     }
 
-    public function getDonorId(): Id
+    public function getDonorId(): IdInterface
     {
         return $this->donorId;
     }

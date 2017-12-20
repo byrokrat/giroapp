@@ -12,7 +12,7 @@ use byrokrat\banking\AccountFactory;
 use byrokrat\banking\AccountNumber;
 use byrokrat\banking\Bankgiro;
 use byrokrat\banking\BankgiroFactory;
-use byrokrat\id\Id;
+use byrokrat\id\IdInterface;
 use byrokrat\id\IdFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -61,10 +61,10 @@ class ValidatorsSpec extends ObjectBehavior
         $this->getBankgiroValidator()->shouldNotValidate('456');
     }
 
-    function it_validates_ids($idFactory, Id $id)
+    function it_validates_ids($idFactory, IdInterface $id)
     {
-        $idFactory->create('123')->willReturn($id);
-        $idFactory->create('456')->willThrow(\RuntimeException::CLASS);
+        $idFactory->createId('123')->willReturn($id);
+        $idFactory->createId('456')->willThrow(\RuntimeException::CLASS);
         $this->getIdValidator()->shouldValidate('123');
         $this->getIdValidator()->shouldNotValidate('456');
     }

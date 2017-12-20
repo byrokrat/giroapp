@@ -110,7 +110,7 @@ services:
         class: byrokrat\giroapp\Xml\NullXmlMandateMigration
 
     organization_id:
-        class: byrokrat\id\Id
+        class: byrokrat\id\IdInterface
         factory: 'byrokrat\id\IdFactory:create'
         arguments: ["@=service('db_settings_mapper').findByKey('org_number')"]
 

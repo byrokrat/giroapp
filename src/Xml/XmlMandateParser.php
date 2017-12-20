@@ -141,7 +141,7 @@ class XmlMandateParser
             );
 
             $this->donorBuilder->setId(
-                $this->idFactory->create(
+                $this->idFactory->createId(
                     $mandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr')
                 )
             );

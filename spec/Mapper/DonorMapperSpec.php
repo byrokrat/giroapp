@@ -9,7 +9,7 @@ use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\banking\AccountNumber;
-use byrokrat\id\Id;
+use byrokrat\id\IdInterface;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\FilterableInterface;
 use hanneskod\yaysondb\Expression\ExpressionInterface;
@@ -89,7 +89,7 @@ class DonorMapperSpec extends ObjectBehavior
         $this->shouldThrow(\RuntimeException::CLASS)->duringCreate($donor);
     }
 
-    function it_fails_on_create_if_mandate_key_exists($collection, Donor $donor, Id $id, AccountNumber $account)
+    function it_fails_create_if_mandate_key_exists($collection, Donor $donor, IdInterface $id, AccountNumber $account)
     {
         $id->format('S-sk')->willReturn('');
         $account->getNumber()->willReturn('');

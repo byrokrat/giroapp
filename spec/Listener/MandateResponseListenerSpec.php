@@ -14,7 +14,7 @@ use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\States;
-use byrokrat\id\Id;
+use byrokrat\id\IdInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Messages;
@@ -75,8 +75,8 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $event,
         $idNode,
         $donor,
-        Id $nodeId,
-        Id $donorId,
+        IdInterface $nodeId,
+        IdInterface $donorId,
         Dispatcher $disp
     ) {
         $idNode->hasAttribute('id')->willReturn(true);

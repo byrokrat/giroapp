@@ -9,7 +9,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
-task('default', ['test', 'sniff']);
+task('default', ['test', 'sniff', 'phpstan']);
 
 desc('Run unit and feature tests');
 task('test', ['phpspec', 'behat']);

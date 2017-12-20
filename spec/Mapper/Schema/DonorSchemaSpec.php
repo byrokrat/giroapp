@@ -80,7 +80,7 @@ class DonorSchemaSpec extends ObjectBehavior
         $accountFactory->createAccount(self::ACCOUNT)->willReturn($account);
         $account->getNumber()->willReturn(self::ACCOUNT);
 
-        $idFactory->create(self::ID)->willReturn($id);
+        $idFactory->createId(self::ID)->willReturn($id);
         $id->format('S-sk')->willReturn(self::ID);
 
         $datetime->format(\DateTime::W3C)->willReturn(self::FORMATTED_DATE);

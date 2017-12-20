@@ -28,7 +28,7 @@ use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Utils\SystemClock;
-use byrokrat\id\Id;
+use byrokrat\id\IdInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
 
@@ -63,7 +63,7 @@ class DonorBuilder
     private $payerNumber;
 
     /**
-     * @var Id
+     * @var IdInterface
      */
     private $id;
 
@@ -148,7 +148,7 @@ class DonorBuilder
         return $this;
     }
 
-    public function setId(Id $id): self
+    public function setId(IdInterface $id): self
     {
         $this->id = $id;
         return $this;
@@ -232,7 +232,7 @@ class DonorBuilder
         return $this->mandateSource;
     }
 
-    private function getId(): Id
+    private function getId(): IdInterface
     {
         if (isset($this->id)) {
             return $this->id;
