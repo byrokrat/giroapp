@@ -11,7 +11,6 @@ use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\ActiveState;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\banking\AccountFactory;
 use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
@@ -70,7 +69,6 @@ class DonorSchemaSpec extends ObjectBehavior
         AccountNumber $account,
         IdFactory $idFactory,
         PersonalId $id,
-        SystemClock $systemClock,
         \DateTime $datetime
     ) {
         $postalAddressSchema->fromArray([self::ADDRESS])->willReturn($address);
@@ -85,15 +83,13 @@ class DonorSchemaSpec extends ObjectBehavior
         $idFactory->create(self::ID)->willReturn($id);
         $id->format('S-sk')->willReturn(self::ID);
 
-        $systemClock->getNow()->willReturn($datetime);
         $datetime->format(\DateTime::W3C)->willReturn(self::FORMATTED_DATE);
 
         $this->beConstructedWith(
             $postalAddressSchema,
             $statePool,
             $accountFactory,
-            $idFactory,
-            $systemClock
+            $idFactory
         );
     }
 
@@ -123,15 +119,6 @@ class DonorSchemaSpec extends ObjectBehavior
                 [self::ATTR_KEY => self::ATTR_VALUE]
             )
         );
-    }
-
-    function it_can_create_donors_without_optional_fields($state, $account, $id, $address)
-    {
-        $schemaWithoutOptionalFields = $this->schemaDocument;
-        unset($schemaWithoutOptionalFields['created']);
-        unset($schemaWithoutOptionalFields['updated']);
-        unset($schemaWithoutOptionalFields['attributes']);
-        $this->fromArray($schemaWithoutOptionalFields)->shouldHaveType(Donor::CLASS);
     }
 
     function it_can_create_arrays($account, $id, $address, $state, $datetime, SEK $amount)
