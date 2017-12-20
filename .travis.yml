@@ -7,8 +7,10 @@ php:
   - 7.1
 
 install:
-  - composer require phpspec/phpspec:^4 behat/behat:^3.3
+  - composer install --no-dev
+  - composer global require phpspec/phpspec:^4 behat/behat:^3.3
+  - export PATH=$PATH:$HOME/.composer/vendor/bin/
 
 script:
-  - vendor/bin/phpspec run --verbose
-  - vendor/bin/behat --verbose
+  - phpspec run --verbose
+  - behat --verbose
