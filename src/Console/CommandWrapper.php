@@ -22,21 +22,26 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\Listener\ExitStatusListener;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\NullOutput;
-use Symfony\Component\Console\Output\StreamOutput;
-use Streamer\Stream;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Wrapper of giroapp console commands
  */
 class CommandWrapper extends Command
 {
+    /**
+     * @var Container
+     */
+    private static $container;
+
     /**
      * @var string Name of command class
      */
@@ -51,6 +56,11 @@ class CommandWrapper extends Command
     {
         $this->commandClass = $commandClass;
         parent::__construct();
+    }
+
+    public static function setContainer(Container $container): void
+    {
+        self::$container = $container;
     }
 
     /**
@@ -68,26 +78,34 @@ class CommandWrapper extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $container = new ProjectServiceContainer;
+        if ($this->discardOutputMessages) {
+            self::$container->set('std_out', new NullOutput);
+        }
 
-        $container->set(InputInterface::CLASS, $input);
-        $container->set('std_out', $this->discardOutputMessages ? new NullOutput : $output);
-        $container->set('err_out', new StreamOutput(STDERR, $output->getVerbosity()));
-        $container->set('std_in', new Stream(STDIN));
-        $container->set('Symfony\Component\Console\Helper\QuestionHelper', $this->getHelper('question'));
+        /** @var EventDispatcherInterface $dispatcher */
+        $dispatcher = self::$container->get(EventDispatcherInterface::CLASS);
 
-        /** @var \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher */
-        $dispatcher = $container->get('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        /** @var ExitStatusListener $exitStatusListener */
+        $exitStatusListener = self::$container->get(ExitStatusListener::CLASS);
 
-        $dispatcher->dispatch(
-            Events::DEBUG,
-            new LogEvent("User directory: <info>{$container->getParameter('fs.user_dir')}</info>")
-        );
+        /** @var CommandInterface $command */
+        $command = self::$container->get($this->commandClass);
 
         try {
-            $dispatcher->dispatch(Events::EXECUTION_STARTED);
-            $container->get($this->commandClass)->execute($input, $output);
-            $dispatcher->dispatch(Events::EXECUTION_STOPED);
+            $dispatcher->dispatch(
+                Events::EXECUTION_STARTED,
+                new LogEvent(sprintf(
+                    'Execution started using: <info>%s</info>',
+                    self::$container->getParameter('fs.user_dir')
+                ))
+            );
+
+            $command->execute($input, $output);
+
+            $dispatcher->dispatch(
+                Events::EXECUTION_STOPED,
+                new LogEvent('Execution successful')
+            );
         } catch (\Exception $e) {
             $dispatcher->dispatch(
                 Events::ERROR,
@@ -102,6 +120,6 @@ class CommandWrapper extends Command
             );
         }
 
-        return $container->get('byrokrat\giroapp\Listener\ExitStatusListener')->getExitStatus();
+        return $exitStatusListener->getExitStatus();
     }
 }

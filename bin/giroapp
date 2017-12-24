@@ -25,7 +25,24 @@ namespace byrokrat\giroapp\Console;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
+use Streamer\Stream;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+$input = new ArgvInput;
+$output = new ConsoleOutput;
+
+$container = new ProjectServiceContainer;
+
+$container->set(InputInterface::CLASS, $input);
+$container->set('std_out', $output);
+$container->set('err_out', $output->getErrorOutput());
+$container->set('std_in', new Stream(STDIN));
+
+CommandWrapper::setContainer($container);
 
 $version = trim(file_get_contents(__DIR__ . '/../version'));
 
@@ -44,4 +61,4 @@ $app->add(new CommandWrapper(ShowCommand::CLASS));
 $app->add(new CommandWrapper(StatusCommand::CLASS));
 $app->add(new CommandWrapper(ValidateCommand::CLASS));
 
-$app->run();
+$app->run($input, $output);

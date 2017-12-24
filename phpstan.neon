@@ -3,6 +3,4 @@ parameters:
 		- src/DependencyInjection/ProjectServiceContainer.php
 	ignoreErrors:
 		- '/Call to an undefined method byrokrat\\autogiro\\Enumerator::on[a-zA-Z0-9\\_]+\(\)/'
-		- '/Call to an undefined method object::getExitStatus\(\)/'
-		- '/Call to an undefined method object::execute\(\)/'
 		- '/Call to an undefined method hanneskod\\classtools\\Iterator\\Filter::where\(\)/'

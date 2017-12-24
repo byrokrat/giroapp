@@ -6,14 +6,16 @@ services:
     byrokrat\giroapp\Listener\MonitoringListener:
         class: ~
         tags:
-            - { name: event_listener, event: FILE_IMPORTED,           method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED,     method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: DONOR_ADDED,    method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: DONOR_UPDATED,   method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: MANDATE_APPROVED, method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: MANDATE_REVOKED,  method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: DONOR_REMOVED,  method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: MANDATE_INVALIDATED,  method: dispatchWarning, priority: 10 }
+            - { name: event_listener, event: EXECUTION_STARTED,        method: dispatchDebug,   priority: 10 }
+            - { name: event_listener, event: EXECUTION_STOPED,         method: dispatchDebug,   priority: 10 }
+            - { name: event_listener, event: FILE_IMPORTED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED, method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: DONOR_ADDED,              method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: DONOR_UPDATED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_APPROVED,         method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_REVOKED,          method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: DONOR_REMOVED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_INVALIDATED,      method: dispatchWarning, priority: 10 }
 
     byrokrat\giroapp\Listener\LoggingListener:
         class: ~

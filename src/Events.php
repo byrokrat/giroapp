@@ -26,12 +26,12 @@ namespace byrokrat\giroapp;
 interface Events
 {
     /**
-     * Execution about to start
+     * Execution about to start, expects a LogEvent
      */
     const EXECUTION_STARTED = 'EXECUTION_STARTED';
 
     /**
-     * Execution about to end
+     * Execution about to end, expects a LogEvent
      */
     const EXECUTION_STOPED = 'EXECUTION_STOPED';
 
