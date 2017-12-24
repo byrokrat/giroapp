@@ -101,7 +101,7 @@ class DonorMapperSpec extends ObjectBehavior
         $this->shouldThrow(\RuntimeException::CLASS)->duringCreate($donor);
     }
 
-    function it_can_update_donor($collection, $donorSchema, $systemClock, Donor $donor, \DateTime $date)
+    function it_can_update_donor($collection, $donorSchema, $systemClock, Donor $donor)
     {
         $donor->getMandateKey()->willReturn('mandate_key');
         $donor->getPayerNumber()->willReturn('payer_number');
@@ -109,6 +109,7 @@ class DonorMapperSpec extends ObjectBehavior
         $donorSchema->toArray($donor)->willReturn(['SCHEMA']);
         $collection->has('mandate_key')->willReturn(true);
         $collection->insert(['SCHEMA'], 'mandate_key')->shouldBeCalled();
+        $date = new \DateTime;
         $systemClock->getNow()->willReturn($date);
         $donor->setUpdated($date)->shouldBeCalled();
 

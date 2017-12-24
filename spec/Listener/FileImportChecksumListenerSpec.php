@@ -24,11 +24,10 @@ class FileImportChecksumListenerSpec extends ObjectBehavior
     function let(
         FileChecksumMapper $fileChecksumMapper,
         SystemClock $systemClock,
-        \DateTime $date,
         FileEvent $event,
         File $file
     ) {
-        $systemClock->getNow()->willReturn($date);
+        $systemClock->getNow()->willReturn(new \DateTime);
         $this->beConstructedWith($fileChecksumMapper, $systemClock);
         $event->getFile()->willReturn($file);
         $file->getFilename()->willReturn(self::FILENAME);
@@ -40,11 +39,11 @@ class FileImportChecksumListenerSpec extends ObjectBehavior
         $this->shouldHaveType(FileImportChecksumListener::CLASS);
     }
 
-    function it_dispatches_errors($fileChecksumMapper, $date, $event, Dispatcher $dispatcher, FileChecksum $oldImport)
+    function it_dispatches_errors($fileChecksumMapper, $event, Dispatcher $dispatcher, FileChecksum $oldImport)
     {
         $fileChecksumMapper->hasKey(self::CHECKSUM)->willReturn(true);
         $fileChecksumMapper->findByKey(self::CHECKSUM)->willReturn($oldImport);
-        $oldImport->getDatetime()->willReturn($date);
+        $oldImport->getDatetime()->willReturn(new \DateTime);
 
         $dispatcher->dispatch(Events::ERROR, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
@@ -53,14 +52,17 @@ class FileImportChecksumListenerSpec extends ObjectBehavior
         $this->onFileImported($event, '', $dispatcher);
     }
 
-    function it_inserts_checksums($fileChecksumMapper, $date, $event, Dispatcher $dispatcher)
+    function it_inserts_checksums($fileChecksumMapper, $event, $systemClock, Dispatcher $dispatcher)
     {
         $fileChecksumMapper->hasKey(self::CHECKSUM)->willReturn(false);
+
+        $date = new \DateTime;
+        $systemClock->getNow()->willReturn($date);
 
         $dispatcher->dispatch(Events::ERROR, Argument::type(LogEvent::CLASS))->shouldNotBeCalled();
         $event->stopPropagation()->shouldNotBeCalled();
 
-        $fileChecksum = new FileChecksum(self::FILENAME, self::CHECKSUM, $date->getWrappedObject());
+        $fileChecksum = new FileChecksum(self::FILENAME, self::CHECKSUM, $date);
         $fileChecksumMapper->insert($fileChecksum)->shouldBeCalled();
 
         $this->onFileImported($event, '', $dispatcher);
