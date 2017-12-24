@@ -29,8 +29,19 @@ class LogFormatterSpec extends ObjectBehavior
         ];
 
         $this->encode($doc)->shouldMatch('/this-is-the-logged-message/');
-        $this->encode($doc)->shouldMatch('/ERROR:/');
+        $this->encode($doc)->shouldMatch('/\[ERROR\]/');
         $this->encode($doc)->shouldMatch('/some-key/');
         $this->encode($doc)->shouldMatch('/some-value/');
+    }
+
+    function it_strips_tags()
+    {
+        $doc = [
+            'message' => 'this-is-the-<info>logged</info>-message',
+            'severity' => 'ERROR',
+            'context' => []
+        ];
+
+        $this->encode($doc)->shouldMatch('/this-is-the-logged-message/');
     }
 }
