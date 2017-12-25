@@ -29,7 +29,6 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -47,11 +46,6 @@ class CommandWrapper extends Command
      */
     private $commandClass;
 
-    /**
-     * @var bool
-     */
-    private $discardOutputMessages = false;
-
     public function __construct(string $commandClass)
     {
         $this->commandClass = $commandClass;
@@ -63,14 +57,6 @@ class CommandWrapper extends Command
         self::$container = $container;
     }
 
-    /**
-     * Instruct wrapper to ignore messages written to standard out
-     */
-    public function discardOutputMessages(): void
-    {
-        $this->discardOutputMessages = true;
-    }
-
     protected function configure(): void
     {
         $this->commandClass::configure($this);
@@ -78,10 +64,6 @@ class CommandWrapper extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if ($this->discardOutputMessages) {
-            self::$container->set('std_out', new NullOutput);
-        }
-
         /** @var EventDispatcherInterface $dispatcher */
         $dispatcher = self::$container->get(EventDispatcherInterface::CLASS);
 
@@ -100,7 +82,7 @@ class CommandWrapper extends Command
                 ))
             );
 
-            $command->execute($input, $output);
+            $command->execute();
 
             $dispatcher->dispatch(
                 Events::EXECUTION_STOPED,

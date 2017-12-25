@@ -23,12 +23,11 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection\InputProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Utils\FileReader;
 use byrokrat\giroapp\Utils\File;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Streamer\Stream;
@@ -38,7 +37,7 @@ use Streamer\Stream;
  */
 class ImportCommand implements CommandInterface
 {
-    use DispatcherProperty;
+    use DispatcherProperty, InputProperty;
 
     /**
      * @var FileReader
@@ -65,12 +64,12 @@ class ImportCommand implements CommandInterface
         $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import even if a pre-condition fails.');
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(): void
     {
         $this->dispatcher->dispatch(
-            $input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
+            $this->input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
             new FileEvent(
-                ($filename = $input->getArgument('filename'))
+                ($filename = $this->input->getArgument('filename'))
                     ? $this->fileReader->readFile($filename)
                     : new File('STDIN', $this->stdin->getContent())
             )

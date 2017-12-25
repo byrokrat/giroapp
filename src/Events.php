@@ -66,6 +66,11 @@ interface Events
     const DONOR_UPDATED = 'DONOR_UPDATED';
 
     /**
+     * A donor exported, expects a DonorEvent
+     */
+    const DONOR_EXPORTED = 'DONOR_EXPORTED';
+
+    /**
      * A donor removed, expects a DonorEvent
      */
     const DONOR_REMOVED = 'DONOR_REMOVED';
