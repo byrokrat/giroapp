@@ -22,17 +22,13 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Listener\ExitStatusListener;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Wrapper of giroapp console commands
+ * Manage the container and execute command
  */
 class CommandWrapper extends Command
 {
@@ -64,44 +60,12 @@ class CommandWrapper extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var EventDispatcherInterface $dispatcher */
-        $dispatcher = self::$container->get(EventDispatcherInterface::CLASS);
-
-        /** @var ExitStatusListener $exitStatusListener */
-        $exitStatusListener = self::$container->get(ExitStatusListener::CLASS);
-
         /** @var CommandInterface $command */
         $command = self::$container->get($this->commandClass);
 
-        try {
-            $dispatcher->dispatch(
-                Events::EXECUTION_STARTED,
-                new LogEvent(sprintf(
-                    'Execution started using: <info>%s</info>',
-                    self::$container->getParameter('fs.user_dir')
-                ))
-            );
+        /** @var CommandRunner $runner */
+        $runner = self::$container->get(CommandRunner::CLASS);
 
-            $command->execute();
-
-            $dispatcher->dispatch(
-                Events::EXECUTION_STOPED,
-                new LogEvent('Execution successful')
-            );
-        } catch (\Exception $e) {
-            $dispatcher->dispatch(
-                Events::ERROR,
-                new LogEvent(
-                    "[EXCEPTION] {$e->getMessage()}",
-                    [
-                        'class' => get_class($e),
-                        'file' => $e->getFile(),
-                        'line' => $e->getLine()
-                    ]
-                )
-            );
-        }
-
-        return $exitStatusListener->getExitStatus();
+        return $runner->run($command);
     }
 }
