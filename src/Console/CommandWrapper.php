@@ -22,10 +22,13 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\DependencyInjection\Container;
+use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
+use Streamer\Stream;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Output\StreamOutput;
 
 /**
  * Manage the container and execute command
@@ -33,12 +36,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CommandWrapper extends Command
 {
     /**
-     * @var Container
-     */
-    private static $container;
-
-    /**
-     * @var string Name of command class
+     * @var string
      */
     private $commandClass;
 
@@ -48,11 +46,6 @@ class CommandWrapper extends Command
         parent::__construct();
     }
 
-    public static function setContainer(Container $container): void
-    {
-        self::$container = $container;
-    }
-
     protected function configure(): void
     {
         $this->commandClass::configure($this);
@@ -60,11 +53,19 @@ class CommandWrapper extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $container = new ProjectServiceContainer;
+
+        $container->set(InputInterface::CLASS, $input);
+        $container->set('std_out', $output);
+        $container->set('err_out', new StreamOutput(STDERR, $output->getVerbosity()));
+        $container->set('std_in', new Stream(STDIN));
+        $container->set(QuestionHelper::CLASS, $this->getHelper('question'));
+
         /** @var CommandInterface $command */
-        $command = self::$container->get($this->commandClass);
+        $command = $container->get($this->commandClass);
 
         /** @var CommandRunner $runner */
-        $runner = self::$container->get(CommandRunner::CLASS);
+        $runner = $container->get(CommandRunner::CLASS);
 
         return $runner->run($command);
     }

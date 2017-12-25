@@ -32,6 +32,7 @@ class ProjectServiceContainer extends Container
 
         $this->services = $this->privates = array();
         $this->syntheticIds = array(
+            'Symfony\\Component\\Console\\Helper\\QuestionHelper' => true,
             'Symfony\\Component\\Console\\Input\\InputInterface' => true,
             'err_out' => true,
             'std_in' => true,
@@ -83,7 +84,6 @@ class ProjectServiceContainer extends Container
         return array(
             'JsonSchema\\Validator' => true,
             'Psr\\Container\\ContainerInterface' => true,
-            'Symfony\\Component\\Console\\Helper\\QuestionHelper' => true,
             'Symfony\\Component\\Console\\Output\\OutputInterface' => true,
             'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
             'byrokrat\\autogiro\\Parser\\Parser' => true,
@@ -294,7 +294,7 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\AddCommand'] = $instance = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
 
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->getInputReaderService()));
+        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')), ($this->services['std_out'] ?? $this->get('std_out')), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper')))));
         $instance->setQuestionFactory(($this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] ?? $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory()));
         $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
 
@@ -324,7 +324,7 @@ class ProjectServiceContainer extends Container
         $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
         $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->getInputReaderService()));
+        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')), ($this->services['std_out'] ?? $this->get('std_out')), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper')))));
         $instance->setQuestionFactory(($this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] ?? $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory()));
 
         return $instance;
@@ -353,7 +353,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getInputReaderService()
     {
-        return $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')), ($this->services['std_out'] ?? $this->get('std_out')), new \Symfony\Component\Console\Helper\QuestionHelper());
+        return $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')), ($this->services['std_out'] ?? $this->get('std_out')), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper')));
     }
 
     /**
@@ -400,7 +400,7 @@ class ProjectServiceContainer extends Container
     {
         $this->services['byrokrat\giroapp\Console\InitCommand'] = $instance = new \byrokrat\giroapp\Console\InitCommand(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService()));
 
-        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->getInputReaderService()));
+        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')), ($this->services['std_out'] ?? $this->get('std_out')), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper')))));
         $instance->setQuestionFactory(($this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] ?? $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory()));
         $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
 

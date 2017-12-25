@@ -34,6 +34,8 @@ services:
 
     Symfony\Component\Console\Helper\QuestionHelper:
         class: ~
+        public: true
+        synthetic: true
 
     byrokrat\giroapp\Builder\:
         resource: '../src/Builder/*'
