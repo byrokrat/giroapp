@@ -24,19 +24,18 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
+use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\autogiro\Writer\Writer;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to create autogiro files
  */
 class ExportCommand implements CommandInterface
 {
-    use DonorMapperProperty, DispatcherProperty;
+    use DonorMapperProperty, DispatcherProperty, OutputProperty;
 
     /**
      * @var Writer
@@ -59,17 +58,16 @@ class ExportCommand implements CommandInterface
         $wrapper->setName('export');
         $wrapper->setDescription('Export a file to autogirot');
         $wrapper->setHelp('Create a file with new set of autogiro actions');
-        $wrapper->discardOutputMessages();
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(): void
     {
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($donor->getState()->isExportable()) {
                 $donor->exportToAutogiro($this->autogiroWriter);
                 $donor->setState($this->statePool->getState($donor->getState()->getNextStateId()));
                 $this->dispatcher->dispatch(
-                    Events::DONOR_UPDATED,
+                    Events::DONOR_EXPORTED,
                     new DonorEvent(
                         "Exported mandate <info>{$donor->getMandateKey()}</info>",
                         $donor
@@ -78,6 +76,6 @@ class ExportCommand implements CommandInterface
             }
         }
 
-        $output->write($this->autogiroWriter->getContent());
+        $this->output->write($this->autogiroWriter->getContent());
     }
 }

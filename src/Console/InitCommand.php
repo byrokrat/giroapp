@@ -26,8 +26,6 @@ use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
 use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Mapper\SettingsMapper;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to initialize settings in database
@@ -67,7 +65,7 @@ class InitCommand implements CommandInterface
         $this->settingsMapper = $settingsMapper;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(): void
     {
         $validators = [
             'org-number' => $this->validators->getIdValidator(),
@@ -87,7 +85,7 @@ class InitCommand implements CommandInterface
 
             if (!empty($newVal) && $newVal != $currentVal) {
                 $this->settingsMapper->save($setting, $newVal);
-                $output->writeln("$desc set to: <info>$newVal</info>");
+                // $output->writeln("$desc set to: <info>$newVal</info>");
             }
         }
     }

@@ -20,20 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console;
+namespace byrokrat\giroapp\DependencyInjection;
+
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Interface for giroapp console commands
+ * Use this trait to automatically inject an output instance
  */
-interface CommandInterface
+trait OutputProperty
 {
     /**
-     * Configure command
+     * @var OutputInterface
      */
-    public static function configure(CommandWrapper $wrapper): void;
+    protected $output;
 
     /**
-     * Execute command
+     * @required
      */
-    public function execute(): void;
+    public function setOutput(OutputInterface $output): void
+    {
+        $this->output = $output;
+    }
 }

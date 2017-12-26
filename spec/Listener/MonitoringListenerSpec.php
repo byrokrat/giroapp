@@ -18,6 +18,12 @@ class MonitoringListenerSpec extends ObjectBehavior
         $this->shouldHaveType(MonitoringListener::CLASS);
     }
 
+    function it_dispatches_debug(LogEvent $event, EventDispatcherInterface $dispatcher)
+    {
+        $this->dispatchDebug($event, '', $dispatcher);
+        $dispatcher->dispatch(Events::DEBUG, $event)->shouldHaveBeenCalled();
+    }
+
     function it_dispatches_info(LogEvent $event, EventDispatcherInterface $dispatcher)
     {
         $this->dispatchInfo($event, '', $dispatcher);

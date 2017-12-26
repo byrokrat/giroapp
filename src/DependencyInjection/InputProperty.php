@@ -20,20 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console;
+namespace byrokrat\giroapp\DependencyInjection;
+
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
- * Interface for giroapp console commands
+ * Use this trait to automatically inject an input instance
  */
-interface CommandInterface
+trait InputProperty
 {
     /**
-     * Configure command
+     * @var InputInterface
      */
-    public static function configure(CommandWrapper $wrapper): void;
+    protected $input;
 
     /**
-     * Execute command
+     * @required
      */
-    public function execute(): void;
+    public function setInput(InputInterface $input): void
+    {
+        $this->input = $input;
+    }
 }

@@ -22,16 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Input\InputInterface;
+use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Display information on individual donors
  */
 class ShowCommand implements CommandInterface
 {
-    use Helper\DonorArgument;
+    use Helper\DonorArgument, OutputProperty;
 
     private static $options = [
         'mandate-key'    => 'Show mandate key',
@@ -57,15 +56,14 @@ class ShowCommand implements CommandInterface
         $wrapper->setDescription('Display donor information');
         $wrapper->setHelp('Display information on individual donors');
         self::configureDonorArgument($wrapper);
-        $wrapper->discardOutputMessages();
         foreach (self::$options as $option => $desc) {
             $wrapper->addOption($option, null, InputOption::VALUE_NONE, $desc);
         }
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): void
+    public function execute(): void
     {
-        $donor = $this->getDonor($input);
+        $donor = $this->getDonor();
 
         $showContent = $content = [
             'mandate-key' => $donor->getMandateKey(),
@@ -92,7 +90,7 @@ class ShowCommand implements CommandInterface
         ];
 
         foreach (array_keys(self::$options) as $option) {
-            if (!$input->getOption($option)) {
+            if (!$this->input->getOption($option)) {
                 unset($showContent[$option]);
             }
         }
@@ -102,7 +100,7 @@ class ShowCommand implements CommandInterface
         }
 
         foreach ($showContent as $info) {
-            $output->writeln(implode(' ', (array)$info));
+            $this->output->writeln(implode(' ', (array)$info));
         }
     }
 }

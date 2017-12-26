@@ -59,7 +59,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $this->export($donor, $writer);
     }
 
-    function it_can_be_exported($dateBuilder, Donor $donor, Writer $writer, SEK $amount, \DateTime $date)
+    function it_can_be_exported($dateBuilder, Donor $donor, Writer $writer, SEK $amount)
     {
         $amount->isPositive()->willReturn(true);
 
@@ -67,6 +67,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $donor->getPayerNumber()->willReturn('payer_number');
         $donor->getMandateKey()->willReturn('mandate_key');
 
+        $date = new \DateTime;
         $dateBuilder->buildDate()->willReturn($date);
 
         $this->export($donor, $writer);

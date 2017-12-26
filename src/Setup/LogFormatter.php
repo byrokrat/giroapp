@@ -32,11 +32,11 @@ class LogFormatter implements DecoderInterface
     public function encode(array $docs): string
     {
         return sprintf(
-            '[%s] %s: %s %s',
+            '[%s] [%s] %s %s',
             (string)date(DATE_RFC2822),
             $docs['severity'],
-            $docs['message'],
-            json_encode((object)$docs['context'])
+            strip_tags($docs['message']),
+            $docs['context'] ? json_encode((object)$docs['context']) : ''
         );
     }
 

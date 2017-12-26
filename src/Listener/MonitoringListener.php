@@ -31,6 +31,11 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
  */
 class MonitoringListener
 {
+    public function dispatchDebug(LogEvent $event, $eventName, Dispatcher $dispatcher): void
+    {
+        $dispatcher->dispatch(Events::DEBUG, $event);
+    }
+
     public function dispatchInfo(LogEvent $event, $eventName, Dispatcher $dispatcher): void
     {
         $dispatcher->dispatch(Events::INFO, $event);

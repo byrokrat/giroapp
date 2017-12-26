@@ -26,12 +26,12 @@ namespace byrokrat\giroapp;
 interface Events
 {
     /**
-     * Execution about to start
+     * Execution about to start, expects a LogEvent
      */
     const EXECUTION_STARTED = 'EXECUTION_STARTED';
 
     /**
-     * Execution about to end
+     * Execution about to end, expects a LogEvent
      */
     const EXECUTION_STOPED = 'EXECUTION_STOPED';
 
@@ -64,6 +64,11 @@ interface Events
      * A donor updated, expects a DonorEvent
      */
     const DONOR_UPDATED = 'DONOR_UPDATED';
+
+    /**
+     * A donor exported, expects a DonorEvent
+     */
+    const DONOR_EXPORTED = 'DONOR_EXPORTED';
 
     /**
      * A donor removed, expects a DonorEvent

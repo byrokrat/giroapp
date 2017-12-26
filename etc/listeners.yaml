@@ -6,37 +6,40 @@ services:
     byrokrat\giroapp\Listener\MonitoringListener:
         class: ~
         tags:
-            - { name: event_listener, event: FILE_IMPORTED,           method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED,     method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: DONOR_ADDED,    method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: DONOR_UPDATED,   method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: MANDATE_APPROVED, method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: MANDATE_REVOKED,  method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: DONOR_REMOVED,  method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: MANDATE_INVALIDATED,  method: dispatchWarning, priority: 10 }
+            - { name: event_listener, event: EXECUTION_STARTED,        method: dispatchDebug,   priority: 10 }
+            - { name: event_listener, event: EXECUTION_STOPED,         method: dispatchDebug,   priority: 10 }
+            - { name: event_listener, event: FILE_IMPORTED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED, method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: DONOR_ADDED,              method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: DONOR_UPDATED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: DONOR_EXPORTED,           method: dispatchDebug,   priority: 10 }
+            - { name: event_listener, event: MANDATE_APPROVED,         method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_REVOKED,          method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: DONOR_REMOVED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_INVALIDATED,      method: dispatchWarning, priority: 10 }
 
     byrokrat\giroapp\Listener\LoggingListener:
         class: ~
         arguments: ['@db_log_collection']
         tags:
-            - { name: event_listener, event: ERROR, method: onLogEvent, priority: 10 }
+            - { name: event_listener, event: ERROR,   method: onLogEvent, priority: 10 }
             - { name: event_listener, event: WARNING, method: onLogEvent, priority: 10 }
-            - { name: event_listener, event: INFO, method: onLogEvent, priority: 10 }
+            - { name: event_listener, event: INFO,    method: onLogEvent, priority: 10 }
 
     byrokrat\giroapp\Listener\OutputtingListener:
         class: ~
         arguments: ['@std_out', '@err_out']
         tags:
-            - { name: event_listener, event: ERROR, priority: -10 }
+            - { name: event_listener, event: ERROR,   priority: -10 }
             - { name: event_listener, event: WARNING, priority: -10 }
-            - { name: event_listener, event: INFO, priority: -10 }
-            - { name: event_listener, event: DEBUG, priority: -10 }
+            - { name: event_listener, event: INFO,    priority: -10 }
+            - { name: event_listener, event: DEBUG,   priority: -10 }
 
     byrokrat\giroapp\Listener\ExitStatusListener:
         class: ~
         public: true
         tags:
-            - { name: event_listener, event: ERROR, method: onFailure }
+            - { name: event_listener, event: ERROR,   method: onFailure }
             - { name: event_listener, event: WARNING, method: onFailure }
 
     byrokrat\giroapp\Listener\FileImportChecksumListener:
@@ -86,9 +89,10 @@ services:
     byrokrat\giroapp\Listener\DonorPersistingListener:
         class: ~
         tags:
-            - { name: event_listener, event: DONOR_ADDED }
+            - { name: event_listener, event: DONOR_ADDED   }
             - { name: event_listener, event: DONOR_REMOVED }
-            - { name: event_listener, event: DONOR_UPDATED, method: onDonorUpdated }
-            - { name: event_listener, event: MANDATE_APPROVED, method: onDonorUpdated }
-            - { name: event_listener, event: MANDATE_REVOKED, method: onDonorUpdated }
+            - { name: event_listener, event: DONOR_UPDATED,       method: onDonorUpdated }
+            - { name: event_listener, event: DONOR_EXPORTED,      method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_APPROVED,    method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_REVOKED,     method: onDonorUpdated }
             - { name: event_listener, event: MANDATE_INVALIDATED, method: onDonorUpdated }
