@@ -5,22 +5,21 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Listener\AutogiroImportingListener;
-use byrokrat\giroapp\Events;
+use byrokrat\giroapp\AutogiroVisitor;
 use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Event\NodeEvent;
+use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Utils\File;
 use byrokrat\autogiro\Parser\Parser;
-use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Tree\FileNode;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use byrokrat\autogiro\Exception as AutogiroException;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class AutogiroImportingListenerSpec extends ObjectBehavior
 {
-    function let(Parser $parser)
+    function let(Parser $parser, AutogiroVisitor $visitor)
     {
-        $this->beConstructedWith($parser);
+        $this->beConstructedWith($parser, $visitor);
     }
 
     function it_is_initializable()
@@ -28,48 +27,22 @@ class AutogiroImportingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(AutogiroImportingListener::CLASS);
     }
 
-    function a_tree(Node $node, $type = '', ...$children)
+    function it_parses_content($parser, $visitor, FileEvent $event, File $file, FileNode $tree)
     {
-        $node->getType()->willReturn($type);
-        $node->getChildren()->willReturn($children);
-
-        return $node;
+        $event->getFile()->willReturn($file);
+        $file->getContent()->willReturn('autogiro');
+        $parser->parse('autogiro')->willReturn($tree);
+        $tree->accept($visitor)->shouldBeCalled();
+        $this->onAutogiroFileImported($event);
     }
 
-    function it_parses_content(
-        FileEvent $event,
-        File $file,
-        Parser $parser,
-        FileNode $fileNode,
-        EventDispatcherInterface $dispatcher
-    ) {
+    function it_throws_on_autogiro_exception($parser, FileEvent $event, File $file)
+    {
         $event->getFile()->willReturn($file);
-        $file->getContent()->willReturn('foobar');
-        $parser->parse('foobar')->willReturn($this->a_tree($fileNode));
-        $this->onAutogiroFileImported($event, '', $dispatcher);
-    }
-
-    function it_dispatches_approved_mandate_events(
-        FileEvent $event,
-        File $file,
-        Parser $parser,
-        FileNode $fileNode,
-        EventDispatcherInterface $dispatcher,
-        Node $node
-    ) {
-        $event->getFile()->willReturn($file);
-        $file->getContent()->willReturn('foobar');
-
-        $parser->parse('foobar')->willReturn(
-            $this->a_tree(
-                $fileNode,
-                '',
-                $this->a_tree($node, 'MandateResponseNode')
-            )
-        );
-
-        $dispatcher->dispatch(Events::MANDATE_RESPONSE_RECEIVED, Argument::type(NodeEvent::CLASS))->shouldBeCalled();
-
-        $this->onAutogiroFileImported($event, '', $dispatcher);
+        $file->getContent()->willReturn('autogiro');
+        $autogiroException = new class extends \Exception implements AutogiroException {
+        };
+        $parser->parse('autogiro')->willThrow($autogiroException);
+        $this->shouldThrow(InvalidAutogiroFileException::CLASS)->during('onAutogiroFileImported', [$event]);
     }
 }

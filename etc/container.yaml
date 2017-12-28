@@ -74,6 +74,12 @@ services:
         class: ~
         arguments: ['%fs.user_dir%/%fs.plugins_dir%', '@fs_user_dir']
 
+    byrokrat\giroapp\AutogiroVisitor:
+        class: ~
+        arguments:
+            - "@=service('db_settings_mapper').findByKey('bgc_customer_number')"
+            - '@organization_bg'
+
     byrokrat\autogiro\Parser\ParserFactory: ~
 
     byrokrat\autogiro\Parser\Parser:
