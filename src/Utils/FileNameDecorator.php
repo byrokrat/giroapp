@@ -22,32 +22,26 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Utils;
 
-use League\Flysystem\Filesystem;
-
 /**
- * Helper to read file content
+ * Decorator that generates file name
  */
-class FileReader
+class FileNameDecorator extends File
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
+    const PREFIX = 'AG';
 
-    public function __construct(Filesystem $filesystem)
+    public function __construct(File $file, SystemClock $clock = null)
     {
-        $this->filesystem = $filesystem;
-    }
+        $clock = $clock ?: new SystemClock;
 
-    /**
-     * @throws \RuntimeException if file does not exist
-     */
-    public function readFile(string $filename): File
-    {
-        if (!$this->filesystem->has($filename)) {
-            throw new \RuntimeException("Unable to read {$filename}");
-        }
-
-        return new File($filename, (string)$this->filesystem->read($filename));
+        parent::__construct(
+            sprintf(
+                '%s_%s_%s_%s.txt',
+                self::PREFIX,
+                $clock->getNow()->format('Ymd\THis'),
+                $file->getFilename(),
+                substr($file->getChecksum(), 0, 5)
+            ),
+            $file->getContent()
+        );
     }
 }

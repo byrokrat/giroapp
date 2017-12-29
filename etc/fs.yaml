@@ -9,17 +9,18 @@ parameters:
 services:
     _defaults:
         public: false
-
-    fs_user_dir_reader:
-        class: byrokrat\giroapp\Utils\FileReader
-        arguments: ['@fs_user_dir']
+        autowire: true
 
     fs_user_dir:
+        class: byrokrat\giroapp\Utils\Filesystem
+        arguments: ['%fs.user_dir%']
+
+    flysystem_user_dir:
         class: League\Flysystem\Filesystem
-        arguments: ['@fs_user_dir_adapter']
+        arguments: ['@flysystem_user_dir_adapter']
         configurator: 'byrokrat\giroapp\Setup\FilesystemConfigurator:createFiles'
 
-    fs_user_dir_adapter:
+    flysystem_user_dir_adapter:
         class: League\Flysystem\Adapter\Local
         arguments: ['%fs.user_dir%']
 
@@ -36,21 +37,12 @@ services:
                 - '%fs.plugins_dir%'
 
     fs_imports:
-        class: League\Flysystem\Filesystem
-        arguments: ['@fs_imports_adapter']
-
-    fs_imports_adapter:
-        class: League\Flysystem\Adapter\Local
+        class: byrokrat\giroapp\Utils\Filesystem
         arguments: ['%fs.user_dir%/%fs.imports_dir%']
 
-    fs_cwd_reader:
-        class: byrokrat\giroapp\Utils\FileReader
-        arguments: ['@fs_cwd']
-
     fs_cwd:
-        class: League\Flysystem\Filesystem
-        arguments: ['@fs_cwd_adapter']
-
-    fs_cwd_adapter:
-        class: League\Flysystem\Adapter\Local
+        class: byrokrat\giroapp\Utils\Filesystem
         arguments: ['.']
+
+    Symfony\Component\Filesystem\Filesystem:
+        class: ~

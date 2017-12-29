@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\OutputProperty;
-use byrokrat\giroapp\Utils\FileReader;
+use byrokrat\giroapp\Utils\Filesystem;
 use JsonSchema\Validator;
 
 /**
@@ -34,9 +34,9 @@ class ValidateCommand implements CommandInterface
     use OutputProperty;
 
     /**
-     * @var FileReader
+     * @var Filesystem
      */
-    private $fileReader;
+    private $filesystem;
 
     /**
      * @var object
@@ -49,13 +49,13 @@ class ValidateCommand implements CommandInterface
     private $validator;
 
     /**
-     * @param FileReader $fileReader
+     * @param Filesystem $filesystem
      * @param object     $donorSchema
      * @param Validator  $validator
      */
-    public function __construct(FileReader $fileReader, $donorSchema, Validator $validator)
+    public function __construct(Filesystem $filesystem, $donorSchema, Validator $validator)
     {
-        $this->fileReader = $fileReader;
+        $this->filesystem = $filesystem;
         $this->donorSchema = $donorSchema;
         $this->validator = $validator;
     }
@@ -69,7 +69,7 @@ class ValidateCommand implements CommandInterface
 
     public function execute(): void
     {
-        $donorData = json_decode($this->fileReader->readFile('data/donors.json')->getContent());
+        $donorData = json_decode($this->filesystem->readFile('data/donors.json')->getContent());
         $this->validator->validate($donorData, $this->donorSchema);
         $errors = '';
 

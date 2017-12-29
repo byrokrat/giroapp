@@ -86,6 +86,7 @@ class ProjectServiceContainer extends Container
             'Psr\\Container\\ContainerInterface' => true,
             'Symfony\\Component\\Console\\Output\\OutputInterface' => true,
             'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
+            'Symfony\\Component\\Filesystem\\Filesystem' => true,
             'byrokrat\\autogiro\\Parser\\Parser' => true,
             'byrokrat\\autogiro\\Parser\\ParserFactory' => true,
             'byrokrat\\autogiro\\Writer\\Writer' => true,
@@ -128,7 +129,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\State\\RevokeMandateState' => true,
             'byrokrat\\giroapp\\State\\StatePool' => true,
             'byrokrat\\giroapp\\Utils\\File' => true,
-            'byrokrat\\giroapp\\Utils\\FileReader' => true,
+            'byrokrat\\giroapp\\Utils\\FileNameDecorator' => true,
+            'byrokrat\\giroapp\\Utils\\Filesystem' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
             'byrokrat\\giroapp\\Xml\\CustomdataTranslator' => true,
             'byrokrat\\giroapp\\Xml\\XmlMandateMigrationInterface' => true,
@@ -146,14 +148,11 @@ class ProjectServiceContainer extends Container
             'db_settings_engine' => true,
             'db_transaction_collection' => true,
             'db_transaction_engine' => true,
+            'flysystem_user_dir' => true,
+            'flysystem_user_dir_adapter' => true,
             'fs_cwd' => true,
-            'fs_cwd_adapter' => true,
-            'fs_cwd_reader' => true,
             'fs_imports' => true,
-            'fs_imports_adapter' => true,
             'fs_user_dir' => true,
-            'fs_user_dir_adapter' => true,
-            'fs_user_dir_reader' => true,
             'organization_bg' => true,
             'organization_id' => true,
         );
@@ -279,7 +278,7 @@ class ProjectServiceContainer extends Container
         $instance->addListener('MANDATE_INVALIDATED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
         }, 1 => 'onDonorUpdated'));
-        (new \byrokrat\giroapp\Setup\PluginLoader($this->getEnv('string:GIROAPP_PATH').'/plugins', ($this->privates['fs_user_dir'] ?? $this->getFsUserDirService())))->loadPlugins($instance);
+        (new \byrokrat\giroapp\Setup\PluginLoader($this->getEnv('string:GIROAPP_PATH').'/plugins', ($this->privates['flysystem_user_dir'] ?? $this->getFlysystemUserDirService())))->loadPlugins($instance);
 
         return $instance;
     }
@@ -383,7 +382,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getImportCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(new \byrokrat\giroapp\Utils\FileReader(new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local('.'))), ($this->services['std_in'] ?? $this->get('std_in')));
+        $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(new \byrokrat\giroapp\Utils\Filesystem('.', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->services['std_in'] ?? $this->get('std_in')));
 
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
         $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
@@ -511,7 +510,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getValidateCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\ValidateCommand'] = $instance = new \byrokrat\giroapp\Console\ValidateCommand(new \byrokrat\giroapp\Utils\FileReader(($this->privates['fs_user_dir'] ?? $this->getFsUserDirService())), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator());
+        $this->services['byrokrat\giroapp\Console\ValidateCommand'] = $instance = new \byrokrat\giroapp\Console\ValidateCommand(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('GIROAPP_PATH'), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator());
 
         $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out')));
 
@@ -575,7 +574,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getCommittingListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(array('settings' => ($this->privates['db_settings_engine'] ?? $this->getDbSettingsEngineService()), 'donors' => ($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService()), 'transactions' => new \hanneskod\yaysondb\Engine\FlysystemEngine('data/transactions.json', ($this->privates['fs_user_dir'] ?? $this->getFsUserDirService())), 'imports' => ($this->privates['db_import_engine'] ?? $this->getDbImportEngineService()), 'log' => ($this->privates['db_log_engine'] ?? $this->getDbLogEngineService()))));
+        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(array('settings' => ($this->privates['db_settings_engine'] ?? $this->getDbSettingsEngineService()), 'donors' => ($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService()), 'transactions' => new \hanneskod\yaysondb\Engine\FlysystemEngine('data/transactions.json', ($this->privates['flysystem_user_dir'] ?? $this->getFlysystemUserDirService())), 'imports' => ($this->privates['db_import_engine'] ?? $this->getDbImportEngineService()), 'log' => ($this->privates['db_log_engine'] ?? $this->getDbLogEngineService()))));
     }
 
     /**
@@ -605,7 +604,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getFileImportDumpingListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\FileImportDumpingListener'] = new \byrokrat\giroapp\Listener\FileImportDumpingListener(new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getEnv('string:GIROAPP_PATH').'/var/imports')), ($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
+        return $this->privates['byrokrat\giroapp\Listener\FileImportDumpingListener'] = new \byrokrat\giroapp\Listener\FileImportDumpingListener(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/imports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
     }
 
     /**
@@ -687,7 +686,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getDbDonorEngineService()
     {
-        return $this->privates['db_donor_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/donors.json', ($this->privates['fs_user_dir'] ?? $this->getFsUserDirService()));
+        return $this->privates['db_donor_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/donors.json', ($this->privates['flysystem_user_dir'] ?? $this->getFlysystemUserDirService()));
     }
 
     /**
@@ -697,7 +696,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getDbImportEngineService()
     {
-        return $this->privates['db_import_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/imports.json', ($this->privates['fs_user_dir'] ?? $this->getFsUserDirService()));
+        return $this->privates['db_import_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/imports.json', ($this->privates['flysystem_user_dir'] ?? $this->getFlysystemUserDirService()));
     }
 
     /**
@@ -717,17 +716,17 @@ class ProjectServiceContainer extends Container
      */
     protected function getDbSettingsEngineService()
     {
-        return $this->privates['db_settings_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/settings.json', ($this->privates['fs_user_dir'] ?? $this->getFsUserDirService()));
+        return $this->privates['db_settings_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/settings.json', ($this->privates['flysystem_user_dir'] ?? $this->getFlysystemUserDirService()));
     }
 
     /**
-     * Gets the private 'fs_user_dir' shared service.
+     * Gets the private 'flysystem_user_dir' shared autowired service.
      *
      * @return \League\Flysystem\Filesystem
      */
-    protected function getFsUserDirService()
+    protected function getFlysystemUserDirService()
     {
-        $this->privates['fs_user_dir'] = $instance = new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getEnv('GIROAPP_PATH')));
+        $this->privates['flysystem_user_dir'] = $instance = new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getEnv('GIROAPP_PATH')));
 
         (new \byrokrat\giroapp\Setup\FilesystemConfigurator(array(0 => 'data/settings.json', 1 => 'data/donors.json', 2 => 'data/transactions.json', 3 => 'var/log', 4 => 'data/imports.json'), array(0 => 'plugins')))->createFiles($instance);
 

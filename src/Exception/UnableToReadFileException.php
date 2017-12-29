@@ -18,28 +18,13 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Exception;
 
-namespace byrokrat\giroapp\Listener;
+use byrokrat\giroapp\Exception as AppException;
 
-use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Utils\Filesystem;
-use byrokrat\giroapp\Utils\FileNameDecorator;
-
-class FileImportDumpingListener
+/**
+ * Exception thrown when a file can not be found
+ */
+class UnableToReadFileException extends \RuntimeException implements AppException
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    public function __construct(Filesystem $filesystem)
-    {
-        $this->filesystem = $filesystem;
-    }
-
-    public function onFileImported(FileEvent $event): void
-    {
-        $this->filesystem->dumpFile(new FileNameDecorator($event->getFile()));
-    }
 }
