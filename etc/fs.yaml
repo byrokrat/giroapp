@@ -5,6 +5,7 @@ parameters:
     fs.external_data_dir: 'var'
     fs.plugins_dir: 'plugins'
     fs.imports_dir: '%fs.external_data_dir%/imports'
+    fs.exports_dir: '%fs.external_data_dir%/exports'
 
 services:
     _defaults:
@@ -39,6 +40,10 @@ services:
     fs_imports:
         class: byrokrat\giroapp\Utils\Filesystem
         arguments: ['%fs.user_dir%/%fs.imports_dir%']
+
+    fs_exports:
+        class: byrokrat\giroapp\Utils\Filesystem
+        arguments: ['%fs.user_dir%/%fs.exports_dir%']
 
     fs_cwd:
         class: byrokrat\giroapp\Utils\Filesystem

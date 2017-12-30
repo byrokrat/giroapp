@@ -9,7 +9,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\XmlEvent;
 use byrokrat\giroapp\Utils\File;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -20,9 +20,10 @@ class FileImportingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(FileImportingListener::CLASS);
     }
 
-    function it_dispatches_XML_FILE_IMPORTED(FileEvent $event, File $file, EventDispatcherInterface $dispatcher)
+    function it_dispatches_import_xml_event(FileEvent $event, File $file, Dispatcher $dispatcher)
     {
         $event->getFile()->willReturn($file);
+        $event->getMessage()->willReturn('');
 
         $file->getFilename()->willReturn('');
         $file->getContent()->willReturn('<xml></xml>');
@@ -32,9 +33,10 @@ class FileImportingListenerSpec extends ObjectBehavior
         $this->onFileImported($event, '', $dispatcher);
     }
 
-    function it_dispatches_import_autogiro_event(FileEvent $event, File $file, EventDispatcherInterface $dispatcher)
+    function it_dispatches_import_autogiro_event(FileEvent $event, File $file, Dispatcher $dispatcher)
     {
         $event->getFile()->willReturn($file);
+        $event->getMessage()->willReturn('');
 
         $file->getFilename()->willReturn('');
         $file->getContent()->willReturn('this-is-not-valid-xml');

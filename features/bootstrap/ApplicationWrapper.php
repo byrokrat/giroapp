@@ -2,6 +2,8 @@
 
 declare(strict_types = 1);
 
+use Symfony\Component\Finder\Finder;
+
 /**
  * Wrapper around an application setup
  */
@@ -75,11 +77,21 @@ class ApplicationWrapper
         return $filename;
     }
 
-    public function createPlugin(string $content)
+    public function createPlugin(string $content): void
     {
         file_put_contents(
             $this->userDir . '/plugins/' . uniqid() . '.php',
             "<?php $content"
         );
+    }
+
+    public function getLastExportedFile(): string
+    {
+        $splFileInfo = null;
+
+        foreach ((new Finder)->files()->in($this->userDir . '/var/exports')->sortByName() as $splFileInfo) {
+        }
+
+        return $splFileInfo ? $splFileInfo->getContents() : '';
     }
 }

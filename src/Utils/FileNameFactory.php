@@ -23,25 +23,30 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Utils;
 
 /**
- * Decorator that generates file name
+ * Generate file names
  */
-class FileNameDecorator extends File
+class FileNameFactory
 {
     const PREFIX = 'AG';
 
-    public function __construct(File $file, SystemClock $clock = null)
-    {
-        $clock = $clock ?: new SystemClock;
+    /**
+     * @var SystemClock
+     */
+    private $systemClock;
 
-        parent::__construct(
-            sprintf(
-                '%s_%s_%s_%s.txt',
-                self::PREFIX,
-                $clock->getNow()->format('Ymd\THis'),
-                $file->getFilename(),
-                substr($file->getChecksum(), 0, 5)
-            ),
-            $file->getContent()
+    public function __construct(SystemClock $systemClock)
+    {
+        $this->systemClock = $systemClock;
+    }
+
+    public function createName(File $file): string
+    {
+        return sprintf(
+            '%s_%s_%s_%s.txt',
+            self::PREFIX,
+            $this->systemClock->getNow()->format('Ymd\THis'),
+            $file->getFilename(),
+            substr($file->getChecksum(), 0, 5)
         );
     }
 }

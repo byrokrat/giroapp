@@ -24,10 +24,11 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
-use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\Utils\File;
 use byrokrat\autogiro\Writer\Writer;
 
 /**
@@ -35,7 +36,7 @@ use byrokrat\autogiro\Writer\Writer;
  */
 class ExportCommand implements CommandInterface
 {
-    use DonorMapperProperty, DispatcherProperty, OutputProperty;
+    use DonorMapperProperty, DispatcherProperty;
 
     /**
      * @var Writer
@@ -57,25 +58,36 @@ class ExportCommand implements CommandInterface
     {
         $wrapper->setName('export');
         $wrapper->setDescription('Export a file to autogirot');
-        $wrapper->setHelp('Create a file with new set of autogiro actions');
+        $wrapper->setHelp('Create a file with new set of autogiro instructions');
     }
 
     public function execute(): void
     {
+        $exported = false;
+
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($donor->getState()->isExportable()) {
                 $donor->exportToAutogiro($this->autogiroWriter);
                 $donor->setState($this->statePool->getState($donor->getState()->getNextStateId()));
                 $this->dispatcher->dispatch(
-                    Events::DONOR_EXPORTED,
+                    Events::DONOR_UPDATED,
                     new DonorEvent(
                         "Exported mandate <info>{$donor->getMandateKey()}</info>",
                         $donor
                     )
                 );
+                $exported = true;
             }
         }
 
-        $this->output->write($this->autogiroWriter->getContent());
+        if ($exported) {
+            $this->dispatcher->dispatch(
+                Events::FILE_EXPORTED,
+                new FileEvent(
+                    'Generating file to export',
+                    new File('export', $this->autogiroWriter->getContent())
+                )
+            );
+        }
     }
 }

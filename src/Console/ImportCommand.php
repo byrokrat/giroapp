@@ -66,12 +66,15 @@ class ImportCommand implements CommandInterface
 
     public function execute(): void
     {
+        $file = ($filename = $this->input->getArgument('filename'))
+            ? $this->filesystem->readFile($filename)
+            : new File('STDIN', $this->stdin->getContent());
+
         $this->dispatcher->dispatch(
             $this->input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
             new FileEvent(
-                ($filename = $this->input->getArgument('filename'))
-                    ? $this->filesystem->readFile($filename)
-                    : new File('STDIN', $this->stdin->getContent())
+                "Importing file <info>{$file->getFilename()}</info>",
+                $file
             )
         );
     }

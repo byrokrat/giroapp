@@ -22,24 +22,44 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
+use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Utils\Filesystem;
-use byrokrat\giroapp\Utils\FileNameDecorator;
+use byrokrat\giroapp\Utils\FileNameFactory;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
-class FileImportDumpingListener
+class FileDumpingListener
 {
     /**
      * @var Filesystem
      */
     private $filesystem;
 
-    public function __construct(Filesystem $filesystem)
+    /**
+     * @var FileNameFactory
+     */
+    private $nameFactory;
+
+    public function __construct(Filesystem $filesystem, FileNameFactory $nameFactory)
     {
         $this->filesystem = $filesystem;
+        $this->nameFactory = $nameFactory;
     }
 
-    public function onFileImported(FileEvent $event): void
+    public function onFileEvent(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
-        $this->filesystem->dumpFile(new FileNameDecorator($event->getFile()));
+        $file = $event->getFile();
+
+        $name = $this->filesystem->getAbsolutePath(
+            $this->nameFactory->createName($file)
+        );
+
+        $this->filesystem->dumpFile($name, $file->getContent());
+
+        $dispatcher->dispatch(
+            Events::INFO,
+            new LogEvent("Writing file <info>$name</info>")
+        );
     }
 }

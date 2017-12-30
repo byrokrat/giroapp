@@ -80,12 +80,10 @@ class FilesystemSpec extends ObjectBehavior
         $this->readFile($filename)->shouldBeLike(new File($filename, file_get_contents(__FILE__)));
     }
 
-    function it_can_dump_file($fs, File $file)
+    function it_can_dump_file($fs)
     {
-        $file->getContent()->willReturn('content');
-        $file->getFilename()->willReturn('name');
         $fs->isAbsolutePath('name')->willReturn(true)->shouldBeCalled();
         $fs->dumpFile('name', 'content')->shouldBeCalled();
-        $this->dumpFile($file);
+        $this->dumpFile('name', 'content');
     }
 }

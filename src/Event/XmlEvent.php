@@ -35,9 +35,9 @@ class XmlEvent extends FileEvent
      */
     private $xml;
 
-    public function __construct(File $file, XmlObject $xml)
+    public function __construct(string $message, File $file, XmlObject $xml)
     {
-        parent::__construct($file);
+        parent::__construct($message, $file);
         $this->xml = $xml;
     }
 

@@ -14,8 +14,7 @@ class FileEventSpec extends ObjectBehavior
 {
     function let(File $file)
     {
-        $file->getFilename()->willReturn('filename');
-        $this->beConstructedWith($file);
+        $this->beConstructedWith('', $file);
     }
 
     function it_is_initializable()
@@ -35,6 +34,7 @@ class FileEventSpec extends ObjectBehavior
 
     function it_contains_a_message($file)
     {
-        $this->getMessage()->shouldContain('filename');
+        $this->beConstructedWith('message', $file);
+        $this->getMessage()->shouldReturn('message');
     }
 }

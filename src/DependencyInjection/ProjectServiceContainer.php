@@ -101,7 +101,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\CommittingListener' => true,
             'byrokrat\\giroapp\\Listener\\DonorPersistingListener' => true,
             'byrokrat\\giroapp\\Listener\\FileImportChecksumListener' => true,
-            'byrokrat\\giroapp\\Listener\\FileImportDumpingListener' => true,
             'byrokrat\\giroapp\\Listener\\FileImportingListener' => true,
             'byrokrat\\giroapp\\Listener\\LoggingListener' => true,
             'byrokrat\\giroapp\\Listener\\MandateResponseListener' => true,
@@ -129,7 +128,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\State\\RevokeMandateState' => true,
             'byrokrat\\giroapp\\State\\StatePool' => true,
             'byrokrat\\giroapp\\Utils\\File' => true,
-            'byrokrat\\giroapp\\Utils\\FileNameDecorator' => true,
+            'byrokrat\\giroapp\\Utils\\FileNameFactory' => true,
             'byrokrat\\giroapp\\Utils\\Filesystem' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
             'byrokrat\\giroapp\\Xml\\CustomdataTranslator' => true,
@@ -148,9 +147,13 @@ class ProjectServiceContainer extends Container
             'db_settings_engine' => true,
             'db_transaction_collection' => true,
             'db_transaction_engine' => true,
+            'file_export_cwd_dumper' => true,
+            'file_export_dumper' => true,
+            'file_import_dumper' => true,
             'flysystem_user_dir' => true,
             'flysystem_user_dir_adapter' => true,
             'fs_cwd' => true,
+            'fs_exports' => true,
             'fs_imports' => true,
             'fs_user_dir' => true,
             'organization_bg' => true,
@@ -176,6 +179,9 @@ class ProjectServiceContainer extends Container
         $instance->addListener('FILE_IMPORTED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
         }, 1 => 'dispatchInfo'), 10);
+        $instance->addListener('FILE_EXPORTED', array(0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
+        }, 1 => 'dispatchInfo'), 10);
         $instance->addListener('FILE_FORCEFULLY_IMPORTED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
         }, 1 => 'dispatchInfo'), 10);
@@ -185,9 +191,6 @@ class ProjectServiceContainer extends Container
         $instance->addListener('DONOR_UPDATED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
         }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('DONOR_EXPORTED', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
-        }, 1 => 'dispatchDebug'), 10);
         $instance->addListener('MANDATE_APPROVED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
         }, 1 => 'dispatchInfo'), 10);
@@ -231,11 +234,17 @@ class ProjectServiceContainer extends Container
             return ($this->privates['byrokrat\giroapp\Listener\FileImportChecksumListener'] ?? $this->getFileImportChecksumListenerService());
         }, 1 => 'onFILEIMPORTED'), 10);
         $instance->addListener('FILE_IMPORTED', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\FileImportDumpingListener'] ?? $this->getFileImportDumpingListenerService());
-        }, 1 => 'onFILEIMPORTED'), -10);
+            return ($this->privates['file_import_dumper'] ?? $this->getFileImportDumperService());
+        }, 1 => 'onFileEvent'), -10);
         $instance->addListener('FILE_FORCEFULLY_IMPORTED', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\FileImportDumpingListener'] ?? $this->getFileImportDumpingListenerService());
-        }, 1 => 'onFileImported'), -10);
+            return ($this->privates['file_import_dumper'] ?? $this->getFileImportDumperService());
+        }, 1 => 'onFileEvent'), -10);
+        $instance->addListener('FILE_EXPORTED', array(0 => function () {
+            return ($this->privates['file_export_dumper'] ?? $this->getFileExportDumperService());
+        }, 1 => 'onFileEvent'), -9);
+        $instance->addListener('FILE_EXPORTED', array(0 => function () {
+            return ($this->privates['file_export_cwd_dumper'] ?? $this->getFileExportCwdDumperService());
+        }, 1 => 'onFileEvent'), -10);
         $instance->addListener('FILE_IMPORTED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\FileImportingListener'] ?? $this->privates['byrokrat\giroapp\Listener\FileImportingListener'] = new \byrokrat\giroapp\Listener\FileImportingListener());
         }, 1 => 'onFILEIMPORTED'));
@@ -264,9 +273,6 @@ class ProjectServiceContainer extends Container
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
         }, 1 => 'onDONORREMOVED'));
         $instance->addListener('DONOR_UPDATED', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated'));
-        $instance->addListener('DONOR_EXPORTED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
         }, 1 => 'onDonorUpdated'));
         $instance->addListener('MANDATE_APPROVED', array(0 => function () {
@@ -340,7 +346,6 @@ class ProjectServiceContainer extends Container
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out')));
 
         return $instance;
     }
@@ -382,7 +387,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getImportCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(new \byrokrat\giroapp\Utils\Filesystem('.', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->services['std_in'] ?? $this->get('std_in')));
+        $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(($this->privates['fs_cwd'] ?? $this->getFsCwdService()), ($this->services['std_in'] ?? $this->get('std_in')));
 
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
         $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
@@ -598,16 +603,6 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'byrokrat\giroapp\Listener\FileImportDumpingListener' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Listener\FileImportDumpingListener
-     */
-    protected function getFileImportDumpingListenerService()
-    {
-        return $this->privates['byrokrat\giroapp\Listener\FileImportDumpingListener'] = new \byrokrat\giroapp\Listener\FileImportDumpingListener(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/imports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
-    }
-
-    /**
      * Gets the private 'byrokrat\giroapp\Listener\LoggingListener' shared autowired service.
      *
      * @return \byrokrat\giroapp\Listener\LoggingListener
@@ -670,6 +665,16 @@ class ProjectServiceContainer extends Container
     }
 
     /**
+     * Gets the private 'byrokrat\giroapp\Utils\FileNameFactory' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Utils\FileNameFactory
+     */
+    protected function getFileNameFactoryService()
+    {
+        return $this->privates['byrokrat\giroapp\Utils\FileNameFactory'] = new \byrokrat\giroapp\Utils\FileNameFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
+    }
+
+    /**
      * Gets the private 'byrokrat\id\IdFactory' shared service.
      *
      * @return \byrokrat\id\PersonalIdFactory
@@ -720,6 +725,36 @@ class ProjectServiceContainer extends Container
     }
 
     /**
+     * Gets the private 'file_export_cwd_dumper' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Listener\FileDumpingListener
+     */
+    protected function getFileExportCwdDumperService()
+    {
+        return $this->privates['file_export_cwd_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener(($this->privates['fs_cwd'] ?? $this->getFsCwdService()), ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
+    }
+
+    /**
+     * Gets the private 'file_export_dumper' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Listener\FileDumpingListener
+     */
+    protected function getFileExportDumperService()
+    {
+        return $this->privates['file_export_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/exports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
+    }
+
+    /**
+     * Gets the private 'file_import_dumper' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Listener\FileDumpingListener
+     */
+    protected function getFileImportDumperService()
+    {
+        return $this->privates['file_import_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/imports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
+    }
+
+    /**
      * Gets the private 'flysystem_user_dir' shared autowired service.
      *
      * @return \League\Flysystem\Filesystem
@@ -731,6 +766,16 @@ class ProjectServiceContainer extends Container
         (new \byrokrat\giroapp\Setup\FilesystemConfigurator(array(0 => 'data/settings.json', 1 => 'data/donors.json', 2 => 'data/transactions.json', 3 => 'var/log', 4 => 'data/imports.json'), array(0 => 'plugins')))->createFiles($instance);
 
         return $instance;
+    }
+
+    /**
+     * Gets the private 'fs_cwd' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Utils\Filesystem
+     */
+    protected function getFsCwdService()
+    {
+        return $this->privates['fs_cwd'] = new \byrokrat\giroapp\Utils\Filesystem('.', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
     }
 
     /**
@@ -820,6 +865,7 @@ class ProjectServiceContainer extends Container
             'fs.external_data_dir' => 'var',
             'fs.plugins_dir' => 'plugins',
             'fs.imports_dir' => 'var/imports',
+            'fs.exports_dir' => 'var/exports',
             'db.settings' => 'data/settings.json',
             'db.donors' => 'data/donors.json',
             'db.transactions' => 'data/transactions.json',

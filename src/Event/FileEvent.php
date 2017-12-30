@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Event;
 use byrokrat\giroapp\Utils\File;
 
 /**
- * Dispatched when a file is imported
+ * Event object wrapping a file
  */
 class FileEvent extends LogEvent
 {
@@ -34,9 +34,9 @@ class FileEvent extends LogEvent
      */
     private $file;
 
-    public function __construct(File $file)
+    public function __construct(string $message, File $file)
     {
-        parent::__construct("Importing file <info>{$file->getFilename()}</info>");
+        parent::__construct($message);
         $this->file = $file;
     }
 

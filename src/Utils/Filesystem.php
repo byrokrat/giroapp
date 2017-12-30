@@ -77,11 +77,8 @@ class Filesystem
         );
     }
 
-    public function dumpFile(File $file): void
+    public function dumpFile(string $path, string $content): void
     {
-        $this->fs->dumpFile(
-            $this->getAbsolutePath($file->getFilename()),
-            $file->getContent()
-        );
+        $this->fs->dumpFile($this->getAbsolutePath($path), $content);
     }
 }
