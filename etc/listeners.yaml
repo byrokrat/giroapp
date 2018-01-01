@@ -9,10 +9,10 @@ services:
             - { name: event_listener, event: EXECUTION_STARTED,        method: dispatchDebug,   priority: 10 }
             - { name: event_listener, event: EXECUTION_STOPED,         method: dispatchDebug,   priority: 10 }
             - { name: event_listener, event: FILE_IMPORTED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: FILE_EXPORTED,            method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED, method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: DONOR_ADDED,              method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: DONOR_UPDATED,            method: dispatchInfo,    priority: 10 }
-            - { name: event_listener, event: DONOR_EXPORTED,           method: dispatchDebug,   priority: 10 }
             - { name: event_listener, event: MANDATE_APPROVED,         method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: MANDATE_REVOKED,          method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: DONOR_REMOVED,            method: dispatchInfo,    priority: 10 }
@@ -47,12 +47,24 @@ services:
         tags:
             - { name: event_listener, event: FILE_IMPORTED, priority: 10 }
 
-    byrokrat\giroapp\Listener\FileImportDumpingListener:
-        class: ~
+    file_import_dumper:
+        class: byrokrat\giroapp\Listener\FileDumpingListener
         arguments: ['@fs_imports']
         tags:
-            - { name: event_listener, event: FILE_IMPORTED, priority: -10 }
-            - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED, method: onFileImported, priority: -10 }
+            - { name: event_listener, event: FILE_IMPORTED,            method: onFileEvent, priority: -10 }
+            - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED, method: onFileEvent, priority: -10 }
+
+    file_export_dumper:
+        class: byrokrat\giroapp\Listener\FileDumpingListener
+        arguments: ['@fs_exports']
+        tags:
+            - { name: event_listener, event: FILE_EXPORTED, method: onFileEvent, priority: -9 }
+
+    file_export_cwd_dumper:
+        class: byrokrat\giroapp\Listener\FileDumpingListener
+        arguments: ['@fs_cwd']
+        tags:
+            - { name: event_listener, event: FILE_EXPORTED, method: onFileEvent, priority: -10 }
 
     byrokrat\giroapp\Listener\FileImportingListener:
         class: ~
@@ -92,7 +104,6 @@ services:
             - { name: event_listener, event: DONOR_ADDED   }
             - { name: event_listener, event: DONOR_REMOVED }
             - { name: event_listener, event: DONOR_UPDATED,       method: onDonorUpdated }
-            - { name: event_listener, event: DONOR_EXPORTED,      method: onDonorUpdated }
             - { name: event_listener, event: MANDATE_APPROVED,    method: onDonorUpdated }
             - { name: event_listener, event: MANDATE_REVOKED,     method: onDonorUpdated }
             - { name: event_listener, event: MANDATE_INVALIDATED, method: onDonorUpdated }

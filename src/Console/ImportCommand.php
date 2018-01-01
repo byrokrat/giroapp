@@ -26,7 +26,7 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\DependencyInjection\InputProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Utils\FileReader;
+use byrokrat\giroapp\Utils\Filesystem;
 use byrokrat\giroapp\Utils\File;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -40,18 +40,18 @@ class ImportCommand implements CommandInterface
     use DispatcherProperty, InputProperty;
 
     /**
-     * @var FileReader
+     * @var Filesystem
      */
-    private $fileReader;
+    private $filesystem;
 
     /**
      * @var Stream
      */
     private $stdin;
 
-    public function __construct(FileReader $fileReader, Stream $stdin)
+    public function __construct(Filesystem $filesystem, Stream $stdin)
     {
-        $this->fileReader = $fileReader;
+        $this->filesystem = $filesystem;
         $this->stdin = $stdin;
     }
 
@@ -66,12 +66,15 @@ class ImportCommand implements CommandInterface
 
     public function execute(): void
     {
+        $file = ($filename = $this->input->getArgument('filename'))
+            ? $this->filesystem->readFile($filename)
+            : new File('STDIN', $this->stdin->getContent());
+
         $this->dispatcher->dispatch(
             $this->input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
             new FileEvent(
-                ($filename = $this->input->getArgument('filename'))
-                    ? $this->fileReader->readFile($filename)
-                    : new File('STDIN', $this->stdin->getContent())
+                "Importing file <info>{$file->getFilename()}</info>",
+                $file
             )
         );
     }

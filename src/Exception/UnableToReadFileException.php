@@ -18,36 +18,13 @@
  * Copyright 2016-17 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Exception;
 
-namespace byrokrat\giroapp\Utils;
-
-use League\Flysystem\Filesystem;
+use byrokrat\giroapp\Exception as AppException;
 
 /**
- * Helper to read file content
+ * Exception thrown when a file can not be found
  */
-class FileReader
+class UnableToReadFileException extends \RuntimeException implements AppException
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
-    public function __construct(Filesystem $filesystem)
-    {
-        $this->filesystem = $filesystem;
-    }
-
-    /**
-     * @throws \RuntimeException if file does not exist
-     */
-    public function readFile(string $filename): File
-    {
-        if (!$this->filesystem->has($filename)) {
-            throw new \RuntimeException("Unable to read {$filename}");
-        }
-
-        return new File($filename, (string)$this->filesystem->read($filename));
-    }
 }

@@ -49,14 +49,14 @@ services:
         class: ~
         public: true
         arguments:
-            - '@fs_cwd_reader'
+            - '@fs_cwd'
             - '@std_in'
 
     byrokrat\giroapp\Console\ValidateCommand:
         class: ~
         public: true
         arguments:
-            - '@fs_user_dir_reader'
+            - '@fs_user_dir'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
 
     byrokrat\giroapp\State\:
@@ -72,7 +72,7 @@ services:
 
     byrokrat\giroapp\Setup\PluginLoader:
         class: ~
-        arguments: ['%fs.user_dir%/%fs.plugins_dir%', '@fs_user_dir']
+        arguments: ['%fs.user_dir%/%fs.plugins_dir%', '@flysystem_user_dir']
 
     byrokrat\autogiro\Parser\ParserFactory: ~
 

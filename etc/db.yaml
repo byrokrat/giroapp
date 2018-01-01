@@ -37,7 +37,7 @@ services:
 
     db_settings_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.settings%', '@fs_user_dir']
+        arguments: ['%db.settings%', '@flysystem_user_dir']
 
     byrokrat\giroapp\Mapper\DonorMapper:
         class: ~
@@ -49,7 +49,7 @@ services:
 
     db_donor_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.donors%', '@fs_user_dir']
+        arguments: ['%db.donors%', '@flysystem_user_dir']
 
     byrokrat\giroapp\Mapper\TransactionMapper:
         class: ~
@@ -61,7 +61,7 @@ services:
 
     db_transaction_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.transactions%', '@fs_user_dir']
+        arguments: ['%db.transactions%', '@flysystem_user_dir']
 
     db_log_collection:
         class: hanneskod\yaysondb\Collection
@@ -84,4 +84,4 @@ services:
 
     db_import_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.imports%', '@fs_user_dir']
+        arguments: ['%db.imports%', '@flysystem_user_dir']

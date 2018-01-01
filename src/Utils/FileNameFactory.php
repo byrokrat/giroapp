@@ -20,31 +20,33 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
-
-use byrokrat\giroapp\Utils\File;
+namespace byrokrat\giroapp\Utils;
 
 /**
- * Event object wrapping a file
+ * Generate file names
  */
-class FileEvent extends LogEvent
+class FileNameFactory
 {
-    /**
-     * @var File
-     */
-    private $file;
+    const PREFIX = 'AG';
 
-    public function __construct(string $message, File $file)
+    /**
+     * @var SystemClock
+     */
+    private $systemClock;
+
+    public function __construct(SystemClock $systemClock)
     {
-        parent::__construct($message);
-        $this->file = $file;
+        $this->systemClock = $systemClock;
     }
 
-    /**
-     * Get file to import
-     */
-    public function getFile(): File
+    public function createName(File $file): string
     {
-        return $this->file;
+        return sprintf(
+            '%s_%s_%s_%s.txt',
+            self::PREFIX,
+            $this->systemClock->getNow()->format('Ymd\THis'),
+            $file->getFilename(),
+            substr($file->getChecksum(), 0, 5)
+        );
     }
 }

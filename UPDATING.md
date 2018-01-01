@@ -5,4 +5,5 @@
 
 ## Notable changes in alpha-3
 
-* Nothing yet...
+* Fix bug #145. Now able to import files outside of current working directory.
+* Export no longer writes to stdout, it generates files instead.

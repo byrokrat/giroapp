@@ -15,9 +15,7 @@ class XmlEventSpec extends ObjectBehavior
 {
     function let(File $file, XmlObject $xml)
     {
-        $file->getFilename()->willReturn('');
-        $xml->asXml()->willReturn('');
-        $this->beConstructedWith($file, $xml);
+        $this->beConstructedWith('', $file, $xml);
     }
 
     function it_is_initializable()
@@ -38,5 +36,11 @@ class XmlEventSpec extends ObjectBehavior
     function it_contains_a_file($file)
     {
         $this->getFile()->shouldReturn($file);
+    }
+
+    function it_contains_a_message($file, $xml)
+    {
+        $this->beConstructedWith('message', $file, $xml);
+        $this->getMessage()->shouldReturn('message');
     }
 }

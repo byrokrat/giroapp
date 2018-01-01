@@ -20,8 +20,4 @@ Feature: Display information on individual donors
       | payer-number | name | account     | id         | amount |
       | 1            | foo  | 50001111116 | 8203232775 | 100    |
     When I run "show 1 --name"
-    Then the output matches:
-        """
-        foo
-
-        """
+    Then the output contains a line like "/^foo$/"

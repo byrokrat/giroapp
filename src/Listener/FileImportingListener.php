@@ -40,6 +40,7 @@ class FileImportingListener
             $dispatcher->dispatch(
                 Events::XML_FILE_IMPORTED,
                 new XmlEvent(
+                    $event->getMessage(),
                     $event->getFile(),
                     new XmlObject($event->getFile()->getContent())
                 )

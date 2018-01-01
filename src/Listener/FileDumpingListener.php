@@ -22,11 +22,14 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
+use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Utils\SystemClock;
-use League\Flysystem\Filesystem;
+use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\Utils\Filesystem;
+use byrokrat\giroapp\Utils\FileNameFactory;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
-class FileImportDumpingListener
+class FileDumpingListener
 {
     /**
      * @var Filesystem
@@ -34,23 +37,29 @@ class FileImportDumpingListener
     private $filesystem;
 
     /**
-     * @var SystemClock
+     * @var FileNameFactory
      */
-    private $systemClock;
+    private $nameFactory;
 
-    public function __construct(Filesystem $filesystem, SystemClock $systemClock)
+    public function __construct(Filesystem $filesystem, FileNameFactory $nameFactory)
     {
         $this->filesystem = $filesystem;
-        $this->systemClock = $systemClock;
+        $this->nameFactory = $nameFactory;
     }
 
-    public function onFileImported(FileEvent $event): void
+    public function onFileEvent(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
         $file = $event->getFile();
 
-        $this->filesystem->write(
-            "{$this->systemClock->getNow()->format('Ymd\TH:i:s')}_{$file->getFilename()}",
-            $file->getContent()
+        $name = $this->filesystem->getAbsolutePath(
+            $this->nameFactory->createName($file)
+        );
+
+        $this->filesystem->dumpFile($name, $file->getContent());
+
+        $dispatcher->dispatch(
+            Events::INFO,
+            new LogEvent("Writing file <info>$name</info>")
         );
     }
 }

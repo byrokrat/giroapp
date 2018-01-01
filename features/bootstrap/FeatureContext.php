@@ -36,7 +36,7 @@ class FeatureContext implements Context
     /**
      * @Given a fresh installation
      */
-    public function aFreshInstallation()
+    public function aFreshInstallation(): void
     {
         $this->app = new ApplicationWrapper;
         $this->iRun("init --org-name foo --org-number 8350000892 --bankgiro 58056201 --bgc-customer-number 123456");
@@ -45,7 +45,7 @@ class FeatureContext implements Context
     /**
      * @Given a payee with :setting :value
      */
-    public function aPayeeWith($setting, $value)
+    public function aPayeeWith($setting, $value): void
     {
         $this->iRun("init --$setting='$value'");
     }
@@ -53,7 +53,7 @@ class FeatureContext implements Context
     /**
      * @Given there are donors:
      */
-    public function thereAreDonors(TableNode $table)
+    public function thereAreDonors(TableNode $table): void
     {
         foreach ($table->getHash() as $row) {
             $row = array_merge(self::DEFAULT_DONOR_ROW, $row);
@@ -82,7 +82,7 @@ class FeatureContext implements Context
     /**
      * @Given a plugin:
      */
-    public function aPlugin(PyStringNode $content)
+    public function aPlugin(PyStringNode $content): void
     {
         $this->app->createPlugin((string)$content);
     }
@@ -90,7 +90,7 @@ class FeatureContext implements Context
     /**
      * @When I run :command
      */
-    public function iRun($command)
+    public function iRun($command): void
     {
         $this->result = $this->app->execute($command);
     }
@@ -98,7 +98,7 @@ class FeatureContext implements Context
     /**
      * @When I import:
      */
-    public function iImport(PyStringNode $content)
+    public function iImport(PyStringNode $content): void
     {
         $this->result = $this->app->import(
             $this->app->createFile((string)$content)
@@ -108,7 +108,7 @@ class FeatureContext implements Context
     /**
      * @Then there is no error
      */
-    public function thereIsNoError()
+    public function thereIsNoError(): void
     {
         if ($this->result->isError()) {
             throw new \Exception("Error: {$this->result->getErrorOutput()}");
@@ -118,7 +118,7 @@ class FeatureContext implements Context
     /**
      * @Then I get an error
      */
-    public function iGetAnError()
+    public function iGetAnError(): void
     {
         if (!$this->result->isError()) {
             throw new \Exception('App invocation should result in an error');
@@ -128,7 +128,7 @@ class FeatureContext implements Context
     /**
      * @Then the database contains donor :donor with :field matching :expected
      */
-    public function theDatabaseContainsDonorWithMatching($donor, $field, $expected)
+    public function theDatabaseContainsDonorWithMatching($donor, $field, $expected): void
     {
         $this->iRun("show $donor --$field");
         $this->thereIsNoError();
@@ -136,39 +136,36 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then the output matches:
+     * @Then the exported file matches:
      */
-    public function theOutputMatches(PyStringNode $string)
+    public function theExportedFileMatches(PyStringNode $string): void
     {
-        $output = explode("\n", $this->result->getOutput());
-        $regexes = explode("\n", (string)$string);
-
-        if (count($output) != count($regexes)) {
-            throw new \Exception("Not the same number of regexes as lines in output '{$this->result->getOutput()}'");
-        }
-
-        foreach ($regexes as $lineNr => $regexp) {
-            if (!preg_match("/^$regexp\s*$/", $output[$lineNr])) {
-                throw new \Exception("Unable to find '$regexp' in '{$output[$lineNr]}'");
-            }
-        }
+        $this->multilinePregMatch(
+            explode("\n", (string)$string),
+            explode("\n", $this->app->getLastExportedFile())
+        );
     }
 
     /**
-     * @Then the output matches :regexp
+     * @Then the output contains a line like :regexp
      */
-    public function theOutputMatches2($regexp)
+    public function theOutputContainsALineLike($regexp): void
     {
-        $output = trim($this->result->getOutput());
-        if (!preg_match($regexp, $output)) {
-            throw new \Exception("Unable to find $regexp in {$output}");
+        $output = explode("\n", $this->result->getOutput());
+
+        foreach ($output as $line) {
+            if (preg_match($regexp, $line)) {
+                return;
+            }
         }
+
+        throw new \Exception("Unable to find $regexp in {$this->result->getOutput()}");
     }
 
     /**
      * @Then the output contains :string
      */
-    public function theOutputContains($string)
+    public function theOutputContains($string): void
     {
         if (!preg_match("/$string/i", $this->result->getOutput())) {
             throw new \Exception("Unable to find $string in output {$this->result->getOutput()}");
@@ -178,10 +175,24 @@ class FeatureContext implements Context
     /**
      * @Then the output does not contain :string
      */
-    public function theOutputDoesNotContain($string)
+    public function theOutputDoesNotContain($string): void
     {
         if (preg_match("/$string/i", $this->result->getOutput())) {
             throw new \Exception("$string should not be in output");
+        }
+    }
+
+    private function multilinePregMatch(array $regexes, array $strings): void
+    {
+        if (count($regexes) != count($strings)) {
+            $source = implode("\n", $strings);
+            throw new \Exception("Not the same number of regexes as lines in '$source'");
+        }
+
+        foreach ($regexes as $lineNr => $regexp) {
+            if (!preg_match("/^$regexp\s*$/", $strings[$lineNr])) {
+                throw new \Exception("Unable to find '$regexp' in '{$strings[$lineNr]}'");
+            }
         }
     }
 }
