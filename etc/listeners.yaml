@@ -82,11 +82,6 @@ services:
         tags:
             - { name: event_listener, event: XML_FILE_IMPORTED }
 
-    byrokrat\giroapp\Listener\AutogiroFilteringListener:
-        class: ~
-        tags:
-            - { name: event_listener, event: MANDATE_RESPONSE_RECEIVED, priority: 10 }
-
     byrokrat\giroapp\Listener\CommittingListener:
         class: ~
         arguments: ['@db']

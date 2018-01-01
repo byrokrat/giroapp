@@ -93,10 +93,10 @@ class ProjectServiceContainer extends Container
             'byrokrat\\autogiro\\Writer\\WriterFactory' => true,
             'byrokrat\\banking\\AccountFactory' => true,
             'byrokrat\\banking\\BankgiroFactory' => true,
+            'byrokrat\\giroapp\\AutogiroVisitor' => true,
             'byrokrat\\giroapp\\Builder\\DateBuilder' => true,
             'byrokrat\\giroapp\\Builder\\DonorBuilder' => true,
             'byrokrat\\giroapp\\Builder\\MandateKeyBuilder' => true,
-            'byrokrat\\giroapp\\Listener\\AutogiroFilteringListener' => true,
             'byrokrat\\giroapp\\Listener\\AutogiroImportingListener' => true,
             'byrokrat\\giroapp\\Listener\\CommittingListener' => true,
             'byrokrat\\giroapp\\Listener\\DonorPersistingListener' => true,
@@ -257,9 +257,6 @@ class ProjectServiceContainer extends Container
         $instance->addListener('XML_FILE_IMPORTED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] ?? $this->getXmlImportingListenerService());
         }, 1 => 'onXMLFILEIMPORTED'));
-        $instance->addListener('MANDATE_RESPONSE_RECEIVED', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\AutogiroFilteringListener'] ?? $this->getAutogiroFilteringListenerService());
-        }, 1 => 'onMANDATERESPONSERECEIVED'), 10);
         $instance->addListener('EXECUTION_STOPED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\CommittingListener'] ?? $this->getCommittingListenerService());
         }, 1 => 'onEXECUTIONSTOPED'));
@@ -553,23 +550,16 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'byrokrat\giroapp\Listener\AutogiroFilteringListener' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Listener\AutogiroFilteringListener
-     */
-    protected function getAutogiroFilteringListenerService()
-    {
-        return $this->privates['byrokrat\giroapp\Listener\AutogiroFilteringListener'] = new \byrokrat\giroapp\Listener\AutogiroFilteringListener(($this->privates['byrokrat\banking\BankgiroFactory'] ?? $this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory()), ($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService()));
-    }
-
-    /**
      * Gets the private 'byrokrat\giroapp\Listener\AutogiroImportingListener' shared autowired service.
      *
      * @return \byrokrat\giroapp\Listener\AutogiroImportingListener
      */
     protected function getAutogiroImportingListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\AutogiroImportingListener'] = new \byrokrat\giroapp\Listener\AutogiroImportingListener([new \byrokrat\autogiro\Parser\ParserFactory(), 'createParser']());
+        $a = new \byrokrat\giroapp\AutogiroVisitor(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bgc_customer_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()));
+        $a->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+
+        return $this->privates['byrokrat\giroapp\Listener\AutogiroImportingListener'] = new \byrokrat\giroapp\Listener\AutogiroImportingListener([new \byrokrat\autogiro\Parser\ParserFactory(), 'createParser'](), $a);
     }
 
     /**

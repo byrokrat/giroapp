@@ -15,6 +15,22 @@ Feature: Importing files
         """
     Then I get an error
 
+  Scenario: I import an autogiro file with invalid payee bankgiro
+    When I import:
+        """
+        01AUTOGIRO              20170817            AG-MEDAVI           1234560050501055
+        092017081799000000000
+        """
+    Then I get an error
+
+  Scenario: I import an autogiro file with invalid payee bgc customer number
+    When I import:
+        """
+        01AUTOGIRO              20170817            AG-MEDAVI           9999990058056201
+        092017081799000000000
+        """
+    Then I get an error
+
   Scenario: I import an autogiro file approving a mandate register request
     Given there are donors:
       | payer-number | state        |

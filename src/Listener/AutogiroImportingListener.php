@@ -22,16 +22,14 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Events;
+use byrokrat\giroapp\AutogiroVisitor;
 use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Event\NodeEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
+use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\autogiro\Parser\Parser;
-use byrokrat\autogiro\Enumerator;
-use byrokrat\autogiro\Tree\Node;
+use byrokrat\autogiro\Exception as AutogiroException;
 
 /**
- * Parse an autogiro file and fire events based on content
+ * Listener that parses autogiro files
  */
 class AutogiroImportingListener
 {
@@ -40,21 +38,23 @@ class AutogiroImportingListener
      */
     private $parser;
 
-    public function __construct(Parser $parser)
+    /**
+     * @var AutogiroVisitor
+     */
+    private $visitor;
+
+    public function __construct(Parser $parser, AutogiroVisitor $visitor)
     {
         $this->parser = $parser;
+        $this->visitor = $visitor;
     }
 
-    public function onAutogiroFileImported(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
+    public function onAutogiroFileImported(FileEvent $event): void
     {
-        $enum = new Enumerator;
-
-        $enum->onMandateResponseNode(function (Node $node) use ($dispatcher) {
-            $dispatcher->dispatch(Events::MANDATE_RESPONSE_RECEIVED, new NodeEvent($node));
-        });
-
-        // TODO dispatch events on all autogiro nodes
-
-        $enum->enumerate($this->parser->parse($event->getFile()->getContent()));
+        try {
+            $this->parser->parse($event->getFile()->getContent())->accept($this->visitor);
+        } catch (AutogiroException $e) {
+            throw new InvalidAutogiroFileException('Invalid autogiro file', 0, $e);
+        }
     }
 }
