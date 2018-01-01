@@ -49,7 +49,7 @@ class ApplicationWrapper
     public function execute(string $command): Result
     {
         $process = proc_open(
-            "{$this->executable} $command --no-interaction --no-ansi",
+            "{$this->executable} $command --no-interaction --no-ansi -vvv",
             [
                 1 => ["pipe", "w"],
                 2 => ["pipe", "w"]

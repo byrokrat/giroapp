@@ -147,25 +147,19 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then the output matches:
+     * @Then the output contains a line like :regexp
      */
-    public function theOutputMatches(PyStringNode $string): void
+    public function theOutputContainsALineLike($regexp): void
     {
-        $this->multilinePregMatch(
-            explode("\n", (string)$string),
-            explode("\n", $this->result->getOutput())
-        );
-    }
+        $output = explode("\n", $this->result->getOutput());
 
-    /**
-     * @Then the output matches :regexp
-     */
-    public function theOutputMatches2($regexp): void
-    {
-        $output = trim($this->result->getOutput());
-        if (!preg_match($regexp, $output)) {
-            throw new \Exception("Unable to find $regexp in {$output}");
+        foreach ($output as $line) {
+            if (preg_match($regexp, $line)) {
+                return;
+            }
         }
+
+        throw new \Exception("Unable to find $regexp in {$this->result->getOutput()}");
     }
 
     /**
