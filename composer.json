@@ -24,6 +24,7 @@
         "ext-mbstring": "*",
         "ext-bcmath": "*",
         "ext-simplexml": "*",
+        "roave/security-advisories": "dev-master",
         "byrokrat/amount": "^2",
         "byrokrat/autogiro": "dev-master",
         "byrokrat/banking": "^1.4",
