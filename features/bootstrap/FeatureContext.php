@@ -29,9 +29,30 @@ class FeatureContext implements Context
     private $app;
 
     /**
+     * @var callable
+     */
+    private $debugDump;
+
+    /**
      * @var Result Result from the last app invocation
      */
     private $result;
+
+    public function __construct(bool $debug)
+    {
+        if ($debug) {
+            $this->debugDump = function (string $str, string $pre = '') {
+                foreach (explode(PHP_EOL, $str) as $line) {
+                    if (!empty($line)) {
+                        echo "$pre $line\n";
+                    }
+                }
+            };
+        } else {
+            $this->debugDump = function () {
+            };
+        }
+    }
 
     /**
      * @Given a fresh installation
@@ -93,6 +114,9 @@ class FeatureContext implements Context
     public function iRun($command): void
     {
         $this->result = $this->app->execute($command);
+        ($this->debugDump)($command, '$');
+        ($this->debugDump)($this->result->getOutput(), '>');
+        ($this->debugDump)($this->result->getErrorOutput(), 'error:');
     }
 
     /**
