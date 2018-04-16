@@ -26,7 +26,7 @@ class ApplicationWrapper
 
     public function __construct(string $executable = '')
     {
-        $this->directory = sys_get_temp_dir() . '/giroapp_acceptance_tests_' . time();
+        $this->directory = sys_get_temp_dir() . '/giroapp_acceptance_tests_' . microtime();
         mkdir($this->directory);
         $this->userDir = $this->directory . '/giroapp_path';
         mkdir($this->userDir);
