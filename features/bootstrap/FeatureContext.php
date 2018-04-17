@@ -29,9 +29,9 @@ class FeatureContext implements Context
     private $app;
 
     /**
-     * @var callable
+     * @var bool
      */
-    private $debugDump;
+    private $debug;
 
     /**
      * @var Result Result from the last app invocation
@@ -40,18 +40,7 @@ class FeatureContext implements Context
 
     public function __construct(bool $debug)
     {
-        if ($debug) {
-            $this->debugDump = function (string $str, string $pre = '') {
-                foreach (explode(PHP_EOL, $str) as $line) {
-                    if (!empty($line)) {
-                        echo "$pre $line\n";
-                    }
-                }
-            };
-        } else {
-            $this->debugDump = function () {
-            };
-        }
+        $this->debug = $debug;
     }
 
     /**
@@ -59,7 +48,7 @@ class FeatureContext implements Context
      */
     public function aFreshInstallation(): void
     {
-        $this->app = new ApplicationWrapper;
+        $this->app = new ApplicationWrapper($this->debug);
         $this->iRun("init --org-name foo --org-number 8350000892 --bankgiro 58056201 --bgc-customer-number 123456");
     }
 
@@ -113,10 +102,7 @@ class FeatureContext implements Context
      */
     public function iRun($command): void
     {
-        $this->result = $this->app->execute($command);
-        ($this->debugDump)($command, '$');
-        ($this->debugDump)($this->result->getOutput(), '>');
-        ($this->debugDump)($this->result->getErrorOutput(), 'error:');
+        $this->result = $this->app->executeVerbose($command);
     }
 
     /**
@@ -154,9 +140,12 @@ class FeatureContext implements Context
      */
     public function theDatabaseContainsDonorWithMatching($donor, $field, $expected): void
     {
-        $this->iRun("show $donor --$field");
+        $this->result = $this->app->execute("show $donor --format=json");
         $this->thereIsNoError();
-        $this->theOutputContains($expected);
+        $data = json_decode($this->result->getOutput(), true);
+        if (!isset($data[$field]) || $data[$field] != $expected) {
+            throw new \Exception("Unable to find $field: $expected in database");
+        }
     }
 
     /**

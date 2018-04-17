@@ -97,6 +97,14 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Builder\\DateBuilder' => true,
             'byrokrat\\giroapp\\Builder\\DonorBuilder' => true,
             'byrokrat\\giroapp\\Builder\\MandateKeyBuilder' => true,
+            'byrokrat\\giroapp\\Filter\\ExportableFilter' => true,
+            'byrokrat\\giroapp\\Filter\\FilterContainer' => true,
+            'byrokrat\\giroapp\\Filter\\InactiveFilter' => true,
+            'byrokrat\\giroapp\\Filter\\NullFilter' => true,
+            'byrokrat\\giroapp\\Formatter\\CsvFormatter' => true,
+            'byrokrat\\giroapp\\Formatter\\FormatterContainer' => true,
+            'byrokrat\\giroapp\\Formatter\\HumanFormatter' => true,
+            'byrokrat\\giroapp\\Formatter\\TableFormatter' => true,
             'byrokrat\\giroapp\\Listener\\AutogiroImportingListener' => true,
             'byrokrat\\giroapp\\Listener\\CommittingListener' => true,
             'byrokrat\\giroapp\\Listener\\DonorPersistingListener' => true,
@@ -339,7 +347,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getExportCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\ExportCommand'] = $instance = new \byrokrat\giroapp\Console\ExportCommand([new \byrokrat\autogiro\Writer\WriterFactory(), 'createWriter'](($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bgc_customer_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
+        $this->services['byrokrat\giroapp\Console\ExportCommand'] = $instance = new \byrokrat\giroapp\Console\ExportCommand((new \byrokrat\autogiro\Writer\WriterFactory())->createWriter(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bgc_customer_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
@@ -415,9 +423,10 @@ class ProjectServiceContainer extends Container
      */
     protected function getLsCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\LsCommand'] = $instance = new \byrokrat\giroapp\Console\LsCommand();
+        $this->services['byrokrat\giroapp\Console\LsCommand'] = $instance = new \byrokrat\giroapp\Console\LsCommand(new \byrokrat\giroapp\Filter\FilterContainer(), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
         $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out')));
 
         return $instance;
@@ -479,7 +488,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getShowCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\ShowCommand'] = $instance = new \byrokrat\giroapp\Console\ShowCommand();
+        $this->services['byrokrat\giroapp\Console\ShowCommand'] = $instance = new \byrokrat\giroapp\Console\ShowCommand(($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
         $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
@@ -559,7 +568,7 @@ class ProjectServiceContainer extends Container
         $a = new \byrokrat\giroapp\AutogiroVisitor(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bgc_customer_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()));
         $a->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
 
-        return $this->privates['byrokrat\giroapp\Listener\AutogiroImportingListener'] = new \byrokrat\giroapp\Listener\AutogiroImportingListener([new \byrokrat\autogiro\Parser\ParserFactory(), 'createParser'](), $a);
+        return $this->privates['byrokrat\giroapp\Listener\AutogiroImportingListener'] = new \byrokrat\giroapp\Listener\AutogiroImportingListener((new \byrokrat\autogiro\Parser\ParserFactory())->createParser(), $a);
     }
 
     /**
@@ -621,7 +630,7 @@ class ProjectServiceContainer extends Container
     {
         $a = ($this->privates['byrokrat\id\IdFactory'] ?? $this->getIdFactoryService());
 
-        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser($a->create(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), new \byrokrat\giroapp\Xml\CustomdataTranslator(new \byrokrat\giroapp\Xml\NullXmlMandateMigration()), ($this->privates['byrokrat\banking\AccountFactory'] ?? $this->privates['byrokrat\banking\AccountFactory'] = new \byrokrat\banking\AccountFactory()), $a));
+        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser($a->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), new \byrokrat\giroapp\Xml\CustomdataTranslator(new \byrokrat\giroapp\Xml\NullXmlMandateMigration()), ($this->privates['byrokrat\banking\AccountFactory'] ?? $this->privates['byrokrat\banking\AccountFactory'] = new \byrokrat\banking\AccountFactory()), $a));
     }
 
     /**
