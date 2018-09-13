@@ -218,7 +218,7 @@ class Validators
     public function getChoiceValidator(array $choices): callable
     {
         return function ($val) use ($choices) {
-            $lower = strtolower($val);
+            $lower = strtolower((string)$val);
 
             if (isset($choices[$lower])) {
                 return $choices[$lower];
@@ -229,7 +229,7 @@ class Validators
             }
 
             throw new \RuntimeException(
-                "Invalid choice, please use one of " . implode('/', array_keys($choices))
+                "Invalid choice '$val', please use one of " . implode('/', array_keys($choices))
             );
         };
     }

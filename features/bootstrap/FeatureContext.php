@@ -29,16 +29,26 @@ class FeatureContext implements Context
     private $app;
 
     /**
+     * @var bool
+     */
+    private $debug;
+
+    /**
      * @var Result Result from the last app invocation
      */
     private $result;
+
+    public function __construct(bool $debug)
+    {
+        $this->debug = $debug;
+    }
 
     /**
      * @Given a fresh installation
      */
     public function aFreshInstallation(): void
     {
-        $this->app = new ApplicationWrapper;
+        $this->app = new ApplicationWrapper($this->debug);
         $this->iRun("init --org-name foo --org-number 8350000892 --bankgiro 58056201 --bgc-customer-number 123456");
     }
 
@@ -92,7 +102,7 @@ class FeatureContext implements Context
      */
     public function iRun($command): void
     {
-        $this->result = $this->app->execute($command);
+        $this->result = $this->app->executeVerbose($command);
     }
 
     /**
@@ -130,9 +140,12 @@ class FeatureContext implements Context
      */
     public function theDatabaseContainsDonorWithMatching($donor, $field, $expected): void
     {
-        $this->iRun("show $donor --$field");
+        $this->result = $this->app->execute("show $donor --format=json");
         $this->thereIsNoError();
-        $this->theOutputContains($expected);
+        $data = json_decode($this->result->getOutput(), true);
+        if (!isset($data[$field]) || $data[$field] != $expected) {
+            throw new \Exception("Unable to find $field: $expected in database");
+        }
     }
 
     /**

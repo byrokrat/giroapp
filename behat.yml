@@ -1,0 +1,10 @@
+default:
+    suites:
+        default:
+            contexts:
+                - FeatureContext:
+                    debug: false
+        debug:
+            contexts:
+                - FeatureContext:
+                    debug: true

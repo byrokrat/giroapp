@@ -22,7 +22,7 @@ task('phpspec', ['update_container'], function() {
 
 desc('Run behat feature tests');
 task('behat', ['update_container'], function() {
-    sh('behat --stop-on-failure', null, ['failOnError' => true]);
+    sh('behat --stop-on-failure --suite=default', null, ['failOnError' => true]);
     println('Behat feature tests passed');
 });
 

@@ -1,0 +1,63 @@
+# TODO
+
+> Temporary TODO for the filter-n-formatter branch..
+
+Hur får vi reda på att mail studsar i mailer-plugin??
+    Inte helt relaterad till denna TODO-lista. Men måste utredas...
+
+## Att vid configure veta vilka filter/formats vi har..
+
+Plugins behöver laddas innan commands skapas..
+
+1. Output och Input till CommandInterface::execute igen..
+
+Men det är ett problem.. Vilka delar av koden som ej är command använder input/output ...
+
+Det är nog bara OutputtingListener...
+
+    Jag kan ju ladda OutputtingListener i CommandWrapper::execute istället...
+    Det är ju inte skitsnyggt kanske, men ok...
+
+    Fundera lite mer på detta innan jag går vidare...
+
+2. OutputProperty och InputProperty måste bort...
+3. CommandInterface::configure() får ej vara static för att lösa detta.
+4. Kanske kan lazy-loading från di kan göra att detta inte påverkar hastigheten för mycket...
+
+5. Sedan följer hur plugins ska laddas. Men flytta det till github issue..
+
+```php
+interface PluginInterface
+{
+    public function loadPlugin(Environment $environment);
+}
+
+class MyPlugin implements PluginInterface, EventSubscriberInterface
+{
+    // ...
+    // Så har composer löst det hela....
+}
+
+class Environment
+{
+    /**
+     * Read a giroapp setting
+     */
+    public function readSetting(string $key): string;
+
+    /**
+     * Register an event subscriber
+     */
+    public function registerSubscriber(SubscriberInterface $subscriber);
+
+    /**
+     * Register a custom donor filter
+     */
+    public function registerDonorFilter(FilterInterface $donorFilter);
+
+    /**
+     * Register a custom donor formatter
+     */
+    public function registerDonorFormatter(FormatterInterface $donorFormatter);
+}
+```

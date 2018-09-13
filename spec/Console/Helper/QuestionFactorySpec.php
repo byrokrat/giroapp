@@ -34,7 +34,7 @@ class QuestionFactorySpec extends ObjectBehavior
     {
         $question = $this->createChoiceQuestion('question', ['a' => 'foo', 'b' => 'bar'], 'foo');
         $question->shouldContainQuestion('question: ');
-        $question->shouldContainDefault('foo');
+        $question->shouldContainDefault('A');
         $question->shouldContainChoices(['b' => 'bar', 'A' => 'foo']);
     }
 

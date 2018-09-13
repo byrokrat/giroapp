@@ -23,46 +23,76 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
+use byrokrat\giroapp\DependencyInjection\InputProperty;
 use byrokrat\giroapp\DependencyInjection\OutputProperty;
-use Symfony\Component\Console\Helper\Table;
+use byrokrat\giroapp\Filter\FilterContainer;
+use byrokrat\giroapp\Formatter\FormatterContainer;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Command to list donors in database
  */
 class LsCommand implements CommandInterface
 {
-    use DonorMapperProperty, OutputProperty;
+    use DonorMapperProperty, InputProperty, OutputProperty;
+
+    /**
+     * @var FilterContainer
+     */
+    private $filterContainer;
+
+    /**
+     * @var FormatterContainer
+     */
+    private $formatterContainer;
+
+    public function __construct(FilterContainer $filterContainer, FormatterContainer $formatterContainer)
+    {
+        $this->filterContainer = $filterContainer;
+        $this->formatterContainer = $formatterContainer;
+    }
 
     public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('ls');
         $wrapper->setDescription('List donors');
         $wrapper->setHelp('List donors in database');
+
+        $wrapper->addOption(
+            'filter',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Set donor filter',
+            ''
+        );
+
+        $wrapper->addOption(
+            'format',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Set output format',
+            'table'
+        );
     }
 
     public function execute(): void
     {
-        $table = new Table($this->output);
+        $filter = $this->filterContainer->getFilter(
+            $this->input->getOption('filter')
+        );
 
-        $table->setHeaders([
-            'mandate-key',
-            'payer-number',
-            'name',
-            'status',
-            'export'
-        ]);
+        $formatter = $this->formatterContainer->getFormatter(
+            $this->input->getOption('format')
+        );
+
+        $formatter->setOutput($this->output);
 
         foreach ($this->donorMapper->findAll() as $donor) {
-            $table->addRow([
-                $donor->getMandateKey(),
-                $donor->getPayerNumber(),
-                $donor->getName(),
-                $donor->getState()->getStateId(),
-                $donor->getState()->isExportable() ? 'yes' : 'no'
-            ]);
+            if ($filter->filterDonor($donor)) {
+                $formatter->addDonor($donor);
+            }
         }
 
-        $table->setStyle('compact');
-        $table->render();
+        $formatter->dump();
     }
 }

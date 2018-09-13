@@ -13,4 +13,4 @@ install:
 
 script:
   - phpspec run --verbose
-  - behat --verbose
+  - behat --suite=debug

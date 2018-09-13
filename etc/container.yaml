@@ -59,6 +59,12 @@ services:
             - '@fs_user_dir'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
 
+    byrokrat\giroapp\Filter\:
+        resource: '../src/Filter/*'
+
+    byrokrat\giroapp\Formatter\:
+        resource: '../src/Formatter/*'
+
     byrokrat\giroapp\State\:
         resource: '../src/State/*'
 

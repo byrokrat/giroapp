@@ -97,6 +97,15 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Builder\\DateBuilder' => true,
             'byrokrat\\giroapp\\Builder\\DonorBuilder' => true,
             'byrokrat\\giroapp\\Builder\\MandateKeyBuilder' => true,
+            'byrokrat\\giroapp\\Filter\\ExportableFilter' => true,
+            'byrokrat\\giroapp\\Filter\\FilterContainer' => true,
+            'byrokrat\\giroapp\\Filter\\InactiveFilter' => true,
+            'byrokrat\\giroapp\\Filter\\NullFilter' => true,
+            'byrokrat\\giroapp\\Formatter\\CsvFormatter' => true,
+            'byrokrat\\giroapp\\Formatter\\FormatterContainer' => true,
+            'byrokrat\\giroapp\\Formatter\\HumanFormatter' => true,
+            'byrokrat\\giroapp\\Formatter\\JsonFormatter' => true,
+            'byrokrat\\giroapp\\Formatter\\TableFormatter' => true,
             'byrokrat\\giroapp\\Listener\\AutogiroImportingListener' => true,
             'byrokrat\\giroapp\\Listener\\CommittingListener' => true,
             'byrokrat\\giroapp\\Listener\\DonorPersistingListener' => true,
@@ -415,9 +424,10 @@ class ProjectServiceContainer extends Container
      */
     protected function getLsCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\LsCommand'] = $instance = new \byrokrat\giroapp\Console\LsCommand();
+        $this->services['byrokrat\giroapp\Console\LsCommand'] = $instance = new \byrokrat\giroapp\Console\LsCommand(new \byrokrat\giroapp\Filter\FilterContainer(), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)));
         $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out', 1)));
 
         return $instance;
@@ -479,7 +489,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getShowCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\ShowCommand'] = $instance = new \byrokrat\giroapp\Console\ShowCommand();
+        $this->services['byrokrat\giroapp\Console\ShowCommand'] = $instance = new \byrokrat\giroapp\Console\ShowCommand(($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
         $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)));

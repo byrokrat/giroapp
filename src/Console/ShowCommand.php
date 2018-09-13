@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Formatter\FormatterContainer;
 use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -32,75 +33,38 @@ class ShowCommand implements CommandInterface
 {
     use Helper\DonorArgument, OutputProperty;
 
-    private static $options = [
-        'mandate-key'    => 'Show mandate key',
-        'mandate-source' => 'Show mandate source',
-        'payer-number'   => 'Show payer number',
-        'state'          => 'Show payer state',
-        'account'        => 'Show payer account',
-        'id'             => 'Show payer state id',
-        'name'           => 'Show payer name',
-        'address'        => 'Show postal address',
-        'email'          => 'Show email address',
-        'phone'          => 'Show phone number',
-        'amount'         => 'Show monthly donation amount',
-        'comment'        => 'Show comment',
-        'created'        => 'Show created date',
-        'updated'        => 'Show updated date',
-        'attributes'     => 'Show attributes'
-    ];
+    /**
+     * @var FormatterContainer
+     */
+    private $formatterContainer;
+
+    public function __construct(FormatterContainer $formatterContainer)
+    {
+        $this->formatterContainer = $formatterContainer;
+    }
 
     public static function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('show');
         $wrapper->setDescription('Display donor information');
         $wrapper->setHelp('Display information on individual donors');
+
         self::configureDonorArgument($wrapper);
-        foreach (self::$options as $option => $desc) {
-            $wrapper->addOption($option, null, InputOption::VALUE_NONE, $desc);
-        }
+
+        $wrapper->addOption(
+            'format',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Set output format',
+            'human'
+        );
     }
 
     public function execute(): void
     {
-        $donor = $this->getDonor();
-
-        $showContent = $content = [
-            'mandate-key' => $donor->getMandateKey(),
-            'state' => $donor->getState()->getStateId(),
-            'mandate-source' => $donor->getMandateSource(),
-            'payer-number' => $donor->getPayerNumber(),
-            'account' => $donor->getAccount()->getNumber(),
-            'id' => $donor->getDonorId()->format('S-sk'),
-            'name' => $donor->getName(),
-            'address' => [
-                'line1' => $donor->getPostalAddress()->getLine1(),
-                'line2' => $donor->getPostalAddress()->getLine2(),
-                'line3' => $donor->getPostalAddress()->getLine3(),
-                'postal_code' => $donor->getPostalAddress()->getPostalCode(),
-                'postal_city' => $donor->getPostalAddress()->getPostalCity()
-            ],
-            'email' => $donor->getEmail(),
-            'phone' => $donor->getPhone(),
-            'amount' => $donor->getDonationAmount()->getAmount(),
-            'comment' => $donor->getComment(),
-            'created' => $donor->getCreated()->format(\DateTime::W3C),
-            'updated' => $donor->getUpdated()->format(\DateTime::W3C),
-            'attributes' => $donor->getAttributes()
-        ];
-
-        foreach (array_keys(self::$options) as $option) {
-            if (!$this->input->getOption($option)) {
-                unset($showContent[$option]);
-            }
-        }
-
-        if (empty($showContent)) {
-            $showContent = $content;
-        }
-
-        foreach ($showContent as $info) {
-            $this->output->writeln(implode(' ', (array)$info));
-        }
+        $formatter = $this->formatterContainer->getFormatter($this->input->getOption('format'));
+        $formatter->setOutput($this->output);
+        $formatter->addDonor($this->getDonor());
+        $formatter->dump();
     }
 }
