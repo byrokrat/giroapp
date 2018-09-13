@@ -21,7 +21,7 @@
 namespace byrokrat\giroapp\State;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 
 /**
  * Defines a donor state in relation to bgc
@@ -51,5 +51,5 @@ interface StateInterface
     /**
      * Export to autogiro and possibly perform state transition
      */
-    public function export(Donor $donor, Writer $writer): void;
+    public function export(Donor $donor, WriterInterface $writer): void;
 }

@@ -10,7 +10,7 @@ Feature: Display information on individual donors
       | 1            | foo  | 50001111116 | 8203232775 | 100    |
     When I run "show 1"
     Then the output contains "foo"
-    And the output contains "5000,111 111-6"
+    And the output contains "5000,111111-6"
     And the output contains "820323-2775"
     And the output contains "100"
 

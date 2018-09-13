@@ -25,8 +25,8 @@ namespace byrokrat\giroapp\Mapper\Schema;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
 use byrokrat\giroapp\State\StatePool;
-use byrokrat\banking\AccountFactory;
-use byrokrat\id\IdFactory;
+use byrokrat\banking\AccountFactoryInterface;
+use byrokrat\id\IdFactoryInterface;
 use byrokrat\amount\Currency\SEK;
 use hanneskod\yaysondb\Expression\ExpressionInterface;
 use hanneskod\yaysondb\Operators as y;
@@ -52,20 +52,20 @@ class DonorSchema
     private $statePool;
 
     /**
-     * @var AccountFactory
+     * @var AccountFactoryInterface
      */
     private $accountFactory;
 
     /**
-     * @var IdFactory
+     * @var IdFactoryInterface
      */
     private $idFactory;
 
     public function __construct(
         PostalAddressSchema $postalAddressSchema,
         StatePool $statePool,
-        AccountFactory $accountFactory,
-        IdFactory $idFactory
+        AccountFactoryInterface $accountFactory,
+        IdFactoryInterface $idFactory
     ) {
         $this->addressSchema = $postalAddressSchema;
         $this->statePool = $statePool;

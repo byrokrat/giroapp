@@ -27,9 +27,6 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
-use byrokrat\autogiro\Tree\Record\OpeningRecordNode;
-use byrokrat\autogiro\Tree\Record\Request\RequestOpeningRecordNode;
-use byrokrat\autogiro\Tree\Record\Response\MandateResponseNode;
 use byrokrat\banking\Bankgiro;
 
 /**
@@ -55,28 +52,18 @@ class AutogiroVisitor extends Visitor
         $this->orgBankgiro = $orgBankgiro;
     }
 
-    public function beforeMandateResponseNode(MandateResponseNode $node): void
+    public function beforeMandateResponse(Node $node): void
     {
         $this->dispatcher->dispatch(Events::MANDATE_RESPONSE_RECEIVED, new NodeEvent($node));
     }
 
-    public function beforeOpeningRecordNode(OpeningRecordNode $node): void
-    {
-        $this->validateOpeningNode($node);
-    }
-
-    public function beforeRequestOpeningRecordNode(RequestOpeningRecordNode $node): void
-    {
-        $this->validateOpeningNode($node);
-    }
-
-    private function validateOpeningNode(Node $node): void
+    public function beforeOpening(Node $node): void
     {
         /** @var string $payeeBgcNr */
-        $payeeBgcNr = $node->getChild('payee_bgc_number')->getValue();
+        $payeeBgcNr = $node->getChild('PayeeBgcNumber')->getValue();
 
         /** @var Bankgiro $payeeBankgiro */
-        $payeeBankgiro = $node->getChild('payee_bankgiro')->getAttribute('account');
+        $payeeBankgiro = $node->getChild('PayeeBankgiro')->getValueFrom('Object');
 
         if ($payeeBgcNr != $this->orgBgcNr) {
             throw new \RuntimeException('File contains invalid payee BGC customer number');

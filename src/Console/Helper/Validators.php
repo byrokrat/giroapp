@@ -24,9 +24,9 @@ namespace byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\banking\AccountFactory;
+use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\BankgiroFactory;
-use byrokrat\id\IdFactory;
+use byrokrat\id\IdFactoryInterface;
 use hanneskod\clean\Rule;
 
 /**
@@ -40,12 +40,12 @@ class Validators
     private $bankgiroFactory;
 
     /**
-     * @var AccountFactory
+     * @var AccountFactoryInterface
      */
     private $accountFactory;
 
     /**
-     * @var IdFactory
+     * @var IdFactoryInterface
      */
     private $idFactory;
 
@@ -55,9 +55,9 @@ class Validators
     private $statePool;
 
     public function __construct(
-        AccountFactory $accountFactory,
+        AccountFactoryInterface $accountFactory,
         BankgiroFactory $bankgiroFactory,
-        IdFactory $idFactory,
+        IdFactoryInterface $idFactory,
         StatePool $statePool
     ) {
         $this->accountFactory = $accountFactory;

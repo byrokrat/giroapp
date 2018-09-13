@@ -8,9 +8,7 @@ use byrokrat\giroapp\AutogiroVisitor;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\autogiro\Visitor\Visitor;
-use byrokrat\autogiro\Tree\Record\OpeningRecordNode;
-use byrokrat\autogiro\Tree\Record\Request\RequestOpeningRecordNode;
-use byrokrat\autogiro\Tree\Record\Response\MandateResponseNode;
+use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\Bankgiro;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use PhpSpec\ObjectBehavior;
@@ -36,50 +34,30 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $this->shouldHaveType(Visitor::CLASS);
     }
 
-    function it_dispatches_on_mandate_response_node($dispatcher, MandateResponseNode $node)
+    function it_dispatches_on_mandate_response_node($dispatcher, Node $node)
     {
         $event = new NodeEvent($node->getWrappedObject());
         $dispatcher->dispatch(Events::MANDATE_RESPONSE_RECEIVED, $event)->shouldBeCalled();
-        $this->beforeMandateResponseNode($node);
+        $this->beforeMandateResponse($node);
     }
 
-    function it_throws_on_invalid_bg_in_opening_node($orgBg, OpeningRecordNode $node, Bankgiro $payeeBg)
+    function it_throws_on_invalid_bg_in_opening_node($orgBg, Node $node, Bankgiro $payeeBg)
     {
-        $node->getChild('payee_bgc_number')->willReturn($node);
+        $node->getChild('PayeeBgcNumber')->willReturn($node);
         $node->getValue()->willReturn(self::ORG_BGC_NR);
-        $node->getChild('payee_bankgiro')->willReturn($node);
-        $node->getAttribute('account')->willReturn($payeeBg);
+        $node->getChild('PayeeBankgiro')->willReturn($node);
+        $node->getValueFrom('Object')->willReturn($payeeBg);
         $payeeBg->equals($orgBg)->willReturn(false);
-        $this->shouldThrow(\RuntimeException::CLASS)->during('beforeOpeningRecordNode', [$node]);
+        $this->shouldThrow(\RuntimeException::CLASS)->during('beforeOpening', [$node]);
     }
 
-    function it_throws_on_invalid_bgc_nr_in_opening_node($orgBg, OpeningRecordNode $node, Bankgiro $payeeBg)
+    function it_throws_on_invalid_bgc_nr_in_opening_node($orgBg, Node $node, Bankgiro $payeeBg)
     {
-        $node->getChild('payee_bgc_number')->willReturn($node);
+        $node->getChild('PayeeBgcNumber')->willReturn($node);
         $node->getValue()->willReturn('some-invalid-value');
-        $node->getChild('payee_bankgiro')->willReturn($node);
-        $node->getAttribute('account')->willReturn($payeeBg);
+        $node->getChild('PayeeBankgiro')->willReturn($node);
+        $node->getValueFrom('Object')->willReturn($payeeBg);
         $payeeBg->equals($orgBg)->willReturn(true);
-        $this->shouldThrow(\RuntimeException::CLASS)->during('beforeOpeningRecordNode', [$node]);
-    }
-
-    function it_throws_on_invalid_bg_in_request_opening($orgBg, RequestOpeningRecordNode $node, Bankgiro $payeeBg)
-    {
-        $node->getChild('payee_bgc_number')->willReturn($node);
-        $node->getValue()->willReturn(self::ORG_BGC_NR);
-        $node->getChild('payee_bankgiro')->willReturn($node);
-        $node->getAttribute('account')->willReturn($payeeBg);
-        $payeeBg->equals($orgBg)->willReturn(false);
-        $this->shouldThrow(\RuntimeException::CLASS)->during('beforeRequestOpeningRecordNode', [$node]);
-    }
-
-    function it_throws_on_invalid_bgc_nr_in_request_opening($orgBg, RequestOpeningRecordNode $node, Bankgiro $payeeBg)
-    {
-        $node->getChild('payee_bgc_number')->willReturn($node);
-        $node->getValue()->willReturn('some-invalid-value');
-        $node->getChild('payee_bankgiro')->willReturn($node);
-        $node->getAttribute('account')->willReturn($payeeBg);
-        $payeeBg->equals($orgBg)->willReturn(true);
-        $this->shouldThrow(\RuntimeException::CLASS)->during('beforeRequestOpeningRecordNode', [$node]);
+        $this->shouldThrow(\RuntimeException::CLASS)->during('beforeOpening', [$node]);
     }
 }

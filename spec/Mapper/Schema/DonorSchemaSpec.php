@@ -11,11 +11,11 @@ use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\ActiveState;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\banking\AccountFactory;
+use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\id\IdFactory;
-use byrokrat\id\PersonalId;
+use byrokrat\id\IdFactoryInterface;
+use byrokrat\id\IdInterface;
 use hanneskod\yaysondb\Expression\ExpressionInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -65,10 +65,10 @@ class DonorSchemaSpec extends ObjectBehavior
         PostalAddress $address,
         StatePool $statePool,
         StateInterface $state,
-        AccountFactory $accountFactory,
+        AccountFactoryInterface $accountFactory,
         AccountNumber $account,
-        IdFactory $idFactory,
-        PersonalId $id,
+        IdFactoryInterface $idFactory,
+        IdInterface $id,
         \DateTime $datetime
     ) {
         $postalAddressSchema->fromArray([self::ADDRESS])->willReturn($address);

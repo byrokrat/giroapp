@@ -27,9 +27,9 @@ use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Exception\InvalidXmlException;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\banking\AccountFactory;
+use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\Bankgiro;
-use byrokrat\id\IdFactory;
+use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\OrganizationId;
 
 /**
@@ -58,12 +58,12 @@ class XmlMandateParser
     private $translator;
 
     /**
-     * @var AccountFactory
+     * @var AccountFactoryInterface
      */
     private $accountFactory;
 
     /**
-     * @var IdFactory
+     * @var IdFactoryInterface
      */
     private $idFactory;
 
@@ -72,8 +72,8 @@ class XmlMandateParser
         Bankgiro $payeeBankgiro,
         DonorBuilder $donorBuilder,
         CustomdataTranslator $translator,
-        AccountFactory $accountFactory,
-        IdFactory $idFactory
+        AccountFactoryInterface $accountFactory,
+        IdFactoryInterface $idFactory
     ) {
         $this->payeeOrgNr = $payeeOrgNr;
         $this->payeeBankgiro = $payeeBankgiro;

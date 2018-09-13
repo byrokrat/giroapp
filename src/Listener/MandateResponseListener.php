@@ -29,7 +29,6 @@ use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\States;
-use byrokrat\autogiro\Messages;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
@@ -58,14 +57,11 @@ class MandateResponseListener
         $node = $nodeEvent->getNode();
 
         $donor = $this->donorMapper->findByActivePayerNumber(
-            $node->getChild('payer_number')->getValue()
+            $node->getValueFrom('PayerNumber')
         );
 
-        // validate id if present in node
-        if ($node->getChild('id')->hasAttribute('id')) {
-            /** @var \byrokrat\id\IdInterface */
-            $nodeId = $node->getChild('id')->getAttribute('id');
-
+        /** @var \byrokrat\id\IdInterface $nodeId */
+        if ($nodeId = $node->getChild('StateId')->getValueFrom('Object')) {
             if ($donor->getDonorId()->format('S-sk') != $nodeId->format('S-sk')) {
                 $dispatcher->dispatch(
                     Events::WARNING,
@@ -85,11 +81,8 @@ class MandateResponseListener
             }
         }
 
-        // validate account if present in node
-        if ($node->getChild('account')->hasAttribute('account')) {
-            /** @var \byrokrat\banking\AccountNumber */
-            $nodeAccount = $node->getChild('account')->getAttribute('account');
-
+        /** @var \byrokrat\banking\AccountNumber $nodeAccount */
+        if ($nodeAccount = $node->getChild('Account')->getValueFrom('Object')) {
             if (!$donor->getAccount()->equals($nodeAccount)) {
                 $dispatcher->dispatch(
                     Events::WARNING,
@@ -113,11 +106,43 @@ class MandateResponseListener
             sprintf(
                 '%s: %s',
                 $donor->getMandateKey(),
-                $node->getChild('status')->getAttribute('message')
+                (string)$node->getChild('Status')->getValueFrom('Text')
             ),
             $donor
         );
 
+        if ($node->hasChild('CreatedFlag')) {
+            $donor->setState($this->statePool->getState(States::MANDATE_APPROVED));
+            $dispatcher->dispatch(Events::MANDATE_APPROVED, $donorEvent);
+            return;
+        }
+
+        if ($node->hasChild('DeletedFlag')) {
+            $donor->setState($this->statePool->getState(States::INACTIVE));
+            $dispatcher->dispatch(Events::MANDATE_REVOKED, $donorEvent);
+            return;
+        }
+
+        if ($node->hasChild('ErrorFlag')) {
+            $donor->setState($this->statePool->getState(States::ERROR));
+            $dispatcher->dispatch(Events::MANDATE_INVALIDATED, $donorEvent);
+            return;
+        }
+
+        $dispatcher->dispatch(
+            Events::WARNING,
+            new LogEvent(
+                sprintf(
+                    '%s: invalid mandate status code: %s',
+                    $donor->getMandateKey(),
+                    $node->getChild('Status')->getValueFrom('Number')
+                )
+            )
+        );
+
+        $nodeEvent->stopPropagation();
+
+        /*
         switch ($node->getChild('status')->getAttribute('message_id')) {
             case Messages::STATUS_MANDATE_DELETED_BY_PAYER:
             case Messages::STATUS_MANDATE_DELETED_DUE_TO_UNANSWERED_ACCOUNT_REQUEST:
@@ -164,5 +189,6 @@ class MandateResponseListener
                 );
                 $nodeEvent->stopPropagation();
         }
+        */
     }
 }

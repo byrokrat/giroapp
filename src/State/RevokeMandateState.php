@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\State;
 
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 
 class RevokeMandateState extends AbstractState
 {
@@ -43,7 +43,7 @@ class RevokeMandateState extends AbstractState
         return States::REVOCATION_SENT;
     }
 
-    public function export(Donor $donor, Writer $writer): void
+    public function export(Donor $donor, WriterInterface $writer): void
     {
         $writer->deleteMandate($donor->getPayerNumber());
     }

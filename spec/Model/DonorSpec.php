@@ -10,7 +10,7 @@ use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -190,7 +190,7 @@ class DonorSpec extends ObjectBehavior
         $this->getUpdated()->shouldEqual($newUpdated);
     }
 
-    function it_is_exportable_to_autogiro($state, Writer $writer)
+    function it_is_exportable_to_autogiro($state, WriterInterface $writer)
     {
         $this->exportToAutogiro($writer);
         $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
