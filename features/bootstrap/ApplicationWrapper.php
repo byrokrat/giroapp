@@ -24,14 +24,32 @@ class ApplicationWrapper
      */
     private $executable;
 
-    public function __construct(string $executable = '')
+    /**
+     * @var callable
+     */
+    private $debugDump;
+
+    public function __construct(bool $debug, string $executable = '')
     {
-        $this->directory = sys_get_temp_dir() . '/giroapp_acceptance_tests_' . time();
+        $this->directory = sys_get_temp_dir() . '/giroapp_acceptance_tests_' . microtime();
         mkdir($this->directory);
         $this->userDir = $this->directory . '/giroapp_path';
         mkdir($this->userDir);
         putenv("GIROAPP_PATH={$this->userDir}");
         $this->executable = $executable ?: realpath(getcwd() . '/bin/giroapp');
+
+        if ($debug) {
+            $this->debugDump = function (string $str, string $pre = '') {
+                foreach (explode(PHP_EOL, $str) as $line) {
+                    if (!empty($line)) {
+                        echo "$pre $line\n";
+                    }
+                }
+            };
+        } else {
+            $this->debugDump = function () {
+            };
+        }
     }
 
     public function __destruct()
@@ -43,13 +61,20 @@ class ApplicationWrapper
 
     public function __call(string $command , array $arguments): Result
     {
-        return $this->execute("$command " . implode(' ', $arguments));
+        return $this->executeVerbose("$command " . implode(' ', $arguments));
+    }
+
+    public function executeVerbose(string $command): Result
+    {
+        return $this->execute("$command -vvv");
     }
 
     public function execute(string $command): Result
     {
+        ($this->debugDump)($command, '$');
+
         $process = proc_open(
-            "{$this->executable} $command --no-interaction --no-ansi -vvv",
+            "{$this->executable} $command --no-interaction --no-ansi",
             [
                 1 => ["pipe", "w"],
                 2 => ["pipe", "w"]
@@ -60,6 +85,9 @@ class ApplicationWrapper
 
         $output = stream_get_contents($pipes[1]);
         $errorOutput = stream_get_contents($pipes[2]);
+
+        ($this->debugDump)($output, '>');
+        ($this->debugDump)($errorOutput, 'error:');
 
         fclose($pipes[1]);
         fclose($pipes[2]);

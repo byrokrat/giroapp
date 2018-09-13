@@ -27,6 +27,7 @@ use Streamer\Stream;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
 
@@ -53,11 +54,15 @@ class CommandWrapper extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if (!$output instanceof ConsoleOutputInterface) {
+            throw new \InvalidArgumentException('Output must implement ConsoleOutputInterface');
+        }
+
         $container = new ProjectServiceContainer;
 
         $container->set(InputInterface::CLASS, $input);
         $container->set('std_out', $output);
-        $container->set('err_out', new StreamOutput(STDERR, $output->getVerbosity()));
+        $container->set('err_out', $output->getErrorOutput());
         $container->set('std_in', new Stream(STDIN));
         $container->set(QuestionHelper::CLASS, $this->getHelper('question'));
 
