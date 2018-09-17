@@ -39,7 +39,7 @@ Feature: Importing files
         """
         01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
         73005805620100000000000123455000000001111116198203232775     043220170817
-        092017081799000000000
+        092017081799000000001
         """
     Then the database contains donor "12345" with "state" matching "MANDATE_APPROVED"
 
@@ -51,7 +51,7 @@ Feature: Importing files
         """
         01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
         73005805620100000000000123455000000001111116198203232775     042320170817
-        092017081799000000000
+        092017081799000000001
         """
     Then the database contains donor "12345" with "state" matching "ERROR"
 
@@ -63,6 +63,6 @@ Feature: Importing files
         """
         01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
         73005805620100000000000123455000000001111116198203232775     033320170817
-        092017081799000000000
+        092017081799000000001
         """
     Then the database contains donor "12345" with "state" matching "INACTIVE"
