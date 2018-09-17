@@ -12,11 +12,11 @@ use byrokrat\giroapp\Exception\InvalidXmlException;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\banking\AccountFactory;
+use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\banking\Bankgiro;
 use byrokrat\id\IdInterface;
-use byrokrat\id\IdFactory;
+use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\OrganizationId;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -31,8 +31,8 @@ class XmlMandateParserSpec extends ObjectBehavior
         Bankgiro $payeeBankgiro,
         DonorBuilder $builder,
         CustomdataTranslator $translator,
-        AccountFactory $accountFactory,
-        IdFactory $idFactory,
+        AccountFactoryInterface $accountFactory,
+        IdFactoryInterface $idFactory,
         XmlObject $xmlRoot,
         XmlObject $xmlMandate
     ) {

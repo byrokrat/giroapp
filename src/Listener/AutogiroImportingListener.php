@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Listener;
 use byrokrat\giroapp\AutogiroVisitor;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
-use byrokrat\autogiro\Parser\Parser;
+use byrokrat\autogiro\Parser\ParserInterface;
 use byrokrat\autogiro\Exception as AutogiroException;
 
 /**
@@ -34,7 +34,7 @@ use byrokrat\autogiro\Exception as AutogiroException;
 class AutogiroImportingListener
 {
     /**
-     * @var Parser
+     * @var ParserInterface
      */
     private $parser;
 
@@ -43,7 +43,7 @@ class AutogiroImportingListener
      */
     private $visitor;
 
-    public function __construct(Parser $parser, AutogiroVisitor $visitor)
+    public function __construct(ParserInterface $parser, AutogiroVisitor $visitor)
     {
         $this->parser = $parser;
         $this->visitor = $visitor;

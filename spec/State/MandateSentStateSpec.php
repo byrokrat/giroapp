@@ -8,7 +8,7 @@ use byrokrat\giroapp\State\MandateSentState;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -44,7 +44,7 @@ class MandateSentStateSpec extends ObjectBehavior
         $this->shouldNotBeExportable();
     }
 
-    function it_can_be_exported(Donor $donor, Writer $writer)
+    function it_can_be_exported(Donor $donor, WriterInterface $writer)
     {
         $this->export($donor, $writer);
     }

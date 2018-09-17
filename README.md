@@ -3,7 +3,6 @@
 [![Packagist Version](https://img.shields.io/packagist/v/byrokrat/giroapp.svg?style=flat-square)](https://packagist.org/packages/byrokrat/giroapp)
 [![Build Status](https://img.shields.io/travis/byrokrat/giroapp/master.svg?style=flat-square)](https://travis-ci.org/byrokrat/giroapp)
 [![Quality Score](https://img.shields.io/scrutinizer/g/byrokrat/giroapp.svg?style=flat-square)](https://scrutinizer-ci.com/g/byrokrat/giroapp)
-[![Dependency Status](https://img.shields.io/gemnasium/byrokrat/giroapp.svg?style=flat-square)](https://gemnasium.com/byrokrat/giroapp)
 
 Command line app for managing autogiro donations.
 
@@ -39,10 +38,12 @@ pointing to the desired directory.
 
 Phpgiro uses [bob](https://github.com/CHH/bob) to run tests and build artifacts.
 
-To complete a build you must first install some development dependencies.
+To complete a build you must first install some dependencies.
 
 ```shell
-composer global require chh/bob:^1.0@alpha phpspec/phpspec:^4 behat/behat:^3.3 squizlabs/php_codesniffer:^3
+composer global require chh/bob:^1.0@alpha
+bob install_dev_tools
+composer install
 ```
 
 Make sure to have the global composer bin directory in your include path.

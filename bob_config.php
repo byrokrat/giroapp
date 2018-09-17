@@ -26,6 +26,12 @@ task('behat', ['update_container'], function() {
     println('Behat feature tests passed');
 });
 
+desc('Run behat feature tests in debug mode');
+task('behat-debug', ['update_container'], function() {
+    sh('behat --stop-on-failure --suite=debug', null, ['failOnError' => true]);
+    println('Behat feature tests passed');
+});
+
 desc('Run php code sniffer');
 task('sniff', function() {
     sh('phpcs src --standard=PSR2 --ignore=src/DependencyInjection/ProjectServiceContainer.php', null, ['failOnError' => true]);
@@ -72,4 +78,13 @@ fileTask('composer.lock', ['composer.json'], function() {
 
 task('load_dependencies', ['vendor/autoload.php', 'composer.lock'], function () {
     require_once 'vendor/autoload.php';
+});
+
+desc('Globally install development tools');
+task('install_dev_tools', function() {
+    sh('composer global require consolidation/cgr', null, ['failOnError' => true]);
+    sh('cgr phpspec/phpspec', null, ['failOnError' => true]);
+    sh('cgr behat/behat', null, ['failOnError' => true]);
+    sh('cgr squizlabs/php_codesniffer', null, ['failOnError' => true]);
+    sh('cgr phpstan/phpstan', null, ['failOnError' => true]);
 });

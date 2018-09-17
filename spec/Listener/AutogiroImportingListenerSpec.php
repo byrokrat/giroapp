@@ -9,15 +9,15 @@ use byrokrat\giroapp\AutogiroVisitor;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Utils\File;
-use byrokrat\autogiro\Parser\Parser;
-use byrokrat\autogiro\Tree\FileNode;
+use byrokrat\autogiro\Parser\ParserInterface;
+use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Exception as AutogiroException;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class AutogiroImportingListenerSpec extends ObjectBehavior
 {
-    function let(Parser $parser, AutogiroVisitor $visitor)
+    function let(ParserInterface $parser, AutogiroVisitor $visitor)
     {
         $this->beConstructedWith($parser, $visitor);
     }
@@ -27,7 +27,7 @@ class AutogiroImportingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(AutogiroImportingListener::CLASS);
     }
 
-    function it_parses_content($parser, $visitor, FileEvent $event, File $file, FileNode $tree)
+    function it_parses_content($parser, $visitor, FileEvent $event, File $file, Node $tree)
     {
         $event->getFile()->willReturn($file);
         $file->getContent()->willReturn('autogiro');

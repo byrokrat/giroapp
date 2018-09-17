@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\State;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 
 abstract class AbstractState implements StateInterface
 {
@@ -37,7 +37,7 @@ abstract class AbstractState implements StateInterface
         return $this->getStateId() != $this->getNextStateId();
     }
 
-    public function export(Donor $donor, Writer $writer): void
+    public function export(Donor $donor, WriterInterface $writer): void
     {
         // Intentionally empty for non-exportable states
     }

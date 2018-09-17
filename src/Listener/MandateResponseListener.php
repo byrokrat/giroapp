@@ -29,7 +29,6 @@ use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\States;
-use byrokrat\autogiro\Messages;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
@@ -58,14 +57,11 @@ class MandateResponseListener
         $node = $nodeEvent->getNode();
 
         $donor = $this->donorMapper->findByActivePayerNumber(
-            $node->getChild('payer_number')->getValue()
+            $node->getValueFrom('PayerNumber')
         );
 
-        // validate id if present in node
-        if ($node->getChild('id')->hasAttribute('id')) {
-            /** @var \byrokrat\id\IdInterface */
-            $nodeId = $node->getChild('id')->getAttribute('id');
-
+        /** @var \byrokrat\id\IdInterface $nodeId */
+        if ($nodeId = $node->getChild('StateId')->getValueFrom('Object')) {
             if ($donor->getDonorId()->format('S-sk') != $nodeId->format('S-sk')) {
                 $dispatcher->dispatch(
                     Events::WARNING,
@@ -85,11 +81,8 @@ class MandateResponseListener
             }
         }
 
-        // validate account if present in node
-        if ($node->getChild('account')->hasAttribute('account')) {
-            /** @var \byrokrat\banking\AccountNumber */
-            $nodeAccount = $node->getChild('account')->getAttribute('account');
-
+        /** @var \byrokrat\banking\AccountNumber $nodeAccount */
+        if ($nodeAccount = $node->getChild('Account')->getValueFrom('Object')) {
             if (!$donor->getAccount()->equals($nodeAccount)) {
                 $dispatcher->dispatch(
                     Events::WARNING,
@@ -113,56 +106,40 @@ class MandateResponseListener
             sprintf(
                 '%s: %s',
                 $donor->getMandateKey(),
-                $node->getChild('status')->getAttribute('message')
+                (string)$node->getChild('Status')->getValueFrom('Text')
             ),
             $donor
         );
 
-        switch ($node->getChild('status')->getAttribute('message_id')) {
-            case Messages::STATUS_MANDATE_DELETED_BY_PAYER:
-            case Messages::STATUS_MANDATE_DELETED_DUE_TO_UNANSWERED_ACCOUNT_REQUEST:
-            case Messages::STATUS_MANDATE_DELETED:
-            case Messages::STATUS_MANDATE_DELETED_DUE_TO_CLOSED_PAYER_BG:
-            case Messages::STATUS_MANDATE_DELETED_BY_BANK:
-            case Messages::STATUS_MANDATE_DELETED_BY_BGC:
-                $donor->setState($this->statePool->getState(States::INACTIVE));
-                $dispatcher->dispatch(Events::MANDATE_REVOKED, $donorEvent);
-                break;
-
-            case Messages::STATUS_MANDATE_CREATED:
-                $donor->setState($this->statePool->getState(States::MANDATE_APPROVED));
-                $dispatcher->dispatch(Events::MANDATE_APPROVED, $donorEvent);
-                break;
-
-            case Messages::STATUS_MANDATE_ACCOUNT_NOT_ALLOWED:
-            case Messages::STATUS_MANDATE_DOES_NOT_EXIST:
-            case Messages::STATUS_MANDATE_INVALID_ACCOUNT_OR_ID:
-            case Messages::STATUS_MANDATE_PAYER_NUMBER_DOES_NOT_EXIST:
-            case Messages::STATUS_MANDATE_ALREADY_EXISTS:
-            case Messages::STATUS_MANDATE_INVALID_ID_OR_BG_NOT_ALLOWED:
-            case Messages::STATUS_MANDATE_INVALID_PAYER_NUMBER:
-            case Messages::STATUS_MANDATE_INVALID_ACCOUNT:
-            case Messages::STATUS_MANDATE_INVALID_PAYEE_ACCOUNT:
-            case Messages::STATUS_MANDATE_INACTIVE_PAYEE_ACCOUNT:
-            case Messages::STATUS_MANDATE_BLOCKED_BY_PAYER:
-            case Messages::STATUS_MANDATE_BLOCK_REMOVED:
-            case Messages::STATUS_MANDATE_MAX_AMOUNT_NOT_ALLOWED:
-                $donor->setState($this->statePool->getState(States::ERROR));
-                $dispatcher->dispatch(Events::MANDATE_INVALIDATED, $donorEvent);
-                break;
-
-            default:
-                $dispatcher->dispatch(
-                    Events::WARNING,
-                    new LogEvent(
-                        sprintf(
-                            '%s: invalid mandate status code: %s',
-                            $donor->getMandateKey(),
-                            $node->getChild('status')->getValue()
-                        )
-                    )
-                );
-                $nodeEvent->stopPropagation();
+        if ($node->hasChild('CreatedFlag')) {
+            $donor->setState($this->statePool->getState(States::MANDATE_APPROVED));
+            $dispatcher->dispatch(Events::MANDATE_APPROVED, $donorEvent);
+            return;
         }
+
+        if ($node->hasChild('DeletedFlag')) {
+            $donor->setState($this->statePool->getState(States::INACTIVE));
+            $dispatcher->dispatch(Events::MANDATE_REVOKED, $donorEvent);
+            return;
+        }
+
+        if ($node->hasChild('ErrorFlag')) {
+            $donor->setState($this->statePool->getState(States::ERROR));
+            $dispatcher->dispatch(Events::MANDATE_INVALIDATED, $donorEvent);
+            return;
+        }
+
+        $dispatcher->dispatch(
+            Events::WARNING,
+            new LogEvent(
+                sprintf(
+                    '%s: invalid mandate status code: %s',
+                    $donor->getMandateKey(),
+                    $node->getChild('Status')->getValueFrom('Number')
+                )
+            )
+        );
+
+        $nodeEvent->stopPropagation();
     }
 }

@@ -26,7 +26,7 @@ use byrokrat\giroapp\State\StateInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 
 /**
  * Models an individual donor
@@ -272,7 +272,7 @@ class Donor
         $this->updated = $updated;
     }
 
-    public function exportToAutogiro(Writer $writer): void
+    public function exportToAutogiro(WriterInterface $writer): void
     {
         $this->getState()->export($this, $writer);
     }

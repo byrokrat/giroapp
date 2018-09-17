@@ -8,7 +8,7 @@ use byrokrat\giroapp\State\NewDigitalMandateState;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -44,7 +44,7 @@ class NewDigitalMandateStateSpec extends ObjectBehavior
         $this->shouldBeExportable();
     }
 
-    function it_can_be_exported(Donor $donor, Writer $writer)
+    function it_can_be_exported(Donor $donor, WriterInterface $writer)
     {
         $donor->getPayerNumber()->willReturn('foobar');
         $this->export($donor, $writer);

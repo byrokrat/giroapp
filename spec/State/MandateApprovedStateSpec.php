@@ -9,7 +9,7 @@ use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Builder\DateBuilder;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -51,15 +51,15 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $this->shouldBeExportable();
     }
 
-    function it_does_not_export_without_an_amount(Donor $donor, Writer $writer, SEK $amount)
+    function it_does_not_export_without_an_amount(Donor $donor, WriterInterface $writer, SEK $amount)
     {
         $amount->isPositive()->willReturn(false);
         $donor->getDonationAmount()->willReturn($amount);
-        $writer->addMonthlyTransaction(Argument::cetera())->shouldNotBeCalled();
+        $writer->addMonthlyPayment(Argument::cetera())->shouldNotBeCalled();
         $this->export($donor, $writer);
     }
 
-    function it_can_be_exported($dateBuilder, Donor $donor, Writer $writer, SEK $amount)
+    function it_can_be_exported($dateBuilder, Donor $donor, WriterInterface $writer, SEK $amount)
     {
         $amount->isPositive()->willReturn(true);
 
@@ -72,6 +72,6 @@ class MandateApprovedStateSpec extends ObjectBehavior
 
         $this->export($donor, $writer);
 
-        $writer->addMonthlyTransaction('payer_number', $amount, $date, 'mandate_key')->shouldHaveBeenCalled();
+        $writer->addMonthlyPayment('payer_number', $amount, $date, 'mandate_key')->shouldHaveBeenCalled();
     }
 }

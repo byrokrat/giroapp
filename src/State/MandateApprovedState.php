@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\State;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Builder\DateBuilder;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 
 class MandateApprovedState extends AbstractState
 {
@@ -54,10 +54,10 @@ class MandateApprovedState extends AbstractState
         return States::ACTIVE;
     }
 
-    public function export(Donor $donor, Writer $writer): void
+    public function export(Donor $donor, WriterInterface $writer): void
     {
         if ($donor->getDonationAmount()->isPositive()) {
-            $writer->addMonthlyTransaction(
+            $writer->addMonthlyPayment(
                 $donor->getPayerNumber(),
                 $donor->getDonationAmount(),
                 $this->dateBuilder->buildDate(),

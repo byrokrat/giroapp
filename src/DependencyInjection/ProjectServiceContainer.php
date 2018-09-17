@@ -87,11 +87,11 @@ class ProjectServiceContainer extends Container
             'Symfony\\Component\\Console\\Output\\OutputInterface' => true,
             'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
             'Symfony\\Component\\Filesystem\\Filesystem' => true,
-            'byrokrat\\autogiro\\Parser\\Parser' => true,
             'byrokrat\\autogiro\\Parser\\ParserFactory' => true,
+            'byrokrat\\autogiro\\Parser\\ParserInterface' => true,
             'byrokrat\\autogiro\\Writer\\Writer' => true,
             'byrokrat\\autogiro\\Writer\\WriterFactory' => true,
-            'byrokrat\\banking\\AccountFactory' => true,
+            'byrokrat\\banking\\AccountFactoryInterface' => true,
             'byrokrat\\banking\\BankgiroFactory' => true,
             'byrokrat\\giroapp\\AutogiroVisitor' => true,
             'byrokrat\\giroapp\\Builder\\DateBuilder' => true,
@@ -104,6 +104,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Formatter\\CsvFormatter' => true,
             'byrokrat\\giroapp\\Formatter\\FormatterContainer' => true,
             'byrokrat\\giroapp\\Formatter\\HumanFormatter' => true,
+            'byrokrat\\giroapp\\Formatter\\JsonFormatter' => true,
             'byrokrat\\giroapp\\Formatter\\TableFormatter' => true,
             'byrokrat\\giroapp\\Listener\\AutogiroImportingListener' => true,
             'byrokrat\\giroapp\\Listener\\CommittingListener' => true,
@@ -142,7 +143,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Xml\\CustomdataTranslator' => true,
             'byrokrat\\giroapp\\Xml\\XmlMandateMigrationInterface' => true,
             'byrokrat\\giroapp\\Xml\\XmlMandateParser' => true,
-            'byrokrat\\id\\IdFactory' => true,
+            'byrokrat\\id\\IdFactoryInterface' => true,
             'byrokrat\\id\\OrganizationIdFactory' => true,
             'db' => true,
             'db_donor_collection' => true,
@@ -221,16 +222,16 @@ class ProjectServiceContainer extends Container
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
         }, 1 => 'onLogEvent'), 10);
         $instance->addListener('ERROR', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out')), ($this->services['err_out'] ?? $this->get('err_out'))));
+            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['err_out'] ?? $this->get('err_out', 1))));
         }, 1 => 'onERROR'), -10);
         $instance->addListener('WARNING', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out')), ($this->services['err_out'] ?? $this->get('err_out'))));
+            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['err_out'] ?? $this->get('err_out', 1))));
         }, 1 => 'onWARNING'), -10);
         $instance->addListener('INFO', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out')), ($this->services['err_out'] ?? $this->get('err_out'))));
+            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['err_out'] ?? $this->get('err_out', 1))));
         }, 1 => 'onINFO'), -10);
         $instance->addListener('DEBUG', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out')), ($this->services['err_out'] ?? $this->get('err_out'))));
+            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['err_out'] ?? $this->get('err_out', 1))));
         }, 1 => 'onDEBUG'), -10);
         $instance->addListener('ERROR', array(0 => function () {
             return ($this->services['byrokrat\giroapp\Listener\ExitStatusListener'] ?? $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] = new \byrokrat\giroapp\Listener\ExitStatusListener());
@@ -304,7 +305,7 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\AddCommand'] = $instance = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
 
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')), ($this->services['std_out'] ?? $this->get('std_out')), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper')))));
+        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)), ($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper', 1)))));
         $instance->setQuestionFactory(($this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] ?? $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory()));
         $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
 
@@ -331,10 +332,10 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\EditCommand'] = $instance = new \byrokrat\giroapp\Console\EditCommand();
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
+        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)));
         $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')), ($this->services['std_out'] ?? $this->get('std_out')), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper')))));
+        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)), ($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper', 1)))));
         $instance->setQuestionFactory(($this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] ?? $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory()));
 
         return $instance;
@@ -362,7 +363,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getInputReaderService()
     {
-        return $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')), ($this->services['std_out'] ?? $this->get('std_out')), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper')));
+        return $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)), ($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper', 1)));
     }
 
     /**
@@ -382,7 +383,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getValidatorsService()
     {
-        return $this->services['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(($this->privates['byrokrat\banking\AccountFactory'] ?? $this->privates['byrokrat\banking\AccountFactory'] = new \byrokrat\banking\AccountFactory()), ($this->privates['byrokrat\banking\BankgiroFactory'] ?? $this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory()), ($this->privates['byrokrat\id\IdFactory'] ?? $this->getIdFactoryService()), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
+        return $this->services['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), ($this->privates['byrokrat\banking\BankgiroFactory'] ?? $this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory()), ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
     }
 
     /**
@@ -392,10 +393,10 @@ class ProjectServiceContainer extends Container
      */
     protected function getImportCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(($this->privates['fs_cwd'] ?? $this->getFsCwdService()), ($this->services['std_in'] ?? $this->get('std_in')));
+        $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(($this->privates['fs_cwd'] ?? $this->getFsCwdService()), ($this->services['std_in'] ?? $this->get('std_in', 1)));
 
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
+        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)));
 
         return $instance;
     }
@@ -409,7 +410,7 @@ class ProjectServiceContainer extends Container
     {
         $this->services['byrokrat\giroapp\Console\InitCommand'] = $instance = new \byrokrat\giroapp\Console\InitCommand(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService()));
 
-        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')), ($this->services['std_out'] ?? $this->get('std_out')), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper')))));
+        $instance->setInputReader(($this->services['byrokrat\giroapp\Console\Helper\InputReader'] ?? $this->services['byrokrat\giroapp\Console\Helper\InputReader'] = new \byrokrat\giroapp\Console\Helper\InputReader(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)), ($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['Symfony\Component\Console\Helper\QuestionHelper'] ?? $this->get('Symfony\Component\Console\Helper\QuestionHelper', 1)))));
         $instance->setQuestionFactory(($this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] ?? $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory()));
         $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
 
@@ -426,8 +427,8 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\LsCommand'] = $instance = new \byrokrat\giroapp\Console\LsCommand(new \byrokrat\giroapp\Filter\FilterContainer(), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
-        $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out')));
+        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)));
+        $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out', 1)));
 
         return $instance;
     }
@@ -457,7 +458,7 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\RemoveCommand'] = $instance = new \byrokrat\giroapp\Console\RemoveCommand();
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
+        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)));
         $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
 
@@ -474,7 +475,7 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\RevokeCommand'] = $instance = new \byrokrat\giroapp\Console\RevokeCommand();
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
+        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)));
         $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
 
@@ -491,9 +492,9 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\ShowCommand'] = $instance = new \byrokrat\giroapp\Console\ShowCommand(($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
+        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)));
         $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
-        $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out')));
+        $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out', 1)));
 
         return $instance;
     }
@@ -508,8 +509,8 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\StatusCommand'] = $instance = new \byrokrat\giroapp\Console\StatusCommand();
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface')));
-        $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out')));
+        $instance->setInput(($this->services['Symfony\Component\Console\Input\InputInterface'] ?? $this->get('Symfony\Component\Console\Input\InputInterface', 1)));
+        $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out', 1)));
 
         return $instance;
     }
@@ -523,7 +524,7 @@ class ProjectServiceContainer extends Container
     {
         $this->services['byrokrat\giroapp\Console\ValidateCommand'] = $instance = new \byrokrat\giroapp\Console\ValidateCommand(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('GIROAPP_PATH'), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator());
 
-        $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out')));
+        $instance->setOutput(($this->services['std_out'] ?? $this->get('std_out', 1)));
 
         return $instance;
     }
@@ -628,9 +629,9 @@ class ProjectServiceContainer extends Container
      */
     protected function getXmlImportingListenerService()
     {
-        $a = ($this->privates['byrokrat\id\IdFactory'] ?? $this->getIdFactoryService());
+        $a = ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService());
 
-        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser($a->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), new \byrokrat\giroapp\Xml\CustomdataTranslator(new \byrokrat\giroapp\Xml\NullXmlMandateMigration()), ($this->privates['byrokrat\banking\AccountFactory'] ?? $this->privates['byrokrat\banking\AccountFactory'] = new \byrokrat\banking\AccountFactory()), $a));
+        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser($a->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), new \byrokrat\giroapp\Xml\CustomdataTranslator(new \byrokrat\giroapp\Xml\NullXmlMandateMigration()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
     }
 
     /**
@@ -650,7 +651,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getDonorSchemaService()
     {
-        return $this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] = new \byrokrat\giroapp\Mapper\Schema\DonorSchema(new \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema(), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()), ($this->privates['byrokrat\banking\AccountFactory'] ?? $this->privates['byrokrat\banking\AccountFactory'] = new \byrokrat\banking\AccountFactory()), ($this->privates['byrokrat\id\IdFactory'] ?? $this->getIdFactoryService()));
+        return $this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] = new \byrokrat\giroapp\Mapper\Schema\DonorSchema(new \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema(), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()));
     }
 
     /**
@@ -674,13 +675,13 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'byrokrat\id\IdFactory' shared service.
+     * Gets the private 'byrokrat\id\IdFactoryInterface' shared service.
      *
      * @return \byrokrat\id\PersonalIdFactory
      */
-    protected function getIdFactoryService()
+    protected function getIdFactoryInterfaceService()
     {
-        return $this->privates['byrokrat\id\IdFactory'] = new \byrokrat\id\PersonalIdFactory(new \byrokrat\id\OrganizationIdFactory());
+        return $this->privates['byrokrat\id\IdFactoryInterface'] = new \byrokrat\id\PersonalIdFactory(new \byrokrat\id\OrganizationIdFactory());
     }
 
     /**

@@ -88,7 +88,7 @@ services:
 
     byrokrat\autogiro\Parser\ParserFactory: ~
 
-    byrokrat\autogiro\Parser\Parser:
+    byrokrat\autogiro\Parser\ParserInterface:
         factory: 'byrokrat\autogiro\Parser\ParserFactory:createParser'
 
     byrokrat\autogiro\Writer\Writer:
@@ -99,11 +99,13 @@ services:
 
     byrokrat\autogiro\Writer\WriterFactory: ~
 
+    byrokrat\banking\AccountFactoryInterface:
+        class: byrokrat\banking\AccountFactory
+        autowire: false
+
     byrokrat\banking\BankgiroFactory: ~
 
-    byrokrat\banking\AccountFactory: ~
-
-    byrokrat\id\IdFactory:
+    byrokrat\id\IdFactoryInterface:
         class: byrokrat\id\PersonalIdFactory
         autowire: false
         arguments: ['@byrokrat\id\OrganizationIdFactory']
@@ -123,7 +125,7 @@ services:
 
     organization_id:
         class: byrokrat\id\IdInterface
-        factory: 'byrokrat\id\IdFactory:createId'
+        factory: 'byrokrat\id\IdFactoryInterface:createId'
         arguments: ["@=service('db_settings_mapper').findByKey('org_number')"]
 
     organization_bg:

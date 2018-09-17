@@ -8,21 +8,20 @@ use byrokrat\giroapp\Console\Helper\Validators;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\banking\AccountFactory;
-use byrokrat\banking\AccountNumber;
-use byrokrat\banking\Bankgiro;
+use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\BankgiroFactory;
+use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
-use byrokrat\id\IdFactory;
+use byrokrat\id\IdFactoryInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class ValidatorsSpec extends ObjectBehavior
 {
     function let(
-        AccountFactory $accountFactory,
+        AccountFactoryInterface $accountFactory,
         BankgiroFactory $bankgiroFactory,
-        IdFactory $idFactory,
+        IdFactoryInterface $idFactory,
         StatePool $statePool
     ) {
         $this->beConstructedWith($accountFactory, $bankgiroFactory, $idFactory, $statePool);
@@ -53,7 +52,7 @@ class ValidatorsSpec extends ObjectBehavior
         $this->getAccountValidator()->shouldNotValidate('456');
     }
 
-    function it_validates_bankgiro_accounts($bankgiroFactory, Bankgiro $bankgiro)
+    function it_validates_bankgiro_accounts($bankgiroFactory, AccountNumber $bankgiro)
     {
         $bankgiroFactory->createAccount('123')->willReturn($bankgiro);
         $bankgiroFactory->createAccount('456')->willThrow(\RuntimeException::CLASS);
