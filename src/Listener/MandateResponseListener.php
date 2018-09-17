@@ -141,54 +141,5 @@ class MandateResponseListener
         );
 
         $nodeEvent->stopPropagation();
-
-        /*
-        switch ($node->getChild('status')->getAttribute('message_id')) {
-            case Messages::STATUS_MANDATE_DELETED_BY_PAYER:
-            case Messages::STATUS_MANDATE_DELETED_DUE_TO_UNANSWERED_ACCOUNT_REQUEST:
-            case Messages::STATUS_MANDATE_DELETED:
-            case Messages::STATUS_MANDATE_DELETED_DUE_TO_CLOSED_PAYER_BG:
-            case Messages::STATUS_MANDATE_DELETED_BY_BANK:
-            case Messages::STATUS_MANDATE_DELETED_BY_BGC:
-                $donor->setState($this->statePool->getState(States::INACTIVE));
-                $dispatcher->dispatch(Events::MANDATE_REVOKED, $donorEvent);
-                break;
-
-            case Messages::STATUS_MANDATE_CREATED:
-                $donor->setState($this->statePool->getState(States::MANDATE_APPROVED));
-                $dispatcher->dispatch(Events::MANDATE_APPROVED, $donorEvent);
-                break;
-
-            case Messages::STATUS_MANDATE_ACCOUNT_NOT_ALLOWED:
-            case Messages::STATUS_MANDATE_DOES_NOT_EXIST:
-            case Messages::STATUS_MANDATE_INVALID_ACCOUNT_OR_ID:
-            case Messages::STATUS_MANDATE_PAYER_NUMBER_DOES_NOT_EXIST:
-            case Messages::STATUS_MANDATE_ALREADY_EXISTS:
-            case Messages::STATUS_MANDATE_INVALID_ID_OR_BG_NOT_ALLOWED:
-            case Messages::STATUS_MANDATE_INVALID_PAYER_NUMBER:
-            case Messages::STATUS_MANDATE_INVALID_ACCOUNT:
-            case Messages::STATUS_MANDATE_INVALID_PAYEE_ACCOUNT:
-            case Messages::STATUS_MANDATE_INACTIVE_PAYEE_ACCOUNT:
-            case Messages::STATUS_MANDATE_BLOCKED_BY_PAYER:
-            case Messages::STATUS_MANDATE_BLOCK_REMOVED:
-            case Messages::STATUS_MANDATE_MAX_AMOUNT_NOT_ALLOWED:
-                $donor->setState($this->statePool->getState(States::ERROR));
-                $dispatcher->dispatch(Events::MANDATE_INVALIDATED, $donorEvent);
-                break;
-
-            default:
-                $dispatcher->dispatch(
-                    Events::WARNING,
-                    new LogEvent(
-                        sprintf(
-                            '%s: invalid mandate status code: %s',
-                            $donor->getMandateKey(),
-                            $node->getChild('status')->getValue()
-                        )
-                    )
-                );
-                $nodeEvent->stopPropagation();
-        }
-        */
     }
 }
