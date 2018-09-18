@@ -7,21 +7,17 @@ Hur får vi reda på att mail studsar i mailer-plugin??
 
 ## Att vid configure veta vilka filter/formats vi har..
 
-Plugins behöver laddas innan commands skapas..
+> Plugins behöver laddas innan commands skapas..
 
-1. Output och Input till CommandInterface::execute igen..
+1. [DONE] Output och Input till CommandInterface::execute.
 
-Men det är ett problem.. Vilka delar av koden som ej är command använder input/output ...
+2. OutputProperty och InputProperty bort.
 
-Det är nog bara OutputtingListener...
+    Även från DI.. Dessa värden behöver inte sparas där...
+        InputInterface, 'std_out' och 'std_in' ska bort från DI!
 
-    Jag kan ju ladda OutputtingListener i CommandWrapper::execute istället...
-    Det är ju inte skitsnyggt kanske, men ok...
-
-    Fundera lite mer på detta innan jag går vidare...
-
-2. OutputProperty och InputProperty måste bort...
 3. CommandInterface::configure() får ej vara static för att lösa detta.
+
 4. Kanske kan lazy-loading från di kan göra att detta inte påverkar hastigheten för mycket...
 
 5. Sedan följer hur plugins ska laddas. Men flytta det till github issue..

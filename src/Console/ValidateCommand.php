@@ -25,11 +25,13 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use byrokrat\giroapp\Utils\Filesystem;
 use JsonSchema\Validator;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to validate database schema
  */
-class ValidateCommand implements CommandInterface
+final class ValidateCommand implements CommandInterface
 {
     use OutputProperty;
 
@@ -67,7 +69,7 @@ class ValidateCommand implements CommandInterface
         $wrapper->setHelp('Validate that the database schema is up to date for all items');
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $donorData = json_decode($this->filesystem->readFile('data/donors.json')->getContent());
         $this->validator->validate($donorData, $this->donorSchema);

@@ -18,11 +18,6 @@ services:
         public: true
         synthetic: true
 
-    err_out:
-        class: Symfony\Component\Console\Output\OutputInterface
-        public: true
-        synthetic: true
-
     std_in:
         class: Streamer\Stream
         public: true

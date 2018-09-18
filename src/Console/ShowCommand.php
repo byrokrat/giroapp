@@ -25,11 +25,13 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\Formatter\FormatterContainer;
 use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Display information on individual donors
  */
-class ShowCommand implements CommandInterface
+final class ShowCommand implements CommandInterface
 {
     use Helper\DonorArgument, OutputProperty;
 
@@ -60,7 +62,7 @@ class ShowCommand implements CommandInterface
         );
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $formatter = $this->formatterContainer->getFormatter($this->input->getOption('format'));
         $formatter->setOutput($this->output);

@@ -22,13 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
-use Symfony\Component\Console\Output\OutputInterface;
 use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\Events;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Write warning, info and debug messages to output
  */
-class OutputtingListener
+final class OutputtingSubscriber implements EventSubscriberInterface
 {
     /**
      * @var OutputInterface
@@ -39,6 +41,16 @@ class OutputtingListener
      * @var OutputInterface
      */
     private $errout;
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            Events::ERROR => ['onError', -10],
+            Events::WARNING => ['onWarning', -10],
+            Events::INFO => ['onInfo', -10],
+            Events::DEBUG => ['onDebug', -10],
+        ];
+    }
 
     public function __construct(OutputInterface $stdout, OutputInterface $errout)
     {

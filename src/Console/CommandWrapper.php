@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
+use byrokrat\giroapp\Listener\OutputtingSubscriber;
 use Streamer\Stream;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,11 +31,12 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Output\StreamOutput;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Manage the container and execute command
  */
-class CommandWrapper extends Command
+final class CommandWrapper extends Command
 {
     /**
      * @var string
@@ -60,11 +62,16 @@ class CommandWrapper extends Command
 
         $container = new ProjectServiceContainer;
 
+        $container->set(QuestionHelper::CLASS, $this->getHelper('question'));
+
+        /** @var EventDispatcherInterface $dispatcher */
+        $dispatcher = $container->get(EventDispatcherInterface::CLASS);
+
+        $dispatcher->addSubscriber(new OutputtingSubscriber($output, $output->getErrorOutput()));
+
         $container->set(InputInterface::CLASS, $input);
         $container->set('std_out', $output);
-        $container->set('err_out', $output->getErrorOutput());
         $container->set('std_in', new Stream(STDIN));
-        $container->set(QuestionHelper::CLASS, $this->getHelper('question'));
 
         /** @var CommandInterface $command */
         $command = $container->get($this->commandClass);
@@ -72,6 +79,6 @@ class CommandWrapper extends Command
         /** @var CommandRunner $runner */
         $runner = $container->get(CommandRunner::CLASS);
 
-        return $runner->run($command);
+        return $runner->run($command, $input, $output);
     }
 }

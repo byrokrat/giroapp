@@ -25,15 +25,17 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Listener\ExitStatusListener;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Command running logic
  */
-class CommandRunner
+final class CommandRunner
 {
     /**
-     * @var Dispatcher
+     * @var EventDispatcherInterface
      */
     private $dispatcher;
 
@@ -42,17 +44,17 @@ class CommandRunner
      */
     private $exitStatusListener;
 
-    public function __construct(Dispatcher $dispatcher, ExitStatusListener $exitStatusListener)
+    public function __construct(EventDispatcherInterface $dispatcher, ExitStatusListener $exitStatusListener)
     {
         $this->dispatcher = $dispatcher;
         $this->exitStatusListener = $exitStatusListener;
     }
 
-    public function run(CommandInterface $command): int
+    public function run(CommandInterface $command, InputInterface $input, OutputInterface $output): int
     {
         try {
             $this->dispatcher->dispatch(Events::EXECUTION_STARTED, new LogEvent('Execution started'));
-            $command->execute();
+            $command->execute($input, $output);
             $this->dispatcher->dispatch(Events::EXECUTION_STOPED, new LogEvent('Execution successful'));
         } catch (\Exception $e) {
             $this->dispatcher->dispatch(

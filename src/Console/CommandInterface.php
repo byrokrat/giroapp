@@ -22,6 +22,9 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
 /**
  * Interface for giroapp console commands
  */
@@ -35,5 +38,5 @@ interface CommandInterface
     /**
      * Execute command
      */
-    public function execute(): void;
+    public function execute(InputInterface $input, OutputInterface $output): void;
 }

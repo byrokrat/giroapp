@@ -28,11 +28,13 @@ use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use byrokrat\giroapp\States;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to display database status
  */
-class StatusCommand implements CommandInterface
+final class StatusCommand implements CommandInterface
 {
     use DonorMapperProperty, InputProperty, OutputProperty;
 
@@ -47,7 +49,7 @@ class StatusCommand implements CommandInterface
         $wrapper->addOption('monthly-amount', null, InputOption::VALUE_NONE, 'Show only monthly amount');
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $counts = [
             'donor-count' => 0,

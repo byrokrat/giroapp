@@ -26,11 +26,13 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to update database schema
  */
-class MigrateCommand implements CommandInterface
+final class MigrateCommand implements CommandInterface
 {
     use DispatcherProperty, DonorMapperProperty;
 
@@ -41,7 +43,7 @@ class MigrateCommand implements CommandInterface
         $wrapper->setHelp('Ensure that the database schema is up to date by triggering a rewrite of all donors');
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         foreach ($this->donorMapper->findAll() as $donor) {
             $this->dispatcher->dispatch(

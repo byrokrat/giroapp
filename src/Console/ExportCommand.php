@@ -30,11 +30,13 @@ use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\Utils\File;
 use byrokrat\autogiro\Writer\Writer;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to create autogiro files
  */
-class ExportCommand implements CommandInterface
+final class ExportCommand implements CommandInterface
 {
     use DonorMapperProperty, DispatcherProperty;
 
@@ -61,7 +63,7 @@ class ExportCommand implements CommandInterface
         $wrapper->setHelp('Create a file with new set of autogiro instructions');
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $exported = false;
 

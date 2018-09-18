@@ -27,11 +27,13 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Event\DonorEvent;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to completely remove a donor
  */
-class RemoveCommand implements CommandInterface
+final class RemoveCommand implements CommandInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
 
@@ -44,7 +46,7 @@ class RemoveCommand implements CommandInterface
         self::configureDonorArgument($wrapper);
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $donor = $this->getDonor();
 

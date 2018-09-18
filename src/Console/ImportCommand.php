@@ -30,12 +30,14 @@ use byrokrat\giroapp\Utils\Filesystem;
 use byrokrat\giroapp\Utils\File;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Streamer\Stream;
 
 /**
  * Command to import a file from autogirot
  */
-class ImportCommand implements CommandInterface
+final class ImportCommand implements CommandInterface
 {
     use DispatcherProperty, InputProperty;
 
@@ -64,7 +66,7 @@ class ImportCommand implements CommandInterface
         $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import even if a pre-condition fails.');
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $file = ($filename = $this->input->getArgument('filename'))
             ? $this->filesystem->readFile($filename)

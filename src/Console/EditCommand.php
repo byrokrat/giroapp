@@ -30,11 +30,13 @@ use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\States;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to edit an existing mandate
  */
-class EditCommand implements CommandInterface
+final class EditCommand implements CommandInterface
 {
     use Helper\DonorArgument, DispatcherProperty, InputReaderProperty;
 
@@ -67,7 +69,7 @@ class EditCommand implements CommandInterface
         }
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $descs = self::$descriptions;
 

@@ -34,7 +34,6 @@ class ProjectServiceContainer extends Container
         $this->syntheticIds = array(
             'Symfony\\Component\\Console\\Helper\\QuestionHelper' => true,
             'Symfony\\Component\\Console\\Input\\InputInterface' => true,
-            'err_out' => true,
             'std_in' => true,
             'std_out' => true,
         );
@@ -114,7 +113,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\LoggingListener' => true,
             'byrokrat\\giroapp\\Listener\\MandateResponseListener' => true,
             'byrokrat\\giroapp\\Listener\\MonitoringListener' => true,
-            'byrokrat\\giroapp\\Listener\\OutputtingListener' => true,
             'byrokrat\\giroapp\\Listener\\XmlImportingListener' => true,
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => true,
             'byrokrat\\giroapp\\Mapper\\FileChecksumMapper' => true,
@@ -221,18 +219,6 @@ class ProjectServiceContainer extends Container
         $instance->addListener('INFO', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
         }, 1 => 'onLogEvent'), 10);
-        $instance->addListener('ERROR', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['err_out'] ?? $this->get('err_out', 1))));
-        }, 1 => 'onERROR'), -10);
-        $instance->addListener('WARNING', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['err_out'] ?? $this->get('err_out', 1))));
-        }, 1 => 'onWARNING'), -10);
-        $instance->addListener('INFO', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['err_out'] ?? $this->get('err_out', 1))));
-        }, 1 => 'onINFO'), -10);
-        $instance->addListener('DEBUG', array(0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\OutputtingListener'] ?? $this->privates['byrokrat\giroapp\Listener\OutputtingListener'] = new \byrokrat\giroapp\Listener\OutputtingListener(($this->services['std_out'] ?? $this->get('std_out', 1)), ($this->services['err_out'] ?? $this->get('err_out', 1))));
-        }, 1 => 'onDEBUG'), -10);
         $instance->addListener('ERROR', array(0 => function () {
             return ($this->services['byrokrat\giroapp\Listener\ExitStatusListener'] ?? $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] = new \byrokrat\giroapp\Listener\ExitStatusListener());
         }, 1 => 'onFailure'));
