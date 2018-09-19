@@ -46,7 +46,7 @@ final class RevokeCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $donor = $this->getDonor();
+        $donor = $this->getDonor($input);
 
         $donor->setState(new RevokeMandateState);
 

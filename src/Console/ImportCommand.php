@@ -23,7 +23,6 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\DependencyInjection\InputProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Utils\Filesystem;
@@ -39,7 +38,7 @@ use Streamer\Stream;
  */
 final class ImportCommand implements CommandInterface
 {
-    use DispatcherProperty, InputProperty;
+    use DispatcherProperty;
 
     /**
      * @var Filesystem
@@ -51,10 +50,10 @@ final class ImportCommand implements CommandInterface
      */
     private $stdin;
 
-    public function __construct(Filesystem $filesystem, Stream $stdin)
+    public function __construct(Filesystem $filesystem, Stream $stdin = null)
     {
         $this->filesystem = $filesystem;
-        $this->stdin = $stdin;
+        $this->stdin = $stdin ?: new Stream(STDIN);
     }
 
     public static function configure(CommandWrapper $wrapper): void
@@ -68,12 +67,12 @@ final class ImportCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $file = ($filename = $this->input->getArgument('filename'))
+        $file = ($filename = $input->getArgument('filename'))
             ? $this->filesystem->readFile($filename)
             : new File('STDIN', $this->stdin->getContent());
 
         $this->dispatcher->dispatch(
-            $this->input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
+            $input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
             new FileEvent(
                 "Importing file <info>{$file->getFilename()}</info>",
                 $file

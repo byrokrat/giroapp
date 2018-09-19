@@ -30,14 +30,14 @@ use Symfony\Component\Console\Question\Question;
  */
 class QuestionFactory
 {
-    public function createQuestion(string $question, $default = null): Question
+    public static function createQuestion(string $question, $default = null): Question
     {
         return is_null($default)
             ? new Question("$question: ")
             : new Question("$question [<info>$default</info>]: ", $default);
     }
 
-    public function createChoiceQuestion(string $question, array $choices, string $default): ChoiceQuestion
+    public static function createChoiceQuestion(string $question, array $choices, string $default): ChoiceQuestion
     {
         $defaultKey = array_search($default, $choices);
 

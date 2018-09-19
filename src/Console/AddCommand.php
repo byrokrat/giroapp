@@ -24,7 +24,6 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Builder\DonorBuilder;
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
 use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
@@ -33,13 +32,14 @@ use byrokrat\giroapp\Model\PostalAddress;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 
 /**
  * Command to add a new mandate
  */
 final class AddCommand implements CommandInterface
 {
-    use DispatcherProperty, InputReaderProperty, ValidatorsProperty;
+    use DispatcherProperty, ValidatorsProperty;
 
     /**
      * @var array Maps option names to free text descriptions
@@ -86,38 +86,40 @@ final class AddCommand implements CommandInterface
     {
         $descs = self::$descriptions;
 
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+
         $this->donorBuilder->reset();
 
         $sources = ['p' => Donor::MANDATE_SOURCE_PAPER, 'o' => Donor::MANDATE_SOURCE_ONLINE_FORM];
 
         $this->donorBuilder->setMandateSource(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'source',
-                $this->questionFactory->createChoiceQuestion($descs['source'], $sources, Donor::MANDATE_SOURCE_PAPER),
+                Helper\QuestionFactory::createChoiceQuestion($descs['source'], $sources, Donor::MANDATE_SOURCE_PAPER),
                 $this->validators->getChoiceValidator($sources)
             )
         );
 
         $this->donorBuilder->setId(
-            $id = $this->inputReader->readInput(
+            $id = $inputReader->readInput(
                 'id',
-                $this->questionFactory->createQuestion($descs['id']),
+                Helper\QuestionFactory::createQuestion($descs['id']),
                 $this->validators->getIdValidator()
             )
         );
 
         $this->donorBuilder->setPayerNumber(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'payer-number',
-                $this->questionFactory->createQuestion($descs['payer-number'], $id->format('Ssk')),
+                Helper\QuestionFactory::createQuestion($descs['payer-number'], $id->format('Ssk')),
                 $this->validators->getPayerNumberValidator()
             )
         );
 
         $this->donorBuilder->setAccount(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'account',
-                $this->questionFactory->createQuestion($descs['account'])->setAutocompleterValues(
+                Helper\QuestionFactory::createQuestion($descs['account'])->setAutocompleterValues(
                     ["3300,{$id->format('Ssk')}"]
                 ),
                 $this->validators->getAccountValidator()
@@ -125,46 +127,46 @@ final class AddCommand implements CommandInterface
         );
 
         $this->donorBuilder->setName(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'name',
-                $this->questionFactory->createQuestion($descs['name']),
+                Helper\QuestionFactory::createQuestion($descs['name']),
                 $this->validators->getRequiredStringValidator('Name')
             )
         );
 
         $this->donorBuilder->setDonationAmount(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'amount',
-                $this->questionFactory->createQuestion($descs['amount']),
+                Helper\QuestionFactory::createQuestion($descs['amount']),
                 $this->validators->getAmountValidator()
             )
         );
 
         $this->donorBuilder->setPostalAddress(
             new PostalAddress(
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'address1',
-                    $this->questionFactory->createQuestion($descs['address1'], ''),
+                    Helper\QuestionFactory::createQuestion($descs['address1'], ''),
                     $this->validators->getStringFilter()
                 ),
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'address2',
-                    $this->questionFactory->createQuestion($descs['address2'], ''),
+                    Helper\QuestionFactory::createQuestion($descs['address2'], ''),
                     $this->validators->getStringFilter()
                 ),
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'address3',
-                    $this->questionFactory->createQuestion($descs['address3'], ''),
+                    Helper\QuestionFactory::createQuestion($descs['address3'], ''),
                     $this->validators->getStringFilter()
                 ),
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'postal-code',
-                    $this->questionFactory->createQuestion($descs['postal-code'], ''),
+                    Helper\QuestionFactory::createQuestion($descs['postal-code'], ''),
                     $this->validators->getPostalCodeValidator()
                 ),
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'postal-city',
-                    $this->questionFactory->createQuestion($descs['postal-city'], '')->setAutocompleterValues(
+                    Helper\QuestionFactory::createQuestion($descs['postal-city'], '')->setAutocompleterValues(
                         $this->validators->getSuggestedCities()
                     ),
                     $this->validators->getStringFilter()
@@ -173,25 +175,25 @@ final class AddCommand implements CommandInterface
         );
 
         $this->donorBuilder->setEmail(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'email',
-                $this->questionFactory->createQuestion($descs['email'], ''),
+                Helper\QuestionFactory::createQuestion($descs['email'], ''),
                 $this->validators->getEmailValidator()
             )
         );
 
         $this->donorBuilder->setPhone(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'phone',
-                $this->questionFactory->createQuestion($descs['phone'], ''),
+                Helper\QuestionFactory::createQuestion($descs['phone'], ''),
                 $this->validators->getPhoneValidator()
             )
         );
 
         $this->donorBuilder->setComment(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'comment',
-                $this->questionFactory->createQuestion($descs['comment'], ''),
+                Helper\QuestionFactory::createQuestion($descs['comment'], ''),
                 $this->validators->getStringFilter()
             )
         );

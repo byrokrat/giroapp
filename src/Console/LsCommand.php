@@ -23,8 +23,6 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
-use byrokrat\giroapp\DependencyInjection\InputProperty;
-use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use byrokrat\giroapp\Filter\FilterContainer;
 use byrokrat\giroapp\Formatter\FormatterContainer;
 use Symfony\Component\Console\Input\InputOption;
@@ -36,7 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class LsCommand implements CommandInterface
 {
-    use DonorMapperProperty, InputProperty, OutputProperty;
+    use DonorMapperProperty;
 
     /**
      * @var FilterContainer
@@ -80,14 +78,14 @@ final class LsCommand implements CommandInterface
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         $filter = $this->filterContainer->getFilter(
-            $this->input->getOption('filter')
+            $input->getOption('filter')
         );
 
         $formatter = $this->formatterContainer->getFormatter(
-            $this->input->getOption('format')
+            $input->getOption('format')
         );
 
-        $formatter->setOutput($this->output);
+        $formatter->setOutput($output);
 
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($filter->filterDonor($donor)) {

@@ -1,37 +1,35 @@
 # TODO
 
-> Temporary TODO for the filter-n-formatter branch..
-
-Hur får vi reda på att mail studsar i mailer-plugin??
-    Inte helt relaterad till denna TODO-lista. Men måste utredas...
-
 ## Att vid configure veta vilka filter/formats vi har..
 
 > Plugins behöver laddas innan commands skapas..
 
 1. [DONE] Output och Input till CommandInterface::execute.
 
-2. OutputProperty och InputProperty bort.
+2. [DONE] OutputProperty och InputProperty bort.
 
-    Även från DI.. Dessa värden behöver inte sparas där...
-        InputInterface, 'std_out' och 'std_in' ska bort från DI!
+3. CommandInterface::configure() ej vara static.
 
-3. CommandInterface::configure() får ej vara static för att lösa detta.
+    Hur ska detta funka så att nya commands också kan laddas från plugin..??
 
 4. Kanske kan lazy-loading från di kan göra att detta inte påverkar hastigheten för mycket...
 
-5. Sedan följer hur plugins ska laddas. Men flytta det till github issue..
+5. Sedan följer hur plugins ska laddas.
+
+    registerCommand()
+        CommandWrapper kanske måste ersättas med en custom Application för det...
+
+    Se text i github issue.
+    Ska också kunna ladda XmlMandateMigration..
+    Se även 'Let SettingsMapper create objects directly #101' ang hur plugins ska hantera settings...
+        Ett INI-format kan vara att föredra då det kan vara enklare för plugins att
+            skriva settings programmatiskt, om vi bryr oss om det.
+            Men det kanske ska köras på annat sätt.. Se writeSetting() nedan
 
 ```php
 interface PluginInterface
 {
-    public function loadPlugin(Environment $environment);
-}
-
-class MyPlugin implements PluginInterface, EventSubscriberInterface
-{
-    // ...
-    // Så har composer löst det hela....
+    public function loadPlugin(Environment $environment): void;
 }
 
 class Environment
@@ -42,18 +40,23 @@ class Environment
     public function readSetting(string $key): string;
 
     /**
+     * Register a console command
+     */
+    public function registerCommand(CommandInterface $command): void;
+
+    /**
      * Register an event subscriber
      */
-    public function registerSubscriber(SubscriberInterface $subscriber);
+    public function registerSubscriber(SubscriberInterface $subscriber): void;
 
     /**
      * Register a custom donor filter
      */
-    public function registerDonorFilter(FilterInterface $donorFilter);
+    public function registerDonorFilter(FilterInterface $donorFilter): void;
 
     /**
      * Register a custom donor formatter
      */
-    public function registerDonorFormatter(FormatterInterface $donorFormatter);
+    public function registerDonorFormatter(FormatterInterface $donorFormatter): void;
 }
 ```

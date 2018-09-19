@@ -23,7 +23,6 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
@@ -32,13 +31,14 @@ use byrokrat\giroapp\States;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 
 /**
  * Command to edit an existing mandate
  */
 final class EditCommand implements CommandInterface
 {
-    use Helper\DonorArgument, DispatcherProperty, InputReaderProperty;
+    use Helper\DonorArgument, DispatcherProperty;
 
     /**
      * @var array Maps option names to free text descriptions
@@ -71,9 +71,9 @@ final class EditCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
+        $donor = $this->getDonor($input);
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
         $descs = self::$descriptions;
-
-        $donor = $this->getDonor();
 
         $this->dispatcher->dispatch(
             Events::INFO,
@@ -81,9 +81,9 @@ final class EditCommand implements CommandInterface
         );
 
         $donor->setName(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'name',
-                $this->questionFactory->createQuestion($descs['name'], $donor->getName()),
+                Helper\QuestionFactory::createQuestion($descs['name'], $donor->getName()),
                 $this->validators->getRequiredStringValidator('Name')
             )
         );
@@ -101,9 +101,9 @@ final class EditCommand implements CommandInterface
         ];
 
         $donor->setState(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'state',
-                $this->questionFactory->createChoiceQuestion(
+                Helper\QuestionFactory::createChoiceQuestion(
                     $descs['state'],
                     $states,
                     $donor->getState()->getStateId()
@@ -113,41 +113,41 @@ final class EditCommand implements CommandInterface
         );
 
         $donor->setDonationAmount(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'amount',
-                $this->questionFactory->createQuestion($descs['amount'], $donor->getDonationAmount()->getAmount()),
+                Helper\QuestionFactory::createQuestion($descs['amount'], $donor->getDonationAmount()->getAmount()),
                 $this->validators->getAmountValidator()
             )
         );
 
         $donor->setPostalAddress(
             new PostalAddress(
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'address1',
-                    $this->questionFactory->createQuestion($descs['address1'], $donor->getPostalAddress()->getLine1()),
+                    Helper\QuestionFactory::createQuestion($descs['address1'], $donor->getPostalAddress()->getLine1()),
                     $this->validators->getStringFilter()
                 ),
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'address2',
-                    $this->questionFactory->createQuestion($descs['address2'], $donor->getPostalAddress()->getLine2()),
+                    Helper\QuestionFactory::createQuestion($descs['address2'], $donor->getPostalAddress()->getLine2()),
                     $this->validators->getStringFilter()
                 ),
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'address3',
-                    $this->questionFactory->createQuestion($descs['address3'], $donor->getPostalAddress()->getLine3()),
+                    Helper\QuestionFactory::createQuestion($descs['address3'], $donor->getPostalAddress()->getLine3()),
                     $this->validators->getStringFilter()
                 ),
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'postal-code',
-                    $this->questionFactory->createQuestion(
+                    Helper\QuestionFactory::createQuestion(
                         $descs['postal-code'],
                         $donor->getPostalAddress()->getPostalCode()
                     ),
                     $this->validators->getPostalCodeValidator()
                 ),
-                $this->inputReader->readInput(
+                $inputReader->readInput(
                     'postal-city',
-                    $this->questionFactory->createQuestion(
+                    Helper\QuestionFactory::createQuestion(
                         $descs['postal-city'],
                         $donor->getPostalAddress()->getPostalCity()
                     )->setAutocompleterValues(
@@ -159,25 +159,25 @@ final class EditCommand implements CommandInterface
         );
 
         $donor->setEmail(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'email',
-                $this->questionFactory->createQuestion($descs['email'], $donor->getEmail()),
+                Helper\QuestionFactory::createQuestion($descs['email'], $donor->getEmail()),
                 $this->validators->getEmailValidator()
             )
         );
 
         $donor->setPhone(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'phone',
-                $this->questionFactory->createQuestion($descs['phone'], $donor->getPhone()),
+                Helper\QuestionFactory::createQuestion($descs['phone'], $donor->getPhone()),
                 $this->validators->getPhoneValidator()
             )
         );
 
         $donor->setComment(
-            $this->inputReader->readInput(
+            $inputReader->readInput(
                 'comment',
-                $this->questionFactory->createQuestion($descs['comment'], $donor->getComment()),
+                Helper\QuestionFactory::createQuestion($descs['comment'], $donor->getComment()),
                 $this->validators->getStringFilter()
             )
         );

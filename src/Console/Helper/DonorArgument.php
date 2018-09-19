@@ -23,19 +23,19 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
-use byrokrat\giroapp\DependencyInjection\InputProperty;
 use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Console\CommandWrapper;
 use byrokrat\giroapp\Model\Donor;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Methods for fetching donors based on command line argument
  */
 trait DonorArgument
 {
-    use DonorMapperProperty, InputProperty, ValidatorsProperty;
+    use DonorMapperProperty, ValidatorsProperty;
 
     protected static function configureDonorArgument(CommandWrapper $wrapper): void
     {
@@ -56,11 +56,11 @@ trait DonorArgument
     /**
      * @throws \RuntimeException if Donor can not be found
      */
-    public function getDonor(): Donor
+    public function getDonor(InputInterface $input): Donor
     {
-        $key = $this->validators->getDonorKeyValidator()($this->input->getArgument('donor'));
+        $key = $this->validators->getDonorKeyValidator()($input->getArgument('donor'));
 
-        if (!$this->input->getOption('force-payer-number') && $this->donorMapper->hasKey($key)) {
+        if (!$input->getOption('force-payer-number') && $this->donorMapper->hasKey($key)) {
             return $this->donorMapper->findByKey($key);
         }
 

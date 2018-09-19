@@ -8,44 +8,18 @@ services:
         public: false
         autowire: true
 
-    Symfony\Component\Console\Input\InputInterface:
-        class: ~
-        public: true
-        synthetic: true
-
-    std_out:
-        class: Symfony\Component\Console\Output\OutputInterface
-        public: true
-        synthetic: true
-
-    std_in:
-        class: Streamer\Stream
-        public: true
-        synthetic: true
-        autowire: false
-
-    Symfony\Component\Console\Output\OutputInterface:
-        alias: 'std_out'
-
-    Symfony\Component\Console\Helper\QuestionHelper:
-        class: ~
-        public: true
-        synthetic: true
-
     byrokrat\giroapp\Builder\:
         resource: '../src/Builder/*'
 
     byrokrat\giroapp\Console\:
         public: true
         resource: '../src/Console/*'
-        exclude: '../src/Console/CommandWrapper.php'
+        exclude: '../src/Console/{CommandWrapper,Helper/InputReader}.php'
 
     byrokrat\giroapp\Console\ImportCommand:
         class: ~
         public: true
-        arguments:
-            - '@fs_cwd'
-            - '@std_in'
+        arguments: ['@fs_cwd']
 
     byrokrat\giroapp\Console\ValidateCommand:
         class: ~

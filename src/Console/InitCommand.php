@@ -22,19 +22,19 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
 use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Mapper\SettingsMapper;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 
 /**
  * Command to initialize settings in database
  */
 final class InitCommand implements CommandInterface
 {
-    use InputReaderProperty, ValidatorsProperty;
+    use ValidatorsProperty;
 
     /**
      * @var SettingsMapper
@@ -76,18 +76,19 @@ final class InitCommand implements CommandInterface
             'bankgiro' => $this->validators->getBankgiroValidator()
         ];
 
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+
         foreach (self::$options as $option => list($setting, $desc)) {
             $currentVal = $this->settingsMapper->findByKey($setting);
 
-            $newVal = (string)$this->inputReader->readInput(
+            $newVal = (string)$inputReader->readInput(
                 $option,
-                $this->questionFactory->createQuestion($desc, $currentVal),
+                Helper\QuestionFactory::createQuestion($desc, $currentVal),
                 $validators[$option]
             );
 
             if (!empty($newVal) && $newVal != $currentVal) {
                 $this->settingsMapper->save($setting, $newVal);
-                // $output->writeln("$desc set to: <info>$newVal</info>");
             }
         }
     }
