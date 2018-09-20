@@ -1,30 +1,29 @@
 # TODO
 
+Issues om
+    Fruktansvärt förvirrande med både flysystem och filesystem, styr upp det...
+
+    Setup namespace borde bort helt och hållet...
+
+6. INI-grejjen
+
+    * Skriv om issue med senaste tankar. Måste inte fixa just nu...
+
 ## Att vid configure veta vilka filter/formats vi har..
 
-> Plugins behöver laddas innan commands skapas..
 
-1. [DONE] Output och Input till CommandInterface::execute
+5. Sedan följer hur plugins ska laddas.
 
-2. [DONE] OutputProperty och InputProperty bort
+    * OrgBankgiroFactory och de andra prylarna ligger inte så bra i Utils
+        vart ska de vara någonstans???
 
-3. [DONE] Enable bootstrap with empty organization data
+    * dokumentera i docs/plugins.md
 
-4. [DONE] CommandInterface::configure() no longer static
+7. Load filters and formatters in configure
 
-5. Lazy-loading commands
-
-6. Sedan följer hur plugins ska laddas.
-
-    Enkel INI-reader...
-        Se även 'Let SettingsMapper create objects directly #101' ang hur plugins ska hantera settings...
+    det kanske blir automatiskt med FilterContainer osv ????
 
 ```php
-interface PluginInterface
-{
-    public function loadPlugin(Environment $environment): void;
-}
-
 class Plugin implements PluginInterface
 {
     private $objects;
@@ -48,48 +47,11 @@ class Plugin implements PluginInterface
 // gör att en kan skriva
 
 return new Plugin(
-    new class extends XmlMandateTranslationInterface {
-        public function getTranslation(string $formId): array
+    new class extends XmlFormInterface {
+        public function getTranslations(): array
         {
             // osv...
         }
     }
 );
-
-class Environment
-{
-    /**
-     * Read a giroapp setting
-     */
-    public function readSetting(string $key): string;
-
-    /**
-     * Register a console command
-     */
-    public function registerCommand(CommandInterface $command): void;
-
-    /**
-     * Register an event subscriber
-     */
-    public function registerSubscriber(SubscriberInterface $subscriber): void;
-
-    /**
-     * Register a custom donor filter
-     */
-    public function registerDonorFilter(FilterInterface $donorFilter): void;
-
-    /**
-     * Register a custom donor formatter
-     */
-    public function registerDonorFormatter(FormatterInterface $donorFormatter): void;
-
-    /**
-     * Set the xml mandate translation key
-     *
-     * TODO eller registerXmlMandateTranslation om varje formId ska ha en egen klass istället...
-     * TODO lite renaming här...
-     * TODO add XmlMandateTranslationInterface::getFormId(): string
-     */
-    public function setXmlMandateTranslation(XmlMandateTranslationInterface $xmlMandateTranslation): void;
-}
 ```

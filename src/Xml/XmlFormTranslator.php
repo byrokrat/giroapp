@@ -29,7 +29,7 @@ use byrokrat\amount\Currency\SEK;
 /**
  * Write data to donor builder based on form translations
  */
-class FormTranslator
+class XmlFormTranslator
 {
     /**
      * @var XmlFormInterface[]

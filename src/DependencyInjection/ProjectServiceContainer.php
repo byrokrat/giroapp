@@ -32,7 +32,7 @@ class ProjectServiceContainer extends Container
 
         $this->services = $this->privates = array();
         $this->methodMap = array(
-            'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => 'getEventDispatcherInterfaceService',
+            'Symfony\\Component\\Console\\Application' => 'getApplicationService',
             'byrokrat\\giroapp\\Console\\AddCommand' => 'getAddCommandService',
             'byrokrat\\giroapp\\Console\\EditCommand' => 'getEditCommandService',
             'byrokrat\\giroapp\\Console\\ExportCommand' => 'getExportCommandService',
@@ -46,6 +46,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\ShowCommand' => 'getShowCommandService',
             'byrokrat\\giroapp\\Console\\StatusCommand' => 'getStatusCommandService',
             'byrokrat\\giroapp\\Console\\ValidateCommand' => 'getValidateCommandService',
+            'byrokrat\\giroapp\\Plugin\\EnvironmentInterface' => 'getEnvironmentInterfaceService',
             'db_settings_mapper' => 'getDbSettingsMapperService',
         );
 
@@ -74,6 +75,7 @@ class ProjectServiceContainer extends Container
             'JsonSchema\\Validator' => true,
             'Psr\\Container\\ContainerInterface' => true,
             'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
+            'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => true,
             'Symfony\\Component\\Filesystem\\Filesystem' => true,
             'byrokrat\\autogiro\\Parser\\ParserFactory' => true,
             'byrokrat\\autogiro\\Parser\\ParserInterface' => true,
@@ -111,9 +113,9 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Mapper\\Schema\\PostalAddressSchema' => true,
             'byrokrat\\giroapp\\Mapper\\SettingsMapper' => true,
             'byrokrat\\giroapp\\Mapper\\TransactionMapper' => true,
-            'byrokrat\\giroapp\\Setup\\FilesystemConfigurator' => true,
+            'byrokrat\\giroapp\\Plugin\\PluginLoader' => true,
+            'byrokrat\\giroapp\\Setup\\FlysystemConfigurator' => true,
             'byrokrat\\giroapp\\Setup\\LogFormatter' => true,
-            'byrokrat\\giroapp\\Setup\\PluginLoader' => true,
             'byrokrat\\giroapp\\State\\ActiveState' => true,
             'byrokrat\\giroapp\\State\\ErrorState' => true,
             'byrokrat\\giroapp\\State\\InactiveState' => true,
@@ -127,12 +129,13 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Utils\\File' => true,
             'byrokrat\\giroapp\\Utils\\FileNameFactory' => true,
             'byrokrat\\giroapp\\Utils\\Filesystem' => true,
+            'byrokrat\\giroapp\\Utils\\FilesystemConfigurator' => true,
             'byrokrat\\giroapp\\Utils\\MissingOrgBankgiro' => true,
             'byrokrat\\giroapp\\Utils\\MissingOrgId' => true,
             'byrokrat\\giroapp\\Utils\\OrgBankgiroFactory' => true,
             'byrokrat\\giroapp\\Utils\\OrgIdFactory' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
-            'byrokrat\\giroapp\\Xml\\FormTranslator' => true,
+            'byrokrat\\giroapp\\Xml\\XmlFormTranslator' => true,
             'byrokrat\\giroapp\\Xml\\XmlMandateParser' => true,
             'byrokrat\\id\\IdFactoryInterface' => true,
             'byrokrat\\id\\OrganizationIdFactory' => true,
@@ -155,6 +158,7 @@ class ProjectServiceContainer extends Container
             'fs_cwd' => true,
             'fs_exports' => true,
             'fs_imports' => true,
+            'fs_plugins' => true,
             'fs_user_dir' => true,
             'organization_bg' => true,
             'organization_id' => true,
@@ -162,13 +166,234 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the public 'Symfony\Component\EventDispatcher\EventDispatcherInterface' shared autowired service.
+     * Gets the public 'Symfony\Component\Console\Application' shared autowired service.
+     *
+     * @return \Symfony\Component\Console\Application
+     */
+    protected function getApplicationService()
+    {
+        return $this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '1.0.0-alpha3@dev');
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\AddCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\AddCommand
+     */
+    protected function getAddCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\AddCommand'] = $instance = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
+
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\EditCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\EditCommand
+     */
+    protected function getEditCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\EditCommand'] = $instance = new \byrokrat\giroapp\Console\EditCommand();
+
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\ExportCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\ExportCommand
+     */
+    protected function getExportCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\ExportCommand'] = $instance = new \byrokrat\giroapp\Console\ExportCommand((new \byrokrat\autogiro\Writer\WriterFactory())->createWriter(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bgc_customer_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
+
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\Helper\QuestionFactory' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\Helper\QuestionFactory
+     */
+    protected function getQuestionFactoryService()
+    {
+        return $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory();
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\ImportCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\ImportCommand
+     */
+    protected function getImportCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(($this->privates['fs_cwd'] ?? $this->getFsCwdService()));
+
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\InitCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\InitCommand
+     */
+    protected function getInitCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\InitCommand'] = $instance = new \byrokrat\giroapp\Console\InitCommand(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService()));
+
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\LsCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\LsCommand
+     */
+    protected function getLsCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\LsCommand'] = $instance = new \byrokrat\giroapp\Console\LsCommand(($this->privates['byrokrat\giroapp\Filter\FilterContainer'] ?? $this->privates['byrokrat\giroapp\Filter\FilterContainer'] = new \byrokrat\giroapp\Filter\FilterContainer()), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
+
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\MigrateCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\MigrateCommand
+     */
+    protected function getMigrateCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\MigrateCommand'] = $instance = new \byrokrat\giroapp\Console\MigrateCommand();
+
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\RemoveCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\RemoveCommand
+     */
+    protected function getRemoveCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\RemoveCommand'] = $instance = new \byrokrat\giroapp\Console\RemoveCommand();
+
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\RevokeCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\RevokeCommand
+     */
+    protected function getRevokeCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\RevokeCommand'] = $instance = new \byrokrat\giroapp\Console\RevokeCommand();
+
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\ShowCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\ShowCommand
+     */
+    protected function getShowCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\ShowCommand'] = $instance = new \byrokrat\giroapp\Console\ShowCommand(($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
+
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\StatusCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\StatusCommand
+     */
+    protected function getStatusCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\StatusCommand'] = $instance = new \byrokrat\giroapp\Console\StatusCommand();
+
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\ValidateCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\ValidateCommand
+     */
+    protected function getValidateCommandService()
+    {
+        return $this->services['byrokrat\giroapp\Console\ValidateCommand'] = new \byrokrat\giroapp\Console\ValidateCommand(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('GIROAPP_PATH'), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator());
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Plugin\EnvironmentInterface' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Plugin\Environment
+     */
+    protected function getEnvironmentInterfaceService()
+    {
+        $this->services['byrokrat\giroapp\Plugin\EnvironmentInterface'] = $instance = new \byrokrat\giroapp\Plugin\Environment(($this->services['Symfony\Component\Console\Application'] ?? $this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '1.0.0-alpha3@dev')), ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()), ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] ?? $this->privates['byrokrat\giroapp\Filter\FilterContainer'] = new \byrokrat\giroapp\Filter\FilterContainer()), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()), ($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? $this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator()));
+
+        $a = new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/plugins', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
+        ($this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] = new \byrokrat\giroapp\Utils\FilesystemConfigurator())->configureFilesystem($a);
+
+        (new \byrokrat\giroapp\Plugin\PluginLoader($a))->loadPlugins($instance);
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'db_settings_mapper' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Mapper\SettingsMapper
+     */
+    protected function getDbSettingsMapperService()
+    {
+        return $this->services['db_settings_mapper'] = new \byrokrat\giroapp\Mapper\SettingsMapper(new \hanneskod\yaysondb\Collection(($this->privates['db_settings_engine'] ?? $this->getDbSettingsEngineService())));
+    }
+
+    /**
+     * Gets the private 'Symfony\Component\EventDispatcher\EventDispatcherInterface' shared autowired service.
      *
      * @return \Symfony\Component\EventDispatcher\EventDispatcher
      */
     protected function getEventDispatcherInterfaceService()
     {
-        $this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] = $instance = new \Symfony\Component\EventDispatcher\EventDispatcher();
+        $this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] = $instance = new \Symfony\Component\EventDispatcher\EventDispatcher();
 
         $instance->addListener('EXECUTION_STARTED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
@@ -263,203 +488,8 @@ class ProjectServiceContainer extends Container
         $instance->addListener('MANDATE_INVALIDATED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
         }, 1 => 'onDonorUpdated'));
-        (new \byrokrat\giroapp\Setup\PluginLoader($this->getEnv('string:GIROAPP_PATH').'/plugins', ($this->privates['flysystem_user_dir'] ?? $this->getFlysystemUserDirService())))->loadPlugins($instance);
 
         return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\AddCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\AddCommand
-     */
-    protected function getAddCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\AddCommand'] = $instance = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
-
-        $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\EditCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\EditCommand
-     */
-    protected function getEditCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\EditCommand'] = $instance = new \byrokrat\giroapp\Console\EditCommand();
-
-        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
-        $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\ExportCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\ExportCommand
-     */
-    protected function getExportCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\ExportCommand'] = $instance = new \byrokrat\giroapp\Console\ExportCommand((new \byrokrat\autogiro\Writer\WriterFactory())->createWriter(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bgc_customer_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
-
-        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\Helper\QuestionFactory' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\Helper\QuestionFactory
-     */
-    protected function getQuestionFactoryService()
-    {
-        return $this->services['byrokrat\giroapp\Console\Helper\QuestionFactory'] = new \byrokrat\giroapp\Console\Helper\QuestionFactory();
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\ImportCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\ImportCommand
-     */
-    protected function getImportCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(($this->privates['fs_cwd'] ?? $this->getFsCwdService()));
-
-        $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\InitCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\InitCommand
-     */
-    protected function getInitCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\InitCommand'] = $instance = new \byrokrat\giroapp\Console\InitCommand(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService()));
-
-        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\LsCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\LsCommand
-     */
-    protected function getLsCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\LsCommand'] = $instance = new \byrokrat\giroapp\Console\LsCommand(new \byrokrat\giroapp\Filter\FilterContainer(), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
-
-        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\MigrateCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\MigrateCommand
-     */
-    protected function getMigrateCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\MigrateCommand'] = $instance = new \byrokrat\giroapp\Console\MigrateCommand();
-
-        $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\RemoveCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\RemoveCommand
-     */
-    protected function getRemoveCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\RemoveCommand'] = $instance = new \byrokrat\giroapp\Console\RemoveCommand();
-
-        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
-        $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\RevokeCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\RevokeCommand
-     */
-    protected function getRevokeCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\RevokeCommand'] = $instance = new \byrokrat\giroapp\Console\RevokeCommand();
-
-        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
-        $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\ShowCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\ShowCommand
-     */
-    protected function getShowCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\ShowCommand'] = $instance = new \byrokrat\giroapp\Console\ShowCommand(($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
-
-        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\StatusCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\StatusCommand
-     */
-    protected function getStatusCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\StatusCommand'] = $instance = new \byrokrat\giroapp\Console\StatusCommand();
-
-        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\ValidateCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\ValidateCommand
-     */
-    protected function getValidateCommandService()
-    {
-        return $this->services['byrokrat\giroapp\Console\ValidateCommand'] = new \byrokrat\giroapp\Console\ValidateCommand(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('GIROAPP_PATH'), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator());
-    }
-
-    /**
-     * Gets the public 'db_settings_mapper' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Mapper\SettingsMapper
-     */
-    protected function getDbSettingsMapperService()
-    {
-        return $this->services['db_settings_mapper'] = new \byrokrat\giroapp\Mapper\SettingsMapper(new \hanneskod\yaysondb\Collection(($this->privates['db_settings_engine'] ?? $this->getDbSettingsEngineService())));
     }
 
     /**
@@ -490,7 +520,7 @@ class ProjectServiceContainer extends Container
     protected function getAutogiroImportingListenerService()
     {
         $a = new \byrokrat\giroapp\AutogiroVisitor(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bgc_customer_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()));
-        $a->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+        $a->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
 
         return $this->privates['byrokrat\giroapp\Listener\AutogiroImportingListener'] = new \byrokrat\giroapp\Listener\AutogiroImportingListener((new \byrokrat\autogiro\Parser\ParserFactory())->createParser(), $a);
     }
@@ -554,7 +584,7 @@ class ProjectServiceContainer extends Container
     {
         $a = ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService());
 
-        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser((new \byrokrat\giroapp\Utils\OrgIdFactory($a))->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), new \byrokrat\giroapp\Xml\FormTranslator(), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
+        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser((new \byrokrat\giroapp\Utils\OrgIdFactory($a))->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? $this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
     }
 
     /**
@@ -664,7 +694,10 @@ class ProjectServiceContainer extends Container
      */
     protected function getFileExportDumperService()
     {
-        return $this->privates['file_export_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/exports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
+        $a = new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/exports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
+        ($this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] = new \byrokrat\giroapp\Utils\FilesystemConfigurator())->configureFilesystem($a);
+
+        return $this->privates['file_export_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
     }
 
     /**
@@ -674,7 +707,10 @@ class ProjectServiceContainer extends Container
      */
     protected function getFileImportDumperService()
     {
-        return $this->privates['file_import_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/imports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
+        $a = new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/imports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
+        ($this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] = new \byrokrat\giroapp\Utils\FilesystemConfigurator())->configureFilesystem($a);
+
+        return $this->privates['file_import_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
     }
 
     /**
@@ -686,7 +722,7 @@ class ProjectServiceContainer extends Container
     {
         $this->privates['flysystem_user_dir'] = $instance = new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getEnv('GIROAPP_PATH')));
 
-        (new \byrokrat\giroapp\Setup\FilesystemConfigurator(array(0 => 'data/settings.json', 1 => 'data/donors.json', 2 => 'data/transactions.json', 3 => 'var/log', 4 => 'data/imports.json'), array(0 => 'plugins')))->createFiles($instance);
+        (new \byrokrat\giroapp\Setup\FlysystemConfigurator(array(0 => 'data/settings.json', 1 => 'data/donors.json', 2 => 'data/transactions.json', 3 => 'var/log', 4 => 'data/imports.json')))->createFiles($instance);
 
         return $instance;
     }
@@ -752,6 +788,9 @@ class ProjectServiceContainer extends Container
 
     private $loadedDynamicParameters = array(
         'fs.user_dir' => false,
+        'fs.plugins_dir' => false,
+        'fs.imports_dir' => false,
+        'fs.exports_dir' => false,
     );
     private $dynamicParameters = array();
 
@@ -768,6 +807,9 @@ class ProjectServiceContainer extends Container
     {
         switch ($name) {
             case 'fs.user_dir': $value = $this->getEnv('GIROAPP_PATH'); break;
+            case 'fs.plugins_dir': $value = $this->getEnv('string:GIROAPP_PATH').'/plugins'; break;
+            case 'fs.imports_dir': $value = $this->getEnv('string:GIROAPP_PATH').'/var/imports'; break;
+            case 'fs.exports_dir': $value = $this->getEnv('string:GIROAPP_PATH').'/var/exports'; break;
             default: throw new InvalidArgumentException(sprintf('The dynamic parameter "%s" must be defined.', $name));
         }
         $this->loadedDynamicParameters[$name] = true;
@@ -786,14 +828,13 @@ class ProjectServiceContainer extends Container
             'env(GIROAPP_PATH)' => 'giroapp',
             'fs.internal_data_dir' => 'data',
             'fs.external_data_dir' => 'var',
-            'fs.plugins_dir' => 'plugins',
-            'fs.imports_dir' => 'var/imports',
-            'fs.exports_dir' => 'var/exports',
             'db.settings' => 'data/settings.json',
             'db.donors' => 'data/donors.json',
             'db.transactions' => 'data/transactions.json',
             'db.log' => 'var/log',
             'db.imports' => 'data/imports.json',
+            'app.name' => 'GiroApp',
+            'app.version' => '1.0.0-alpha3@dev',
         );
     }
 }

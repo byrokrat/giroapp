@@ -3,6 +3,10 @@ imports:
     - { resource: db.yaml }
     - { resource: listeners.yaml }
 
+parameters:
+    app.name: 'GiroApp'
+    app.version: '1.0.0-alpha3@dev'
+
 services:
     _defaults:
         public: false
@@ -45,20 +49,20 @@ services:
     byrokrat\giroapp\Utils\:
         resource: '../src/Utils/*'
 
-    Symfony\Component\EventDispatcher\EventDispatcherInterface:
-        class: 'Symfony\Component\EventDispatcher\EventDispatcher'
+    byrokrat\giroapp\Plugin\EnvironmentInterface:
+        class: byrokrat\giroapp\Plugin\Environment
         public: true
-        configurator: 'byrokrat\giroapp\Setup\PluginLoader:loadPlugins'
+        configurator: 'byrokrat\giroapp\Plugin\PluginLoader:loadPlugins'
 
-    byrokrat\giroapp\Setup\PluginLoader:
+    byrokrat\giroapp\Plugin\PluginLoader:
         class: ~
-        arguments: ['%fs.user_dir%/%fs.plugins_dir%', '@flysystem_user_dir']
+        arguments: ['@fs_plugins']
 
     byrokrat\giroapp\Xml\XmlMandateParser:
         class: ~
         arguments: ['@organization_id', '@organization_bg']
 
-    byrokrat\giroapp\Xml\FormTranslator: ~
+    byrokrat\giroapp\Xml\XmlFormTranslator: ~
 
     byrokrat\giroapp\AutogiroVisitor:
         class: ~
@@ -113,3 +117,11 @@ services:
         arguments: ["@=service('db_settings_mapper').findByKey('bankgiro')"]
 
     JsonSchema\Validator: ~
+
+    Symfony\Component\Console\Application:
+        class: ~
+        arguments: ['%app.name%', '%app.version%']
+        public: true
+
+    Symfony\Component\EventDispatcher\EventDispatcherInterface:
+        class: 'Symfony\Component\EventDispatcher\EventDispatcher'

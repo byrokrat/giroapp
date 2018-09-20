@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Xml;
 
-use byrokrat\giroapp\Xml\FormTranslator;
+use byrokrat\giroapp\Xml\XmlFormTranslator;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use byrokrat\giroapp\Builder\DonorBuilder;
 use byrokrat\giroapp\Exception\InvalidXmlFormException;
@@ -12,11 +12,11 @@ use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class FormTranslatorSpec extends ObjectBehavior
+class XmlFormTranslatorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(FormTranslator::CLASS);
+        $this->shouldHaveType(XmlFormTranslator::CLASS);
     }
 
     function it_sets_attribute_if_key_is_not_translated(XmlFormInterface $xmlForm, DonorBuilder $donorBuilder)

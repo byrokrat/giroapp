@@ -27,7 +27,7 @@ use League\Flysystem\Filesystem;
 /**
  * Created required files in filesystem
  */
-class FilesystemConfigurator
+class FlysystemConfigurator
 {
     /**
      * @var string[]
@@ -43,7 +43,7 @@ class FilesystemConfigurator
      * @param string[] $requiredFiles List of required files
      * @param string[] $requiredDirs List of required directories
      */
-    public function __construct(array $requiredFiles, array $requiredDirs)
+    public function __construct(array $requiredFiles = [], array $requiredDirs = [])
     {
         $this->requiredFiles = $requiredFiles;
         $this->requiredDirs = $requiredDirs;
