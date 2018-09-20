@@ -14,7 +14,6 @@ use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
-use byrokrat\banking\Bankgiro;
 use byrokrat\id\IdInterface;
 use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\OrganizationId;
@@ -28,7 +27,7 @@ class XmlMandateParserSpec extends ObjectBehavior
 
     function let(
         OrganizationId $payeeOrgNr,
-        Bankgiro $payeeBankgiro,
+        AccountNumber $payeeBankgiro,
         DonorBuilder $builder,
         CustomdataTranslator $translator,
         AccountFactoryInterface $accountFactory,

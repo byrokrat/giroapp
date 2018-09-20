@@ -38,7 +38,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\EditCommand' => 'getEditCommandService',
             'byrokrat\\giroapp\\Console\\ExportCommand' => 'getExportCommandService',
             'byrokrat\\giroapp\\Console\\Helper\\QuestionFactory' => 'getQuestionFactoryService',
-            'byrokrat\\giroapp\\Console\\Helper\\Validators' => 'getValidatorsService',
             'byrokrat\\giroapp\\Console\\ImportCommand' => 'getImportCommandService',
             'byrokrat\\giroapp\\Console\\InitCommand' => 'getInitCommandService',
             'byrokrat\\giroapp\\Console\\LsCommand' => 'getLsCommandService',
@@ -80,14 +79,15 @@ class ProjectServiceContainer extends Container
             'Symfony\\Component\\Filesystem\\Filesystem' => true,
             'byrokrat\\autogiro\\Parser\\ParserFactory' => true,
             'byrokrat\\autogiro\\Parser\\ParserInterface' => true,
-            'byrokrat\\autogiro\\Writer\\Writer' => true,
             'byrokrat\\autogiro\\Writer\\WriterFactory' => true,
+            'byrokrat\\autogiro\\Writer\\WriterInterface' => true,
             'byrokrat\\banking\\AccountFactoryInterface' => true,
             'byrokrat\\banking\\BankgiroFactory' => true,
             'byrokrat\\giroapp\\AutogiroVisitor' => true,
             'byrokrat\\giroapp\\Builder\\DateBuilder' => true,
             'byrokrat\\giroapp\\Builder\\DonorBuilder' => true,
             'byrokrat\\giroapp\\Builder\\MandateKeyBuilder' => true,
+            'byrokrat\\giroapp\\Console\\Helper\\Validators' => true,
             'byrokrat\\giroapp\\Filter\\ExportableFilter' => true,
             'byrokrat\\giroapp\\Filter\\FilterContainer' => true,
             'byrokrat\\giroapp\\Filter\\InactiveFilter' => true,
@@ -129,6 +129,10 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Utils\\File' => true,
             'byrokrat\\giroapp\\Utils\\FileNameFactory' => true,
             'byrokrat\\giroapp\\Utils\\Filesystem' => true,
+            'byrokrat\\giroapp\\Utils\\MissingOrgBankgiro' => true,
+            'byrokrat\\giroapp\\Utils\\MissingOrgId' => true,
+            'byrokrat\\giroapp\\Utils\\OrgBankgiroFactory' => true,
+            'byrokrat\\giroapp\\Utils\\OrgIdFactory' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
             'byrokrat\\giroapp\\Xml\\CustomdataTranslator' => true,
             'byrokrat\\giroapp\\Xml\\XmlMandateMigrationInterface' => true,
@@ -283,7 +287,7 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\AddCommand'] = $instance = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
 
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
 
         return $instance;
     }
@@ -308,7 +312,7 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\EditCommand'] = $instance = new \byrokrat\giroapp\Console\EditCommand();
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
 
         return $instance;
@@ -340,16 +344,6 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the public 'byrokrat\giroapp\Console\Helper\Validators' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\Helper\Validators
-     */
-    protected function getValidatorsService()
-    {
-        return $this->services['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), ($this->privates['byrokrat\banking\BankgiroFactory'] ?? $this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory()), ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
-    }
-
-    /**
      * Gets the public 'byrokrat\giroapp\Console\ImportCommand' shared autowired service.
      *
      * @return \byrokrat\giroapp\Console\ImportCommand
@@ -372,7 +366,7 @@ class ProjectServiceContainer extends Container
     {
         $this->services['byrokrat\giroapp\Console\InitCommand'] = $instance = new \byrokrat\giroapp\Console\InitCommand(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService()));
 
-        $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
 
         return $instance;
     }
@@ -416,7 +410,7 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\RemoveCommand'] = $instance = new \byrokrat\giroapp\Console\RemoveCommand();
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
 
         return $instance;
@@ -432,7 +426,7 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\RevokeCommand'] = $instance = new \byrokrat\giroapp\Console\RevokeCommand();
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
         $instance->setEventDispatcher(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
 
         return $instance;
@@ -448,7 +442,7 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\ShowCommand'] = $instance = new \byrokrat\giroapp\Console\ShowCommand(($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
-        $instance->setValidators(($this->services['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
 
         return $instance;
     }
@@ -505,6 +499,16 @@ class ProjectServiceContainer extends Container
     protected function getDonorBuilderService()
     {
         return $this->privates['byrokrat\giroapp\Builder\DonorBuilder'] = new \byrokrat\giroapp\Builder\DonorBuilder(new \byrokrat\giroapp\Builder\MandateKeyBuilder(), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()), ($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
+    }
+
+    /**
+     * Gets the private 'byrokrat\giroapp\Console\Helper\Validators' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\Helper\Validators
+     */
+    protected function getValidatorsService()
+    {
+        return $this->privates['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), ($this->privates['byrokrat\giroapp\Utils\OrgBankgiroFactory'] ?? $this->getOrgBankgiroFactoryService()), ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
     }
 
     /**
@@ -579,7 +583,7 @@ class ProjectServiceContainer extends Container
     {
         $a = ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService());
 
-        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser($a->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), new \byrokrat\giroapp\Xml\CustomdataTranslator(new \byrokrat\giroapp\Xml\NullXmlMandateMigration()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
+        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser((new \byrokrat\giroapp\Utils\OrgIdFactory($a))->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), new \byrokrat\giroapp\Xml\CustomdataTranslator(new \byrokrat\giroapp\Xml\NullXmlMandateMigration()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
     }
 
     /**
@@ -620,6 +624,16 @@ class ProjectServiceContainer extends Container
     protected function getFileNameFactoryService()
     {
         return $this->privates['byrokrat\giroapp\Utils\FileNameFactory'] = new \byrokrat\giroapp\Utils\FileNameFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
+    }
+
+    /**
+     * Gets the private 'byrokrat\giroapp\Utils\OrgBankgiroFactory' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Utils\OrgBankgiroFactory
+     */
+    protected function getOrgBankgiroFactoryService()
+    {
+        return $this->privates['byrokrat\giroapp\Utils\OrgBankgiroFactory'] = new \byrokrat\giroapp\Utils\OrgBankgiroFactory(new \byrokrat\banking\BankgiroFactory());
     }
 
     /**
@@ -729,11 +743,11 @@ class ProjectServiceContainer extends Container
     /**
      * Gets the private 'organization_bg' shared autowired service.
      *
-     * @return \byrokrat\banking\Bankgiro
+     * @return \byrokrat\banking\AccountNumber
      */
     protected function getOrganizationBgService()
     {
-        return $this->privates['organization_bg'] = ($this->privates['byrokrat\banking\BankgiroFactory'] ?? $this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory())->createAccount(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bankgiro"));
+        return $this->privates['organization_bg'] = ($this->privates['byrokrat\giroapp\Utils\OrgBankgiroFactory'] ?? $this->getOrgBankgiroFactoryService())->createAccount(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bankgiro"));
     }
 
     public function getParameter($name)

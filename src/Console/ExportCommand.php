@@ -29,7 +29,7 @@ use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\Utils\File;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -41,7 +41,7 @@ final class ExportCommand implements CommandInterface
     use DonorMapperProperty, DispatcherProperty;
 
     /**
-     * @var Writer
+     * @var WriterInterface
      */
     private $autogiroWriter;
 
@@ -50,7 +50,7 @@ final class ExportCommand implements CommandInterface
      */
     private $statePool;
 
-    public function __construct(Writer $autogiroWriter, StatePool $statePool)
+    public function __construct(WriterInterface $autogiroWriter, StatePool $statePool)
     {
         $this->autogiroWriter = $autogiroWriter;
         $this->statePool = $statePool;

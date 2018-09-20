@@ -9,7 +9,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
-use byrokrat\banking\Bankgiro;
+use byrokrat\banking\AccountNumber;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -18,7 +18,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
 {
     const ORG_BGC_NR = 'foobar';
 
-    function let(Dispatcher $dispatcher, Bankgiro $orgBg)
+    function let(Dispatcher $dispatcher, AccountNumber $orgBg)
     {
         $this->beConstructedWith(self::ORG_BGC_NR, $orgBg);
         $this->setEventDispatcher($dispatcher);
@@ -41,7 +41,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $this->beforeMandateResponse($node);
     }
 
-    function it_throws_on_invalid_bg_in_opening_node($orgBg, Node $node, Bankgiro $payeeBg)
+    function it_throws_on_invalid_bg_in_opening_node($orgBg, Node $node, AccountNumber $payeeBg)
     {
         $node->getChild('PayeeBgcNumber')->willReturn($node);
         $node->getValue()->willReturn(self::ORG_BGC_NR);
@@ -51,7 +51,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $this->shouldThrow(\RuntimeException::CLASS)->during('beforeOpening', [$node]);
     }
 
-    function it_throws_on_invalid_bgc_nr_in_opening_node($orgBg, Node $node, Bankgiro $payeeBg)
+    function it_throws_on_invalid_bgc_nr_in_opening_node($orgBg, Node $node, AccountNumber $payeeBg)
     {
         $node->getChild('PayeeBgcNumber')->willReturn($node);
         $node->getValue()->willReturn('some-invalid-value');

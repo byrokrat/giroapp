@@ -28,7 +28,7 @@ use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Exception\InvalidXmlException;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactoryInterface;
-use byrokrat\banking\Bankgiro;
+use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\OrganizationId;
 
@@ -43,7 +43,7 @@ class XmlMandateParser
     private $payeeOrgNr;
 
     /**
-     * @var Bankgiro
+     * @var AccountNumber
      */
     private $payeeBankgiro;
 
@@ -69,7 +69,7 @@ class XmlMandateParser
 
     public function __construct(
         OrganizationId $payeeOrgNr,
-        Bankgiro $payeeBankgiro,
+        AccountNumber $payeeBankgiro,
         DonorBuilder $donorBuilder,
         CustomdataTranslator $translator,
         AccountFactoryInterface $accountFactory,

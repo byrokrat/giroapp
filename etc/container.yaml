@@ -28,6 +28,11 @@ services:
             - '@fs_user_dir'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
 
+    byrokrat\giroapp\Console\Helper\Validators:
+        class: ~
+        arguments:
+            $bankgiroFactory: '@byrokrat\giroapp\Utils\OrgBankgiroFactory'
+
     byrokrat\giroapp\Filter\:
         resource: '../src/Filter/*'
 
@@ -49,18 +54,27 @@ services:
         class: ~
         arguments: ['%fs.user_dir%/%fs.plugins_dir%', '@flysystem_user_dir']
 
+    byrokrat\giroapp\Xml\XmlMandateParser:
+        class: ~
+        arguments: ['@organization_id', '@organization_bg']
+
+    byrokrat\giroapp\Xml\CustomdataTranslator: ~
+
+    byrokrat\giroapp\Xml\XmlMandateMigrationInterface:
+        class: byrokrat\giroapp\Xml\NullXmlMandateMigration
+
     byrokrat\giroapp\AutogiroVisitor:
         class: ~
         arguments:
             - "@=service('db_settings_mapper').findByKey('bgc_customer_number')"
             - '@organization_bg'
 
-    byrokrat\autogiro\Parser\ParserFactory: ~
-
     byrokrat\autogiro\Parser\ParserInterface:
         factory: 'byrokrat\autogiro\Parser\ParserFactory:createParser'
 
-    byrokrat\autogiro\Writer\Writer:
+    byrokrat\autogiro\Parser\ParserFactory: ~
+
+    byrokrat\autogiro\Writer\WriterInterface:
         factory: 'byrokrat\autogiro\Writer\WriterFactory:createWriter'
         arguments:
             - "@=service('db_settings_mapper').findByKey('bgc_customer_number')"
@@ -72,7 +86,15 @@ services:
         class: byrokrat\banking\AccountFactory
         autowire: false
 
+    byrokrat\giroapp\Utils\OrgBankgiroFactory:
+        class: ~
+        arguments: ['@byrokrat\banking\BankgiroFactory']
+
     byrokrat\banking\BankgiroFactory: ~
+
+    byrokrat\giroapp\Utils\OrgIdFactory:
+        class: ~
+        arguments: ['@byrokrat\id\IdFactoryInterface']
 
     byrokrat\id\IdFactoryInterface:
         class: byrokrat\id\PersonalIdFactory
@@ -83,23 +105,14 @@ services:
         class: ~
         autowire: false
 
-    byrokrat\giroapp\Xml\XmlMandateParser:
-        class: ~
-        arguments: ['@organization_id', '@organization_bg']
-
-    byrokrat\giroapp\Xml\CustomdataTranslator: ~
-
-    byrokrat\giroapp\Xml\XmlMandateMigrationInterface:
-        class: byrokrat\giroapp\Xml\NullXmlMandateMigration
-
     organization_id:
         class: byrokrat\id\IdInterface
-        factory: 'byrokrat\id\IdFactoryInterface:createId'
+        factory: 'byrokrat\giroapp\Utils\OrgIdFactory:createId'
         arguments: ["@=service('db_settings_mapper').findByKey('org_number')"]
 
     organization_bg:
-        class: byrokrat\banking\Bankgiro
-        factory: 'byrokrat\banking\BankgiroFactory:createAccount'
+        class: byrokrat\banking\AccountNumber
+        factory: 'byrokrat\giroapp\Utils\OrgBankgiroFactory:createAccount'
         arguments: ["@=service('db_settings_mapper').findByKey('bankgiro')"]
 
     JsonSchema\Validator: ~
