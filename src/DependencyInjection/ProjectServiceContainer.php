@@ -34,7 +34,6 @@ class ProjectServiceContainer extends Container
         $this->methodMap = array(
             'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => 'getEventDispatcherInterfaceService',
             'byrokrat\\giroapp\\Console\\AddCommand' => 'getAddCommandService',
-            'byrokrat\\giroapp\\Console\\CommandRunner' => 'getCommandRunnerService',
             'byrokrat\\giroapp\\Console\\EditCommand' => 'getEditCommandService',
             'byrokrat\\giroapp\\Console\\ExportCommand' => 'getExportCommandService',
             'byrokrat\\giroapp\\Console\\Helper\\QuestionFactory' => 'getQuestionFactoryService',
@@ -283,16 +282,6 @@ class ProjectServiceContainer extends Container
         $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
 
         return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\CommandRunner' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\CommandRunner
-     */
-    protected function getCommandRunnerService()
-    {
-        return $this->services['byrokrat\giroapp\Console\CommandRunner'] = new \byrokrat\giroapp\Console\CommandRunner(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
     }
 
     /**

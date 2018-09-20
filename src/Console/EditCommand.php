@@ -41,9 +41,9 @@ final class EditCommand implements CommandInterface
     use Helper\DonorArgument, DispatcherProperty;
 
     /**
-     * @var array Maps option names to free text descriptions
+     * Maps option names to free text descriptions
      */
-    private static $descriptions = [
+    private const DESCRIPTIONS = [
         'name' => 'Donor name',
         'state' => 'Donor state identifier',
         'amount' => 'Monthly donation amount',
@@ -57,14 +57,14 @@ final class EditCommand implements CommandInterface
         'comment' => 'Comment'
     ];
 
-    public function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
-        self::configureDonorArgument($wrapper);
+        $this->configureDonorArgument($wrapper);
         $wrapper->setName('edit');
         $wrapper->setDescription('Edit an existing donor');
         $wrapper->setHelp('Edit a donor in the database.');
 
-        foreach (self::$descriptions as $option => $desc) {
+        foreach (self::DESCRIPTIONS as $option => $desc) {
             $wrapper->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
     }
@@ -73,7 +73,7 @@ final class EditCommand implements CommandInterface
     {
         $donor = $this->getDonor($input);
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
-        $descs = self::$descriptions;
+        $descs = self::DESCRIPTIONS;
 
         $this->dispatcher->dispatch(
             Events::INFO,

@@ -42,22 +42,22 @@ final class InitCommand implements CommandInterface
     private $settingsMapper;
 
     /**
-     * @var array List of options, db keys and description messages
+     * List of options, db keys and description messages
      */
-    private static $options = [
+    private const OPTIONS = [
         'org-name' => ['org_name', 'Name of organization'],
         'org-number' => ['org_number', 'Organization id number'],
         'bgc-customer-number' => ['bgc_customer_number', 'BGC customer number'],
         'bankgiro' => ['bankgiro', 'Bankgiro number']
     ];
 
-    public function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('init');
         $wrapper->setDescription('Initialize the database');
         $wrapper->setHelp('Initialize giroapp installation');
 
-        foreach (self::$options as $option => list(, $desc)) {
+        foreach (self::OPTIONS as $option => list(, $desc)) {
             $wrapper->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
     }
@@ -78,7 +78,7 @@ final class InitCommand implements CommandInterface
 
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 
-        foreach (self::$options as $option => list($setting, $desc)) {
+        foreach (self::OPTIONS as $option => list($setting, $desc)) {
             $currentVal = $this->settingsMapper->findByKey($setting);
 
             $newVal = (string)$inputReader->readInput(

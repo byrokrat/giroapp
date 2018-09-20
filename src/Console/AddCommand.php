@@ -42,9 +42,9 @@ final class AddCommand implements CommandInterface
     use DispatcherProperty, ValidatorsProperty;
 
     /**
-     * @var array Maps option names to free text descriptions
+     * Maps option names to free text descriptions
      */
-    private static $descriptions = [
+    private const DESCRIPTIONS = [
         'source' => 'Mandate source',
         'id' => 'Donor personal id',
         'payer-number' => 'Payer number',
@@ -71,20 +71,20 @@ final class AddCommand implements CommandInterface
         $this->donorBuilder = $donorBuilder;
     }
 
-    public function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('add');
         $wrapper->setDescription('Add a new donor');
         $wrapper->setHelp('Register a new mandate in database');
 
-        foreach (self::$descriptions as $option => $desc) {
+        foreach (self::DESCRIPTIONS as $option => $desc) {
             $wrapper->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $descs = self::$descriptions;
+        $descs = self::DESCRIPTIONS;
 
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 

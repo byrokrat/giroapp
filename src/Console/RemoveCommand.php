@@ -37,13 +37,13 @@ final class RemoveCommand implements CommandInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
 
-    public function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('remove');
         $wrapper->setDescription('Remove a donor');
         $wrapper->setHelp('Remove a donor completely from the database');
         $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force remove');
-        self::configureDonorArgument($wrapper);
+        $this->configureDonorArgument($wrapper);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void

@@ -52,7 +52,7 @@ final class LsCommand implements CommandInterface
         $this->formatterContainer = $formatterContainer;
     }
 
-    public function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('ls');
         $wrapper->setDescription('List donors');

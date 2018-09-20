@@ -56,7 +56,7 @@ final class ExportCommand implements CommandInterface
         $this->statePool = $statePool;
     }
 
-    public function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('export');
         $wrapper->setDescription('Export a file to autogirot');

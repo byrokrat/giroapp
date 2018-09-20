@@ -14,7 +14,7 @@ services:
     byrokrat\giroapp\Console\:
         public: true
         resource: '../src/Console/*'
-        exclude: '../src/Console/{CommandWrapper,Helper/InputReader}.php'
+        exclude: '../src/Console/{Adapter,Helper/InputReader}.php'
 
     byrokrat\giroapp\Console\ImportCommand:
         class: ~

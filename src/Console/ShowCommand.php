@@ -44,13 +44,13 @@ final class ShowCommand implements CommandInterface
         $this->formatterContainer = $formatterContainer;
     }
 
-    public function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('show');
         $wrapper->setDescription('Display donor information');
         $wrapper->setHelp('Display information on individual donors');
 
-        self::configureDonorArgument($wrapper);
+        $this->configureDonorArgument($wrapper);
 
         $wrapper->addOption(
             'format',

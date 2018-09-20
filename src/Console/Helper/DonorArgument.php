@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
-use byrokrat\giroapp\Console\CommandWrapper;
+use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Model\Donor;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -37,7 +37,7 @@ trait DonorArgument
 {
     use DonorMapperProperty, ValidatorsProperty;
 
-    protected static function configureDonorArgument(CommandWrapper $wrapper): void
+    protected function configureDonorArgument(Adapter $wrapper): void
     {
         $wrapper->addArgument(
             'donor',

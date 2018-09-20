@@ -33,7 +33,7 @@ interface CommandInterface
     /**
      * Configure command
      */
-    public function configure(CommandWrapper $wrapper): void;
+    public function configure(Adapter $wrapper): void;
 
     /**
      * Execute command

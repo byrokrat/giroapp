@@ -37,17 +37,17 @@ $container = new ProjectServiceContainer;
 
 $dispatcher = $container->get(EventDispatcherInterface::CLASS);
 
-$app->add(new CommandWrapper($container->get(AddCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(EditCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(ExportCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(ImportCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(InitCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(LsCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(MigrateCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(RemoveCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(RevokeCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(ShowCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(StatusCommand::CLASS), $dispatcher));
-$app->add(new CommandWrapper($container->get(ValidateCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(AddCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(EditCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(ExportCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(ImportCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(InitCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(LsCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(MigrateCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(RemoveCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(RevokeCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(ShowCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(StatusCommand::CLASS), $dispatcher));
+$app->add(new Adapter($container->get(ValidateCommand::CLASS), $dispatcher));
 
 $app->run();
