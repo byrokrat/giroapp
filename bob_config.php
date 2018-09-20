@@ -9,7 +9,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
-task('default', ['test', 'sniff', 'phpstan']);
+task('default', ['test', 'examples', 'phpstan', 'sniff']);
 
 desc('Run unit and feature tests');
 task('test', ['phpspec', 'behat']);
@@ -32,18 +32,24 @@ task('behat-debug', ['update_container'], function() {
     println('Behat feature tests passed');
 });
 
-desc('Run php code sniffer');
-task('sniff', function() {
-    sh('phpcs src --standard=PSR2 --ignore=src/DependencyInjection/ProjectServiceContainer.php', null, ['failOnError' => true]);
-    println('Syntax checker on src/ passed');
-    sh('phpcs spec --standard=spec/ruleset.xml', null, ['failOnError' => true]);
-    println('Syntax checker on spec/ passed');
+desc('Tests documentation examples');
+task('examples', function() {
+    sh('readme-tester README.md docs', null, ['failOnError' => true]);
+    println('Documentation examples valid');
 });
 
 desc('Run statical analysis using phpstan feature tests');
 task('phpstan', function() {
     sh('phpstan analyze -c phpstan.neon -l 7 src', null, ['failOnError' => true]);
     println('Phpstan analysis passed');
+});
+
+desc('Run php code sniffer');
+task('sniff', function() {
+    sh('phpcs src --standard=PSR2 --ignore=src/DependencyInjection/ProjectServiceContainer.php', null, ['failOnError' => true]);
+    println('Syntax checker on src/ passed');
+    sh('phpcs spec --standard=spec/ruleset.xml', null, ['failOnError' => true]);
+    println('Syntax checker on spec/ passed');
 });
 
 desc('Build dependency injection container');
@@ -85,6 +91,7 @@ task('install_dev_tools', function() {
     sh('composer global require consolidation/cgr', null, ['failOnError' => true]);
     sh('cgr phpspec/phpspec', null, ['failOnError' => true]);
     sh('cgr behat/behat', null, ['failOnError' => true]);
-    sh('cgr squizlabs/php_codesniffer', null, ['failOnError' => true]);
+    sh('cgr hanneskod/readme-tester:^1.0@beta', null, ['failOnError' => true]);
     sh('cgr phpstan/phpstan', null, ['failOnError' => true]);
+    sh('cgr squizlabs/php_codesniffer', null, ['failOnError' => true]);
 });
