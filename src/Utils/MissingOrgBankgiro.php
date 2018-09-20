@@ -28,29 +28,26 @@ use byrokrat\banking\Formatter\FormatterInterface;
 
 class MissingOrgBankgiro implements AccountNumber
 {
-    private function throwException(): void
-    {
-        throw new InvalidSettingException('Missing or invalid organization bankgiro account number');
-    }
+    private const MESSAGE = 'Missing or invalid organization bankgiro account number';
 
     public function getBankName(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getRawNumber(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function format(FormatterInterface $formatter): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getNumber(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function __toString(): string
@@ -60,36 +57,36 @@ class MissingOrgBankgiro implements AccountNumber
 
     public function prettyprint(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function get16(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getClearingNumber(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getClearingCheckDigit(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getSerialNumber(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getCheckDigit(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function equals(AccountNumber $account, bool $strict = false): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 }

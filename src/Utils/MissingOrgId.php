@@ -27,128 +27,125 @@ use byrokrat\id\IdInterface;
 
 class MissingOrgId implements IdInterface
 {
-    private function throwException(): void
-    {
-        throw new InvalidSettingException('Missing or invalid organization id number');
-    }
+    private const MESSAGE = 'Missing or invalid organization id number';
 
     public function getId(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function __tostring(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function format(string $format): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getSerialPreDelimiter(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getSerialPostDelimiter(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getDelimiter(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getCheckDigit(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getBirthDate(): \DateTimeImmutable
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getAge(\DateTimeInterface $atDate = null): int
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getCentury(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getSex(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isMale(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isFemale(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isSexOther(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isSexUndefined(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getBirthCounty(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function getLegalForm(): string
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isLegalFormUndefined(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isStateOrParish(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isIncorporated(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isPartnership(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isAssociation(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isNonProfit(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 
     public function isTradingCompany(): bool
     {
-        $this->throwException();
+        throw new InvalidSettingException(self::MESSAGE);
     }
 }
