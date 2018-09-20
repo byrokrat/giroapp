@@ -22,15 +22,26 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
+use byrokrat\giroapp\Events;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+
 /**
  * Capture application exit status
  */
-class ExitStatusListener
+class ExitStatusSubscriber implements EventSubscriberInterface
 {
     /**
      * @var integer
      */
     private $status = 0;
+
+    public static function getSubscribedEvents()
+    {
+        return [
+            Events::ERROR => 'onFailure',
+            Events::WARNING => 'onFailure',
+        ];
+    }
 
     public function getExitStatus(): int
     {

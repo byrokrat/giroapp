@@ -4,15 +4,15 @@
 
 > Plugins behöver laddas innan commands skapas..
 
-1. [DONE] Output och Input till CommandInterface::execute.
+1. [DONE] Output och Input till CommandInterface::execute
 
-2. [DONE] OutputProperty och InputProperty bort.
+2. [DONE] OutputProperty och InputProperty bort
 
 3. [DONE] Enable bootstrap with empty organization data
 
-4. CommandInterface::configure() ej vara static.
+4. [DONE] CommandInterface::configure() no longer static
 
-5. Kanske kan lazy-loading från di kan göra att detta inte påverkar hastigheten för mycket...
+5. Lazy-loading commands
 
 6. Sedan följer hur plugins ska laddas.
 

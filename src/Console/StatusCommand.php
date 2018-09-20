@@ -36,7 +36,7 @@ final class StatusCommand implements CommandInterface
 {
     use DonorMapperProperty;
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('status');
         $wrapper->setDescription('Show current status');

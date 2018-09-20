@@ -22,33 +22,38 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Listener\OutputtingSubscriber;
+use byrokrat\giroapp\Listener\ExitStatusSubscriber;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-/**
- * Manage the container and execute command
- */
 final class CommandWrapper extends Command
 {
     /**
-     * @var string
+     * @var CommandInterface
      */
-    private $commandClass;
+    private $command;
 
-    public function __construct(string $commandClass)
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $dispatcher;
+
+    public function __construct(CommandInterface $command, EventDispatcherInterface $dispatcher)
     {
-        $this->commandClass = $commandClass;
+        $this->command = $command;
+        $this->dispatcher = $dispatcher;
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->commandClass::configure($this);
+        $this->command->configure($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -57,19 +62,30 @@ final class CommandWrapper extends Command
             throw new \InvalidArgumentException('Output must implement ConsoleOutputInterface');
         }
 
-        $container = new ProjectServiceContainer;
+        $exitStatus = new ExitStatusSubscriber;
 
-        /** @var EventDispatcherInterface $dispatcher */
-        $dispatcher = $container->get(EventDispatcherInterface::CLASS);
+        $this->dispatcher->addSubscriber($exitStatus);
 
-        $dispatcher->addSubscriber(new OutputtingSubscriber($output, $output->getErrorOutput()));
+        $this->dispatcher->addSubscriber(new OutputtingSubscriber($output, $output->getErrorOutput()));
 
-        /** @var CommandInterface $command */
-        $command = $container->get($this->commandClass);
+        try {
+            $this->dispatcher->dispatch(Events::EXECUTION_STARTED, new LogEvent('Execution started'));
+            $this->command->execute($input, $output);
+            $this->dispatcher->dispatch(Events::EXECUTION_STOPED, new LogEvent('Execution successful'));
+        } catch (\Exception $e) {
+            $this->dispatcher->dispatch(
+                Events::ERROR,
+                new LogEvent(
+                    "[EXCEPTION] {$e->getMessage()}",
+                    [
+                        'class' => get_class($e),
+                        'file' => $e->getFile(),
+                        'line' => $e->getLine()
+                    ]
+                )
+            );
+        }
 
-        /** @var CommandRunner $runner */
-        $runner = $container->get(CommandRunner::CLASS);
-
-        return $runner->run($command, $input, $output);
+        return $exitStatus->getExitStatus();
     }
 }

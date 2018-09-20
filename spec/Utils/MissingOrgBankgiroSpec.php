@@ -29,7 +29,6 @@ class MissingOrgBankgiroSpec extends ObjectBehavior
         $this->shouldThrow(InvalidSettingException::CLASS)->during('getRawNumber');
         $this->shouldThrow(InvalidSettingException::CLASS)->during('format', [$formatter]);
         $this->shouldThrow(InvalidSettingException::CLASS)->during('getNumber');
-        $this->shouldThrow(InvalidSettingException::CLASS)->during('__toString');
         $this->shouldThrow(InvalidSettingException::CLASS)->during('prettyprint');
         $this->shouldThrow(InvalidSettingException::CLASS)->during('get16');
         $this->shouldThrow(InvalidSettingException::CLASS)->during('getClearingNumber');
@@ -37,5 +36,10 @@ class MissingOrgBankgiroSpec extends ObjectBehavior
         $this->shouldThrow(InvalidSettingException::CLASS)->during('getSerialNumber');
         $this->shouldThrow(InvalidSettingException::CLASS)->during('getCheckDigit');
         $this->shouldThrow(InvalidSettingException::CLASS)->during('equals', [$account, false]);
+    }
+
+    function it_has_a_string_representations()
+    {
+        $this->__toString()->shouldReturn('');
     }
 }

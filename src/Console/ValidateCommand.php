@@ -59,7 +59,7 @@ final class ValidateCommand implements CommandInterface
         $this->validator = $validator;
     }
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('validate');
         $wrapper->setDescription('Validate database schema');

@@ -57,7 +57,7 @@ final class EditCommand implements CommandInterface
         'comment' => 'Comment'
     ];
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(CommandWrapper $wrapper): void
     {
         self::configureDonorArgument($wrapper);
         $wrapper->setName('edit');

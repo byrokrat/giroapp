@@ -31,7 +31,7 @@ services:
     byrokrat\giroapp\Console\Helper\Validators:
         class: ~
         arguments:
-            $bankgiroFactory: '@byrokrat\giroapp\Utils\OrgBankgiroFactory'
+            $bankgiroFactory: '@byrokrat\banking\BankgiroFactory'
 
     byrokrat\giroapp\Filter\:
         resource: '../src/Filter/*'

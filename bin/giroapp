@@ -25,23 +25,29 @@ namespace byrokrat\giroapp\Console;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
 use Symfony\Component\Console\Application;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 $version = trim(file_get_contents(__DIR__ . '/../version'));
 
 $app = new Application('GiroApp', $version);
 
-$app->add(new CommandWrapper(AddCommand::CLASS));
-$app->add(new CommandWrapper(EditCommand::CLASS));
-$app->add(new CommandWrapper(ExportCommand::CLASS));
-$app->add(new CommandWrapper(ImportCommand::CLASS));
-$app->add(new CommandWrapper(InitCommand::CLASS));
-$app->add(new CommandWrapper(LsCommand::CLASS));
-$app->add(new CommandWrapper(MigrateCommand::CLASS));
-$app->add(new CommandWrapper(RemoveCommand::CLASS));
-$app->add(new CommandWrapper(RevokeCommand::CLASS));
-$app->add(new CommandWrapper(ShowCommand::CLASS));
-$app->add(new CommandWrapper(StatusCommand::CLASS));
-$app->add(new CommandWrapper(ValidateCommand::CLASS));
+$container = new ProjectServiceContainer;
+
+$dispatcher = $container->get(EventDispatcherInterface::CLASS);
+
+$app->add(new CommandWrapper($container->get(AddCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(EditCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(ExportCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(ImportCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(InitCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(LsCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(MigrateCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(RemoveCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(RevokeCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(ShowCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(StatusCommand::CLASS), $dispatcher));
+$app->add(new CommandWrapper($container->get(ValidateCommand::CLASS), $dispatcher));
 
 $app->run();

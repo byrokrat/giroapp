@@ -47,7 +47,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\ShowCommand' => 'getShowCommandService',
             'byrokrat\\giroapp\\Console\\StatusCommand' => 'getStatusCommandService',
             'byrokrat\\giroapp\\Console\\ValidateCommand' => 'getValidateCommandService',
-            'byrokrat\\giroapp\\Listener\\ExitStatusListener' => 'getExitStatusListenerService',
             'db_settings_mapper' => 'getDbSettingsMapperService',
         );
 
@@ -215,12 +214,6 @@ class ProjectServiceContainer extends Container
         $instance->addListener('INFO', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
         }, 1 => 'onLogEvent'), 10);
-        $instance->addListener('ERROR', array(0 => function () {
-            return ($this->services['byrokrat\giroapp\Listener\ExitStatusListener'] ?? $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] = new \byrokrat\giroapp\Listener\ExitStatusListener());
-        }, 1 => 'onFailure'));
-        $instance->addListener('WARNING', array(0 => function () {
-            return ($this->services['byrokrat\giroapp\Listener\ExitStatusListener'] ?? $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] = new \byrokrat\giroapp\Listener\ExitStatusListener());
-        }, 1 => 'onFailure'));
         $instance->addListener('FILE_IMPORTED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\FileImportChecksumListener'] ?? $this->getFileImportChecksumListenerService());
         }, 1 => 'onFILEIMPORTED'), 10);
@@ -299,7 +292,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getCommandRunnerService()
     {
-        return $this->services['byrokrat\giroapp\Console\CommandRunner'] = new \byrokrat\giroapp\Console\CommandRunner(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()), ($this->services['byrokrat\giroapp\Listener\ExitStatusListener'] ?? $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] = new \byrokrat\giroapp\Listener\ExitStatusListener()));
+        return $this->services['byrokrat\giroapp\Console\CommandRunner'] = new \byrokrat\giroapp\Console\CommandRunner(($this->services['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
     }
 
     /**
@@ -472,16 +465,6 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the public 'byrokrat\giroapp\Listener\ExitStatusListener' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Listener\ExitStatusListener
-     */
-    protected function getExitStatusListenerService()
-    {
-        return $this->services['byrokrat\giroapp\Listener\ExitStatusListener'] = new \byrokrat\giroapp\Listener\ExitStatusListener();
-    }
-
-    /**
      * Gets the public 'db_settings_mapper' shared autowired service.
      *
      * @return \byrokrat\giroapp\Mapper\SettingsMapper
@@ -508,7 +491,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getValidatorsService()
     {
-        return $this->privates['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), ($this->privates['byrokrat\giroapp\Utils\OrgBankgiroFactory'] ?? $this->getOrgBankgiroFactoryService()), ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
+        return $this->privates['byrokrat\giroapp\Console\Helper\Validators'] = new \byrokrat\giroapp\Console\Helper\Validators(($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), ($this->privates['byrokrat\banking\BankgiroFactory'] ?? $this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory()), ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
     }
 
     /**
@@ -627,16 +610,6 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'byrokrat\giroapp\Utils\OrgBankgiroFactory' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Utils\OrgBankgiroFactory
-     */
-    protected function getOrgBankgiroFactoryService()
-    {
-        return $this->privates['byrokrat\giroapp\Utils\OrgBankgiroFactory'] = new \byrokrat\giroapp\Utils\OrgBankgiroFactory(new \byrokrat\banking\BankgiroFactory());
-    }
-
-    /**
      * Gets the private 'byrokrat\id\IdFactoryInterface' shared service.
      *
      * @return \byrokrat\id\PersonalIdFactory
@@ -747,7 +720,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getOrganizationBgService()
     {
-        return $this->privates['organization_bg'] = ($this->privates['byrokrat\giroapp\Utils\OrgBankgiroFactory'] ?? $this->getOrgBankgiroFactoryService())->createAccount(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bankgiro"));
+        return $this->privates['organization_bg'] = (new \byrokrat\giroapp\Utils\OrgBankgiroFactory(($this->privates['byrokrat\banking\BankgiroFactory'] ?? $this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory())))->createAccount(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bankgiro"));
     }
 
     public function getParameter($name)

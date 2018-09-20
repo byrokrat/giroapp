@@ -37,7 +37,7 @@ final class RemoveCommand implements CommandInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('remove');
         $wrapper->setDescription('Remove a donor');

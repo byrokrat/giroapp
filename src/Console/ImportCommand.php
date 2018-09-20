@@ -56,7 +56,7 @@ final class ImportCommand implements CommandInterface
         $this->stdin = $stdin ?: new Stream(STDIN);
     }
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('import');
         $wrapper->setDescription('Import a file from autogirot');

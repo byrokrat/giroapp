@@ -36,7 +36,7 @@ final class MigrateCommand implements CommandInterface
 {
     use DispatcherProperty, DonorMapperProperty;
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('migrate');
         $wrapper->setDescription('Update database schema');

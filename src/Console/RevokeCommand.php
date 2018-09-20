@@ -36,7 +36,7 @@ final class RevokeCommand implements CommandInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('revoke');
         $wrapper->setDescription('Revoke a donor mandate');

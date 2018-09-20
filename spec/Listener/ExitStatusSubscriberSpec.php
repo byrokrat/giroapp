@@ -4,15 +4,21 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Listener\ExitStatusListener;
+use byrokrat\giroapp\Listener\ExitStatusSubscriber;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class ExitStatusListenerSpec extends ObjectBehavior
+class ExitStatusSubscriberSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(ExitStatusListener::CLASS);
+        $this->shouldHaveType(ExitStatusSubscriber::CLASS);
+    }
+
+    function it_is_a_subsriber()
+    {
+        $this->shouldHaveType(EventSubscriberInterface::CLASS);
     }
 
     function it_defaults_to_status_zero()

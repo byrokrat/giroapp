@@ -51,7 +51,7 @@ final class InitCommand implements CommandInterface
         'bankgiro' => ['bankgiro', 'Bankgiro number']
     ];
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('init');
         $wrapper->setDescription('Initialize the database');

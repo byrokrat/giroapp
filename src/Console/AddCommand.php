@@ -71,7 +71,7 @@ final class AddCommand implements CommandInterface
         $this->donorBuilder = $donorBuilder;
     }
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(CommandWrapper $wrapper): void
     {
         $wrapper->setName('add');
         $wrapper->setDescription('Add a new donor');

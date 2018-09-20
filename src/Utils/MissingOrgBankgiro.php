@@ -55,7 +55,7 @@ class MissingOrgBankgiro implements AccountNumber
 
     public function __toString(): string
     {
-        $this->throwException();
+        return '';
     }
 
     public function prettyprint(): string
