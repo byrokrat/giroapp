@@ -58,10 +58,7 @@ services:
         class: ~
         arguments: ['@organization_id', '@organization_bg']
 
-    byrokrat\giroapp\Xml\CustomdataTranslator: ~
-
-    byrokrat\giroapp\Xml\XmlMandateMigrationInterface:
-        class: byrokrat\giroapp\Xml\NullXmlMandateMigration
+    byrokrat\giroapp\Xml\FormTranslator: ~
 
     byrokrat\giroapp\AutogiroVisitor:
         class: ~

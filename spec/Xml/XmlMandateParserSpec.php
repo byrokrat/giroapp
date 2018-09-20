@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp\Xml;
 
 use byrokrat\giroapp\Xml\XmlMandateParser;
 use byrokrat\giroapp\Xml\XmlObject;
-use byrokrat\giroapp\Xml\CustomdataTranslator;
+use byrokrat\giroapp\Xml\FormTranslator;
 use byrokrat\giroapp\Builder\DonorBuilder;
 use byrokrat\giroapp\Exception\InvalidXmlException;
 use byrokrat\giroapp\Model\Donor;
@@ -29,7 +29,7 @@ class XmlMandateParserSpec extends ObjectBehavior
         OrganizationId $payeeOrgNr,
         AccountNumber $payeeBankgiro,
         DonorBuilder $builder,
-        CustomdataTranslator $translator,
+        FormTranslator $translator,
         AccountFactoryInterface $accountFactory,
         IdFactoryInterface $idFactory,
         XmlObject $xmlRoot,

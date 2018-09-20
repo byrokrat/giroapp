@@ -18,17 +18,40 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
 namespace byrokrat\giroapp\Xml;
 
 /**
- * An empty (null object) mandate migration map
+ * Defines the semantic content of custom data fields in xml mandates
  */
-class NullXmlMandateMigration implements XmlMandateMigrationInterface
+interface XmlFormInterface
 {
-    public function getXmlMigrationMap(string $formId): array
-    {
-        return [];
-    }
+    /**
+     * Indicator that a field contains a phone number
+     */
+    const PHONE = 'PHONE';
+
+    /**
+     * Indicator that a field contains an email address
+     */
+    const EMAIL = 'EMAIL';
+
+    /**
+     * Indicator that a field contains amount to be donated monthly
+     */
+    const DONATION_AMOUNT = 'DONATION_AMOUNT';
+
+    /**
+     * Indicator that a field contains a comment
+     */
+    const COMMENT = 'COMMENT';
+
+    /**
+     * Get name of this form
+     */
+    public function getName(): string;
+
+    /**
+     * Get a map of data field names to action or semantic constant
+     */
+    public function getTranslations(): array;
 }

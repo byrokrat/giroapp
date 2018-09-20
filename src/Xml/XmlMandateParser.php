@@ -53,7 +53,7 @@ class XmlMandateParser
     private $donorBuilder;
 
     /**
-     * @var CustomdataTranslator
+     * @var FormTranslator
      */
     private $translator;
 
@@ -71,7 +71,7 @@ class XmlMandateParser
         OrganizationId $payeeOrgNr,
         AccountNumber $payeeBankgiro,
         DonorBuilder $donorBuilder,
-        CustomdataTranslator $translator,
+        FormTranslator $translator,
         AccountFactoryInterface $accountFactory,
         IdFactoryInterface $idFactory
     ) {

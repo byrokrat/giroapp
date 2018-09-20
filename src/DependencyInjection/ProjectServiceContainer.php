@@ -132,8 +132,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Utils\\OrgBankgiroFactory' => true,
             'byrokrat\\giroapp\\Utils\\OrgIdFactory' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
-            'byrokrat\\giroapp\\Xml\\CustomdataTranslator' => true,
-            'byrokrat\\giroapp\\Xml\\XmlMandateMigrationInterface' => true,
+            'byrokrat\\giroapp\\Xml\\FormTranslator' => true,
             'byrokrat\\giroapp\\Xml\\XmlMandateParser' => true,
             'byrokrat\\id\\IdFactoryInterface' => true,
             'byrokrat\\id\\OrganizationIdFactory' => true,
@@ -555,7 +554,7 @@ class ProjectServiceContainer extends Container
     {
         $a = ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService());
 
-        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser((new \byrokrat\giroapp\Utils\OrgIdFactory($a))->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), new \byrokrat\giroapp\Xml\CustomdataTranslator(new \byrokrat\giroapp\Xml\NullXmlMandateMigration()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
+        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser((new \byrokrat\giroapp\Utils\OrgIdFactory($a))->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), new \byrokrat\giroapp\Xml\FormTranslator(), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
     }
 
     /**

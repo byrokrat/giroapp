@@ -23,8 +23,8 @@ namespace byrokrat\giroapp\Exception;
 use byrokrat\giroapp\Exception as AppException;
 
 /**
- * Exception thrown when an xml mandate migration map contains an invalid value
+ * Exception thrown when an xml form specification contains an invalid value
  */
-class InvalidXmlMandateMigrationException extends \RuntimeException implements AppException
+class InvalidXmlFormException extends \RuntimeException implements AppException
 {
 }

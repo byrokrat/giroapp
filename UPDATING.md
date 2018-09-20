@@ -7,3 +7,5 @@
 
 * Fix bug #145. Now able to import files outside of current working directory.
 * Export no longer writes to stdout, it generates files instead.
+* Renaming in the `Xml` namespace.
+* You now need to create one `XmlFormInterface` object for each supporten xml form.

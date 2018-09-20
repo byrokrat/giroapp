@@ -23,31 +23,31 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Xml;
 
 use byrokrat\giroapp\Builder\DonorBuilder;
-use byrokrat\giroapp\Exception\InvalidXmlMandateMigrationException;
+use byrokrat\giroapp\Exception\InvalidXmlFormException;
 use byrokrat\amount\Currency\SEK;
 
 /**
- * Write data to donor builder based on xml mandate migration map
+ * Write data to donor builder based on form translations
  */
-class CustomdataTranslator
+class FormTranslator
 {
     /**
-     * @var XmlMandateMigrationInterface
+     * @var XmlFormInterface[]
      */
-    private $migrationMap;
+    private $xmlForms = [];
 
     /**
-     * @var array Collection of created migration maps
+     * @var array
      */
     private $createdMaps = [];
 
-    public function __construct(XmlMandateMigrationInterface $migrationMap)
+    public function addXmlForm(XmlFormInterface $xmlForm)
     {
-        $this->migrationMap = $migrationMap;
+        $this->xmlForms[] = $xmlForm;
     }
 
     /**
-     * Write value to donorBuilder using migration map as translation key
+     * Write translated value to donorBuilder
      */
     public function writeValue(DonorBuilder $donorBuilder, string $formId, string $key, string $value): void
     {
@@ -70,41 +70,49 @@ class CustomdataTranslator
     }
 
     /**
-     * @throws InvalidXmlMandateMigrationException if migration map contains invalid value
+     * @throws InvalidXmlFormException if map contains invalid value
      */
     private function buildMap(string $formId): array
     {
         $map = [];
+        $translations = [];
 
-        foreach ($this->migrationMap->getXmlMigrationMap($formId) as $key => $value) {
+        foreach ($this->xmlForms as $xmlForm) {
+            if ($xmlForm->getName() == $formId) {
+                $translations = $xmlForm->getTranslations();
+                break;
+            }
+        }
+
+        foreach ($translations as $key => $value) {
             if (is_callable($value)) {
                 $map[$key] = $value;
                 continue;
             }
 
             switch ($value) {
-                case XmlMandateMigrationInterface::PHONE:
+                case XmlFormInterface::PHONE:
                     $map[$key] = function ($donorBuilder, $value) {
                         $donorBuilder->setPhone($value);
                     };
                     break;
-                case XmlMandateMigrationInterface::EMAIL:
+                case XmlFormInterface::EMAIL:
                     $map[$key] = function ($donorBuilder, $value) {
                         $donorBuilder->setEmail($value);
                     };
                     break;
-                case XmlMandateMigrationInterface::DONATION_AMOUNT:
+                case XmlFormInterface::DONATION_AMOUNT:
                     $map[$key] = function ($donorBuilder, $value) {
                         $donorBuilder->setDonationAmount(new SEK($value));
                     };
                     break;
-                case XmlMandateMigrationInterface::COMMENT:
+                case XmlFormInterface::COMMENT:
                     $map[$key] = function ($donorBuilder, $value) {
                         $donorBuilder->setComment($value);
                     };
                     break;
                 default:
-                    throw new InvalidXmlMandateMigrationException("Invalid migration for key $key");
+                    throw new InvalidXmlFormException("Invalid translation for key $key");
             }
         }
 
