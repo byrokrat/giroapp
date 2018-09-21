@@ -23,21 +23,22 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\DependencyInjection\InputProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Utils\Filesystem;
 use byrokrat\giroapp\Utils\File;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Streamer\Stream;
 
 /**
  * Command to import a file from autogirot
  */
-class ImportCommand implements CommandInterface
+final class ImportCommand implements CommandInterface
 {
-    use DispatcherProperty, InputProperty;
+    use DispatcherProperty;
 
     /**
      * @var Filesystem
@@ -49,13 +50,13 @@ class ImportCommand implements CommandInterface
      */
     private $stdin;
 
-    public function __construct(Filesystem $filesystem, Stream $stdin)
+    public function __construct(Filesystem $filesystem, Stream $stdin = null)
     {
         $this->filesystem = $filesystem;
-        $this->stdin = $stdin;
+        $this->stdin = $stdin ?: new Stream(STDIN);
     }
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('import');
         $wrapper->setDescription('Import a file from autogirot');
@@ -64,14 +65,14 @@ class ImportCommand implements CommandInterface
         $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import even if a pre-condition fails.');
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $file = ($filename = $this->input->getArgument('filename'))
+        $file = ($filename = $input->getArgument('filename'))
             ? $this->filesystem->readFile($filename)
             : new File('STDIN', $this->stdin->getContent());
 
         $this->dispatcher->dispatch(
-            $this->input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
+            $input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
             new FileEvent(
                 "Importing file <info>{$file->getFilename()}</info>",
                 $file

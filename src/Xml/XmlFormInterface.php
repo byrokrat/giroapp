@@ -23,7 +23,7 @@ namespace byrokrat\giroapp\Xml;
 /**
  * Defines the semantic content of custom data fields in xml mandates
  */
-interface XmlMandateMigrationInterface
+interface XmlFormInterface
 {
     /**
      * Indicator that a field contains a phone number
@@ -46,9 +46,12 @@ interface XmlMandateMigrationInterface
     const COMMENT = 'COMMENT';
 
     /**
-     * Get a map of custom data field names to action or semantic constant
-     *
-     * @param string $formId Id of the form to map
+     * Get name of this form
      */
-    public function getXmlMigrationMap(string $formId): array;
+    public function getName(): string;
+
+    /**
+     * Get a map of data field names to action or semantic constant
+     */
+    public function getTranslations(): array;
 }

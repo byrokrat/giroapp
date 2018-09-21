@@ -18,17 +18,13 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Exception;
 
-namespace byrokrat\giroapp\Xml;
+use byrokrat\giroapp\Exception as AppException;
 
 /**
- * An empty (null object) mandate migration map
+ * Exception thrown when a plugin is broken
  */
-class NullXmlMandateMigration implements XmlMandateMigrationInterface
+class InvalidPluginException extends \RuntimeException implements AppException
 {
-    public function getXmlMigrationMap(string $formId): array
-    {
-        return [];
-    }
 }

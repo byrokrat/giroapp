@@ -4,7 +4,7 @@
     "keywords": ["autogiro"],
     "homepage": "https://github.com/byrokrat/giroapp",
     "type": "project",
-    "license": "GPL-3.0",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Hannes Forsgård",
@@ -30,7 +30,6 @@
         "byrokrat/banking": "^2.1",
         "byrokrat/id": "^2.0",
         "hanneskod/yaysondb": "^2.1.2",
-        "hanneskod/classtools": "^1.1",
         "hanneskod/clean" :"^2",
         "symfony/dependency-injection": "^4",
         "symfony/console": "^4",

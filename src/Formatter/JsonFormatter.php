@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Output donors as json collection
  */
-class JsonFormatter implements FormatterInterface
+final class JsonFormatter implements FormatterInterface
 {
     /**
      * @var OutputInterface

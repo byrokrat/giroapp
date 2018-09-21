@@ -20,39 +20,30 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DependencyInjection;
+namespace byrokrat\giroapp\Utils;
 
-use byrokrat\giroapp\Console\Helper\InputReader;
-use byrokrat\giroapp\Console\Helper\QuestionFactory;
+use byrokrat\banking\AccountFactoryInterface;
+use byrokrat\banking\AccountNumber;
+use byrokrat\banking\Exception\InvalidAccountNumberException;
 
-/**
- * Use this trait to automatically inject dependencies for reading user input
- */
-trait InputReaderProperty
+class OrgBankgiroFactory implements AccountFactoryInterface
 {
     /**
-     * @var InputReader
+     * @var AccountFactoryInterface
      */
-    protected $inputReader;
+    private $decorated;
 
-    /**
-     * @var QuestionFactory
-     */
-    protected $questionFactory;
-
-    /**
-     * @required
-     */
-    public function setInputReader(InputReader $inputReader): void
+    public function __construct(AccountFactoryInterface $decorated)
     {
-        $this->inputReader = $inputReader;
+        $this->decorated = $decorated;
     }
 
-    /**
-     * @required
-     */
-    public function setQuestionFactory(QuestionFactory $questionFactory): void
+    public function createAccount(string $number): AccountNumber
     {
-        $this->questionFactory = $questionFactory;
+        try {
+            return $this->decorated->createAccount($number);
+        } catch (InvalidAccountNumberException $e) {
+            return new MissingOrgBankgiro;
+        }
     }
 }

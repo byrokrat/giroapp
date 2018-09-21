@@ -24,35 +24,53 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Listener\ExitStatusListener;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
+use byrokrat\giroapp\Listener\OutputtingSubscriber;
+use byrokrat\giroapp\Listener\ExitStatusSubscriber;
+use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\ConsoleOutputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-/**
- * Command running logic
- */
-class CommandRunner
+final class Adapter extends SymfonyCommand
 {
     /**
-     * @var Dispatcher
+     * @var CommandInterface
+     */
+    private $command;
+
+    /**
+     * @var EventDispatcherInterface
      */
     private $dispatcher;
 
-    /**
-     * @var ExitStatusListener
-     */
-    private $exitStatusListener;
-
-    public function __construct(Dispatcher $dispatcher, ExitStatusListener $exitStatusListener)
+    public function __construct(CommandInterface $command, EventDispatcherInterface $dispatcher)
     {
+        $this->command = $command;
         $this->dispatcher = $dispatcher;
-        $this->exitStatusListener = $exitStatusListener;
+        parent::__construct();
     }
 
-    public function run(CommandInterface $command): int
+    protected function configure(): void
     {
+        $this->command->configure($this);
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        if (!$output instanceof ConsoleOutputInterface) {
+            throw new \InvalidArgumentException('Output must implement ConsoleOutputInterface');
+        }
+
+        $exitStatus = new ExitStatusSubscriber;
+
+        $this->dispatcher->addSubscriber($exitStatus);
+
+        $this->dispatcher->addSubscriber(new OutputtingSubscriber($output, $output->getErrorOutput()));
+
         try {
             $this->dispatcher->dispatch(Events::EXECUTION_STARTED, new LogEvent('Execution started'));
-            $command->execute();
+            $this->command->execute($input, $output);
             $this->dispatcher->dispatch(Events::EXECUTION_STOPED, new LogEvent('Execution successful'));
         } catch (\Exception $e) {
             $this->dispatcher->dispatch(
@@ -68,6 +86,6 @@ class CommandRunner
             );
         }
 
-        return $this->exitStatusListener->getExitStatus();
+        return $exitStatus->getExitStatus();
     }
 }

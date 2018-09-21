@@ -18,13 +18,32 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\Exception;
+declare(strict_types = 1);
 
-use byrokrat\giroapp\Exception as AppException;
+namespace byrokrat\giroapp\Utils;
 
-/**
- * Exception thrown when an xml mandate migration map contains an invalid value
- */
-class InvalidXmlMandateMigrationException extends \RuntimeException implements AppException
+use byrokrat\id\IdFactoryInterface;
+use byrokrat\id\IdInterface;
+use byrokrat\id\Exception\UnableToCreateIdException;
+
+class OrgIdFactory implements IdFactoryInterface
 {
+    /**
+     * @var IdFactoryInterface
+     */
+    private $decorated;
+
+    public function __construct(IdFactoryInterface $decorated)
+    {
+        $this->decorated = $decorated;
+    }
+
+    public function createId(string $number): IdInterface
+    {
+        try {
+            return $this->decorated->createId($number);
+        } catch (UnableToCreateIdException $e) {
+            return new MissingOrgId;
+        }
+    }
 }

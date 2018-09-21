@@ -25,23 +25,25 @@ namespace byrokrat\giroapp\Console;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
+use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use Symfony\Component\Console\Application;
 
-$version = trim(file_get_contents(__DIR__ . '/../version'));
+$container = new ProjectServiceContainer;
 
-$app = new Application('GiroApp', $version);
+$env = $container->get(EnvironmentInterface::CLASS);
 
-$app->add(new CommandWrapper(AddCommand::CLASS));
-$app->add(new CommandWrapper(EditCommand::CLASS));
-$app->add(new CommandWrapper(ExportCommand::CLASS));
-$app->add(new CommandWrapper(ImportCommand::CLASS));
-$app->add(new CommandWrapper(InitCommand::CLASS));
-$app->add(new CommandWrapper(LsCommand::CLASS));
-$app->add(new CommandWrapper(MigrateCommand::CLASS));
-$app->add(new CommandWrapper(RemoveCommand::CLASS));
-$app->add(new CommandWrapper(RevokeCommand::CLASS));
-$app->add(new CommandWrapper(ShowCommand::CLASS));
-$app->add(new CommandWrapper(StatusCommand::CLASS));
-$app->add(new CommandWrapper(ValidateCommand::CLASS));
+$env->registerCommand($container->get(AddCommand::CLASS));
+$env->registerCommand($container->get(EditCommand::CLASS));
+$env->registerCommand($container->get(ExportCommand::CLASS));
+$env->registerCommand($container->get(ImportCommand::CLASS));
+$env->registerCommand($container->get(InitCommand::CLASS));
+$env->registerCommand($container->get(LsCommand::CLASS));
+$env->registerCommand($container->get(MigrateCommand::CLASS));
+$env->registerCommand($container->get(RemoveCommand::CLASS));
+$env->registerCommand($container->get(RevokeCommand::CLASS));
+$env->registerCommand($container->get(ShowCommand::CLASS));
+$env->registerCommand($container->get(StatusCommand::CLASS));
+$env->registerCommand($container->get(ValidateCommand::CLASS));
 
-$app->run();
+$container->get(Application::CLASS)->run();

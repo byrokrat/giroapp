@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp\Xml;
 
 use byrokrat\giroapp\Xml\XmlMandateParser;
 use byrokrat\giroapp\Xml\XmlObject;
-use byrokrat\giroapp\Xml\CustomdataTranslator;
+use byrokrat\giroapp\Xml\XmlFormTranslator;
 use byrokrat\giroapp\Builder\DonorBuilder;
 use byrokrat\giroapp\Exception\InvalidXmlException;
 use byrokrat\giroapp\Model\Donor;
@@ -14,7 +14,6 @@ use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
-use byrokrat\banking\Bankgiro;
 use byrokrat\id\IdInterface;
 use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\OrganizationId;
@@ -28,9 +27,9 @@ class XmlMandateParserSpec extends ObjectBehavior
 
     function let(
         OrganizationId $payeeOrgNr,
-        Bankgiro $payeeBankgiro,
+        AccountNumber $payeeBankgiro,
         DonorBuilder $builder,
-        CustomdataTranslator $translator,
+        XmlFormTranslator $translator,
         AccountFactoryInterface $accountFactory,
         IdFactoryInterface $idFactory,
         XmlObject $xmlRoot,

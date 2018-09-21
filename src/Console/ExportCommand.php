@@ -29,17 +29,19 @@ use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\Utils\File;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to create autogiro files
  */
-class ExportCommand implements CommandInterface
+final class ExportCommand implements CommandInterface
 {
     use DonorMapperProperty, DispatcherProperty;
 
     /**
-     * @var Writer
+     * @var WriterInterface
      */
     private $autogiroWriter;
 
@@ -48,20 +50,20 @@ class ExportCommand implements CommandInterface
      */
     private $statePool;
 
-    public function __construct(Writer $autogiroWriter, StatePool $statePool)
+    public function __construct(WriterInterface $autogiroWriter, StatePool $statePool)
     {
         $this->autogiroWriter = $autogiroWriter;
         $this->statePool = $statePool;
     }
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('export');
         $wrapper->setDescription('Export a file to autogirot');
         $wrapper->setHelp('Create a file with new set of autogiro instructions');
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $exported = false;
 

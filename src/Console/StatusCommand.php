@@ -23,20 +23,20 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
-use byrokrat\giroapp\DependencyInjection\InputProperty;
-use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use byrokrat\giroapp\States;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to display database status
  */
-class StatusCommand implements CommandInterface
+final class StatusCommand implements CommandInterface
 {
-    use DonorMapperProperty, InputProperty, OutputProperty;
+    use DonorMapperProperty;
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('status');
         $wrapper->setDescription('Show current status');
@@ -47,7 +47,7 @@ class StatusCommand implements CommandInterface
         $wrapper->addOption('monthly-amount', null, InputOption::VALUE_NONE, 'Show only monthly amount');
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $counts = [
             'donor-count' => 0,
@@ -72,16 +72,16 @@ class StatusCommand implements CommandInterface
         $counts['monthly-amount'] = $counts['monthly-amount']->getString(0);
 
         foreach (array_keys($counts) as $key) {
-            if ($this->input->getOption($key)) {
-                $this->output->writeln($counts[$key]);
+            if ($input->getOption($key)) {
+                $output->writeln($counts[$key]);
                 return;
             }
         }
 
-        $this->output->writeln("Donors: {$counts['donor-count']}");
-        $this->output->writeln("Active: {$counts['active-donor-count']}");
+        $output->writeln("Donors: {$counts['donor-count']}");
+        $output->writeln("Active: {$counts['active-donor-count']}");
         $highlight = $counts['exportable-count'] ? 'error' : 'info';
-        $this->output->writeln("<$highlight>Exportables: {$counts['exportable-count']}</$highlight>");
-        $this->output->writeln("Monthly amount: {$counts['monthly-amount']}");
+        $output->writeln("<$highlight>Exportables: {$counts['exportable-count']}</$highlight>");
+        $output->writeln("Monthly amount: {$counts['monthly-amount']}");
     }
 }

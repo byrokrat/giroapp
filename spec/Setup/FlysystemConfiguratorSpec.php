@@ -4,17 +4,17 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Setup;
 
-use byrokrat\giroapp\Setup\FilesystemConfigurator;
+use byrokrat\giroapp\Setup\FlysystemConfigurator;
 use League\Flysystem\Filesystem;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class FilesystemConfiguratorSpec extends ObjectBehavior
+class FlysystemConfiguratorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
         $this->beConstructedWith([], []);
-        $this->shouldHaveType(FilesystemConfigurator::CLASS);
+        $this->shouldHaveType(FlysystemConfigurator::CLASS);
     }
 
     function it_creates_files(Filesystem $filesystem)

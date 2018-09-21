@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Output donors as comma separated values
  */
-class CsvFormatter implements FormatterInterface
+final class CsvFormatter implements FormatterInterface
 {
     /**
      * @var OutputInterface

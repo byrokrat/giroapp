@@ -27,28 +27,30 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Event\DonorEvent;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to completely remove a donor
  */
-class RemoveCommand implements CommandInterface
+final class RemoveCommand implements CommandInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('remove');
         $wrapper->setDescription('Remove a donor');
         $wrapper->setHelp('Remove a donor completely from the database');
         $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force remove');
-        self::configureDonorArgument($wrapper);
+        $this->configureDonorArgument($wrapper);
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $donor = $this->getDonor();
+        $donor = $this->getDonor($input);
 
-        if ($donor->getState()->getStateId() != States::INACTIVE && !$this->input->getOption('force')) {
+        if ($donor->getState()->getStateId() != States::INACTIVE && !$input->getOption('force')) {
             throw new \RuntimeException('Unable to remove donor that is not inactive. Use -f to override.');
         }
 

@@ -3,39 +3,14 @@ imports:
     - { resource: db.yaml }
     - { resource: listeners.yaml }
 
+parameters:
+    app.name: 'GiroApp'
+    app.version: '1.0.0-alpha3@dev'
+
 services:
     _defaults:
         public: false
         autowire: true
-
-    Symfony\Component\Console\Input\InputInterface:
-        class: ~
-        public: true
-        synthetic: true
-
-    std_out:
-        class: Symfony\Component\Console\Output\OutputInterface
-        public: true
-        synthetic: true
-
-    err_out:
-        class: Symfony\Component\Console\Output\OutputInterface
-        public: true
-        synthetic: true
-
-    std_in:
-        class: Streamer\Stream
-        public: true
-        synthetic: true
-        autowire: false
-
-    Symfony\Component\Console\Output\OutputInterface:
-        alias: 'std_out'
-
-    Symfony\Component\Console\Helper\QuestionHelper:
-        class: ~
-        public: true
-        synthetic: true
 
     byrokrat\giroapp\Builder\:
         resource: '../src/Builder/*'
@@ -43,14 +18,12 @@ services:
     byrokrat\giroapp\Console\:
         public: true
         resource: '../src/Console/*'
-        exclude: '../src/Console/CommandWrapper.php'
+        exclude: '../src/Console/{Adapter,Helper/InputReader}.php'
 
     byrokrat\giroapp\Console\ImportCommand:
         class: ~
         public: true
-        arguments:
-            - '@fs_cwd'
-            - '@std_in'
+        arguments: ['@fs_cwd']
 
     byrokrat\giroapp\Console\ValidateCommand:
         class: ~
@@ -58,6 +31,11 @@ services:
         arguments:
             - '@fs_user_dir'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
+
+    byrokrat\giroapp\Console\Helper\Validators:
+        class: ~
+        arguments:
+            $bankgiroFactory: '@byrokrat\banking\BankgiroFactory'
 
     byrokrat\giroapp\Filter\:
         resource: '../src/Filter/*'
@@ -71,14 +49,20 @@ services:
     byrokrat\giroapp\Utils\:
         resource: '../src/Utils/*'
 
-    Symfony\Component\EventDispatcher\EventDispatcherInterface:
-        class: 'Symfony\Component\EventDispatcher\EventDispatcher'
+    byrokrat\giroapp\Plugin\EnvironmentInterface:
+        class: byrokrat\giroapp\Plugin\Environment
         public: true
-        configurator: 'byrokrat\giroapp\Setup\PluginLoader:loadPlugins'
+        configurator: 'byrokrat\giroapp\Plugin\PluginLoader:loadPlugins'
 
-    byrokrat\giroapp\Setup\PluginLoader:
+    byrokrat\giroapp\Plugin\PluginLoader:
         class: ~
-        arguments: ['%fs.user_dir%/%fs.plugins_dir%', '@flysystem_user_dir']
+        arguments: ['@fs_plugins']
+
+    byrokrat\giroapp\Xml\XmlMandateParser:
+        class: ~
+        arguments: ['@organization_id', '@organization_bg']
+
+    byrokrat\giroapp\Xml\XmlFormTranslator: ~
 
     byrokrat\giroapp\AutogiroVisitor:
         class: ~
@@ -86,12 +70,12 @@ services:
             - "@=service('db_settings_mapper').findByKey('bgc_customer_number')"
             - '@organization_bg'
 
-    byrokrat\autogiro\Parser\ParserFactory: ~
-
     byrokrat\autogiro\Parser\ParserInterface:
         factory: 'byrokrat\autogiro\Parser\ParserFactory:createParser'
 
-    byrokrat\autogiro\Writer\Writer:
+    byrokrat\autogiro\Parser\ParserFactory: ~
+
+    byrokrat\autogiro\Writer\WriterInterface:
         factory: 'byrokrat\autogiro\Writer\WriterFactory:createWriter'
         arguments:
             - "@=service('db_settings_mapper').findByKey('bgc_customer_number')"
@@ -103,7 +87,15 @@ services:
         class: byrokrat\banking\AccountFactory
         autowire: false
 
+    byrokrat\giroapp\Utils\OrgBankgiroFactory:
+        class: ~
+        arguments: ['@byrokrat\banking\BankgiroFactory']
+
     byrokrat\banking\BankgiroFactory: ~
+
+    byrokrat\giroapp\Utils\OrgIdFactory:
+        class: ~
+        arguments: ['@byrokrat\id\IdFactoryInterface']
 
     byrokrat\id\IdFactoryInterface:
         class: byrokrat\id\PersonalIdFactory
@@ -114,23 +106,22 @@ services:
         class: ~
         autowire: false
 
-    byrokrat\giroapp\Xml\XmlMandateParser:
-        class: ~
-        arguments: ['@organization_id', '@organization_bg']
-
-    byrokrat\giroapp\Xml\CustomdataTranslator: ~
-
-    byrokrat\giroapp\Xml\XmlMandateMigrationInterface:
-        class: byrokrat\giroapp\Xml\NullXmlMandateMigration
-
     organization_id:
         class: byrokrat\id\IdInterface
-        factory: 'byrokrat\id\IdFactoryInterface:createId'
+        factory: 'byrokrat\giroapp\Utils\OrgIdFactory:createId'
         arguments: ["@=service('db_settings_mapper').findByKey('org_number')"]
 
     organization_bg:
-        class: byrokrat\banking\Bankgiro
-        factory: 'byrokrat\banking\BankgiroFactory:createAccount'
+        class: byrokrat\banking\AccountNumber
+        factory: 'byrokrat\giroapp\Utils\OrgBankgiroFactory:createAccount'
         arguments: ["@=service('db_settings_mapper').findByKey('bankgiro')"]
 
     JsonSchema\Validator: ~
+
+    Symfony\Component\Console\Application:
+        class: ~
+        arguments: ['%app.name%', '%app.version%']
+        public: true
+
+    Symfony\Component\EventDispatcher\EventDispatcherInterface:
+        class: 'Symfony\Component\EventDispatcher\EventDispatcher'

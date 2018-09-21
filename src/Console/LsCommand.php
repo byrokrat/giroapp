@@ -23,18 +23,18 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
-use byrokrat\giroapp\DependencyInjection\InputProperty;
-use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use byrokrat\giroapp\Filter\FilterContainer;
 use byrokrat\giroapp\Formatter\FormatterContainer;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Command to list donors in database
  */
-class LsCommand implements CommandInterface
+final class LsCommand implements CommandInterface
 {
-    use DonorMapperProperty, InputProperty, OutputProperty;
+    use DonorMapperProperty;
 
     /**
      * @var FilterContainer
@@ -52,7 +52,7 @@ class LsCommand implements CommandInterface
         $this->formatterContainer = $formatterContainer;
     }
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('ls');
         $wrapper->setDescription('List donors');
@@ -62,7 +62,7 @@ class LsCommand implements CommandInterface
             'filter',
             null,
             InputOption::VALUE_REQUIRED,
-            'Set donor filter',
+            "Set donor filter ({$this->filterContainer->getFilterNames()})",
             ''
         );
 
@@ -70,22 +70,22 @@ class LsCommand implements CommandInterface
             'format',
             null,
             InputOption::VALUE_REQUIRED,
-            'Set output format',
+            "Set output format ({$this->formatterContainer->getFormatterNames()})",
             'table'
         );
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $filter = $this->filterContainer->getFilter(
-            $this->input->getOption('filter')
+            $input->getOption('filter')
         );
 
         $formatter = $this->formatterContainer->getFormatter(
-            $this->input->getOption('format')
+            $input->getOption('format')
         );
 
-        $formatter->setOutput($this->output);
+        $formatter->setOutput($output);
 
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($filter->filterDonor($donor)) {

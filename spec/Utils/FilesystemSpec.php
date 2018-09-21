@@ -8,6 +8,7 @@ use byrokrat\giroapp\Utils\Filesystem;
 use byrokrat\giroapp\Utils\File;
 use byrokrat\giroapp\Exception\UnableToReadFileException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
+use Symfony\Component\Finder\Finder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -41,6 +42,13 @@ class FilesystemSpec extends ObjectBehavior
         $fs->exists('file')->willReturn(true);
         $fs->isAbsolutePath('file')->willReturn(true)->shouldBeCalled();
         $this->exists('file')->shouldReturn(true);
+    }
+
+    function it_can_create_directories($fs)
+    {
+        $fs->mkdir('dirname')->shouldBeCalled();
+        $fs->isAbsolutePath('dirname')->willReturn(true);
+        $this->mkdir('dirname');
     }
 
     function it_can_check_if_path_is_file($fs)
@@ -85,5 +93,11 @@ class FilesystemSpec extends ObjectBehavior
         $fs->isAbsolutePath('name')->willReturn(true)->shouldBeCalled();
         $fs->dumpFile('name', 'content')->shouldBeCalled();
         $this->dumpFile('name', 'content');
+    }
+
+    function it_can_create_finders($fs)
+    {
+        $fs->isAbsolutePath(__DIR__)->willReturn(true);
+        $this->getFinder(__DIR__)->shouldBeLike((new Finder)->in(__DIR__));
     }
 }

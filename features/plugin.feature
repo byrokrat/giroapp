@@ -7,23 +7,30 @@ Feature: Plugins
     Given a fresh installation
     And a plugin:
         """
-        use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+        use byrokrat\giroapp\Plugin\PluginInterface;
+        use byrokrat\giroapp\Plugin\EnvironmentInterface;
         use byrokrat\giroapp\Events;
+        use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-        class TestPlugin implements EventSubscriberInterface
+        class TestPlugin implements PluginInterface
         {
-            public static function getSubscribedEvents()
+            public function loadPlugin(EnvironmentInterface $environment): void
             {
-                return [
-                    Events::EXECUTION_STARTED => 'onExecutionStart'
-                ];
-            }
+                $environment->registerSubscriber(new class implements EventSubscriberInterface {
+                    public static function getSubscribedEvents()
+                    {
+                        return [Events::EXECUTION_STARTED => 'onExecutionStart'];
+                    }
 
-            public function onExecutionStart()
-            {
-                echo "my-cool-plugin-is-executed";
+                    public function onExecutionStart()
+                    {
+                        echo "my-cool-plugin-is-executed";
+                    }
+                });
             }
         }
+
+        return new TestPlugin;
         """
     When I run "ls"
     Then the output contains "my-cool-plugin-is-executed"

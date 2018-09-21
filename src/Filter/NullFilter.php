@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Filter;
 
 use byrokrat\giroapp\Model\Donor;
 
-class NullFilter implements FilterInterface
+final class NullFilter implements FilterInterface
 {
     public function getName(): string
     {

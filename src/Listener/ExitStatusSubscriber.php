@@ -20,25 +20,36 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DependencyInjection;
+namespace byrokrat\giroapp\Listener;
 
-use Symfony\Component\Console\Output\OutputInterface;
+use byrokrat\giroapp\Events;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Use this trait to automatically inject an output instance
+ * Capture application exit status
  */
-trait OutputProperty
+class ExitStatusSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var OutputInterface
+     * @var integer
      */
-    protected $output;
+    private $status = 0;
 
-    /**
-     * @required
-     */
-    public function setOutput(OutputInterface $output): void
+    public static function getSubscribedEvents()
     {
-        $this->output = $output;
+        return [
+            Events::ERROR => 'onFailure',
+            Events::WARNING => 'onFailure',
+        ];
+    }
+
+    public function getExitStatus(): int
+    {
+        return $this->status;
+    }
+
+    public function onFailure(): void
+    {
+        $this->status = 1;
     }
 }

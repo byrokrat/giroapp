@@ -1,5 +1,3 @@
 parameters:
 	excludes_analyse:
 		- src/DependencyInjection/ProjectServiceContainer.php
-	ignoreErrors:
-		- '/Call to an undefined method hanneskod\\classtools\\Iterator\\Filter::where\(\)/'

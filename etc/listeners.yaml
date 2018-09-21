@@ -26,22 +26,6 @@ services:
             - { name: event_listener, event: WARNING, method: onLogEvent, priority: 10 }
             - { name: event_listener, event: INFO,    method: onLogEvent, priority: 10 }
 
-    byrokrat\giroapp\Listener\OutputtingListener:
-        class: ~
-        arguments: ['@std_out', '@err_out']
-        tags:
-            - { name: event_listener, event: ERROR,   priority: -10 }
-            - { name: event_listener, event: WARNING, priority: -10 }
-            - { name: event_listener, event: INFO,    priority: -10 }
-            - { name: event_listener, event: DEBUG,   priority: -10 }
-
-    byrokrat\giroapp\Listener\ExitStatusListener:
-        class: ~
-        public: true
-        tags:
-            - { name: event_listener, event: ERROR,   method: onFailure }
-            - { name: event_listener, event: WARNING, method: onFailure }
-
     byrokrat\giroapp\Listener\FileImportChecksumListener:
         class: ~
         tags:

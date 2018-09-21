@@ -28,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Output donors in a human readable manner
  */
-class HumanFormatter implements FormatterInterface
+final class HumanFormatter implements FormatterInterface
 {
     /**
      * @var OutputInterface

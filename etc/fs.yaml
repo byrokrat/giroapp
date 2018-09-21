@@ -3,9 +3,9 @@ parameters:
     fs.user_dir: '%env(GIROAPP_PATH)%'
     fs.internal_data_dir: 'data'
     fs.external_data_dir: 'var'
-    fs.plugins_dir: 'plugins'
-    fs.imports_dir: '%fs.external_data_dir%/imports'
-    fs.exports_dir: '%fs.external_data_dir%/exports'
+    fs.plugins_dir: '%fs.user_dir%/plugins'
+    fs.imports_dir: '%fs.user_dir%/%fs.external_data_dir%/imports'
+    fs.exports_dir: '%fs.user_dir%/%fs.external_data_dir%/exports'
 
 services:
     _defaults:
@@ -19,13 +19,13 @@ services:
     flysystem_user_dir:
         class: League\Flysystem\Filesystem
         arguments: ['@flysystem_user_dir_adapter']
-        configurator: 'byrokrat\giroapp\Setup\FilesystemConfigurator:createFiles'
+        configurator: 'byrokrat\giroapp\Setup\FlysystemConfigurator:createFiles'
 
     flysystem_user_dir_adapter:
         class: League\Flysystem\Adapter\Local
         arguments: ['%fs.user_dir%']
 
-    byrokrat\giroapp\Setup\FilesystemConfigurator:
+    byrokrat\giroapp\Setup\FlysystemConfigurator:
         class: ~
         arguments:
             -
@@ -34,20 +34,25 @@ services:
                 - '%db.transactions%'
                 - '%db.log%'
                 - '%db.imports%'
-            -
-                - '%fs.plugins_dir%'
-
-    fs_imports:
-        class: byrokrat\giroapp\Utils\Filesystem
-        arguments: ['%fs.user_dir%/%fs.imports_dir%']
-
-    fs_exports:
-        class: byrokrat\giroapp\Utils\Filesystem
-        arguments: ['%fs.user_dir%/%fs.exports_dir%']
 
     fs_cwd:
         class: byrokrat\giroapp\Utils\Filesystem
         arguments: ['.']
+
+    fs_imports:
+        class: byrokrat\giroapp\Utils\Filesystem
+        arguments: ['%fs.imports_dir%']
+        configurator: 'byrokrat\giroapp\Utils\FilesystemConfigurator:configureFilesystem'
+
+    fs_exports:
+        class: byrokrat\giroapp\Utils\Filesystem
+        arguments: ['%fs.exports_dir%']
+        configurator: 'byrokrat\giroapp\Utils\FilesystemConfigurator:configureFilesystem'
+
+    fs_plugins:
+        class: byrokrat\giroapp\Utils\Filesystem
+        arguments: ['%fs.plugins_dir%']
+        configurator: 'byrokrat\giroapp\Utils\FilesystemConfigurator:configureFilesystem'
 
     Symfony\Component\Filesystem\Filesystem:
         class: ~

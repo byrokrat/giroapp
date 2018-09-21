@@ -20,25 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DependencyInjection;
+namespace byrokrat\giroapp\Utils;
 
-use Symfony\Component\Console\Input\InputInterface;
-
-/**
- * Use this trait to automatically inject an input instance
- */
-trait InputProperty
+class FilesystemConfigurator
 {
-    /**
-     * @var InputInterface
-     */
-    protected $input;
-
-    /**
-     * @required
-     */
-    public function setInput(InputInterface $input): void
+    public function configureFilesystem(Filesystem $filesystem): void
     {
-        $this->input = $input;
+        if (!$filesystem->exists()) {
+            $filesystem->mkdir();
+        }
     }
 }

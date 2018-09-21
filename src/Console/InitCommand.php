@@ -22,17 +22,19 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\InputReaderProperty;
 use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Mapper\SettingsMapper;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 
 /**
  * Command to initialize settings in database
  */
-class InitCommand implements CommandInterface
+final class InitCommand implements CommandInterface
 {
-    use InputReaderProperty, ValidatorsProperty;
+    use ValidatorsProperty;
 
     /**
      * @var SettingsMapper
@@ -40,22 +42,22 @@ class InitCommand implements CommandInterface
     private $settingsMapper;
 
     /**
-     * @var array List of options, db keys and description messages
+     * List of options, db keys and description messages
      */
-    private static $options = [
+    private const OPTIONS = [
         'org-name' => ['org_name', 'Name of organization'],
         'org-number' => ['org_number', 'Organization id number'],
         'bgc-customer-number' => ['bgc_customer_number', 'BGC customer number'],
         'bankgiro' => ['bankgiro', 'Bankgiro number']
     ];
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('init');
         $wrapper->setDescription('Initialize the database');
         $wrapper->setHelp('Initialize giroapp installation');
 
-        foreach (self::$options as $option => list(, $desc)) {
+        foreach (self::OPTIONS as $option => list(, $desc)) {
             $wrapper->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
     }
@@ -65,7 +67,7 @@ class InitCommand implements CommandInterface
         $this->settingsMapper = $settingsMapper;
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
         $validators = [
             'org-number' => $this->validators->getIdValidator(),
@@ -74,18 +76,19 @@ class InitCommand implements CommandInterface
             'bankgiro' => $this->validators->getBankgiroValidator()
         ];
 
-        foreach (self::$options as $option => list($setting, $desc)) {
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+
+        foreach (self::OPTIONS as $option => list($setting, $desc)) {
             $currentVal = $this->settingsMapper->findByKey($setting);
 
-            $newVal = (string)$this->inputReader->readInput(
+            $newVal = (string)$inputReader->readInput(
                 $option,
-                $this->questionFactory->createQuestion($desc, $currentVal),
+                Helper\QuestionFactory::createQuestion($desc, $currentVal),
                 $validators[$option]
             );
 
             if (!empty($newVal) && $newVal != $currentVal) {
                 $this->settingsMapper->save($setting, $newVal);
-                // $output->writeln("$desc set to: <info>$newVal</info>");
             }
         }
     }

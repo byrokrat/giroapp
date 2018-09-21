@@ -18,27 +18,13 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Exception;
 
-namespace byrokrat\giroapp\Listener;
+use byrokrat\giroapp\Exception as AppException;
 
 /**
- * Capture application exit status
+ * Exception thrown when a setting is missing or invalid
  */
-class ExitStatusListener
+class InvalidSettingException extends \RuntimeException implements AppException
 {
-    /**
-     * @var integer
-     */
-    private $status = 0;
-
-    public function getExitStatus(): int
-    {
-        return $this->status;
-    }
-
-    public function onFailure(): void
-    {
-        $this->status = 1;
-    }
 }

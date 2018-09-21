@@ -4,13 +4,14 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Listener\OutputtingListener;
+use byrokrat\giroapp\Listener\OutputtingSubscriber;
 use byrokrat\giroapp\Event\LogEvent;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class OutputtingListenerSpec extends ObjectBehavior
+class OutputtingSubscriberSpec extends ObjectBehavior
 {
     function let(OutputInterface $stdout, OutputInterface $errout)
     {
@@ -19,7 +20,12 @@ class OutputtingListenerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(OutputtingListener::CLASS);
+        $this->shouldHaveType(OutputtingSubscriber::CLASS);
+    }
+
+    function it_is_a_subsriber()
+    {
+        $this->shouldHaveType(EventSubscriberInterface::CLASS);
     }
 
     function it_writes_error_messages(LogEvent $event, $errout)

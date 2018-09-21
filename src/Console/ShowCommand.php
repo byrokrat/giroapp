@@ -23,15 +23,16 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Formatter\FormatterContainer;
-use byrokrat\giroapp\DependencyInjection\OutputProperty;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Display information on individual donors
  */
-class ShowCommand implements CommandInterface
+final class ShowCommand implements CommandInterface
 {
-    use Helper\DonorArgument, OutputProperty;
+    use Helper\DonorArgument;
 
     /**
      * @var FormatterContainer
@@ -43,28 +44,28 @@ class ShowCommand implements CommandInterface
         $this->formatterContainer = $formatterContainer;
     }
 
-    public static function configure(CommandWrapper $wrapper): void
+    public function configure(Adapter $wrapper): void
     {
         $wrapper->setName('show');
         $wrapper->setDescription('Display donor information');
         $wrapper->setHelp('Display information on individual donors');
 
-        self::configureDonorArgument($wrapper);
+        $this->configureDonorArgument($wrapper);
 
         $wrapper->addOption(
             'format',
             null,
             InputOption::VALUE_REQUIRED,
-            'Set output format',
+            "Set output format ({$this->formatterContainer->getFormatterNames()})",
             'human'
         );
     }
 
-    public function execute(): void
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $formatter = $this->formatterContainer->getFormatter($this->input->getOption('format'));
-        $formatter->setOutput($this->output);
-        $formatter->addDonor($this->getDonor());
+        $formatter = $this->formatterContainer->getFormatter($input->getOption('format'));
+        $formatter->setOutput($output);
+        $formatter->addDonor($this->getDonor($input));
         $formatter->dump();
     }
 }

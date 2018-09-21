@@ -4,19 +4,23 @@ Giroapp supports importing xml formatted mandates through the `import` command.
 When you create an online mandate form you may specify custom data fields. This
 data is saved as donor attributes on import. You can tell giroapp how these
 values should be handled by creating an implementation of
-`XmlMandateMigrationInterface` in the user directory.
+`XmlFormInterface` in the user directory.
 
 The following example tells giroapp that the content of the custom data field
 `phone` should be handled as a phone number.
 
-The `$formId` parameter may be used to return different maps for different forms.
-
+<!-- @example CustomForm1 -->
 ```php
-use byrokrat\giroapp\Xml\XmlMandateMigrationInterface;
+use byrokrat\giroapp\Xml\XmlFormInterface;
 
-class MyCustomMigration implements XmlMandateMigrationInterface
+class CustomForm implements XmlFormInterface
 {
-    public function getXmlMigrationMap(string $formId): array
+    public function getName(): string
+    {
+        return 'name';
+    }
+
+    public function getTranslations(): array
     {
         return [
             'phone' => self::PHONE
@@ -27,13 +31,19 @@ class MyCustomMigration implements XmlMandateMigrationInterface
 
 Custom callbacks may also be used. The above example is equivalent to
 
+<!-- @example CustomForm2 -->
 ```php
-use byrokrat\giroapp\Xml\XmlMandateMigrationInterface;
+use byrokrat\giroapp\Xml\XmlFormInterface;
 use byrokrat\giroapp\Builder\DonorBuilder;
 
-class MyCustomMigration implements XmlMandateMigrationInterface
+class CustomForm implements XmlFormInterface
 {
-    public function getXmlMigrationMap(string $formId): array
+    public function getName(): string
+    {
+        return 'name';
+    }
+
+    public function getTranslations(): array
     {
         return [
             'phone' => function (DonorBuilder $donorBuilder, string $value) {
@@ -42,4 +52,17 @@ class MyCustomMigration implements XmlMandateMigrationInterface
         ];
     }
 }
+```
+
+Load the difinition as a plugin. Save a file like the following in the `plugins`
+directory. For more information see the plugins section.
+
+<!--
+    @example FormPlugin
+    @include CustomForm1
+-->
+```php
+use byrokrat\giroapp\Plugin\Plugin;
+
+return new Plugin(new CustomForm);
 ```

@@ -9,7 +9,6 @@ use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactoryInterface;
-use byrokrat\banking\BankgiroFactory;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
 use byrokrat\id\IdFactoryInterface;
@@ -20,7 +19,7 @@ class ValidatorsSpec extends ObjectBehavior
 {
     function let(
         AccountFactoryInterface $accountFactory,
-        BankgiroFactory $bankgiroFactory,
+        AccountFactoryInterface $bankgiroFactory,
         IdFactoryInterface $idFactory,
         StatePool $statePool
     ) {

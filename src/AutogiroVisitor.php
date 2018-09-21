@@ -27,7 +27,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
-use byrokrat\banking\Bankgiro;
+use byrokrat\banking\AccountNumber;
 
 /**
  * Giroapp visitor of autogiro files
@@ -42,11 +42,11 @@ class AutogiroVisitor extends Visitor
     private $orgBgcNr;
 
     /**
-     * @var Bankgiro
+     * @var AccountNumber
      */
     private $orgBankgiro;
 
-    public function __construct(string $orgBgcNr, Bankgiro $orgBankgiro)
+    public function __construct(string $orgBgcNr, AccountNumber $orgBankgiro)
     {
         $this->orgBgcNr = $orgBgcNr;
         $this->orgBankgiro = $orgBankgiro;
@@ -62,7 +62,7 @@ class AutogiroVisitor extends Visitor
         /** @var string $payeeBgcNr */
         $payeeBgcNr = $node->getChild('PayeeBgcNumber')->getValue();
 
-        /** @var Bankgiro $payeeBankgiro */
+        /** @var AccountNumber $payeeBankgiro */
         $payeeBankgiro = $node->getChild('PayeeBankgiro')->getValueFrom('Object');
 
         if ($payeeBgcNr != $this->orgBgcNr) {

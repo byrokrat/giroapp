@@ -24,6 +24,7 @@ namespace byrokrat\giroapp\Utils;
 
 use byrokrat\giroapp\Exception\UnableToReadFileException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Wrapper class to access to file system
@@ -46,14 +47,19 @@ class Filesystem
         $this->fs = $fs;
     }
 
-    public function getAbsolutePath(string $path): string
+    public function getAbsolutePath(string $path = ''): string
     {
         return $this->fs->isAbsolutePath($path) ? $path : $this->basePath . DIRECTORY_SEPARATOR . $path;
     }
 
-    public function exists(string $path): bool
+    public function exists(string $path = ''): bool
     {
         return $this->fs->exists($this->getAbsolutePath($path));
+    }
+
+    public function mkdir(string $path = ''): void
+    {
+        $this->fs->mkdir($this->getAbsolutePath($path));
     }
 
     public function isFile(string $path): bool
@@ -80,5 +86,10 @@ class Filesystem
     public function dumpFile(string $path, string $content): void
     {
         $this->fs->dumpFile($this->getAbsolutePath($path), $content);
+    }
+
+    public function getFinder(string $path = ''): Finder
+    {
+        return (new Finder)->in($this->getAbsolutePath($path));
     }
 }
