@@ -1,15 +1,35 @@
 # Writing plugins
 
-Giroapp plugins are Symfony event subscribers in the user directory under `plugins/`.
+Giroapp plugins are `.php` or `.phar` files in the user directory under `plugins/`.
 
-Here is an example plugin that notifies someone on application error:
+The plugin must return a `PluginInterface` instance.
 
+Plugins may register
+
+* Event subscribers
+* XML form difinitions
+* Commands
+* Donor filters
+* Donor formatters
+
+Here is an example plugin that sends notifications on application error:
+
+<!-- @example Full-plugin -->
 ```php
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use byrokrat\giroapp\Plugin\PluginInterface;
+use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ErrorNotifyingPlugin implements EventSubscriberInterface
+return new class implements PluginInterface {
+    public function loadPlugin(EnvironmentInterface $env): void
+    {
+        $env->registerSubscriber(new ErrorNotifyingSubscriber);
+    }
+};
+
+class ErrorNotifyingSubscriber implements EventSubscriberInterface
 {
     public static function getSubscribedEvents()
     {
@@ -28,36 +48,40 @@ class ErrorNotifyingPlugin implements EventSubscriberInterface
 }
 ```
 
-Here is another example plugin that sends mails to added donors:
+For a more condensed syntax you may use the `Plugin` class that automatically
+registers objects into the environment.
 
+Here is an example that sends mails to added donors:
+
+<!-- @example Condensed-plugin -->
 ```php
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use byrokrat\giroapp\Plugin\Plugin;
 use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\donorEvent;
+use byrokrat\giroapp\Event\DonorEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class DonorMailingPlugin implements EventSubscriberInterface
-{
-    public static function getSubscribedEvents()
+return new Plugin(
+    new class implements EventSubscriberInterface
     {
-        return [
-            Events::MANDATE_APPROVED => 'onApprovedDonor'
-        ];
-    }
+        public static function getSubscribedEvents()
+        {
+            return [
+                Events::MANDATE_APPROVED => 'onApprovedDonor'
+            ];
+        }
 
-    public function onApprovedDonor(DonorEvent $donorEvent)
-    {
-        send_mail_to_donor(
-            $donorEvent->getDonor()->getEmail(),
-            "Welcome {$donorEvent->getDonor()->getName()}, you are now a donor!"
-        );
+        public function onApprovedDonor(DonorEvent $donorEvent)
+        {
+            send_mail_to_donor(
+                $donorEvent->getDonor()->getEmail(),
+                "Welcome {$donorEvent->getDonor()->getName()}, you are now a donor!"
+            );
+        }
     }
-}
+);
 ```
 
-You can put multiple plugin classes in the same file if desired. Just make sure
-that the plugin files are postfixed `.php`
-
-For a list of possible event names see [Events](src/Events.php).
+> For a list of possible event names see [Events](src/Events.php).
 
 ## Listener priorities
 
