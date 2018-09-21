@@ -29,7 +29,7 @@ use Symfony\Component\Console\Helper\Table;
 /**
  * Output donors in tabular style
  */
-class TableFormatter implements FormatterInterface
+final class TableFormatter implements FormatterInterface
 {
     /**
      * @var Table

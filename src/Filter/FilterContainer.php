@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Filter;
 /**
  * Filter repository
  */
-class FilterContainer
+final class FilterContainer
 {
     /**
      * @var FilterInterface[]
@@ -53,8 +53,8 @@ class FilterContainer
         return $this->filters[$name];
     }
 
-    public function getFilterNames(): array
+    public function getFilterNames(): string
     {
-        return array_keys($this->filters);
+        return '"' . implode('" / "', array_keys($this->filters)) . '"';
     }
 }

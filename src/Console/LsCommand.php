@@ -62,7 +62,7 @@ final class LsCommand implements CommandInterface
             'filter',
             null,
             InputOption::VALUE_REQUIRED,
-            'Set donor filter',
+            "Set donor filter ({$this->filterContainer->getFilterNames()})",
             ''
         );
 
@@ -70,7 +70,7 @@ final class LsCommand implements CommandInterface
             'format',
             null,
             InputOption::VALUE_REQUIRED,
-            'Set output format',
+            "Set output format ({$this->formatterContainer->getFormatterNames()})",
             'table'
         );
     }
