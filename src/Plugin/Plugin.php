@@ -35,7 +35,7 @@ final class Plugin implements PluginInterface
      */
     private $objects;
 
-    public function __construct(object ...$objects)
+    public function __construct(...$objects)
     {
         $this->objects = $objects;
     }

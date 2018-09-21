@@ -63,4 +63,10 @@ class PluginSpec extends ObjectBehavior
         $env->registerDonorFilter($filter)->shouldHaveBeenCalled();
         $env->registerXmlForm($xmlForm)->shouldHaveBeenCalled();
     }
+
+    function it_ignore_unknowns(EnvironmentInterface $env)
+    {
+        $this->beConstructedWith('this-is-not-known');
+        $this->loadPlugin($env);
+    }
 }
