@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Formatter;
 /**
  * Formatter repository
  */
-final class FormatterContainer
+class FormatterContainer
 {
     /**
      * @var FormatterInterface[]

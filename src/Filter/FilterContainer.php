@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Filter;
 /**
  * Filter repository
  */
-final class FilterContainer
+class FilterContainer
 {
     /**
      * @var FilterInterface[]
