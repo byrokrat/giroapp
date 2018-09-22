@@ -24,7 +24,6 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
-use byrokrat\giroapp\States;
 use byrokrat\giroapp\Event\DonorEvent;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -50,7 +49,7 @@ final class RemoveCommand implements CommandInterface
     {
         $donor = $this->getDonor($input);
 
-        if ($donor->getState()->getStateId() != States::INACTIVE && !$input->getOption('force')) {
+        if (!$donor->getState()->isPurgeable() && !$input->getOption('force')) {
             throw new \RuntimeException('Unable to remove donor that is not inactive. Use -f to override.');
         }
 

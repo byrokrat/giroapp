@@ -35,4 +35,9 @@ class MandateSentState extends AbstractState
     {
         return 'Mandate has been sent to the bank and is awaiting approval';
     }
+
+    public function isAwaitingResponse(): bool
+    {
+        return true;
+    }
 }

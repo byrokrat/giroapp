@@ -74,4 +74,24 @@ class MandateApprovedStateSpec extends ObjectBehavior
 
         $writer->addMonthlyPayment('payer_number', $amount, $date, 'mandate_key')->shouldHaveBeenCalled();
     }
+
+    function it_is_not_active()
+    {
+        $this->shouldNotBeActive();
+    }
+
+    function it_is_not_awaiting_response()
+    {
+        $this->shouldNotBeAwaitingResponse();
+    }
+
+    function it_is_not_error()
+    {
+        $this->shouldNotBeError();
+    }
+
+    function it_is_not_purgeable()
+    {
+        $this->shouldNotBePurgeable();
+    }
 }

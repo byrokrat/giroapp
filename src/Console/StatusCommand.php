@@ -23,7 +23,6 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
-use byrokrat\giroapp\States;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,35 +40,47 @@ final class StatusCommand implements CommandInterface
         $wrapper->setName('status');
         $wrapper->setDescription('Show current status');
         $wrapper->setHelp('Examine the status of the giroapp database');
-        $wrapper->addOption('donor-count', null, InputOption::VALUE_NONE, 'Show only donor count');
-        $wrapper->addOption('active-donor-count', null, InputOption::VALUE_NONE, 'Show only active donor count');
-        $wrapper->addOption('exportable-count', null, InputOption::VALUE_NONE, 'Show only exportable count');
+        $wrapper->addOption('donor-count', null, InputOption::VALUE_NONE, 'Show only active donor count');
         $wrapper->addOption('monthly-amount', null, InputOption::VALUE_NONE, 'Show only monthly amount');
+        $wrapper->addOption('exportable-count', null, InputOption::VALUE_NONE, 'Show only exportable count');
+        $wrapper->addOption('waiting-count', null, InputOption::VALUE_NONE, 'Show only awaiting response count');
+        $wrapper->addOption('error-count', null, InputOption::VALUE_NONE, 'Show only error count');
+        $wrapper->addOption('purgeable-count', null, InputOption::VALUE_NONE, 'Show only purgeable count');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         $counts = [
             'donor-count' => 0,
-            'active-donor-count' => 0,
+            'monthly-amount' => new SEK('0'),
             'exportable-count' => 0,
-            'monthly-amount' => new SEK('0')
+            'waiting-count' => 0,
+            'error-count' => 0,
+            'purgeable-count' => 0,
         ];
 
         foreach ($this->donorMapper->findAll() as $donor) {
-            $counts['donor-count']++;
-
-            if ($donor->getState()->getStateId() == States::ACTIVE) {
+            if ($donor->getState()->isActive()) {
+                $counts['donor-count']++;
                 $counts['monthly-amount'] = $counts['monthly-amount']->add($donor->getDonationAmount());
-                $counts['active-donor-count']++;
             }
 
             if ($donor->getState()->isExportable()) {
                 $counts['exportable-count']++;
             }
-        }
 
-        $counts['monthly-amount'] = $counts['monthly-amount']->getString(0);
+            if ($donor->getState()->isAwaitingResponse()) {
+                $counts['waiting-count']++;
+            }
+
+            if ($donor->getState()->isError()) {
+                $counts['error-count']++;
+            }
+
+            if ($donor->getState()->isPurgeable()) {
+                $counts['purgeable-count']++;
+            }
+        }
 
         foreach (array_keys($counts) as $key) {
             if ($input->getOption($key)) {
@@ -78,10 +89,19 @@ final class StatusCommand implements CommandInterface
             }
         }
 
-        $output->writeln("Donors: {$counts['donor-count']}");
-        $output->writeln("Active: {$counts['active-donor-count']}");
-        $highlight = $counts['exportable-count'] ? 'error' : 'info';
-        $output->writeln("<$highlight>Exportables: {$counts['exportable-count']}</$highlight>");
-        $output->writeln("Monthly amount: {$counts['monthly-amount']}");
+        $amount = number_format($counts['monthly-amount']->getFloat(), 0, ',', ' ');
+
+        $output->writeln("<comment>Donors: {$counts['donor-count']}</comment>");
+        $output->writeln("<comment>Monthly amount: $amount kr</comment>");
+        $output->writeln($this->format('Exportables', $counts['exportable-count']));
+        $output->writeln($this->format('Awaiting response', $counts['waiting-count']));
+        $output->writeln($this->format('Errors', $counts['error-count']));
+        $output->writeln($this->format('Purgeables', $counts['purgeable-count']));
+    }
+
+    private function format(string $desc, int $count): string
+    {
+        $tag = $count ? 'error' : 'info';
+        return "<$tag>$desc: $count</$tag>";
     }
 }

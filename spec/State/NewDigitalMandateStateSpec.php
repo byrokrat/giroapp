@@ -50,4 +50,24 @@ class NewDigitalMandateStateSpec extends ObjectBehavior
         $this->export($donor, $writer);
         $writer->acceptDigitalMandate('foobar')->shouldHaveBeenCalled();
     }
+
+    function it_is_not_active()
+    {
+        $this->shouldNotBeActive();
+    }
+
+    function it_is_not_awaiting_response()
+    {
+        $this->shouldNotBeAwaitingResponse();
+    }
+
+    function it_is_not_error()
+    {
+        $this->shouldNotBeError();
+    }
+
+    function it_is_not_purgeable()
+    {
+        $this->shouldNotBePurgeable();
+    }
 }

@@ -48,4 +48,24 @@ class InactiveStateSpec extends ObjectBehavior
     {
         $this->export($donor, $writer);
     }
+
+    function it_is_not_active()
+    {
+        $this->shouldNotBeActive();
+    }
+
+    function it_is_not_awaiting_response()
+    {
+        $this->shouldNotBeAwaitingResponse();
+    }
+
+    function it_is_not_error()
+    {
+        $this->shouldNotBeError();
+    }
+
+    function it_is_purgeable()
+    {
+        $this->shouldBePurgeable();
+    }
 }

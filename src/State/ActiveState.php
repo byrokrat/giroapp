@@ -35,4 +35,9 @@ class ActiveState extends AbstractState
     {
         return 'Donor is active';
     }
+
+    public function isActive(): bool
+    {
+        return true;
+    }
 }

@@ -41,4 +41,24 @@ abstract class AbstractState implements StateInterface
     {
         // Intentionally empty for non-exportable states
     }
+
+    public function isActive(): bool
+    {
+        return false;
+    }
+
+    public function isAwaitingResponse(): bool
+    {
+        return false;
+    }
+
+    public function isError(): bool
+    {
+        return false;
+    }
+
+    public function isPurgeable(): bool
+    {
+        return false;
+    }
 }

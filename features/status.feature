@@ -16,18 +16,14 @@ Feature: Examine database status
       | 7            | REVOCATION_SENT     | 781121-3714 | 100    |
       | 8            | REVOKE_MANDATE      | 890121-5742 | 100    |
 
-  Scenario: I check the exportable count
-    When I run "status --exportable-count"
-    Then the output contains a line like "/^4$/"
-
   Scenario: I check the donor count
     When I run "status --donor-count"
-    Then the output contains a line like "/^8$/"
-
-  Scenario: I check the active donor count
-    When I run "status --active-donor-count"
     Then the output contains a line like "/^1$/"
 
   Scenario: I check the amount count
     When I run "status --monthly-amount"
-    Then the output contains a line like "/^100$/"
+    Then the output contains a line like "/^100.00$/"
+
+  Scenario: I check the exportable count
+    When I run "status --exportable-count"
+    Then the output contains a line like "/^4$/"

@@ -35,4 +35,9 @@ class ErrorState extends AbstractState
     {
         return 'Donor is inactive due to an error';
     }
+
+    public function isError(): bool
+    {
+        return true;
+    }
 }
