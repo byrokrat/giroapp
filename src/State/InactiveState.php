@@ -35,4 +35,9 @@ class InactiveState extends AbstractState
     {
         return 'Donor is inactive (has been revoked/rejected)';
     }
+
+    public function isPurgeable(): bool
+    {
+        return true;
+    }
 }

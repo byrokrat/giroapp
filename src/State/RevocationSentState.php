@@ -35,4 +35,9 @@ class RevocationSentState extends AbstractState
     {
         return 'Revocation request has been sent to the bank';
     }
+
+    public function isAwaitingResponse(): bool
+    {
+        return true;
+    }
 }

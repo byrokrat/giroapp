@@ -44,12 +44,32 @@ interface StateInterface
     public function getDescription(): string;
 
     /**
-     * Check if this state is exportable to autogirot
+     * Export to autogiro and possibly perform state transition
+     */
+    public function export(Donor $donor, WriterInterface $writer): void;
+
+    /**
+     * Check if a donor with this state is an active donor
+     */
+    public function isActive(): bool;
+
+    /**
+     * Check if a donor with this state is expecting a response from autogirot
+     */
+    public function isAwaitingResponse(): bool;
+
+    /**
+     * Check if a donor with this state is broken
+     */
+    public function isError(): bool;
+
+    /**
+     * Check if a donor with this state is exportable to autogirot
      */
     public function isExportable(): bool;
 
     /**
-     * Export to autogiro and possibly perform state transition
+     * Check if a donor with this state can be safely removed
      */
-    public function export(Donor $donor, WriterInterface $writer): void;
+    public function isPurgeable(): bool;
 }

@@ -48,4 +48,24 @@ class MandateSentStateSpec extends ObjectBehavior
     {
         $this->export($donor, $writer);
     }
+
+    function it_is_not_active()
+    {
+        $this->shouldNotBeActive();
+    }
+
+    function it_is_awaiting_response()
+    {
+        $this->shouldBeAwaitingResponse();
+    }
+
+    function it_is_not_error()
+    {
+        $this->shouldNotBeError();
+    }
+
+    function it_is_not_purgeable()
+    {
+        $this->shouldNotBePurgeable();
+    }
 }
