@@ -41,6 +41,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\InitCommand' => 'getInitCommandService',
             'byrokrat\\giroapp\\Console\\LsCommand' => 'getLsCommandService',
             'byrokrat\\giroapp\\Console\\MigrateCommand' => 'getMigrateCommandService',
+            'byrokrat\\giroapp\\Console\\PurgeCommand' => 'getPurgeCommandService',
             'byrokrat\\giroapp\\Console\\RemoveCommand' => 'getRemoveCommandService',
             'byrokrat\\giroapp\\Console\\RevokeCommand' => 'getRevokeCommandService',
             'byrokrat\\giroapp\\Console\\ShowCommand' => 'getShowCommandService',
@@ -281,6 +282,21 @@ class ProjectServiceContainer extends Container
     protected function getMigrateCommandService()
     {
         $this->services['byrokrat\giroapp\Console\MigrateCommand'] = $instance = new \byrokrat\giroapp\Console\MigrateCommand();
+
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\PurgeCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\PurgeCommand
+     */
+    protected function getPurgeCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\PurgeCommand'] = $instance = new \byrokrat\giroapp\Console\PurgeCommand();
 
         $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
