@@ -9,3 +9,5 @@
 * Export no longer writes to stdout, it generates files instead.
 * Renaming in the `Xml` namespace.
 * You now need to create one `XmlFormInterface` object for each supporten xml form.
+* Supports plugins
+* Added `state_desc` to donor schema. Run `giroapp migrate` to update database.

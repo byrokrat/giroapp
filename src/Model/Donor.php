@@ -61,6 +61,11 @@ class Donor
     /**
      * @var string
      */
+    private $stateDesc;
+
+    /**
+     * @var string
+     */
     private $mandateSource;
 
     /**
@@ -126,6 +131,7 @@ class Donor
     public function __construct(
         string $mandateKey,
         StateInterface $state,
+        string $stateDesc,
         string $mandateSource,
         string $payerNumber,
         AccountNumber $account,
@@ -141,7 +147,7 @@ class Donor
         array $attributes = []
     ) {
         $this->mandateKey = $mandateKey;
-        $this->setState($state);
+        $this->setState($state, $stateDesc);
         $this->mandateSource = $mandateSource;
         $this->setPayerNumber($payerNumber);
         $this->account = $account;
@@ -167,9 +173,15 @@ class Donor
         return $this->state;
     }
 
-    public function setState(StateInterface $state): void
+    public function getStateDesc(): string
+    {
+        return $this->stateDesc;
+    }
+
+    public function setState(StateInterface $state, string $stateDesc): void
     {
         $this->state = $state;
+        $this->stateDesc = $stateDesc;
     }
 
     public function getMandateSource(): string

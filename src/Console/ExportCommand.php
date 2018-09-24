@@ -70,7 +70,10 @@ final class ExportCommand implements CommandInterface
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($donor->getState()->isExportable()) {
                 $donor->exportToAutogiro($this->autogiroWriter);
-                $donor->setState($this->statePool->getState($donor->getState()->getNextStateId()));
+                $donor->setState(
+                    $this->statePool->getState($donor->getState()->getNextStateId()),
+                    'Donor exported to autogiro'
+                );
                 $this->dispatcher->dispatch(
                     Events::DONOR_UPDATED,
                     new DonorEvent(

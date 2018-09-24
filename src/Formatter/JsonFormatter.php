@@ -56,6 +56,7 @@ final class JsonFormatter implements FormatterInterface
         $this->data[] = [
             'mandate-key' => $donor->getMandateKey(),
             'state' => $donor->getState()->getStateId(),
+            'state-desc' => $donor->getStateDesc(),
             'mandate-source' => $donor->getMandateSource(),
             'payer-number' => $donor->getPayerNumber(),
             'account' => $donor->getAccount()->getNumber(),

@@ -124,6 +124,7 @@ class DonorBuilderSpec extends ObjectBehavior
                 new Donor(
                     self::MANDATE_KEY,
                     $state->getWrappedObject(),
+                    'Mandate created',
                     Donor::MANDATE_SOURCE_PAPER,
                     self::PAYER_NUMBER,
                     $account->getWrappedObject(),
@@ -162,6 +163,7 @@ class DonorBuilderSpec extends ObjectBehavior
             new Donor(
                 self::MANDATE_KEY,
                 $state->getWrappedObject(),
+                'Mandate created',
                 Donor::MANDATE_SOURCE_DIGITAL,
                 'payer-number',
                 $account->getWrappedObject(),

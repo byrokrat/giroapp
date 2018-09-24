@@ -102,29 +102,24 @@ class MandateResponseListener
             }
         }
 
-        $donorEvent = new DonorEvent(
-            sprintf(
-                '%s: %s',
-                $donor->getMandateKey(),
-                (string)$node->getChild('Status')->getValueFrom('Text')
-            ),
-            $donor
-        );
+        $status = (string)$node->getChild('Status')->getValueFrom('Text');
+
+        $donorEvent = new DonorEvent("{$donor->getMandateKey()}: $status", $donor);
 
         if ($node->hasChild('CreatedFlag')) {
-            $donor->setState($this->statePool->getState(States::MANDATE_APPROVED));
+            $donor->setState($this->statePool->getState(States::MANDATE_APPROVED), $status);
             $dispatcher->dispatch(Events::MANDATE_APPROVED, $donorEvent);
             return;
         }
 
         if ($node->hasChild('DeletedFlag')) {
-            $donor->setState($this->statePool->getState(States::INACTIVE));
+            $donor->setState($this->statePool->getState(States::INACTIVE), $status);
             $dispatcher->dispatch(Events::MANDATE_REVOKED, $donorEvent);
             return;
         }
 
         if ($node->hasChild('ErrorFlag')) {
-            $donor->setState($this->statePool->getState(States::ERROR));
+            $donor->setState($this->statePool->getState(States::ERROR), $status);
             $dispatcher->dispatch(Events::MANDATE_INVALIDATED, $donorEvent);
             return;
         }
@@ -135,7 +130,7 @@ class MandateResponseListener
                 sprintf(
                     '%s: invalid mandate status code: %s',
                     $donor->getMandateKey(),
-                    $node->getChild('Status')->getValueFrom('Number')
+                    (string)$node->getChild('Status')->getValueFrom('Number')
                 )
             )
         );

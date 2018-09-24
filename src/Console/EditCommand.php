@@ -109,7 +109,8 @@ final class EditCommand implements CommandInterface
                     $donor->getState()->getStateId()
                 ),
                 $this->validators->getStateValidator($states)
-            )
+            ),
+            'Donor edited by user'
         );
 
         $donor->setDonationAmount(

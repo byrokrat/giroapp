@@ -26,6 +26,7 @@ class DonorSchemaSpec extends ObjectBehavior
     const MANDATE_SOURCE = 'mandate-source';
     const PAYER_NUMBER = 'payer-number';
     const STATE = 'state';
+    const STATE_DESC = 'state-desc';
     const NAME = 'name';
     const ACCOUNT = 'account';
     const ID = 'id';
@@ -47,6 +48,7 @@ class DonorSchemaSpec extends ObjectBehavior
         'mandate_source' => self::MANDATE_SOURCE,
         'payer_number' => self::PAYER_NUMBER,
         'state' => self::STATE,
+        'state_desc' => self::STATE_DESC,
         'name' => self::NAME,
         'account' => self::ACCOUNT,
         'donor_id' => self::ID,
@@ -104,6 +106,7 @@ class DonorSchemaSpec extends ObjectBehavior
             new Donor(
                 self::MANDATE_KEY,
                 $state->getWrappedObject(),
+                self::STATE_DESC,
                 self::MANDATE_SOURCE,
                 self::PAYER_NUMBER,
                 $account->getWrappedObject(),
@@ -128,6 +131,7 @@ class DonorSchemaSpec extends ObjectBehavior
         $donor = new Donor(
             self::MANDATE_KEY,
             $state->getWrappedObject(),
+            self::STATE_DESC,
             self::MANDATE_SOURCE,
             self::PAYER_NUMBER,
             $account->getWrappedObject(),

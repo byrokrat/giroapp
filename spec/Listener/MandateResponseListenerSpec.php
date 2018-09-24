@@ -123,7 +123,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
     function its_inactive_on_mandate_deleted_response($event, $parentNode, $donor, $inactiveState, Dispatcher $disp)
     {
         $parentNode->hasChild('DeletedFlag')->willReturn(true);
-        $donor->setState($inactiveState)->shouldBeCalled();
+        $donor->setState($inactiveState, Argument::type('string'))->shouldBeCalled();
         $disp->dispatch(Events::MANDATE_REVOKED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $this->onMandateResponseReceived($event, '', $disp);
     }
@@ -131,7 +131,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
     function its_error_on_error_response($event, $parentNode, $donor, $errorState, Dispatcher $disp)
     {
         $parentNode->hasChild('ErrorFlag')->willReturn(true);
-        $donor->setState($errorState)->shouldBeCalled();
+        $donor->setState($errorState, Argument::type('string'))->shouldBeCalled();
         $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $this->onMandateResponseReceived($event, '', $disp);
     }
@@ -139,7 +139,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
     function its_approved_on_created_response($event, $parentNode, $donor, $approvedState, Dispatcher $disp)
     {
         $parentNode->hasChild('CreatedFlag')->willReturn(true);
-        $donor->setState($approvedState)->shouldBeCalled();
+        $donor->setState($approvedState, Argument::type('string'))->shouldBeCalled();
         $disp->dispatch(Events::MANDATE_APPROVED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
         $this->onMandateResponseReceived($event, '', $disp);
     }

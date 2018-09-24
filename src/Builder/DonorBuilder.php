@@ -207,6 +207,7 @@ class DonorBuilder
         return new Donor(
             $this->keyBuilder->buildKey($this->getId(), $this->getAccount()),
             $this->getState(),
+            'Mandate created',
             $this->getMandateSource(),
             $this->getPayerNumber(),
             $this->getAccount(),

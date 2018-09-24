@@ -18,9 +18,13 @@
                     "pattern": "^[a-zA-Z0-9]{16}$"
                 },
                 "state": {
-                    "description": "Mandate state descriptor",
+                    "description": "Mandate state id",
                     "type": "string",
                     "pattern": "^[A-Z_]+$"
+                },
+                "state-desc": {
+                    "description": "Mandate state description",
+                    "type": "string"
                 },
                 "mandate_source": {
                     "description": "Mandate source descriptor",
@@ -38,7 +42,7 @@
                     "pattern": "^[0-9, -]+$"
                 },
                 "donor_id": {
-                    "description": "Donor state id number",
+                    "description": "Donor id number",
                     "type": "string",
                     "pattern": "^[0-9-]+$"
                 },
@@ -125,6 +129,7 @@
                 "type",
                 "mandate_key",
                 "state",
+                "state_desc",
                 "mandate_source",
                 "payer_number",
                 "account",

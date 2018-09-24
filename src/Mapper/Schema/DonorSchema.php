@@ -79,6 +79,7 @@ class DonorSchema
             'type' => self::TYPE,
             'mandate_key' => $donor->getMandateKey(),
             'state' => $donor->getState()->getStateId(),
+            'state_desc' => $donor->getStateDesc(),
             'mandate_source' => $donor->getMandateSource(),
             'payer_number' => $donor->getPayerNumber(),
             'account' => $donor->getAccount()->getNumber(),
@@ -100,6 +101,7 @@ class DonorSchema
         return new Donor(
             $doc['mandate_key'],
             $this->statePool->getState($doc['state']),
+            $doc['state_desc'] ?? '',
             $doc['mandate_source'],
             $doc['payer_number'],
             $this->accountFactory->createAccount($doc['account']),

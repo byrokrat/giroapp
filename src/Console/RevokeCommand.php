@@ -29,9 +29,6 @@ use byrokrat\giroapp\State\RevokeMandateState;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Command to revoke a mandate
- */
 final class RevokeCommand implements CommandInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
@@ -48,7 +45,7 @@ final class RevokeCommand implements CommandInterface
     {
         $donor = $this->getDonor($input);
 
-        $donor->setState(new RevokeMandateState);
+        $donor->setState(new RevokeMandateState, 'Mandate revoked by user');
 
         $this->dispatcher->dispatch(
             Events::MANDATE_REVOKED,
