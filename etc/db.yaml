@@ -1,43 +1,40 @@
 parameters:
-    db.settings: '%fs.internal_data_dir%/settings.json'
     db.donors: '%fs.internal_data_dir%/donors.json'
-    db.transactions: '%fs.internal_data_dir%/transactions.json'
-    db.log: '%fs.external_data_dir%/log'
     db.imports: '%fs.internal_data_dir%/imports.json'
+    db.log: '%fs.external_data_dir%/log'
 
 services:
     _defaults:
         public: false
         autowire: true
 
+    byrokrat\giroapp\Mapper\:
+        resource: '../src/Mapper/*'
+
+    flysystem_user_dir:
+        class: League\Flysystem\Filesystem
+        arguments: ['@flysystem_user_dir_adapter']
+        configurator: 'byrokrat\giroapp\Mapper\FlysystemConfigurator:createFiles'
+
+    flysystem_user_dir_adapter:
+        class: League\Flysystem\Adapter\Local
+        arguments: ['%fs.user_dir%']
+
+    byrokrat\giroapp\Mapper\FlysystemConfigurator:
+        class: ~
+        arguments:
+            -
+                - '%db.donors%'
+                - '%db.log%'
+                - '%db.imports%'
+
     db:
         class: hanneskod\yaysondb\Yaysondb
         arguments:
             -
-                settings: '@db_settings_engine'
                 donors: '@db_donor_engine'
-                transactions: '@db_transaction_engine'
                 imports: '@db_import_engine'
                 log: '@db_log_engine'
-
-    byrokrat\giroapp\Mapper\:
-        resource: '../src/Mapper/*'
-
-    byrokrat\giroapp\Mapper\SettingsMapper:
-        class: ~
-        arguments: ['@db_settings_collection']
-
-    db_settings_mapper:
-      alias: 'byrokrat\giroapp\Mapper\SettingsMapper'
-      public: true
-
-    db_settings_collection:
-        class: hanneskod\yaysondb\Collection
-        arguments: ['@db_settings_engine']
-
-    db_settings_engine:
-        class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.settings%', '@flysystem_user_dir']
 
     byrokrat\giroapp\Mapper\DonorMapper:
         class: ~
@@ -51,28 +48,13 @@ services:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.donors%', '@flysystem_user_dir']
 
-    byrokrat\giroapp\Mapper\TransactionMapper:
-        class: ~
-        arguments: ['@db_transaction_collection']
-
-    db_transaction_collection:
-        class: hanneskod\yaysondb\Collection
-        arguments: ['@db_transaction_engine']
-
-    db_transaction_engine:
-        class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.transactions%', '@flysystem_user_dir']
-
     db_log_collection:
         class: hanneskod\yaysondb\Collection
         arguments: ['@db_log_engine']
 
     db_log_engine:
         class: hanneskod\yaysondb\Engine\LogEngine
-        arguments: ['%fs.user_dir%/%db.log%', '@byrokrat\giroapp\Setup\LogFormatter']
-
-    byrokrat\giroapp\Setup\LogFormatter:
-        class: ~
+        arguments: ['%fs.user_dir%/%db.log%', '@byrokrat\giroapp\Mapper\LogFormatter']
 
     byrokrat\giroapp\Mapper\FileChecksumMapper:
         class: ~

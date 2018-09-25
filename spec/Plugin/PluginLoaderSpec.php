@@ -35,7 +35,7 @@ class PluginLoaderSpec extends ObjectBehavior
     {
         $filesystem->getFinder()->willReturn((new Finder)->in(__DIR__ . '/validplugindata'));
 
-        $environment->readSetting('custom-test-check')->willReturn('')->shouldBeCalled();
+        $environment->readConfig('custom-test-check')->willReturn('')->shouldBeCalled();
 
         $this->loadPlugins($environment);
     }

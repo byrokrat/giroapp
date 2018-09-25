@@ -97,6 +97,11 @@ class ApplicationWrapper
         return new Result($returnCode, $output, $errorOutput);
     }
 
+    public function createIniFile(string $content): void
+    {
+        file_put_contents("{$this->userDir}/giroapp.ini", $content);
+    }
+
     public function createFile(string $content): string
     {
         $filename = uniqid();
@@ -107,6 +112,7 @@ class ApplicationWrapper
 
     public function createPlugin(string $content): void
     {
+        mkdir($this->userDir . '/plugins');
         file_put_contents(
             $this->userDir . '/plugins/' . uniqid() . '.php',
             "<?php $content"

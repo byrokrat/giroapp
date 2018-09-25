@@ -1,16 +1,31 @@
+parameters:
+    app.name: 'GiroApp'
+    app.version: '1.0.0-alpha3@dev'
+    env(GIROAPP_PATH): 'giroapp'
+    env(GIROAPP_INI_FILE): '%env(GIROAPP_PATH)%/giroapp.ini'
+    app.ini_file_name: '%env(GIROAPP_INI_FILE)%'
+
 imports:
     - { resource: fs.yaml }
     - { resource: db.yaml }
     - { resource: listeners.yaml }
 
-parameters:
-    app.name: 'GiroApp'
-    app.version: '1.0.0-alpha3@dev'
-
 services:
     _defaults:
         public: false
         autowire: true
+
+    byrokrat\giroapp\Config\ConfigManager:
+        class: ~
+        configurator: 'byrokrat\giroapp\Config\ConfigManagerConfigurator:loadConfigFile'
+
+    configs:
+        alias: byrokrat\giroapp\Config\ConfigManager
+        public: true
+
+    byrokrat\giroapp\Config\ConfigManagerConfigurator:
+        class: ~
+        arguments: ['@fs_cwd', '%app.ini_file_name%']
 
     byrokrat\giroapp\Builder\:
         resource: '../src/Builder/*'
@@ -67,33 +82,35 @@ services:
     byrokrat\giroapp\AutogiroVisitor:
         class: ~
         arguments:
-            - "@=service('db_settings_mapper').findByKey('bgc_customer_number')"
+            - "@=service('configs').getConfig('org.bgc_number')"
             - '@organization_bg'
+
+    byrokrat\autogiro\Writer\WriterInterface:
+        factory: 'byrokrat\giroapp\AutogiroWriterFactory:createWriter'
+        arguments:
+            - "@=service('configs').getConfig('org.bgc_number')"
+            - '@organization_bg'
+
+    byrokrat\giroapp\AutogiroWriterFactory: ~
+
+    byrokrat\autogiro\Writer\WriterFactory: ~
 
     byrokrat\autogiro\Parser\ParserInterface:
         factory: 'byrokrat\autogiro\Parser\ParserFactory:createParser'
 
     byrokrat\autogiro\Parser\ParserFactory: ~
 
-    byrokrat\autogiro\Writer\WriterInterface:
-        factory: 'byrokrat\autogiro\Writer\WriterFactory:createWriter'
-        arguments:
-            - "@=service('db_settings_mapper').findByKey('bgc_customer_number')"
-            - '@organization_bg'
-
-    byrokrat\autogiro\Writer\WriterFactory: ~
-
     byrokrat\banking\AccountFactoryInterface:
         class: byrokrat\banking\AccountFactory
         autowire: false
 
-    byrokrat\giroapp\Utils\OrgBankgiroFactory:
+    byrokrat\giroapp\Config\OrgBankgiroFactory:
         class: ~
         arguments: ['@byrokrat\banking\BankgiroFactory']
 
     byrokrat\banking\BankgiroFactory: ~
 
-    byrokrat\giroapp\Utils\OrgIdFactory:
+    byrokrat\giroapp\Config\OrgIdFactory:
         class: ~
         arguments: ['@byrokrat\id\IdFactoryInterface']
 
@@ -108,13 +125,13 @@ services:
 
     organization_id:
         class: byrokrat\id\IdInterface
-        factory: 'byrokrat\giroapp\Utils\OrgIdFactory:createId'
-        arguments: ["@=service('db_settings_mapper').findByKey('org_number')"]
+        factory: 'byrokrat\giroapp\Config\OrgIdFactory:createId'
+        arguments: ["@=service('configs').getConfig('org.state_id')"]
 
     organization_bg:
         class: byrokrat\banking\AccountNumber
-        factory: 'byrokrat\giroapp\Utils\OrgBankgiroFactory:createAccount'
-        arguments: ["@=service('db_settings_mapper').findByKey('bankgiro')"]
+        factory: 'byrokrat\giroapp\Config\OrgBankgiroFactory:createAccount'
+        arguments: ["@=service('configs').getConfig('org.bankgiro')"]
 
     JsonSchema\Validator: ~
 

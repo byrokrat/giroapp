@@ -18,13 +18,26 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\Exception;
+declare(strict_types = 1);
 
-use byrokrat\giroapp\Exception as AppException;
+namespace byrokrat\giroapp\Config;
 
-/**
- * Exception thrown when a setting is missing or invalid
- */
-class InvalidSettingException extends \RuntimeException implements AppException
+class ConfigManager
 {
+    /**
+     * @var array
+     */
+    private $configs = [];
+
+    public function loadRepository(RepositoryInterface $configs): void
+    {
+        $this->configs = array_merge($this->configs, $configs->getConfigs());
+    }
+
+    public function getConfig(string $name): ConfigInterface
+    {
+        return new LazyConfig(function () use ($name) {
+            return $this->configs[$name] ?? null;
+        });
+    }
 }

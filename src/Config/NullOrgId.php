@@ -20,132 +20,132 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Config;
 
-use byrokrat\giroapp\Exception\InvalidSettingException;
+use byrokrat\giroapp\Exception\InvalidConfigException;
 use byrokrat\id\IdInterface;
 
-class MissingOrgId implements IdInterface
+class NullOrgId implements IdInterface
 {
     private const MESSAGE = 'Missing or invalid organization id number';
 
     public function getId(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function __tostring(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function format(string $format): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getSerialPreDelimiter(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getSerialPostDelimiter(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getDelimiter(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getCheckDigit(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getBirthDate(): \DateTimeImmutable
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getAge(\DateTimeInterface $atDate = null): int
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getCentury(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getSex(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isMale(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isFemale(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isSexOther(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isSexUndefined(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getBirthCounty(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getLegalForm(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isLegalFormUndefined(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isStateOrParish(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isIncorporated(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isPartnership(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isAssociation(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isNonProfit(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function isTradingCompany(): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 }

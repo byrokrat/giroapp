@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Setup;
+namespace spec\byrokrat\giroapp\Mapper;
 
-use byrokrat\giroapp\Setup\LogFormatter;
+use byrokrat\giroapp\Mapper\LogFormatter;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

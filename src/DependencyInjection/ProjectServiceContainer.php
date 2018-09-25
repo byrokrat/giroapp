@@ -38,7 +38,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\ExportCommand' => 'getExportCommandService',
             'byrokrat\\giroapp\\Console\\Helper\\QuestionFactory' => 'getQuestionFactoryService',
             'byrokrat\\giroapp\\Console\\ImportCommand' => 'getImportCommandService',
-            'byrokrat\\giroapp\\Console\\InitCommand' => 'getInitCommandService',
             'byrokrat\\giroapp\\Console\\LsCommand' => 'getLsCommandService',
             'byrokrat\\giroapp\\Console\\MigrateCommand' => 'getMigrateCommandService',
             'byrokrat\\giroapp\\Console\\PurgeCommand' => 'getPurgeCommandService',
@@ -48,7 +47,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\StatusCommand' => 'getStatusCommandService',
             'byrokrat\\giroapp\\Console\\ValidateCommand' => 'getValidateCommandService',
             'byrokrat\\giroapp\\Plugin\\EnvironmentInterface' => 'getEnvironmentInterfaceService',
-            'db_settings_mapper' => 'getDbSettingsMapperService',
+            'configs' => 'getConfigsService',
         );
 
         $this->aliases = array();
@@ -85,9 +84,14 @@ class ProjectServiceContainer extends Container
             'byrokrat\\banking\\AccountFactoryInterface' => true,
             'byrokrat\\banking\\BankgiroFactory' => true,
             'byrokrat\\giroapp\\AutogiroVisitor' => true,
+            'byrokrat\\giroapp\\AutogiroWriterFactory' => true,
             'byrokrat\\giroapp\\Builder\\DateBuilder' => true,
             'byrokrat\\giroapp\\Builder\\DonorBuilder' => true,
             'byrokrat\\giroapp\\Builder\\MandateKeyBuilder' => true,
+            'byrokrat\\giroapp\\Config\\ConfigManager' => true,
+            'byrokrat\\giroapp\\Config\\ConfigManagerConfigurator' => true,
+            'byrokrat\\giroapp\\Config\\OrgBankgiroFactory' => true,
+            'byrokrat\\giroapp\\Config\\OrgIdFactory' => true,
             'byrokrat\\giroapp\\Console\\Helper\\Validators' => true,
             'byrokrat\\giroapp\\Filter\\ExportableFilter' => true,
             'byrokrat\\giroapp\\Filter\\FilterContainer' => true,
@@ -109,14 +113,12 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\XmlImportingListener' => true,
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => true,
             'byrokrat\\giroapp\\Mapper\\FileChecksumMapper' => true,
+            'byrokrat\\giroapp\\Mapper\\FlysystemConfigurator' => true,
+            'byrokrat\\giroapp\\Mapper\\LogFormatter' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\FileChecksumSchema' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\PostalAddressSchema' => true,
-            'byrokrat\\giroapp\\Mapper\\SettingsMapper' => true,
-            'byrokrat\\giroapp\\Mapper\\TransactionMapper' => true,
             'byrokrat\\giroapp\\Plugin\\PluginLoader' => true,
-            'byrokrat\\giroapp\\Setup\\FlysystemConfigurator' => true,
-            'byrokrat\\giroapp\\Setup\\LogFormatter' => true,
             'byrokrat\\giroapp\\State\\ActiveState' => true,
             'byrokrat\\giroapp\\State\\ErrorState' => true,
             'byrokrat\\giroapp\\State\\InactiveState' => true,
@@ -131,10 +133,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Utils\\FileNameFactory' => true,
             'byrokrat\\giroapp\\Utils\\Filesystem' => true,
             'byrokrat\\giroapp\\Utils\\FilesystemConfigurator' => true,
-            'byrokrat\\giroapp\\Utils\\MissingOrgBankgiro' => true,
-            'byrokrat\\giroapp\\Utils\\MissingOrgId' => true,
-            'byrokrat\\giroapp\\Utils\\OrgBankgiroFactory' => true,
-            'byrokrat\\giroapp\\Utils\\OrgIdFactory' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
             'byrokrat\\giroapp\\Xml\\XmlFormTranslator' => true,
             'byrokrat\\giroapp\\Xml\\XmlMandateParser' => true,
@@ -147,10 +145,6 @@ class ProjectServiceContainer extends Container
             'db_import_engine' => true,
             'db_log_collection' => true,
             'db_log_engine' => true,
-            'db_settings_collection' => true,
-            'db_settings_engine' => true,
-            'db_transaction_collection' => true,
-            'db_transaction_engine' => true,
             'file_export_cwd_dumper' => true,
             'file_export_dumper' => true,
             'file_import_dumper' => true,
@@ -214,7 +208,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getExportCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\ExportCommand'] = $instance = new \byrokrat\giroapp\Console\ExportCommand((new \byrokrat\autogiro\Writer\WriterFactory())->createWriter(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bgc_customer_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
+        $this->services['byrokrat\giroapp\Console\ExportCommand'] = $instance = new \byrokrat\giroapp\Console\ExportCommand((new \byrokrat\giroapp\AutogiroWriterFactory(new \byrokrat\autogiro\Writer\WriterFactory()))->createWriter(($this->services['configs'] ?? $this->getConfigsService())->getConfig("org.bgc_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
         $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
@@ -242,20 +236,6 @@ class ProjectServiceContainer extends Container
         $this->services['byrokrat\giroapp\Console\ImportCommand'] = $instance = new \byrokrat\giroapp\Console\ImportCommand(($this->privates['fs_cwd'] ?? $this->getFsCwdService()));
 
         $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-
-        return $instance;
-    }
-
-    /**
-     * Gets the public 'byrokrat\giroapp\Console\InitCommand' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Console\InitCommand
-     */
-    protected function getInitCommandService()
-    {
-        $this->services['byrokrat\giroapp\Console\InitCommand'] = $instance = new \byrokrat\giroapp\Console\InitCommand(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService()));
-
-        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
 
         return $instance;
     }
@@ -382,7 +362,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getEnvironmentInterfaceService()
     {
-        $this->services['byrokrat\giroapp\Plugin\EnvironmentInterface'] = $instance = new \byrokrat\giroapp\Plugin\Environment(($this->services['Symfony\Component\Console\Application'] ?? $this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '1.0.0-alpha3@dev')), ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()), ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] ?? $this->privates['byrokrat\giroapp\Filter\FilterContainer'] = new \byrokrat\giroapp\Filter\FilterContainer()), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()), ($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? $this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator()));
+        $this->services['byrokrat\giroapp\Plugin\EnvironmentInterface'] = $instance = new \byrokrat\giroapp\Plugin\Environment(($this->services['Symfony\Component\Console\Application'] ?? $this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '1.0.0-alpha3@dev')), ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()), ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] ?? $this->privates['byrokrat\giroapp\Filter\FilterContainer'] = new \byrokrat\giroapp\Filter\FilterContainer()), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()), ($this->services['configs'] ?? $this->getConfigsService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? $this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator()));
 
         $a = new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/plugins', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
         ($this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] = new \byrokrat\giroapp\Utils\FilesystemConfigurator())->configureFilesystem($a);
@@ -393,13 +373,17 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the public 'db_settings_mapper' shared autowired service.
+     * Gets the public 'configs' shared autowired service.
      *
-     * @return \byrokrat\giroapp\Mapper\SettingsMapper
+     * @return \byrokrat\giroapp\Config\ConfigManager
      */
-    protected function getDbSettingsMapperService()
+    protected function getConfigsService()
     {
-        return $this->services['db_settings_mapper'] = new \byrokrat\giroapp\Mapper\SettingsMapper(new \hanneskod\yaysondb\Collection(($this->privates['db_settings_engine'] ?? $this->getDbSettingsEngineService())));
+        $this->services['configs'] = $instance = new \byrokrat\giroapp\Config\ConfigManager();
+
+        (new \byrokrat\giroapp\Config\ConfigManagerConfigurator(($this->privates['fs_cwd'] ?? $this->getFsCwdService()), $this->getEnv('GIROAPP_INI_FILE')))->loadConfigFile($instance);
+
+        return $instance;
     }
 
     /**
@@ -535,7 +519,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getAutogiroImportingListenerService()
     {
-        $a = new \byrokrat\giroapp\AutogiroVisitor(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bgc_customer_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()));
+        $a = new \byrokrat\giroapp\AutogiroVisitor(($this->services['configs'] ?? $this->getConfigsService())->getConfig("org.bgc_number"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()));
         $a->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
 
         return $this->privates['byrokrat\giroapp\Listener\AutogiroImportingListener'] = new \byrokrat\giroapp\Listener\AutogiroImportingListener((new \byrokrat\autogiro\Parser\ParserFactory())->createParser(), $a);
@@ -548,7 +532,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getCommittingListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(array('settings' => ($this->privates['db_settings_engine'] ?? $this->getDbSettingsEngineService()), 'donors' => ($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService()), 'transactions' => new \hanneskod\yaysondb\Engine\FlysystemEngine('data/transactions.json', ($this->privates['flysystem_user_dir'] ?? $this->getFlysystemUserDirService())), 'imports' => ($this->privates['db_import_engine'] ?? $this->getDbImportEngineService()), 'log' => ($this->privates['db_log_engine'] ?? $this->getDbLogEngineService()))));
+        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(array('donors' => ($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService()), 'imports' => ($this->privates['db_import_engine'] ?? $this->getDbImportEngineService()), 'log' => ($this->privates['db_log_engine'] ?? $this->getDbLogEngineService()))));
     }
 
     /**
@@ -600,7 +584,7 @@ class ProjectServiceContainer extends Container
     {
         $a = ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService());
 
-        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser((new \byrokrat\giroapp\Utils\OrgIdFactory($a))->createId(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("org_number")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? $this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
+        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser((new \byrokrat\giroapp\Config\OrgIdFactory($a))->createId(($this->services['configs'] ?? $this->getConfigsService())->getConfig("org.state_id")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? $this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
     }
 
     /**
@@ -680,17 +664,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getDbLogEngineService()
     {
-        return $this->privates['db_log_engine'] = new \hanneskod\yaysondb\Engine\LogEngine($this->getEnv('string:GIROAPP_PATH').'/var/log', new \byrokrat\giroapp\Setup\LogFormatter());
-    }
-
-    /**
-     * Gets the private 'db_settings_engine' shared autowired service.
-     *
-     * @return \hanneskod\yaysondb\Engine\FlysystemEngine
-     */
-    protected function getDbSettingsEngineService()
-    {
-        return $this->privates['db_settings_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('data/settings.json', ($this->privates['flysystem_user_dir'] ?? $this->getFlysystemUserDirService()));
+        return $this->privates['db_log_engine'] = new \hanneskod\yaysondb\Engine\LogEngine($this->getEnv('string:GIROAPP_PATH').'/var/log', new \byrokrat\giroapp\Mapper\LogFormatter());
     }
 
     /**
@@ -738,7 +712,7 @@ class ProjectServiceContainer extends Container
     {
         $this->privates['flysystem_user_dir'] = $instance = new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getEnv('GIROAPP_PATH')));
 
-        (new \byrokrat\giroapp\Setup\FlysystemConfigurator(array(0 => 'data/settings.json', 1 => 'data/donors.json', 2 => 'data/transactions.json', 3 => 'var/log', 4 => 'data/imports.json')))->createFiles($instance);
+        (new \byrokrat\giroapp\Mapper\FlysystemConfigurator(array(0 => 'data/donors.json', 1 => 'var/log', 2 => 'data/imports.json')))->createFiles($instance);
 
         return $instance;
     }
@@ -760,7 +734,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getOrganizationBgService()
     {
-        return $this->privates['organization_bg'] = (new \byrokrat\giroapp\Utils\OrgBankgiroFactory(($this->privates['byrokrat\banking\BankgiroFactory'] ?? $this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory())))->createAccount(($this->services['db_settings_mapper'] ?? $this->getDbSettingsMapperService())->findByKey("bankgiro"));
+        return $this->privates['organization_bg'] = (new \byrokrat\giroapp\Config\OrgBankgiroFactory(($this->privates['byrokrat\banking\BankgiroFactory'] ?? $this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory())))->createAccount(($this->services['configs'] ?? $this->getConfigsService())->getConfig("org.bankgiro"));
     }
 
     public function getParameter($name)
@@ -807,6 +781,8 @@ class ProjectServiceContainer extends Container
         'fs.plugins_dir' => false,
         'fs.imports_dir' => false,
         'fs.exports_dir' => false,
+        'env(GIROAPP_INI_FILE)' => false,
+        'app.ini_file_name' => false,
     );
     private $dynamicParameters = array();
 
@@ -826,6 +802,8 @@ class ProjectServiceContainer extends Container
             case 'fs.plugins_dir': $value = $this->getEnv('string:GIROAPP_PATH').'/plugins'; break;
             case 'fs.imports_dir': $value = $this->getEnv('string:GIROAPP_PATH').'/var/imports'; break;
             case 'fs.exports_dir': $value = $this->getEnv('string:GIROAPP_PATH').'/var/exports'; break;
+            case 'env(GIROAPP_INI_FILE)': $value = $this->getEnv('string:GIROAPP_PATH').'/giroapp.ini'; break;
+            case 'app.ini_file_name': $value = $this->getEnv('GIROAPP_INI_FILE'); break;
             default: throw new InvalidArgumentException(sprintf('The dynamic parameter "%s" must be defined.', $name));
         }
         $this->loadedDynamicParameters[$name] = true;
@@ -841,16 +819,14 @@ class ProjectServiceContainer extends Container
     protected function getDefaultParameters()
     {
         return array(
-            'env(GIROAPP_PATH)' => 'giroapp',
             'fs.internal_data_dir' => 'data',
             'fs.external_data_dir' => 'var',
-            'db.settings' => 'data/settings.json',
             'db.donors' => 'data/donors.json',
-            'db.transactions' => 'data/transactions.json',
-            'db.log' => 'var/log',
             'db.imports' => 'data/imports.json',
+            'db.log' => 'var/log',
             'app.name' => 'GiroApp',
             'app.version' => '1.0.0-alpha3@dev',
+            'env(GIROAPP_PATH)' => 'giroapp',
         );
     }
 }

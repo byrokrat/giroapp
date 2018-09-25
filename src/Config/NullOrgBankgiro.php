@@ -20,34 +20,34 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Config;
 
-use byrokrat\giroapp\Exception\InvalidSettingException;
+use byrokrat\giroapp\Exception\InvalidConfigException;
 use byrokrat\banking\AccountNumber;
 use byrokrat\banking\Formatter\FormatterInterface;
 
-class MissingOrgBankgiro implements AccountNumber
+class NullOrgBankgiro implements AccountNumber
 {
     private const MESSAGE = 'Missing or invalid organization bankgiro account number';
 
     public function getBankName(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getRawNumber(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function format(FormatterInterface $formatter): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getNumber(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function __toString(): string
@@ -57,36 +57,36 @@ class MissingOrgBankgiro implements AccountNumber
 
     public function prettyprint(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function get16(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getClearingNumber(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getClearingCheckDigit(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getSerialNumber(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function getCheckDigit(): string
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 
     public function equals(AccountNumber $account, bool $strict = false): bool
     {
-        throw new InvalidSettingException(self::MESSAGE);
+        throw new InvalidConfigException(self::MESSAGE);
     }
 }

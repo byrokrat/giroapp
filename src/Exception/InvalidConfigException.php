@@ -18,32 +18,13 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Exception;
 
-namespace byrokrat\giroapp\Utils;
+use byrokrat\giroapp\Exception as AppException;
 
-use byrokrat\banking\AccountFactoryInterface;
-use byrokrat\banking\AccountNumber;
-use byrokrat\banking\Exception\InvalidAccountNumberException;
-
-class OrgBankgiroFactory implements AccountFactoryInterface
+/**
+ * Exception thrown when configuration is missing or invalid
+ */
+class InvalidConfigException extends \RuntimeException implements AppException
 {
-    /**
-     * @var AccountFactoryInterface
-     */
-    private $decorated;
-
-    public function __construct(AccountFactoryInterface $decorated)
-    {
-        $this->decorated = $decorated;
-    }
-
-    public function createAccount(string $number): AccountNumber
-    {
-        try {
-            return $this->decorated->createAccount($number);
-        } catch (InvalidAccountNumberException $e) {
-            return new MissingOrgBankgiro;
-        }
-    }
 }

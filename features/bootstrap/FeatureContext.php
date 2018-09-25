@@ -49,15 +49,14 @@ class FeatureContext implements Context
     public function aFreshInstallation(): void
     {
         $this->app = new ApplicationWrapper($this->debug);
-        $this->iRun("init --org-name foo --org-number 8350000892 --bankgiro 58056201 --bgc-customer-number 123456");
     }
 
     /**
-     * @Given a payee with :setting :value
+     * @Given a configuration file:
      */
-    public function aPayeeWith($setting, $value): void
+    public function aConfigurationFile(PyStringNode $ini)
     {
-        $this->iRun("init --$setting='$value'");
+        $this->app->createIniFile((string)$ini);
     }
 
     /**

@@ -20,23 +20,22 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Mapper;
+namespace byrokrat\giroapp\Config;
 
-use hanneskod\yaysondb\CollectionInterface;
-use hanneskod\yaysondb\Operators as y;
-
-/**
- * Mapps transaction objects to database collection
- */
-class TransactionMapper
+class SimpleConfig implements ConfigInterface
 {
     /**
-     * @var CollectionInterface
+     * @var mixed
      */
-    private $collection;
+    private $value;
 
-    public function __construct(CollectionInterface $collection)
+    public function __construct($value)
     {
-        $this->collection = $collection;
+        $this->value = $value;
+    }
+
+    public function getValue()
+    {
+        return $this->value;
     }
 }

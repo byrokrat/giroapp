@@ -7,6 +7,6 @@ return new class implements PluginInterface
 {
     public function loadPlugin(EnvironmentInterface $env): void
     {
-        $env->readSetting('custom-test-check');
+        $env->readConfig('custom-test-check');
     }
 };

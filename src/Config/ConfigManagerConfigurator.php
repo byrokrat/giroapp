@@ -20,30 +20,38 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Config;
 
-use byrokrat\id\IdFactoryInterface;
-use byrokrat\id\IdInterface;
-use byrokrat\id\Exception\UnableToCreateIdException;
+use byrokrat\giroapp\Utils\Filesystem;
 
-class OrgIdFactory implements IdFactoryInterface
+class ConfigManagerConfigurator
 {
     /**
-     * @var IdFactoryInterface
+     * @var Filesystem
      */
-    private $decorated;
+    private $filesystem;
 
-    public function __construct(IdFactoryInterface $decorated)
+    /**
+     * @var string
+     */
+    private $iniFileName;
+
+    public function __construct(Filesystem $filesystem, string $iniFileName)
     {
-        $this->decorated = $decorated;
+        $this->filesystem = $filesystem;
+        $this->iniFileName = $iniFileName;
     }
 
-    public function createId(string $number): IdInterface
+    public function loadConfigFile(ConfigManager $manager): void
     {
-        try {
-            return $this->decorated->createId($number);
-        } catch (UnableToCreateIdException $e) {
-            return new MissingOrgId;
+        if (!$this->filesystem->isFile($this->iniFileName)) {
+            return;
         }
+
+        $manager->loadRepository(
+            new IniRepository(
+                $this->filesystem->readFile($this->iniFileName)->getContent()
+            )
+        );
     }
 }

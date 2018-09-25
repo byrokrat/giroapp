@@ -5,8 +5,11 @@ Feature: Importing files
 
   Background:
     Given a fresh installation
-    And a payee with 'bankgiro' '58056201'
-    And a payee with 'bgc-customer-number' '123456'
+    And a configuration file:
+        """
+        org.bgc_number = 123456
+        org.bankgiro = 58056201
+        """
 
   Scenario: I import an invalid file
     When I import:

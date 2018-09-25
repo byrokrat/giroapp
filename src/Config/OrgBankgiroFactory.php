@@ -20,11 +20,31 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model;
+namespace byrokrat\giroapp\Config;
 
-/**
- * Models a performed transaction
- */
-class Transaction
+use byrokrat\giroapp\Config\ConfigInterface;
+use byrokrat\banking\AccountFactoryInterface;
+use byrokrat\banking\AccountNumber;
+use byrokrat\banking\Exception\InvalidAccountNumberException;
+
+class OrgBankgiroFactory
 {
+    /**
+     * @var AccountFactoryInterface
+     */
+    private $decorated;
+
+    public function __construct(AccountFactoryInterface $decorated)
+    {
+        $this->decorated = $decorated;
+    }
+
+    public function createAccount(ConfigInterface $config): AccountNumber
+    {
+        try {
+            return $this->decorated->createAccount((string)$config->getValue());
+        } catch (InvalidAccountNumberException $e) {
+            return new NullOrgBankgiro;
+        }
+    }
 }

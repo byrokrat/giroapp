@@ -5,8 +5,11 @@ Feature: Exporting files to autogirot
 
   Background:
     Given a fresh installation
-    And a payee with 'bankgiro' '58056201'
-    And a payee with 'bgc-customer-number' '111111'
+    And a configuration file:
+        """
+        org.bgc_number = 111111
+        org.bankgiro = 58056201
+        """
 
   Scenario: I export a new paper based mandate
     Given there are donors:

@@ -8,11 +8,12 @@ use byrokrat\giroapp\Plugin\Environment;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Console\CommandInterface;
+use byrokrat\giroapp\Config\ConfigManager;
+use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Filter\FilterContainer;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterContainer;
 use byrokrat\giroapp\Formatter\FormatterInterface;
-use byrokrat\giroapp\Mapper\SettingsMapper;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use byrokrat\giroapp\Xml\XmlFormTranslator;
 use Symfony\Component\Console\Application;
@@ -28,7 +29,7 @@ class EnvironmentSpec extends ObjectBehavior
         EventDispatcherInterface $dispatcher,
         FilterContainer $filterContainer,
         FormatterContainer $formatterContainer,
-        SettingsMapper $settingsMapper,
+        ConfigManager $configManager,
         XmlFormTranslator $xmlFormTranslator
     ) {
         $this->beConstructedWith(
@@ -36,7 +37,7 @@ class EnvironmentSpec extends ObjectBehavior
             $dispatcher,
             $filterContainer,
             $formatterContainer,
-            $settingsMapper,
+            $configManager,
             $xmlFormTranslator
         );
     }
@@ -51,10 +52,11 @@ class EnvironmentSpec extends ObjectBehavior
         $this->shouldHaveType(EnvironmentInterface::CLASS);
     }
 
-    function it_can_read_settings($settingsMapper)
+    function it_can_read_configs($configManager, ConfigInterface $config)
     {
-        $settingsMapper->findByKey('foo')->willReturn('bar');
-        $this->readSetting('foo')->shouldReturn('bar');
+        $configManager->getConfig('foo')->willReturn($config);
+        $config->getValue()->willReturn('bar');
+        $this->readConfig('foo')->shouldReturn('bar');
     }
 
     function it_can_register_commands($application, $dispatcher, CommandInterface $command)

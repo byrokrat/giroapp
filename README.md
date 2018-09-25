@@ -22,7 +22,9 @@ composer create-project byrokrat/giroapp --stability=alpha --no-interaction --no
 
 5. Optionally change your user directory path. See below.
 
-6. Setup your local installation using `giroapp init`.
+6. Copy `giroapp.ini.dist` to `giroapp.ini` in you user directory.
+
+7. Edit `giroapp.ini` to your needs.
 
 ### Changing the user directory path
 

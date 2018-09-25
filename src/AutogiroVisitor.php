@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\autogiro\Visitor\Visitor;
@@ -37,7 +38,7 @@ class AutogiroVisitor extends Visitor
     use DispatcherProperty;
 
     /**
-     * @var string
+     * @var ConfigInterface
      */
     private $orgBgcNr;
 
@@ -46,7 +47,7 @@ class AutogiroVisitor extends Visitor
      */
     private $orgBankgiro;
 
-    public function __construct(string $orgBgcNr, AccountNumber $orgBankgiro)
+    public function __construct(ConfigInterface $orgBgcNr, AccountNumber $orgBankgiro)
     {
         $this->orgBgcNr = $orgBgcNr;
         $this->orgBankgiro = $orgBankgiro;
@@ -65,7 +66,7 @@ class AutogiroVisitor extends Visitor
         /** @var AccountNumber $payeeBankgiro */
         $payeeBankgiro = $node->getChild('PayeeBankgiro')->getValueFrom('Object');
 
-        if ($payeeBgcNr != $this->orgBgcNr) {
+        if ($payeeBgcNr != $this->orgBgcNr->getValue()) {
             throw new \RuntimeException('File contains invalid payee BGC customer number');
         }
 

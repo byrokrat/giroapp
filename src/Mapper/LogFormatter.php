@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Setup;
+namespace byrokrat\giroapp\Mapper;
 
 use hanneskod\yaysondb\Engine\DecoderInterface;
 

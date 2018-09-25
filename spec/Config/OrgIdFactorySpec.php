@@ -2,10 +2,11 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Utils;
+namespace spec\byrokrat\giroapp\Config;
 
-use byrokrat\giroapp\Utils\OrgIdFactory;
-use byrokrat\giroapp\Utils\MissingOrgId;
+use byrokrat\giroapp\Config\OrgIdFactory;
+use byrokrat\giroapp\Config\NullOrgId;
+use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\IdInterface;
 use byrokrat\id\Exception\UnableToCreateIdException;
@@ -24,20 +25,17 @@ class OrgIdFactorySpec extends ObjectBehavior
         $this->shouldHaveType(OrgIdFactory::CLASS);
     }
 
-    function it_is_an_id_factory()
+    function it_delegates_creating_account($decorated, ConfigInterface $config, IdInterface $id)
     {
-        $this->shouldHaveType(IdFactoryInterface::CLASS);
-    }
-
-    function it_delegates_creating_account($decorated, IdInterface $id)
-    {
+        $config->getValue()->willReturn('foo');
         $decorated->createId('foo')->willReturn($id);
-        $this->createId('foo')->shouldReturn($id);
+        $this->createId($config)->shouldReturn($id);
     }
 
-    function it_creates_missing_org_bankgiro_on_failure($decorated)
+    function it_creates_missing_org_bankgiro_on_failure($decorated, ConfigInterface $config)
     {
+        $config->getValue()->willReturn('foo');
         $decorated->createId('foo')->willThrow(new UnableToCreateIdException);
-        $this->createId('foo')->shouldHaveType(MissingOrgId::CLASS);
+        $this->createId($config)->shouldHaveType(NullOrgId::CLASS);
     }
 }

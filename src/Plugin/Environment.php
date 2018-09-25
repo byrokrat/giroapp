@@ -24,11 +24,11 @@ namespace byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Console\CommandInterface;
+use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Filter\FilterContainer;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterContainer;
 use byrokrat\giroapp\Formatter\FormatterInterface;
-use byrokrat\giroapp\Mapper\SettingsMapper;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use byrokrat\giroapp\Xml\XmlFormTranslator;
 use Symfony\Component\Console\Application;
@@ -58,9 +58,9 @@ final class Environment implements EnvironmentInterface
     private $formatterContainer;
 
     /**
-     * @var SettingsMapper
+     * @var ConfigManager
      */
-    private $settingsMapper;
+    private $configManager;
 
     /**
      * @var XmlFormTranslator
@@ -72,20 +72,20 @@ final class Environment implements EnvironmentInterface
         EventDispatcherInterface $dispatcher,
         FilterContainer $filterContainer,
         FormatterContainer $formatterContainer,
-        SettingsMapper $settingsMapper,
+        ConfigManager $configManager,
         XmlFormTranslator $xmlFormTranslator
     ) {
         $this->application = $application;
         $this->dispatcher = $dispatcher;
         $this->filterContainer = $filterContainer;
         $this->formatterContainer = $formatterContainer;
-        $this->settingsMapper = $settingsMapper;
+        $this->configManager = $configManager;
         $this->xmlFormTranslator = $xmlFormTranslator;
     }
 
-    public function readSetting(string $key): string
+    public function readConfig(string $key): string
     {
-        return $this->settingsMapper->findByKey($key);
+        return $this->configManager->getConfig($key)->getValue();
     }
 
     public function registerCommand(CommandInterface $command): void

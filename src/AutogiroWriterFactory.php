@@ -20,38 +20,26 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Mapper;
+namespace byrokrat\giroapp;
 
-use hanneskod\yaysondb\CollectionInterface;
+use byrokrat\giroapp\Config\ConfigInterface;
+use byrokrat\autogiro\Writer\WriterFactory;
+use byrokrat\banking\AccountNumber;
 
-/**
- * Mapps key-value pairs to a db collection
- */
-class SettingsMapper
+class AutogiroWriterFactory
 {
     /**
-     * @var CollectionInterface
+     * @var WriterFactory
      */
-    private $collection;
+    private $decorated;
 
-    public function __construct(CollectionInterface $collection)
+    public function __construct(WriterFactory $decorated)
     {
-        $this->collection = $collection;
+        $this->decorated = $decorated;
     }
 
-    /**
-     * Lookup setting identified by key
-     */
-    public function findByKey(string $key): string
+    public function createWriter(ConfigInterface $bgcNr, AccountNumber $bankgiro)
     {
-        return $this->collection->has($key) ? $this->collection->read($key)['value'] : '';
-    }
-
-    /**
-     * Save setting key-value pair
-     */
-    public function save(string $key, string $value): void
-    {
-        $this->collection->insert(['value' => $value], $key);
+        return $this->decorated->createWriter((string)$bgcNr->getValue(), $bankgiro);
     }
 }

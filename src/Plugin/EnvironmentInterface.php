@@ -29,9 +29,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 interface EnvironmentInterface
 {
     /**
-     * Read a giroapp setting
+     * Read a giroapp config value
      */
-    public function readSetting(string $key): string;
+    public function readConfig(string $key): string;
 
     /**
      * Register a console command

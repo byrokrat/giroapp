@@ -2,10 +2,11 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Utils;
+namespace spec\byrokrat\giroapp\Config;
 
-use byrokrat\giroapp\Utils\OrgBankgiroFactory;
-use byrokrat\giroapp\Utils\MissingOrgBankgiro;
+use byrokrat\giroapp\Config\OrgBankgiroFactory;
+use byrokrat\giroapp\Config\NullOrgBankgiro;
+use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\banking\Exception\InvalidAccountNumberException;
@@ -24,20 +25,17 @@ class OrgBankgiroFactorySpec extends ObjectBehavior
         $this->shouldHaveType(OrgBankgiroFactory::CLASS);
     }
 
-    function it_is_an_account_factory()
+    function it_delegates_creating_account($decorated, ConfigInterface $config, AccountNumber $account)
     {
-        $this->shouldHaveType(AccountFactoryInterface::CLASS);
-    }
-
-    function it_delegates_creating_account($decorated, AccountNumber $account)
-    {
+        $config->getValue()->willReturn('foo');
         $decorated->createAccount('foo')->willReturn($account);
-        $this->createAccount('foo')->shouldReturn($account);
+        $this->createAccount($config)->shouldReturn($account);
     }
 
-    function it_creates_missing_org_bankgiro_on_failure($decorated)
+    function it_creates_missing_org_bankgiro_on_failure($decorated, ConfigInterface $config)
     {
+        $config->getValue()->willReturn('foo');
         $decorated->createAccount('foo')->willThrow(new InvalidAccountNumberException);
-        $this->createAccount('foo')->shouldHaveType(MissingOrgBankgiro::CLASS);
+        $this->createAccount($config)->shouldHaveType(NullOrgBankgiro::CLASS);
     }
 }

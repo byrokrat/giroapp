@@ -1,5 +1,4 @@
 parameters:
-    env(GIROAPP_PATH): 'giroapp'
     fs.user_dir: '%env(GIROAPP_PATH)%'
     fs.internal_data_dir: 'data'
     fs.external_data_dir: 'var'
@@ -15,25 +14,6 @@ services:
     fs_user_dir:
         class: byrokrat\giroapp\Utils\Filesystem
         arguments: ['%fs.user_dir%']
-
-    flysystem_user_dir:
-        class: League\Flysystem\Filesystem
-        arguments: ['@flysystem_user_dir_adapter']
-        configurator: 'byrokrat\giroapp\Setup\FlysystemConfigurator:createFiles'
-
-    flysystem_user_dir_adapter:
-        class: League\Flysystem\Adapter\Local
-        arguments: ['%fs.user_dir%']
-
-    byrokrat\giroapp\Setup\FlysystemConfigurator:
-        class: ~
-        arguments:
-            -
-                - '%db.settings%'
-                - '%db.donors%'
-                - '%db.transactions%'
-                - '%db.log%'
-                - '%db.imports%'
 
     fs_cwd:
         class: byrokrat\giroapp\Utils\Filesystem
