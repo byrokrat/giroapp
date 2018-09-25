@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Builder;
 
+use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Utils\SystemClock;
 
 /**
@@ -45,44 +46,29 @@ class DateBuilder
     private $systemClock;
 
     /**
-     * @var int
+     * @var ConfigInterface
      */
     private $dayOfMonth;
 
     /**
-     * @var int
+     * @var ConfigInterface
      */
     private $minDaysInFuture;
 
-    public function __construct(SystemClock $systemClock)
-    {
+    public function __construct(
+        SystemClock $systemClock,
+        ConfigInterface $dayOfMonth,
+        ConfigInterface $minDaysInFuture
+    ) {
         $this->systemClock = $systemClock;
-    }
-
-    /**
-     * Set day of month of created date
-     */
-    public function setDayOfMonth(int $dayOfMonth): self
-    {
         $this->dayOfMonth = $dayOfMonth;
-
-        return $this;
-    }
-
-    /**
-     * Set number of days in the future created dates must minimaly be in
-     */
-    public function setMinDaysInFuture(int $minDaysInFuture): self
-    {
         $this->minDaysInFuture = $minDaysInFuture;
-
-        return $this;
     }
 
     /**
      * Get next date for requested day of month
      */
-    public function buildDate(): \DateTimeInterface
+    public function buildDate(): \DateTimeImmutable
     {
         $currentDate = $this->systemClock->getNow();
 
@@ -92,16 +78,16 @@ class DateBuilder
             $createdDate->add(new \DateInterval('P1M'));
         }
 
-        return $createdDate;
+        return \DateTimeImmutable::createFromMutable($createdDate);
     }
 
     private function getDayOfMonth(): int
     {
-        return $this->dayOfMonth ?: self::DEFAULT_DAY_OF_MONTH;
+        return (int)$this->dayOfMonth->getValue() ?: self::DEFAULT_DAY_OF_MONTH;
     }
 
     private function getMinDaysInFuture(): int
     {
-        return $this->minDaysInFuture ?: self::DEFAULT_MIN_DAYS_IN_FUTURE;
+        return (int)$this->minDaysInFuture->getValue() ?: self::DEFAULT_MIN_DAYS_IN_FUTURE;
     }
 }

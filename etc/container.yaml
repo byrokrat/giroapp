@@ -30,6 +30,12 @@ services:
     byrokrat\giroapp\Builder\:
         resource: '../src/Builder/*'
 
+    byrokrat\giroapp\Builder\DateBuilder:
+        class: ~
+        arguments:
+            $dayOfMonth: "@=service('configs').getConfig('trans.day_of_month')"
+            $minDaysInFuture: "@=service('configs').getConfig('trans.min_days_in_future')"
+
     byrokrat\giroapp\Console\:
         public: true
         resource: '../src/Console/*'

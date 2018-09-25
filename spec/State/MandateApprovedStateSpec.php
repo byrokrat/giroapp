@@ -67,7 +67,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $donor->getPayerNumber()->willReturn('payer_number');
         $donor->getMandateKey()->willReturn('mandate_key');
 
-        $date = new \DateTime;
+        $date = new \DateTimeImmutable;
         $dateBuilder->buildDate()->willReturn($date);
 
         $this->export($donor, $writer);
