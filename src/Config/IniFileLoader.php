@@ -24,25 +24,25 @@ namespace byrokrat\giroapp\Config;
 
 use byrokrat\giroapp\Utils\Filesystem;
 
-class ConfigManagerConfigurator
+final class IniFileLoader
 {
-    /**
-     * @var Filesystem
-     */
-    private $filesystem;
-
     /**
      * @var string
      */
     private $iniFileName;
 
-    public function __construct(Filesystem $filesystem, string $iniFileName)
+    /**
+     * @var Filesystem
+     */
+    private $filesystem;
+
+    public function __construct(string $iniFileName, Filesystem $filesystem)
     {
-        $this->filesystem = $filesystem;
         $this->iniFileName = $iniFileName;
+        $this->filesystem = $filesystem;
     }
 
-    public function loadConfigFile(ConfigManager $manager): void
+    public function loadIniFile(ConfigManager $manager): void
     {
         if (!$this->filesystem->isFile($this->iniFileName)) {
             return;

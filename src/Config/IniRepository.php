@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Config;
 
 use byrokrat\giroapp\Exception\InvalidConfigException;
 
-class IniRepository implements RepositoryInterface
+final class IniRepository implements RepositoryInterface
 {
     /**
      * @var array

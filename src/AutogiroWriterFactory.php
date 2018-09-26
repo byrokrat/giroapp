@@ -24,6 +24,7 @@ namespace byrokrat\giroapp;
 
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\autogiro\Writer\WriterFactory;
+use byrokrat\autogiro\Writer\WriterInterface;
 use byrokrat\banking\AccountNumber;
 
 class AutogiroWriterFactory
@@ -38,7 +39,7 @@ class AutogiroWriterFactory
         $this->decorated = $decorated;
     }
 
-    public function createWriter(ConfigInterface $bgcNr, AccountNumber $bankgiro)
+    public function createWriter(ConfigInterface $bgcNr, AccountNumber $bankgiro): WriterInterface
     {
         return $this->decorated->createWriter((string)$bgcNr->getValue(), $bankgiro);
     }

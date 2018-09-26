@@ -7,8 +7,8 @@ Feature: Exporting files to autogirot
     Given a fresh installation
     And a configuration file:
         """
-        org.bgc_number = 111111
-        org.bankgiro = 58056201
+        org_bgc_nr = 111111
+        org_bg = 58056201
         """
 
   Scenario: I export a new paper based mandate

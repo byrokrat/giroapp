@@ -109,7 +109,7 @@ class DonorMapperSpec extends ObjectBehavior
         $donorSchema->toArray($donor)->willReturn(['SCHEMA']);
         $collection->has('mandate_key')->willReturn(true);
         $collection->insert(['SCHEMA'], 'mandate_key')->shouldBeCalled();
-        $date = new \DateTime;
+        $date = new \DateTimeImmutable;
         $systemClock->getNow()->willReturn($date);
         $donor->setUpdated($date)->shouldBeCalled();
 

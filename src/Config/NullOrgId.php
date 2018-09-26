@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Config;
 use byrokrat\giroapp\Exception\InvalidConfigException;
 use byrokrat\id\IdInterface;
 
-class NullOrgId implements IdInterface
+final class NullOrgId implements IdInterface
 {
     private const MESSAGE = 'Missing or invalid organization id number';
 

@@ -27,7 +27,7 @@ use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\banking\Exception\InvalidAccountNumberException;
 
-class OrgBankgiroFactory
+final class OrgBankgiroFactory
 {
     /**
      * @var AccountFactoryInterface

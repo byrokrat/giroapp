@@ -71,7 +71,7 @@ class DonorSchemaSpec extends ObjectBehavior
         AccountNumber $account,
         IdFactoryInterface $idFactory,
         IdInterface $id,
-        \DateTime $datetime
+        \DateTimeImmutable $datetime
     ) {
         $postalAddressSchema->fromArray([self::ADDRESS])->willReturn($address);
         $postalAddressSchema->toArray($address)->willReturn([self::ADDRESS]);
@@ -85,7 +85,7 @@ class DonorSchemaSpec extends ObjectBehavior
         $idFactory->createId(self::ID)->willReturn($id);
         $id->format('S-sk')->willReturn(self::ID);
 
-        $datetime->format(\DateTime::W3C)->willReturn(self::FORMATTED_DATE);
+        $datetime->format(\DateTimeImmutable::W3C)->willReturn(self::FORMATTED_DATE);
 
         $this->beConstructedWith(
             $postalAddressSchema,

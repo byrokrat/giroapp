@@ -27,7 +27,7 @@ class FileImportChecksumListenerSpec extends ObjectBehavior
         FileEvent $event,
         File $file
     ) {
-        $systemClock->getNow()->willReturn(new \DateTime);
+        $systemClock->getNow()->willReturn(new \DateTimeImmutable);
         $this->beConstructedWith($fileChecksumMapper, $systemClock);
         $event->getFile()->willReturn($file);
         $file->getFilename()->willReturn(self::FILENAME);
@@ -43,7 +43,7 @@ class FileImportChecksumListenerSpec extends ObjectBehavior
     {
         $fileChecksumMapper->hasKey(self::CHECKSUM)->willReturn(true);
         $fileChecksumMapper->findByKey(self::CHECKSUM)->willReturn($oldImport);
-        $oldImport->getDatetime()->willReturn(new \DateTime);
+        $oldImport->getDatetime()->willReturn(new \DateTimeImmutable);
 
         $dispatcher->dispatch(Events::ERROR, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
@@ -56,7 +56,7 @@ class FileImportChecksumListenerSpec extends ObjectBehavior
     {
         $fileChecksumMapper->hasKey(self::CHECKSUM)->willReturn(false);
 
-        $date = new \DateTime;
+        $date = new \DateTimeImmutable;
         $systemClock->getNow()->willReturn($date);
 
         $dispatcher->dispatch(Events::ERROR, Argument::type(LogEvent::CLASS))->shouldNotBeCalled();

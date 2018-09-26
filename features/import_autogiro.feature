@@ -7,8 +7,8 @@ Feature: Importing files
     Given a fresh installation
     And a configuration file:
         """
-        org.bgc_number = 123456
-        org.bankgiro = 58056201
+        org_bgc_nr = 123456
+        org_bg = 58056201
         """
 
   Scenario: I import an invalid file

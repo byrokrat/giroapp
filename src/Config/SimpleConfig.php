@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Config;
 
-class SimpleConfig implements ConfigInterface
+final class SimpleConfig implements ConfigInterface
 {
     /**
      * @var mixed

@@ -13,7 +13,7 @@ class FileChecksumSpec extends ObjectBehavior
     const FILENAME = 'fname';
     const CHECKSUM = 'check';
 
-    function let(\DateTime $date)
+    function let(\DateTimeImmutable $date)
     {
         $this->beConstructedWith(self::FILENAME, self::CHECKSUM, $date);
     }

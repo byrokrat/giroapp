@@ -32,8 +32,8 @@ class DonorSpec extends ObjectBehavior
         PersonalId $donorId,
         PostalAddress $address,
         SEK $donationAmount,
-        \DateTime $created,
-        \DateTime $updated
+        \DateTimeImmutable $created,
+        \DateTimeImmutable $updated
     ) {
         $this->beConstructedWith(
             self::MANDATE_KEY,
@@ -192,7 +192,7 @@ class DonorSpec extends ObjectBehavior
         $this->getUpdated()->shouldEqual($updated);
     }
 
-    function it_can_set_updated_date(\DateTime $newUpdated)
+    function it_can_set_updated_date(\DateTimeImmutable $newUpdated)
     {
         $this->setUpdated($newUpdated);
         $this->getUpdated()->shouldEqual($newUpdated);

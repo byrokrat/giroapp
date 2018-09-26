@@ -17,6 +17,6 @@ class SystemClockSpec extends ObjectBehavior
 
     function it_creates_now()
     {
-        $this->getNow()->shouldHaveType(\DateTimeInterface::CLASS);
+        $this->getNow()->shouldHaveType(\DateTimeImmutable::CLASS);
     }
 }

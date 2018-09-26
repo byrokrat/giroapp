@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Config;
 
-class ArrayRepository implements RepositoryInterface
+final class ArrayRepository implements RepositoryInterface
 {
     /**
      * @var array

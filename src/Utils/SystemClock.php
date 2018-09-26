@@ -27,7 +27,7 @@ namespace byrokrat\giroapp\Utils;
  */
 class SystemClock
 {
-    public function getNow(): \DateTimeInterface
+    public function getNow(): \DateTimeImmutable
     {
         return new \DateTimeImmutable;
     }

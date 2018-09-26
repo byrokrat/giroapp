@@ -7,8 +7,8 @@ Feature: Importing files
     Given a fresh installation
     And a configuration file:
         """
-        org.state_id = 835000-0892
-        org.bankgiro = 58056201
+        org_id = 835000-0892
+        org_bg = 58056201
         """
     When I import:
         """

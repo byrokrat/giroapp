@@ -114,12 +114,12 @@ class Donor
     private $comment;
 
     /**
-     * @var \DateTimeInterface
+     * @var \DateTimeImmutable
      */
     private $created;
 
     /**
-     * @var \DateTimeInterface
+     * @var \DateTimeImmutable
      */
     private $updated;
 
@@ -142,8 +142,8 @@ class Donor
         string $phone,
         SEK $donationAmount,
         string $comment,
-        \DateTimeInterface $created,
-        \DateTimeInterface $updated,
+        \DateTimeImmutable $created,
+        \DateTimeImmutable $updated,
         array $attributes = []
     ) {
         $this->mandateKey = $mandateKey;
@@ -269,17 +269,17 @@ class Donor
         $this->comment = $comment;
     }
 
-    public function getCreated(): \DateTimeInterface
+    public function getCreated(): \DateTimeImmutable
     {
         return $this->created;
     }
 
-    public function getUpdated(): \DateTimeInterface
+    public function getUpdated(): \DateTimeImmutable
     {
         return $this->updated;
     }
 
-    public function setUpdated(\DateTimeInterface $updated): void
+    public function setUpdated(\DateTimeImmutable $updated): void
     {
         $this->updated = $updated;
     }

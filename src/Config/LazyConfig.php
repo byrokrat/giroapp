@@ -22,10 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Config;
 
-class LazyConfig implements ConfigInterface
+final class LazyConfig implements ConfigInterface
 {
     /**
-     * @var mixed
+     * @var callable
      */
     private $valueFactory;
 

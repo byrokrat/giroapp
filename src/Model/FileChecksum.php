@@ -38,11 +38,11 @@ class FileChecksum
     private $checksum;
 
     /**
-     * @var \DateTimeInterface
+     * @var \DateTimeImmutable
      */
     private $datetime;
 
-    public function __construct(string $filename, string $checksum, \DateTimeInterface $datetime)
+    public function __construct(string $filename, string $checksum, \DateTimeImmutable $datetime)
     {
         $this->filename = $filename;
         $this->checksum = $checksum;
@@ -59,7 +59,7 @@ class FileChecksum
         return $this->checksum;
     }
 
-    public function getDatetime(): \DateTimeInterface
+    public function getDatetime(): \DateTimeImmutable
     {
         return $this->datetime;
     }

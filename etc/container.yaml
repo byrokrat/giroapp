@@ -14,18 +14,20 @@ services:
     _defaults:
         public: false
         autowire: true
+        bind:
+            $filesystem: '@fs_cwd'
 
     byrokrat\giroapp\Config\ConfigManager:
         class: ~
-        configurator: 'byrokrat\giroapp\Config\ConfigManagerConfigurator:loadConfigFile'
+        configurator: 'byrokrat\giroapp\Config\IniFileLoader:loadIniFile'
 
     configs:
         alias: byrokrat\giroapp\Config\ConfigManager
         public: true
 
-    byrokrat\giroapp\Config\ConfigManagerConfigurator:
+    byrokrat\giroapp\Config\IniFileLoader:
         class: ~
-        arguments: ['@fs_cwd', '%app.ini_file_name%']
+        arguments: ['%app.ini_file_name%']
 
     byrokrat\giroapp\Builder\:
         resource: '../src/Builder/*'
@@ -33,18 +35,13 @@ services:
     byrokrat\giroapp\Builder\DateBuilder:
         class: ~
         arguments:
-            $dayOfMonth: "@=service('configs').getConfig('trans.day_of_month')"
-            $minDaysInFuture: "@=service('configs').getConfig('trans.min_days_in_future')"
+            $dayOfMonth: "@=service('configs').getConfig('trans_day_of_month')"
+            $minDaysInFuture: "@=service('configs').getConfig('trans_min_days_in_future')"
 
     byrokrat\giroapp\Console\:
         public: true
         resource: '../src/Console/*'
         exclude: '../src/Console/{Adapter,Helper/InputReader}.php'
-
-    byrokrat\giroapp\Console\ImportCommand:
-        class: ~
-        public: true
-        arguments: ['@fs_cwd']
 
     byrokrat\giroapp\Console\ValidateCommand:
         class: ~
@@ -88,13 +85,13 @@ services:
     byrokrat\giroapp\AutogiroVisitor:
         class: ~
         arguments:
-            - "@=service('configs').getConfig('org.bgc_number')"
+            - "@=service('configs').getConfig('org_bgc_nr')"
             - '@organization_bg'
 
     byrokrat\autogiro\Writer\WriterInterface:
         factory: 'byrokrat\giroapp\AutogiroWriterFactory:createWriter'
         arguments:
-            - "@=service('configs').getConfig('org.bgc_number')"
+            - "@=service('configs').getConfig('org_bgc_nr')"
             - '@organization_bg'
 
     byrokrat\giroapp\AutogiroWriterFactory: ~
@@ -132,12 +129,12 @@ services:
     organization_id:
         class: byrokrat\id\IdInterface
         factory: 'byrokrat\giroapp\Config\OrgIdFactory:createId'
-        arguments: ["@=service('configs').getConfig('org.state_id')"]
+        arguments: ["@=service('configs').getConfig('org_id')"]
 
     organization_bg:
         class: byrokrat\banking\AccountNumber
         factory: 'byrokrat\giroapp\Config\OrgBankgiroFactory:createAccount'
-        arguments: ["@=service('configs').getConfig('org.bankgiro')"]
+        arguments: ["@=service('configs').getConfig('org_bg')"]
 
     JsonSchema\Validator: ~
 

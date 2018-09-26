@@ -24,7 +24,7 @@ class FileNameFactorySpec extends ObjectBehavior
 
     function it_creates_file_name($systemClock, File $file)
     {
-        $systemClock->getNow()->willReturn(new \DateTime('2010-01-01 01:01:01'));
+        $systemClock->getNow()->willReturn(new \DateTimeImmutable('2010-01-01 01:01:01'));
         $file->getFilename()->willReturn('name');
         $file->getChecksum()->willReturn('1234567890');
         $this->createName($file)->shouldReturn('AG_20100101T010101_name_12345.txt');

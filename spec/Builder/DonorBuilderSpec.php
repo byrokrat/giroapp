@@ -31,7 +31,7 @@ class DonorBuilderSpec extends ObjectBehavior
         StatePool $statePool,
         StateInterface $state,
         SystemClock $systemClock,
-        \DateTime $datetime
+        \DateTimeImmutable $datetime
     ) {
         $id->format('Ssk')->willReturn(self::PAYER_NUMBER);
         $keyBuilder->buildKey($id, $account)->willReturn(self::MANDATE_KEY);

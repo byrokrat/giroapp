@@ -27,7 +27,7 @@ use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\IdInterface;
 use byrokrat\id\Exception\UnableToCreateIdException;
 
-class OrgIdFactory
+final class OrgIdFactory
 {
     /**
      * @var IdFactoryInterface

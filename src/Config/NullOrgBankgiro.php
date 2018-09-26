@@ -26,7 +26,7 @@ use byrokrat\giroapp\Exception\InvalidConfigException;
 use byrokrat\banking\AccountNumber;
 use byrokrat\banking\Formatter\FormatterInterface;
 
-class NullOrgBankgiro implements AccountNumber
+final class NullOrgBankgiro implements AccountNumber
 {
     private const MESSAGE = 'Missing or invalid organization bankgiro account number';
 
