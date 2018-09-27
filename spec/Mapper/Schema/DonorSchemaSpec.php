@@ -85,7 +85,7 @@ class DonorSchemaSpec extends ObjectBehavior
         $idFactory->createId(self::ID)->willReturn($id);
         $id->format('S-sk')->willReturn(self::ID);
 
-        $datetime->format(\DateTimeImmutable::W3C)->willReturn(self::FORMATTED_DATE);
+        $datetime->format(\DateTime::W3C)->willReturn(self::FORMATTED_DATE);
 
         $this->beConstructedWith(
             $postalAddressSchema,
