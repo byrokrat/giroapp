@@ -89,7 +89,7 @@ class DonorMapper
     /**
      * Find active donor mandate identified by payer number.
      *
-     * @throws RuntimeException if donor is not found
+     * @throws \RuntimeException if donor is not found
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {

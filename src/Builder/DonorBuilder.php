@@ -78,7 +78,7 @@ class DonorBuilder
     private $name;
 
     /**
-     * @var PostalAddress
+     * @var ?PostalAddress
      */
     private $postalAddress;
 

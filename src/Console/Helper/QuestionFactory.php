@@ -46,8 +46,8 @@ class QuestionFactory
         }
 
         unset($choices[$defaultKey]);
-        $choices[strtoupper($defaultKey)] = $default;
+        $choices[strtoupper((string)$defaultKey)] = $default;
 
-        return new ChoiceQuestion("$question: ", $choices, strtoupper($defaultKey));
+        return new ChoiceQuestion("$question: ", $choices, strtoupper((string)$defaultKey));
     }
 }

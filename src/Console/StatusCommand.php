@@ -84,7 +84,7 @@ final class StatusCommand implements CommandInterface
 
         foreach (array_keys($counts) as $key) {
             if ($input->getOption($key)) {
-                $output->writeln($counts[$key]);
+                $output->writeln((string)$counts[$key]);
                 return;
             }
         }

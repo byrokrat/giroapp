@@ -33,7 +33,7 @@ class LogFormatter implements DecoderInterface
     {
         return sprintf(
             '[%s] [%s] %s %s',
-            (string)date(DATE_RFC2822),
+            date(DATE_RFC2822),
             $docs['severity'],
             strip_tags($docs['message']),
             $docs['context'] ? json_encode((object)$docs['context']) : ''

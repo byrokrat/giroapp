@@ -51,7 +51,7 @@ class XmlObject
      */
     public function asXml(): string
     {
-        return $this->xml->asXML();
+        return (string)$this->xml->asXML();
     }
 
     /**
@@ -83,8 +83,11 @@ class XmlObject
      */
     public function getElements(string $path): iterable
     {
-        foreach ($this->xml->xpath($path) as $element) {
-            yield new XmlObject($element->asXML());
+        foreach ((array)$this->xml->xpath($path) as $element) {
+            if (!$element) {
+                continue;
+            }
+            yield new XmlObject((string)$element->asXML());
         }
     }
 }

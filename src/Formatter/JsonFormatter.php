@@ -82,6 +82,6 @@ final class JsonFormatter implements FormatterInterface
     public function dump(): void
     {
         $data = count($this->data) == 1 ? $this->data[0] : $this->data;
-        $this->output->writeln(json_encode($data, JSON_PRETTY_PRINT));
+        $this->output->writeln((string)json_encode($data, JSON_PRETTY_PRINT));
     }
 }
