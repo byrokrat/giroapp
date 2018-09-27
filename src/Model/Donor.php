@@ -49,7 +49,7 @@ class Donor
     const MANDATE_SOURCE_DIGITAL = 'MANDATE_SOURCE_DIGITAL';
 
     /**
-     * $var string
+     * @var string
      */
     private $mandateKey;
 

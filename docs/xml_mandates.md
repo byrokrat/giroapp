@@ -34,7 +34,7 @@ Custom callbacks may also be used. The above example is equivalent to
 <!-- @example CustomForm2 -->
 ```php
 use byrokrat\giroapp\Xml\XmlFormInterface;
-use byrokrat\giroapp\Builder\DonorBuilder;
+use byrokrat\giroapp\Model\Builder\DonorBuilder;
 
 class CustomForm implements XmlFormInterface
 {

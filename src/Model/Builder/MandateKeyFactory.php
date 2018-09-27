@@ -20,16 +20,13 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Builder;
+namespace byrokrat\giroapp\Model\Builder;
 
 use byrokrat\id\IdInterface;
 use byrokrat\banking\AccountNumber;
 use Hashids\Hashids;
 
-/**
- * Create unique mandate keys
- */
-class MandateKeyBuilder
+class MandateKeyFactory
 {
     /**
      * Number of chars in created keys
@@ -42,40 +39,28 @@ class MandateKeyBuilder
     private $hashEngine;
 
     /**
-     * Create a unique key based on input
+     * Set internal hash engine (must create keys of the desired length!)
      */
-    public function buildKey(IdInterface $id, AccountNumber $account): string
+    public function __construct(Hashids $hashEngine = null)
     {
-        $key = $this->getHashEngine()->encode($id->format('Ss') . substr($account->get16(), 0, -1));
+        $this->hashEngine = $hashEngine ?: new Hashids(
+            '',
+            self::KEY_LENGTH,
+            'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
+        );
+    }
+
+    /**
+     * Create a unique mandate key
+     */
+    public function createMandateKey(IdInterface $id, AccountNumber $account): string
+    {
+        $key = $this->hashEngine->encode($id->format('Ss') . substr($account->get16(), 0, -1));
 
         if (strlen($key) != self::KEY_LENGTH) {
-            throw new \LogicException('Mandate key of wrong key size, this is an internal error.');
+            throw new \LogicException('Mandate key of wrong key size.');
         }
 
         return $key;
-    }
-
-    /**
-     * Set internal hash engine (must create keys of the desired length!)
-     */
-    public function setHashEngine(Hashids $hashEngine): void
-    {
-        $this->hashEngine = $hashEngine;
-    }
-
-    /**
-     * Get internal hash engine
-     */
-    private function getHashEngine(): Hashids
-    {
-        if (!isset($this->hashEngine)) {
-            $this->hashEngine = new Hashids(
-                '',
-                self::KEY_LENGTH,
-                'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-            );
-        }
-
-        return $this->hashEngine;
     }
 }

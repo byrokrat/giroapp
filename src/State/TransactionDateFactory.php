@@ -20,15 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Builder;
+namespace byrokrat\giroapp\State;
 
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Utils\SystemClock;
 
-/**
- * Calculate the date of next possible transaction date based on requested day of month
- */
-class DateBuilder
+class TransactionDateFactory
 {
     /**
      * Default day of month of created date
@@ -66,9 +63,9 @@ class DateBuilder
     }
 
     /**
-     * Get next date for requested day of month
+     * Calculate the date of next possible transaction date based on requested day of month
      */
-    public function buildDate(): \DateTimeImmutable
+    public function createNextTransactionDate(): \DateTimeImmutable
     {
         $currentDate = $this->systemClock->getNow();
 

@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Xml;
 
-use byrokrat\giroapp\Builder\DonorBuilder;
+use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Exception\InvalidXmlException;

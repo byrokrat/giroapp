@@ -2,10 +2,10 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Builder;
+namespace spec\byrokrat\giroapp\Model\Builder;
 
-use byrokrat\giroapp\Builder\DonorBuilder;
-use byrokrat\giroapp\Builder\MandateKeyBuilder;
+use byrokrat\giroapp\Model\Builder\DonorBuilder;
+use byrokrat\giroapp\Model\Builder\MandateKeyFactory;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\StatePool;
@@ -25,7 +25,7 @@ class DonorBuilderSpec extends ObjectBehavior
     const PAYER_NUMBER = 'payer-number';
 
     function let(
-        MandateKeyBuilder $keyBuilder,
+        MandateKeyFactory $keyFactory,
         IdInterface $id,
         AccountNumber $account,
         StatePool $statePool,
@@ -34,10 +34,10 @@ class DonorBuilderSpec extends ObjectBehavior
         \DateTimeImmutable $datetime
     ) {
         $id->format('Ssk')->willReturn(self::PAYER_NUMBER);
-        $keyBuilder->buildKey($id, $account)->willReturn(self::MANDATE_KEY);
+        $keyFactory->createMandateKey($id, $account)->willReturn(self::MANDATE_KEY);
         $statePool->getState(Argument::any())->willReturn($state);
         $systemClock->getNow()->willReturn($datetime);
-        $this->beConstructedWith($keyBuilder, $statePool, $systemClock);
+        $this->beConstructedWith($keyFactory, $statePool, $systemClock);
     }
 
     function it_is_initializable()

@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Builder;
+namespace byrokrat\giroapp\Model\Builder;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
@@ -38,9 +38,9 @@ use byrokrat\amount\Currency\SEK;
 class DonorBuilder
 {
     /**
-     * @var MandateKeyBuilder
+     * @var MandateKeyFactory
      */
-    private $keyBuilder;
+    private $keyFactory;
 
     /**
      * @var StatePool;
@@ -107,9 +107,9 @@ class DonorBuilder
      */
     private $donationAmount;
 
-    public function __construct(MandateKeyBuilder $keyBuilder, StatePool $statePool, SystemClock $systemClock)
+    public function __construct(MandateKeyFactory $keyFactory, StatePool $statePool, SystemClock $systemClock)
     {
-        $this->keyBuilder = $keyBuilder;
+        $this->keyFactory = $keyFactory;
         $this->statePool = $statePool;
         $this->systemClock = $systemClock;
     }
@@ -205,7 +205,7 @@ class DonorBuilder
     public function buildDonor(): Donor
     {
         return new Donor(
-            $this->keyBuilder->buildKey($this->getId(), $this->getAccount()),
+            $this->keyFactory->createMandateKey($this->getId(), $this->getAccount()),
             $this->getState(),
             'Mandate created',
             $this->getMandateSource(),

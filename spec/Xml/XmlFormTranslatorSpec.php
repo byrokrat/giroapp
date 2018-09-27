@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp\Xml;
 
 use byrokrat\giroapp\Xml\XmlFormTranslator;
 use byrokrat\giroapp\Xml\XmlFormInterface;
-use byrokrat\giroapp\Builder\DonorBuilder;
+use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Exception\InvalidXmlFormException;
 use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;

@@ -6,9 +6,9 @@ namespace spec\byrokrat\giroapp\State;
 
 use byrokrat\giroapp\State\MandateApprovedState;
 use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\TransactionDateFactory;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Builder\DateBuilder;
 use byrokrat\autogiro\Writer\WriterInterface;
 use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
@@ -16,9 +16,9 @@ use Prophecy\Argument;
 
 class MandateApprovedStateSpec extends ObjectBehavior
 {
-    function let(DateBuilder $dateBuilder)
+    function let(TransactionDateFactory $dateFactory)
     {
-        $this->beConstructedWith($dateBuilder);
+        $this->beConstructedWith($dateFactory);
     }
 
     function it_is_initializable()
@@ -59,7 +59,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $this->export($donor, $writer);
     }
 
-    function it_can_be_exported($dateBuilder, Donor $donor, WriterInterface $writer, SEK $amount)
+    function it_can_be_exported($dateFactory, Donor $donor, WriterInterface $writer, SEK $amount)
     {
         $amount->isPositive()->willReturn(true);
 
@@ -68,7 +68,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $donor->getMandateKey()->willReturn('mandate_key');
 
         $date = new \DateTimeImmutable;
-        $dateBuilder->buildDate()->willReturn($date);
+        $dateFactory->createNextTransactionDate()->willReturn($date);
 
         $this->export($donor, $writer);
 

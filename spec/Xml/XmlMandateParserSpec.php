@@ -7,7 +7,7 @@ namespace spec\byrokrat\giroapp\Xml;
 use byrokrat\giroapp\Xml\XmlMandateParser;
 use byrokrat\giroapp\Xml\XmlObject;
 use byrokrat\giroapp\Xml\XmlFormTranslator;
-use byrokrat\giroapp\Builder\DonorBuilder;
+use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Exception\InvalidXmlException;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;

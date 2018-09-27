@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Xml;
 
-use byrokrat\giroapp\Builder\DonorBuilder;
+use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Exception\InvalidXmlFormException;
 use byrokrat\amount\Currency\SEK;
 

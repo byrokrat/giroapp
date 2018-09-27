@@ -29,15 +29,6 @@ services:
         class: ~
         arguments: ['%app.ini_file_name%']
 
-    byrokrat\giroapp\Builder\:
-        resource: '../src/Builder/*'
-
-    byrokrat\giroapp\Builder\DateBuilder:
-        class: ~
-        arguments:
-            $dayOfMonth: "@=service('configs').getConfig('trans_day_of_month')"
-            $minDaysInFuture: "@=service('configs').getConfig('trans_min_days_in_future')"
-
     byrokrat\giroapp\Console\:
         public: true
         resource: '../src/Console/*'
@@ -61,11 +52,8 @@ services:
     byrokrat\giroapp\Formatter\:
         resource: '../src/Formatter/*'
 
-    byrokrat\giroapp\State\:
-        resource: '../src/State/*'
-
-    byrokrat\giroapp\Utils\:
-        resource: '../src/Utils/*'
+    byrokrat\giroapp\Model\Builder\:
+        resource: '../src/Model/Builder/*'
 
     byrokrat\giroapp\Plugin\EnvironmentInterface:
         class: byrokrat\giroapp\Plugin\Environment
@@ -75,6 +63,18 @@ services:
     byrokrat\giroapp\Plugin\PluginLoader:
         class: ~
         arguments: ['@fs_plugins']
+
+    byrokrat\giroapp\State\:
+        resource: '../src/State/*'
+
+    byrokrat\giroapp\State\TransactionDateFactory:
+        class: ~
+        arguments:
+            $dayOfMonth: "@=service('configs').getConfig('trans_day_of_month')"
+            $minDaysInFuture: "@=service('configs').getConfig('trans_min_days_in_future')"
+
+    byrokrat\giroapp\Utils\:
+        resource: '../src/Utils/*'
 
     byrokrat\giroapp\Xml\XmlMandateParser:
         class: ~

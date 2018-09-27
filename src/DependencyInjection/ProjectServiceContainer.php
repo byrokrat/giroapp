@@ -85,9 +85,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\banking\\BankgiroFactory' => true,
             'byrokrat\\giroapp\\AutogiroVisitor' => true,
             'byrokrat\\giroapp\\AutogiroWriterFactory' => true,
-            'byrokrat\\giroapp\\Builder\\DateBuilder' => true,
-            'byrokrat\\giroapp\\Builder\\DonorBuilder' => true,
-            'byrokrat\\giroapp\\Builder\\MandateKeyBuilder' => true,
             'byrokrat\\giroapp\\Config\\ConfigManager' => true,
             'byrokrat\\giroapp\\Config\\IniFileLoader' => true,
             'byrokrat\\giroapp\\Config\\OrgBankgiroFactory' => true,
@@ -118,6 +115,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\FileChecksumSchema' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\PostalAddressSchema' => true,
+            'byrokrat\\giroapp\\Model\\Builder\\DonorBuilder' => true,
+            'byrokrat\\giroapp\\Model\\Builder\\MandateKeyFactory' => true,
             'byrokrat\\giroapp\\Plugin\\PluginLoader' => true,
             'byrokrat\\giroapp\\State\\ActiveState' => true,
             'byrokrat\\giroapp\\State\\ErrorState' => true,
@@ -129,6 +128,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\State\\RevocationSentState' => true,
             'byrokrat\\giroapp\\State\\RevokeMandateState' => true,
             'byrokrat\\giroapp\\State\\StatePool' => true,
+            'byrokrat\\giroapp\\State\\TransactionDateFactory' => true,
             'byrokrat\\giroapp\\Utils\\File' => true,
             'byrokrat\\giroapp\\Utils\\FileNameFactory' => true,
             'byrokrat\\giroapp\\Utils\\Filesystem' => true,
@@ -177,7 +177,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getAddCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\AddCommand'] = $instance = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
+        $this->services['byrokrat\giroapp\Console\AddCommand'] = $instance = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Model\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
 
         $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
         $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
@@ -493,16 +493,6 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'byrokrat\giroapp\Builder\DonorBuilder' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Builder\DonorBuilder
-     */
-    protected function getDonorBuilderService()
-    {
-        return $this->privates['byrokrat\giroapp\Builder\DonorBuilder'] = new \byrokrat\giroapp\Builder\DonorBuilder(new \byrokrat\giroapp\Builder\MandateKeyBuilder(), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()), ($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
-    }
-
-    /**
      * Gets the private 'byrokrat\giroapp\Console\Helper\Validators' shared autowired service.
      *
      * @return \byrokrat\giroapp\Console\Helper\Validators
@@ -584,7 +574,7 @@ class ProjectServiceContainer extends Container
     {
         $a = ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService());
 
-        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser((new \byrokrat\giroapp\Config\OrgIdFactory($a))->createId(($this->services['configs'] ?? $this->getConfigsService())->getConfig("org_id")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? $this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
+        return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser((new \byrokrat\giroapp\Config\OrgIdFactory($a))->createId(($this->services['configs'] ?? $this->getConfigsService())->getConfig("org_id")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Model\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? $this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator()), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? $this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()), $a));
     }
 
     /**
@@ -608,13 +598,23 @@ class ProjectServiceContainer extends Container
     }
 
     /**
+     * Gets the private 'byrokrat\giroapp\Model\Builder\DonorBuilder' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Model\Builder\DonorBuilder
+     */
+    protected function getDonorBuilderService()
+    {
+        return $this->privates['byrokrat\giroapp\Model\Builder\DonorBuilder'] = new \byrokrat\giroapp\Model\Builder\DonorBuilder(new \byrokrat\giroapp\Model\Builder\MandateKeyFactory(), ($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()), ($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
+    }
+
+    /**
      * Gets the private 'byrokrat\giroapp\State\StatePool' shared autowired service.
      *
      * @return \byrokrat\giroapp\State\StatePool
      */
     protected function getStatePoolService()
     {
-        return $this->privates['byrokrat\giroapp\State\StatePool'] = new \byrokrat\giroapp\State\StatePool(new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\Builder\DateBuilder(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()), ($this->services['configs'] ?? $this->getConfigsService())->getConfig("trans_day_of_month"), ($this->services['configs'] ?? $this->getConfigsService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState());
+        return $this->privates['byrokrat\giroapp\State\StatePool'] = new \byrokrat\giroapp\State\StatePool(new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()), ($this->services['configs'] ?? $this->getConfigsService())->getConfig("trans_day_of_month"), ($this->services['configs'] ?? $this->getConfigsService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState());
     }
 
     /**
