@@ -101,16 +101,12 @@ function build_container()
     println('Generated dependency injection container');
 }
 
+task('load_dependencies', ['vendor/autoload.php'], function () {
+    require_once 'vendor/autoload.php';
+});
+
 fileTask('vendor/autoload.php', ['vendor/autoload.php'], function() {
     shell('composer install');
-});
-
-fileTask('composer.lock', ['composer.json'], function() {
-    shell('composer update');
-});
-
-task('load_dependencies', ['vendor/autoload.php', 'composer.lock'], function () {
-    require_once 'vendor/autoload.php';
 });
 
 desc('Globally install development tools');
