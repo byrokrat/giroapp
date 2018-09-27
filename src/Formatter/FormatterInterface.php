@@ -34,17 +34,17 @@ interface FormatterInterface
     public function getName(): string;
 
     /**
-     * Set the output this formatter should write to
+     * Initialize and set the output formatter should write to
      */
-    public function setOutput(OutputInterface $output): void;
+    public function initialize(OutputInterface $output): void;
 
     /**
-     * Add donor to format.
+     * Add donor to format
      */
-    public function addDonor(Donor $donor): void;
+    public function formatDonor(Donor $donor): void;
 
     /**
-     * Dump formatted content to output
+     * Finalize, possibly dump formatted content to output
      */
-    public function dump(): void;
+    public function finalize(): void;
 }

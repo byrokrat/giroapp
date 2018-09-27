@@ -41,7 +41,7 @@ final class ListFormatter implements FormatterInterface
         return 'list';
     }
 
-    public function setOutput(OutputInterface $output): void
+    public function initialize(OutputInterface $output): void
     {
         $this->table = new Table($output);
         $this->table->setHeaders([
@@ -54,7 +54,7 @@ final class ListFormatter implements FormatterInterface
         $this->table->setStyle('compact');
     }
 
-    public function addDonor(Donor $donor): void
+    public function formatDonor(Donor $donor): void
     {
         $this->table->addRow([
             $donor->getMandateKey(),
@@ -65,7 +65,7 @@ final class ListFormatter implements FormatterInterface
         ]);
     }
 
-    public function dump(): void
+    public function finalize(): void
     {
         $this->table->render();
     }

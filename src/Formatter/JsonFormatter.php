@@ -45,13 +45,13 @@ final class JsonFormatter implements FormatterInterface
         return 'json';
     }
 
-    public function setOutput(OutputInterface $output): void
+    public function initialize(OutputInterface $output): void
     {
         $this->output = $output;
         $this->data = [];
     }
 
-    public function addDonor(Donor $donor): void
+    public function formatDonor(Donor $donor): void
     {
         $this->data[] = [
             'mandate-key' => $donor->getMandateKey(),
@@ -79,7 +79,7 @@ final class JsonFormatter implements FormatterInterface
         ];
     }
 
-    public function dump(): void
+    public function finalize(): void
     {
         $data = count($this->data) == 1 ? $this->data[0] : $this->data;
         $this->output->writeln((string)json_encode($data, JSON_PRETTY_PRINT));

@@ -40,7 +40,7 @@ final class CsvFormatter implements FormatterInterface
         return 'csv';
     }
 
-    public function setOutput(OutputInterface $output): void
+    public function initialize(OutputInterface $output): void
     {
         $this->output = $output;
 
@@ -70,7 +70,7 @@ final class CsvFormatter implements FormatterInterface
         $this->output->writeln('"' . implode('", "', $headers) . '"');
     }
 
-    public function addDonor(Donor $donor): void
+    public function formatDonor(Donor $donor): void
     {
         $attr = [];
 
@@ -104,7 +104,7 @@ final class CsvFormatter implements FormatterInterface
         $this->output->writeln('"' . implode('", "', $data) . '"');
     }
 
-    public function dump(): void
+    public function finalize(): void
     {
     }
 }

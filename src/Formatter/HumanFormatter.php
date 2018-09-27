@@ -45,19 +45,19 @@ final class HumanFormatter implements FormatterInterface
         return 'human';
     }
 
-    public function setOutput(OutputInterface $output): void
+    public function initialize(OutputInterface $output): void
     {
         $this->output = $output;
         $this->firstItem = true;
     }
 
-    public function addDonor(Donor $donor): void
+    public function formatDonor(Donor $donor): void
     {
-        if ($this->firstItem) {
-            $this->firstItem = false;
-        } else {
+        if (!$this->firstItem) {
             $this->output->writeln("");
         }
+
+        $this->firstItem = false;
 
         $address = array_filter([
             $donor->getPostalAddress()->getLine1(),
@@ -88,7 +88,7 @@ final class HumanFormatter implements FormatterInterface
         }
     }
 
-    public function dump(): void
+    public function finalize(): void
     {
     }
 }

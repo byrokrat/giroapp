@@ -85,14 +85,14 @@ final class LsCommand implements CommandInterface
             $input->getOption('format')
         );
 
-        $formatter->setOutput($output);
+        $formatter->initialize($output);
 
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($filter->filterDonor($donor)) {
-                $formatter->addDonor($donor);
+                $formatter->formatDonor($donor);
             }
         }
 
-        $formatter->dump();
+        $formatter->finalize();
     }
 }
