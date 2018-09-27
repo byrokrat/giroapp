@@ -56,7 +56,7 @@ trait DonorArgument
     /**
      * @throws \RuntimeException if Donor can not be found
      */
-    public function getDonor(InputInterface $input): Donor
+    public function readDonor(InputInterface $input): Donor
     {
         $key = $this->validators->getDonorKeyValidator()($input->getArgument('donor'));
 
@@ -73,5 +73,30 @@ trait DonorArgument
         }
 
         throw new \RuntimeException("Unable to find donor $key");
+    }
+
+    /**
+     * @return iterable & Donor[]
+     * @throws \RuntimeException if Donor can not be found
+     */
+    public function readAllDonors(InputInterface $input): iterable
+    {
+        $key = $this->validators->getDonorKeyValidator()($input->getArgument('donor'));
+
+        if (!$input->getOption('force-payer-number') && $this->donorMapper->hasKey($key)) {
+            yield $this->donorMapper->findByKey($key);
+            return;
+        }
+
+        $count = 0;
+
+        foreach ($this->donorMapper->findByPayerNumber($key) as $donor) {
+            $count++;
+            yield $donor;
+        }
+
+        if (!$count) {
+            throw new \RuntimeException("Unable to find donor $key");
+        }
     }
 }

@@ -183,9 +183,9 @@ class DonorMapper
         if ($this->collection->findOne($expr)) {
             throw new \RuntimeException(
                 sprintf(
-                    'Unable to save donor %s, a mandate for payer number %s already exists',
+                    "Unable to save donor %s, a mandate already exists. Try '%s' for more information.",
                     $donor->getMandateKey(),
-                    $donor->getPayerNumber()
+                    "giroapp show {$donor->getPayerNumber()} --format=list"
                 )
             );
         }

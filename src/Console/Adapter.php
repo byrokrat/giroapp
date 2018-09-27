@@ -76,7 +76,7 @@ final class Adapter extends SymfonyCommand
             $this->dispatcher->dispatch(
                 Events::ERROR,
                 new LogEvent(
-                    "[EXCEPTION] {$e->getMessage()}",
+                    $e->getMessage(),
                     [
                         'class' => get_class($e),
                         'file' => $e->getFile(),

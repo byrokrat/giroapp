@@ -29,7 +29,7 @@ use Symfony\Component\Console\Helper\Table;
 /**
  * Output donors in tabular style
  */
-final class TableFormatter implements FormatterInterface
+final class ListFormatter implements FormatterInterface
 {
     /**
      * @var Table
@@ -38,7 +38,7 @@ final class TableFormatter implements FormatterInterface
 
     public function getName(): string
     {
-        return 'table';
+        return 'list';
     }
 
     public function setOutput(OutputInterface $output): void

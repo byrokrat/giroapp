@@ -71,7 +71,7 @@ final class EditCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $donor = $this->getDonor($input);
+        $donor = $this->readDonor($input);
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
         $descs = self::DESCRIPTIONS;
 

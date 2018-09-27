@@ -101,7 +101,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Formatter\\FormatterContainer' => true,
             'byrokrat\\giroapp\\Formatter\\HumanFormatter' => true,
             'byrokrat\\giroapp\\Formatter\\JsonFormatter' => true,
-            'byrokrat\\giroapp\\Formatter\\TableFormatter' => true,
+            'byrokrat\\giroapp\\Formatter\\ListFormatter' => true,
             'byrokrat\\giroapp\\Listener\\AutogiroImportingListener' => true,
             'byrokrat\\giroapp\\Listener\\CommittingListener' => true,
             'byrokrat\\giroapp\\Listener\\DonorPersistingListener' => true,

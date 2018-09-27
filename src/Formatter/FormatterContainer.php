@@ -34,7 +34,7 @@ class FormatterContainer
 
     public function __construct()
     {
-        $this->addFormatter(new TableFormatter);
+        $this->addFormatter(new ListFormatter);
         $this->addFormatter(new CsvFormatter);
         $this->addFormatter(new HumanFormatter);
         $this->addFormatter(new JsonFormatter);

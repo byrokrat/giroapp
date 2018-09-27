@@ -65,7 +65,11 @@ final class ShowCommand implements CommandInterface
     {
         $formatter = $this->formatterContainer->getFormatter($input->getOption('format'));
         $formatter->setOutput($output);
-        $formatter->addDonor($this->getDonor($input));
+
+        foreach ($this->readAllDonors($input) as $donor) {
+            $formatter->addDonor($donor);
+        }
+
         $formatter->dump();
     }
 }

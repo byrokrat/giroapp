@@ -47,7 +47,7 @@ final class RemoveCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $donor = $this->getDonor($input);
+        $donor = $this->readDonor($input);
 
         if (!$donor->getState()->isPurgeable() && !$input->getOption('force')) {
             throw new \RuntimeException('Unable to remove donor that is not inactive. Use -f to override.');

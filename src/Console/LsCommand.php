@@ -71,7 +71,7 @@ final class LsCommand implements CommandInterface
             null,
             InputOption::VALUE_REQUIRED,
             "Set output format ({$this->formatterContainer->getFormatterNames()})",
-            'table'
+            'list'
         );
     }
 
