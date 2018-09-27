@@ -34,13 +34,19 @@ class FeatureContext implements Context
     private $debug;
 
     /**
+     * @var string
+     */
+    private $executable;
+
+    /**
      * @var Result Result from the last app invocation
      */
     private $result;
 
-    public function __construct(bool $debug)
+    public function __construct(bool $debug, string $executable)
     {
         $this->debug = $debug;
+        $this->executable = $executable;
     }
 
     /**
@@ -48,7 +54,7 @@ class FeatureContext implements Context
      */
     public function aFreshInstallation(): void
     {
-        $this->app = new ApplicationWrapper($this->debug);
+        $this->app = new ApplicationWrapper($this->executable, $this->debug);
     }
 
     /**

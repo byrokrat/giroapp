@@ -1,6 +1,6 @@
 parameters:
     app.name: 'GiroApp'
-    app.version: '1.0.0-alpha3@dev'
+    app.version: '$app_version$'
     env(GIROAPP_PATH): 'giroapp'
     env(GIROAPP_INI_FILE): '%env(GIROAPP_PATH)%/giroapp.ini'
     app.ini_file_name: '%env(GIROAPP_INI_FILE)%'

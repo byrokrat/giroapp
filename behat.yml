@@ -3,8 +3,15 @@ default:
         default:
             contexts:
                 - FeatureContext:
+                    executable: bin/giroapp
                     debug: false
         debug:
             contexts:
                 - FeatureContext:
+                    executable: bin/giroapp
                     debug: true
+        phar:
+            contexts:
+                - FeatureContext:
+                    executable: giroapp.phar
+                    debug: false

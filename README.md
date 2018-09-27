@@ -8,23 +8,17 @@ Command line app for managing autogiro donations.
 
 ## Installation
 
-1. Download the [composer](https://getcomposer.org/) dependency manager.
+1. Download the latest phar archive from the [releases](https://github.com/byrokrat/giroapp/releases) tab.
 
-2. `cd` to the desired installation directory (for example `cd /opt`).
+2. Copy `giroapp.phar` to desired installation target (for example `/opt`).
 
-3. Install using composer
+3. Optionally rename `giroapp.phar` => `giroapp`.
 
-```shell
-composer create-project byrokrat/giroapp --stability=alpha --no-interaction --no-dev
-```
+4. Optionally change your user directory path. See below.
 
-4. Add `/opt/giroapp/bin` to your environment `PATH`.
+5. Copy [`giroapp.ini.dist`](giroapp.ini.dist) to `giroapp.ini` in you user directory.
 
-5. Optionally change your user directory path. See below.
-
-6. Copy `giroapp.ini.dist` to `giroapp.ini` in you user directory.
-
-7. Edit `giroapp.ini` to your needs.
+6. Edit `giroapp.ini` to your needs.
 
 ### Changing the user directory path
 
@@ -38,7 +32,7 @@ pointing to the desired directory.
 
 ## Building
 
-Phpgiro uses [bob](https://github.com/CHH/bob) to run tests and build artifacts.
+Giroapp uses [bob](https://github.com/CHH/bob) to run tests and build artifacts.
 
 To complete a build you must first install some dependencies.
 

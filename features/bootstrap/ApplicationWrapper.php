@@ -29,14 +29,14 @@ class ApplicationWrapper
      */
     private $debugDump;
 
-    public function __construct(bool $debug, string $executable = '')
+    public function __construct(string $executable, bool $debug)
     {
         $this->directory = sys_get_temp_dir() . '/giroapp_acceptance_tests_' . microtime();
         mkdir($this->directory);
         $this->userDir = $this->directory . '/giroapp_path';
         mkdir($this->userDir);
         putenv("GIROAPP_PATH={$this->userDir}");
-        $this->executable = $executable ?: realpath(getcwd() . '/bin/giroapp');
+        $this->executable = realpath(getcwd() . '/' . $executable) ;
 
         if ($debug) {
             $this->debugDump = function (string $str, string $pre = '') {
