@@ -26,12 +26,14 @@ class InputReaderSpec extends ObjectBehavior
 
     function it_reads_option_if_set($input, Question $question)
     {
+        $input->hasOption('option-name')->willReturn(true);
         $input->getOption('option-name')->willReturn('foobar');
         $this->readInput('option-name', $question, 'strtoupper')->shouldReturn('FOOBAR');
     }
 
     function it_asks_question_if_option_is_not_set($input, $output, $questionHelper, Question $question)
     {
+        $input->hasOption('option-name')->willReturn(true);
         $input->getOption('option-name')->willReturn(null);
         $input->isInteractive()->willReturn(true);
         $question->setValidator('strtoupper')->willReturn($question);
@@ -42,6 +44,7 @@ class InputReaderSpec extends ObjectBehavior
 
     function it_calls_validator_if_non_interactive($input, $output, $questionHelper, Question $question)
     {
+        $input->hasOption('option-name')->willReturn(true);
         $input->getOption('option-name')->willReturn(null);
         $input->isInteractive()->willReturn(false);
         $question->setValidator('strtoupper')->willReturn($question);

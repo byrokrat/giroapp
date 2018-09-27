@@ -57,16 +57,30 @@ final class EditCommand implements CommandInterface
         'comment' => 'Comment'
     ];
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Adapter $adapter): void
     {
-        $this->configureDonorArgument($wrapper);
-        $wrapper->setName('edit');
-        $wrapper->setDescription('Edit an existing donor');
-        $wrapper->setHelp('Edit a donor in the database.');
+        $this->configureDonorArgument($adapter);
+        $adapter->setName('edit');
+        $adapter->setDescription('Edit an existing donor');
+        $adapter->setHelp('Edit a donor in the database.');
 
         foreach (self::DESCRIPTIONS as $option => $desc) {
-            $wrapper->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
+            $adapter->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
+
+        $adapter->addOption(
+            'attr-key',
+            null,
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Attribute key'
+        );
+
+        $adapter->addOption(
+            'attr-value',
+            null,
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Attribute value'
+        );
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -182,6 +196,40 @@ final class EditCommand implements CommandInterface
                 $this->validators->getStringFilter()
             )
         );
+
+        foreach ($donor->getAttributes() as $attrKey => $attrValue) {
+            $donor->setAttribute(
+                $attrKey,
+                $inputReader->readInput(
+                    '',
+                    Helper\QuestionFactory::createQuestion("Attribute <info>$attrKey</info>", $attrValue),
+                    $this->validators->getStringFilter()
+                )
+            );
+        }
+
+        $attrKeys = $input->getOption('attr-key');
+        $attrValues = $input->getOption('attr-value');
+
+        for ($count = 0;; $count++) {
+            $attrKey = $inputReader->readInput(
+                '',
+                Helper\QuestionFactory::createQuestion('Add an attribute (empty to skip)', $attrKeys[$count] ?? ''),
+                $this->validators->getStringFilter()
+            );
+
+            if (!$attrKey) {
+                break;
+            }
+
+            $attrValue = $inputReader->readInput(
+                '',
+                Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
+                $this->validators->getStringFilter()
+            );
+
+            $donor->setAttribute($attrKey, $attrValue);
+        }
 
         $this->dispatcher->dispatch(
             Events::DONOR_UPDATED,

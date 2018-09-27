@@ -71,15 +71,29 @@ final class AddCommand implements CommandInterface
         $this->donorBuilder = $donorBuilder;
     }
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Adapter $adapter): void
     {
-        $wrapper->setName('add');
-        $wrapper->setDescription('Add a new donor');
-        $wrapper->setHelp('Register a new mandate in database');
+        $adapter->setName('add');
+        $adapter->setDescription('Add a new donor');
+        $adapter->setHelp('Register a new mandate in database');
 
         foreach (self::DESCRIPTIONS as $option => $desc) {
-            $wrapper->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
+            $adapter->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
+
+        $adapter->addOption(
+            'attr-key',
+            null,
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Attribute key'
+        );
+
+        $adapter->addOption(
+            'attr-value',
+            null,
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Attribute value'
+        );
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -197,6 +211,29 @@ final class AddCommand implements CommandInterface
                 $this->validators->getStringFilter()
             )
         );
+
+        $attrKeys = $input->getOption('attr-key');
+        $attrValues = $input->getOption('attr-value');
+
+        for ($count = 0;; $count++) {
+            $attrKey = $inputReader->readInput(
+                '',
+                Helper\QuestionFactory::createQuestion('Add an attribute (empty to skip)', $attrKeys[$count] ?? ''),
+                $this->validators->getStringFilter()
+            );
+
+            if (!$attrKey) {
+                break;
+            }
+
+            $attrValue = $inputReader->readInput(
+                '',
+                Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
+                $this->validators->getStringFilter()
+            );
+
+            $this->donorBuilder->setAttribute($attrKey, $attrValue);
+        }
 
         $donor = $this->donorBuilder->buildDonor();
 

@@ -59,7 +59,11 @@ class InputReader
      */
     public function readInput(string $option, Question $question, callable $validator)
     {
-        $value = $this->input->getOption($option);
+        $value = null;
+
+        if ($this->input->hasOption($option)) {
+            $value = $this->input->getOption($option);
+        }
 
         if (!is_null($value)) {
             return $validator($value);
