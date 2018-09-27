@@ -83,6 +83,13 @@ class DonorSpec extends ObjectBehavior
         $this->getStateDesc()->shouldEqual('desc');
     }
 
+    function it_reads_default_state_descs(StateInterface $newState)
+    {
+        $newState->getDescription()->willReturn('foobar');
+        $this->setState($newState);
+        $this->getStateDesc()->shouldEqual('foobar');
+    }
+
     function it_contains_mandate_source()
     {
         $this->getMandateSource()->shouldEqual(Donor::MANDATE_SOURCE_PAPER);

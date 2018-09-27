@@ -45,7 +45,7 @@ final class RevokeCommand implements CommandInterface
     {
         $donor = $this->readDonor($input);
 
-        $donor->setState(new RevokeMandateState, 'Mandate revoked by user');
+        $donor->setState(new RevokeMandateState);
 
         $this->dispatcher->dispatch(
             Events::MANDATE_REVOKED,

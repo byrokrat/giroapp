@@ -178,10 +178,10 @@ class Donor
         return $this->stateDesc;
     }
 
-    public function setState(StateInterface $state, string $stateDesc): void
+    public function setState(StateInterface $state, string $stateDesc = ''): void
     {
         $this->state = $state;
-        $this->stateDesc = $stateDesc;
+        $this->stateDesc = $stateDesc ?: $state->getDescription();
     }
 
     public function getMandateSource(): string
