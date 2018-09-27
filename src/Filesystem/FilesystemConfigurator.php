@@ -20,41 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Filesystem;
 
-/**
- * Simple file wrapper
- */
-class File
+final class FilesystemConfigurator
 {
-    /**
-     * @var string
-     */
-    private $filename;
-
-    /**
-     * @var string
-     */
-    private $content;
-
-    public function __construct(string $filename, string $content)
+    public function createCurrentDirectory(Filesystem $filesystem): void
     {
-        $this->filename = $filename;
-        $this->content = $content;
-    }
-
-    public function getFilename(): string
-    {
-        return $this->filename;
-    }
-
-    public function getContent(): string
-    {
-        return $this->content;
-    }
-
-    public function getChecksum(): string
-    {
-        return hash('sha256', $this->content);
+        if (!$filesystem->exists('')) {
+            $filesystem->mkdir('');
+        }
     }
 }

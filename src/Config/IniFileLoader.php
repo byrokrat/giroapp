@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Config;
 
-use byrokrat\giroapp\Utils\Filesystem;
+use byrokrat\giroapp\Filesystem\Filesystem;
 
 final class IniFileLoader
 {

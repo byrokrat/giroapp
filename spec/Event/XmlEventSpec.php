@@ -7,13 +7,13 @@ namespace spec\byrokrat\giroapp\Event;
 use byrokrat\giroapp\Event\XmlEvent;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Xml\XmlObject;
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class XmlEventSpec extends ObjectBehavior
 {
-    function let(File $file, XmlObject $xml)
+    function let(FileInterface $file, XmlObject $xml)
     {
         $this->beConstructedWith('', $file, $xml);
     }

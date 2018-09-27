@@ -2,10 +2,11 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Utils;
+namespace spec\byrokrat\giroapp\Filesystem;
 
-use byrokrat\giroapp\Utils\Filesystem;
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\Filesystem;
+use byrokrat\giroapp\Filesystem\FileInterface;
+use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\giroapp\Exception\UnableToReadFileException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Finder\Finder;
@@ -58,7 +59,7 @@ class FilesystemSpec extends ObjectBehavior
         $this->isFile(__FILE__)->shouldReturn(true);
     }
 
-    function it_fails_if_path_is_dir($fs)
+    function it_recognize_dirs_as_non_files($fs)
     {
         $fs->exists(__DIR__)->willReturn(true);
         $fs->isAbsolutePath(__DIR__)->willReturn(true)->shouldBeCalled();
@@ -76,7 +77,7 @@ class FilesystemSpec extends ObjectBehavior
     {
         $fs->exists(__FILE__)->willReturn(true);
         $fs->isAbsolutePath(__FILE__)->willReturn(true)->shouldBeCalled();
-        $this->readFile(__FILE__)->shouldBeLike(new File(__FILE__, file_get_contents(__FILE__)));
+        $this->readFile(__FILE__)->shouldBeLike(new Sha256File(__FILE__, file_get_contents(__FILE__)));
     }
 
     function it_can_read_relative_paths($fs)
@@ -85,19 +86,21 @@ class FilesystemSpec extends ObjectBehavior
         $filename = 'FilesystemSpec.php';
         $fs->isAbsolutePath($filename)->willReturn(false)->shouldBeCalled();
         $fs->exists(__FILE__)->willReturn(true);
-        $this->readFile($filename)->shouldBeLike(new File($filename, file_get_contents(__FILE__)));
+        $this->readFile($filename)->shouldBeLike(new Sha256File($filename, file_get_contents(__FILE__)));
     }
 
-    function it_can_dump_file($fs)
+    function it_can_write_file($fs, FileInterface $file)
     {
+        $file->getFilename()->willReturn('name');
+        $file->getContent()->willReturn('content');
         $fs->isAbsolutePath('name')->willReturn(true)->shouldBeCalled();
         $fs->dumpFile('name', 'content')->shouldBeCalled();
-        $this->dumpFile('name', 'content');
+        $this->writeFile($file);
     }
 
     function it_can_create_finders($fs)
     {
         $fs->isAbsolutePath(__DIR__)->willReturn(true);
-        $this->getFinder(__DIR__)->shouldBeLike((new Finder)->in(__DIR__));
+        $this->getFinderFor(__DIR__)->shouldBeLike((new Finder)->in(__DIR__));
     }
 }

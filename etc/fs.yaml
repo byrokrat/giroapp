@@ -11,28 +11,31 @@ services:
         public: false
         autowire: true
 
+    byrokrat\giroapp\Filesystem\:
+        resource: '../src/Filesystem/*'
+
     fs_user_dir:
-        class: byrokrat\giroapp\Utils\Filesystem
+        class: byrokrat\giroapp\Filesystem\Filesystem
         arguments: ['%fs.user_dir%']
 
     fs_cwd:
-        class: byrokrat\giroapp\Utils\Filesystem
+        class: byrokrat\giroapp\Filesystem\Filesystem
         arguments: ['.']
 
     fs_imports:
-        class: byrokrat\giroapp\Utils\Filesystem
+        class: byrokrat\giroapp\Filesystem\Filesystem
         arguments: ['%fs.imports_dir%']
-        configurator: 'byrokrat\giroapp\Utils\FilesystemConfigurator:configureFilesystem'
+        configurator: 'byrokrat\giroapp\Filesystem\FilesystemConfigurator:createCurrentDirectory'
 
     fs_exports:
-        class: byrokrat\giroapp\Utils\Filesystem
+        class: byrokrat\giroapp\Filesystem\Filesystem
         arguments: ['%fs.exports_dir%']
-        configurator: 'byrokrat\giroapp\Utils\FilesystemConfigurator:configureFilesystem'
+        configurator: 'byrokrat\giroapp\Filesystem\FilesystemConfigurator:createCurrentDirectory'
 
     fs_plugins:
-        class: byrokrat\giroapp\Utils\Filesystem
+        class: byrokrat\giroapp\Filesystem\Filesystem
         arguments: ['%fs.plugins_dir%']
-        configurator: 'byrokrat\giroapp\Utils\FilesystemConfigurator:configureFilesystem'
+        configurator: 'byrokrat\giroapp\Filesystem\FilesystemConfigurator:createCurrentDirectory'
 
     Symfony\Component\Filesystem\Filesystem:
         class: ~

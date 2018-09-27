@@ -8,7 +8,7 @@ use byrokrat\giroapp\Listener\FileImportingListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\XmlEvent;
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\FileInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -20,7 +20,7 @@ class FileImportingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(FileImportingListener::CLASS);
     }
 
-    function it_dispatches_import_xml_event(FileEvent $event, File $file, Dispatcher $dispatcher)
+    function it_dispatches_import_xml_event(FileEvent $event, FileInterface $file, Dispatcher $dispatcher)
     {
         $event->getFile()->willReturn($file);
         $event->getMessage()->willReturn('');
@@ -33,7 +33,7 @@ class FileImportingListenerSpec extends ObjectBehavior
         $this->onFileImported($event, '', $dispatcher);
     }
 
-    function it_dispatches_import_autogiro_event(FileEvent $event, File $file, Dispatcher $dispatcher)
+    function it_dispatches_import_autogiro_event(FileEvent $event, FileInterface $file, Dispatcher $dispatcher)
     {
         $event->getFile()->willReturn($file);
         $event->getMessage()->willReturn('');

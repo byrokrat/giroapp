@@ -25,8 +25,8 @@ namespace byrokrat\giroapp\Listener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Utils\Filesystem;
-use byrokrat\giroapp\Utils\FileNameFactory;
+use byrokrat\giroapp\Filesystem\Filesystem;
+use byrokrat\giroapp\Filesystem\FilenameWriter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 class FileDumpingListener
@@ -37,29 +37,25 @@ class FileDumpingListener
     private $filesystem;
 
     /**
-     * @var FileNameFactory
+     * @var FilenameWriter
      */
-    private $nameFactory;
+    private $nameWriter;
 
-    public function __construct(Filesystem $filesystem, FileNameFactory $nameFactory)
+    public function __construct(Filesystem $filesystem, FilenameWriter $nameWriter)
     {
         $this->filesystem = $filesystem;
-        $this->nameFactory = $nameFactory;
+        $this->nameWriter = $nameWriter;
     }
 
     public function onFileEvent(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
-        $file = $event->getFile();
+        $file = $this->nameWriter->rename($event->getFile());
 
-        $name = $this->filesystem->getAbsolutePath(
-            $this->nameFactory->createName($file)
-        );
-
-        $this->filesystem->dumpFile($name, $file->getContent());
+        $this->filesystem->writeFile($file);
 
         $dispatcher->dispatch(
             Events::INFO,
-            new LogEvent("Writing file <info>$name</info>")
+            new LogEvent("Writing file <info>{$file->getFilename()}</info>")
         );
     }
 }

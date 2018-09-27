@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Plugin\PluginInterface;
-use byrokrat\giroapp\Utils\Filesystem;
+use byrokrat\giroapp\Filesystem\Filesystem;
 use byrokrat\giroapp\Exception\InvalidPluginException;
 
 class PluginLoader
@@ -40,7 +40,7 @@ class PluginLoader
 
     public function loadPlugins(EnvironmentInterface $environment): void
     {
-        $finder = $this->filesystem->getFinder()
+        $finder = $this->filesystem->getFinderFor('')
             ->files()
             ->name('*.php')
             ->name('/\.(php)|(phar)$/i')

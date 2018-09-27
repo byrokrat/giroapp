@@ -2,13 +2,13 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Utils;
+namespace spec\byrokrat\giroapp\Filesystem;
 
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\Sha256File;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class FileSpec extends ObjectBehavior
+class Sha256FileSpec extends ObjectBehavior
 {
     const FILENAME = 'filename';
     const CONTENT = 'content';
@@ -20,7 +20,7 @@ class FileSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(File::CLASS);
+        $this->shouldHaveType(Sha256File::CLASS);
     }
 
     function it_contains_file_name()

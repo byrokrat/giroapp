@@ -20,44 +20,44 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Filesystem;
 
 use byrokrat\giroapp\Exception\UnableToReadFileException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Finder\Finder;
 
 /**
- * Wrapper class to access to file system
+ * Wrapper class to access the file system
  */
 class Filesystem
 {
     /**
      * @var string
      */
-    private $basePath;
+    private $currentDir;
 
     /**
      * @var SymfonyFilesystem
      */
     private $fs;
 
-    public function __construct(string $basePath, SymfonyFilesystem $fs)
+    public function __construct(string $currentDir, SymfonyFilesystem $fs)
     {
-        $this->basePath = $basePath;
+        $this->currentDir = $currentDir;
         $this->fs = $fs;
     }
 
-    public function getAbsolutePath(string $path = ''): string
+    public function getAbsolutePath(string $path): string
     {
-        return $this->fs->isAbsolutePath($path) ? $path : $this->basePath . DIRECTORY_SEPARATOR . $path;
+        return $this->fs->isAbsolutePath($path) ? $path : $this->currentDir . DIRECTORY_SEPARATOR . $path;
     }
 
-    public function exists(string $path = ''): bool
+    public function exists(string $path): bool
     {
         return $this->fs->exists($this->getAbsolutePath($path));
     }
 
-    public function mkdir(string $path = ''): void
+    public function mkdir(string $path): void
     {
         $this->fs->mkdir($this->getAbsolutePath($path));
     }
@@ -71,24 +71,24 @@ class Filesystem
     /**
      * @throws UnableToReadFileException if file does not exist
      */
-    public function readFile(string $path): File
+    public function readFile(string $path): FileInterface
     {
         if (!$this->isFile($path)) {
             throw new UnableToReadFileException("Unable to read {$path}");
         }
 
-        return new File(
+        return new Sha256File(
             $path,
             (string)file_get_contents($this->getAbsolutePath($path))
         );
     }
 
-    public function dumpFile(string $path, string $content): void
+    public function writeFile(FileInterface $file): void
     {
-        $this->fs->dumpFile($this->getAbsolutePath($path), $content);
+        $this->fs->dumpFile($this->getAbsolutePath($file->getFilename()), $file->getContent());
     }
 
-    public function getFinder(string $path = ''): Finder
+    public function getFinderFor(string $path): Finder
     {
         return (new Finder)->in($this->getAbsolutePath($path));
     }

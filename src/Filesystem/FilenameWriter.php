@@ -20,14 +20,35 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Filesystem;
 
-class FilesystemConfigurator
+use byrokrat\giroapp\Utils\SystemClock;
+
+class FilenameWriter
 {
-    public function configureFilesystem(Filesystem $filesystem): void
+    const PREFIX = 'AG';
+
+    /**
+     * @var SystemClock
+     */
+    private $systemClock;
+
+    public function __construct(SystemClock $systemClock)
     {
-        if (!$filesystem->exists()) {
-            $filesystem->mkdir();
-        }
+        $this->systemClock = $systemClock;
+    }
+
+    public function rename(FileInterface $file): FileInterface
+    {
+        return new Sha256File(
+            sprintf(
+                '%s_%s_%s_%s.txt',
+                self::PREFIX,
+                $this->systemClock->getNow()->format('Ymd\THis'),
+                $file->getFilename(),
+                substr($file->getChecksum(), 0, 5)
+            ),
+            $file->getContent()
+        );
     }
 }

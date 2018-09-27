@@ -8,7 +8,7 @@ use byrokrat\giroapp\Listener\AutogiroImportingListener;
 use byrokrat\giroapp\AutogiroVisitor;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\autogiro\Parser\ParserInterface;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Exception as AutogiroException;
@@ -27,7 +27,7 @@ class AutogiroImportingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(AutogiroImportingListener::CLASS);
     }
 
-    function it_parses_content($parser, $visitor, FileEvent $event, File $file, Node $tree)
+    function it_parses_content($parser, $visitor, FileEvent $event, FileInterface $file, Node $tree)
     {
         $event->getFile()->willReturn($file);
         $file->getContent()->willReturn('autogiro');
@@ -36,7 +36,7 @@ class AutogiroImportingListenerSpec extends ObjectBehavior
         $this->onAutogiroFileImported($event);
     }
 
-    function it_throws_on_autogiro_exception($parser, FileEvent $event, File $file)
+    function it_throws_on_autogiro_exception($parser, FileEvent $event, FileInterface $file)
     {
         $event->getFile()->willReturn($file);
         $file->getContent()->willReturn('autogiro');

@@ -10,7 +10,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Model\FileChecksum;
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\giroapp\Utils\SystemClock;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use PhpSpec\ObjectBehavior;
@@ -25,7 +25,7 @@ class FileImportChecksumListenerSpec extends ObjectBehavior
         FileChecksumMapper $fileChecksumMapper,
         SystemClock $systemClock,
         FileEvent $event,
-        File $file
+        FileInterface $file
     ) {
         $systemClock->getNow()->willReturn(new \DateTimeImmutable);
         $this->beConstructedWith($fileChecksumMapper, $systemClock);

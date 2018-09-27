@@ -18,35 +18,13 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Filesystem;
 
-namespace byrokrat\giroapp\Utils;
-
-/**
- * Generate file names
- */
-class FileNameFactory
+interface FileInterface
 {
-    const PREFIX = 'AG';
+    public function getFilename(): string;
 
-    /**
-     * @var SystemClock
-     */
-    private $systemClock;
+    public function getContent(): string;
 
-    public function __construct(SystemClock $systemClock)
-    {
-        $this->systemClock = $systemClock;
-    }
-
-    public function createName(File $file): string
-    {
-        return sprintf(
-            '%s_%s_%s_%s.txt',
-            self::PREFIX,
-            $this->systemClock->getNow()->format('Ymd\THis'),
-            $file->getFilename(),
-            substr($file->getChecksum(), 0, 5)
-        );
-    }
+    public function getChecksum(): string;
 }

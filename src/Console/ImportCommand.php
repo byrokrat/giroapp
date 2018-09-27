@@ -25,8 +25,8 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Utils\Filesystem;
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\Filesystem;
+use byrokrat\giroapp\Filesystem\Sha256File;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -69,7 +69,7 @@ final class ImportCommand implements CommandInterface
     {
         $file = ($filename = $input->getArgument('filename'))
             ? $this->filesystem->readFile($filename)
-            : new File('STDIN', $this->stdin->getContent());
+            : new Sha256File('STDIN', $this->stdin->getContent());
 
         $this->dispatcher->dispatch(
             $input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,

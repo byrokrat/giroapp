@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\FileInterface;
 
 /**
  * Event object wrapping a file
@@ -30,20 +30,17 @@ use byrokrat\giroapp\Utils\File;
 class FileEvent extends LogEvent
 {
     /**
-     * @var File
+     * @var FileInterface
      */
     private $file;
 
-    public function __construct(string $message, File $file)
+    public function __construct(string $message, FileInterface $file)
     {
         parent::__construct($message);
         $this->file = $file;
     }
 
-    /**
-     * Get file to import
-     */
-    public function getFile(): File
+    public function getFile(): FileInterface
     {
         return $this->file;
     }

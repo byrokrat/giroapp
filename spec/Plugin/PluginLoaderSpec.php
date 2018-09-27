@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Plugin\PluginLoader;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
-use byrokrat\giroapp\Utils\Filesystem;
+use byrokrat\giroapp\Filesystem\Filesystem;
 use byrokrat\giroapp\Exception\InvalidPluginException;
 use Symfony\Component\Finder\Finder;
 use PhpSpec\ObjectBehavior;
@@ -26,14 +26,14 @@ class PluginLoaderSpec extends ObjectBehavior
 
     function it_fails_on_broken_plugins($filesystem, EnvironmentInterface $environment)
     {
-        $filesystem->getFinder()->willReturn((new Finder)->in(__DIR__ . '/brokenplugindata'));
+        $filesystem->getFinderFor('')->willReturn((new Finder)->in(__DIR__ . '/brokenplugindata'));
 
         $this->shouldThrow(InvalidPluginException::CLASS)->during('loadPlugins', [$environment]);
     }
 
     function it_loads_plugins($filesystem, EnvironmentInterface $environment)
     {
-        $filesystem->getFinder()->willReturn((new Finder)->in(__DIR__ . '/validplugindata'));
+        $filesystem->getFinderFor('')->willReturn((new Finder)->in(__DIR__ . '/validplugindata'));
 
         $environment->readConfig('custom-test-check')->willReturn('')->shouldBeCalled();
 

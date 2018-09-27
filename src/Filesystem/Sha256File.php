@@ -20,29 +20,38 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\Filesystem;
 
-use byrokrat\giroapp\Xml\XmlObject;
-use byrokrat\giroapp\Filesystem\FileInterface;
-
-/**
- * Dispatched when an xml file is imported
- */
-class XmlEvent extends FileEvent
+final class Sha256File implements FileInterface
 {
     /**
-     * @var XmlObject
+     * @var string
      */
-    private $xml;
+    private $filename;
 
-    public function __construct(string $message, FileInterface $file, XmlObject $xml)
+    /**
+     * @var string
+     */
+    private $content;
+
+    public function __construct(string $filename, string $content)
     {
-        parent::__construct($message, $file);
-        $this->xml = $xml;
+        $this->filename = $filename;
+        $this->content = $content;
     }
 
-    public function getXmlObject(): XmlObject
+    public function getFilename(): string
     {
-        return $this->xml;
+        return $this->filename;
+    }
+
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    public function getChecksum(): string
+    {
+        return hash('sha256', $this->content);
     }
 }

@@ -28,7 +28,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\State\StatePool;
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\autogiro\Writer\WriterInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -87,7 +87,7 @@ final class ExportCommand implements CommandInterface
                 Events::FILE_EXPORTED,
                 new FileEvent(
                     'Generating file to export',
-                    new File('export', $this->autogiroWriter->getContent())
+                    new Sha256File('export', $this->autogiroWriter->getContent())
                 )
             );
         }

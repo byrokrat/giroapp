@@ -90,6 +90,11 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Config\\OrgBankgiroFactory' => true,
             'byrokrat\\giroapp\\Config\\OrgIdFactory' => true,
             'byrokrat\\giroapp\\Console\\Helper\\Validators' => true,
+            'byrokrat\\giroapp\\Filesystem\\FileInterface' => true,
+            'byrokrat\\giroapp\\Filesystem\\FilenameWriter' => true,
+            'byrokrat\\giroapp\\Filesystem\\Filesystem' => true,
+            'byrokrat\\giroapp\\Filesystem\\FilesystemConfigurator' => true,
+            'byrokrat\\giroapp\\Filesystem\\Sha256File' => true,
             'byrokrat\\giroapp\\Filter\\ExportableFilter' => true,
             'byrokrat\\giroapp\\Filter\\FilterContainer' => true,
             'byrokrat\\giroapp\\Filter\\InactiveFilter' => true,
@@ -352,7 +357,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getValidateCommandService()
     {
-        return $this->services['byrokrat\giroapp\Console\ValidateCommand'] = new \byrokrat\giroapp\Console\ValidateCommand(new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('GIROAPP_PATH'), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator());
+        return $this->services['byrokrat\giroapp\Console\ValidateCommand'] = new \byrokrat\giroapp\Console\ValidateCommand(new \byrokrat\giroapp\Filesystem\Filesystem($this->getEnv('GIROAPP_PATH'), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator());
     }
 
     /**
@@ -364,8 +369,8 @@ class ProjectServiceContainer extends Container
     {
         $this->services['byrokrat\giroapp\Plugin\EnvironmentInterface'] = $instance = new \byrokrat\giroapp\Plugin\Environment(($this->services['Symfony\Component\Console\Application'] ?? $this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '$app_version$')), ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()), ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] ?? $this->privates['byrokrat\giroapp\Filter\FilterContainer'] = new \byrokrat\giroapp\Filter\FilterContainer()), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? $this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer()), ($this->services['configs'] ?? $this->getConfigsService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? $this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator()));
 
-        $a = new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/plugins', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
-        ($this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] = new \byrokrat\giroapp\Utils\FilesystemConfigurator())->configureFilesystem($a);
+        $a = new \byrokrat\giroapp\Filesystem\Filesystem($this->getEnv('string:GIROAPP_PATH').'/plugins', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
+        ($this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator())->createCurrentDirectory($a);
 
         (new \byrokrat\giroapp\Plugin\PluginLoader($a))->loadPlugins($instance);
 
@@ -503,6 +508,16 @@ class ProjectServiceContainer extends Container
     }
 
     /**
+     * Gets the private 'byrokrat\giroapp\Filesystem\FilenameWriter' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Filesystem\FilenameWriter
+     */
+    protected function getFilenameWriterService()
+    {
+        return $this->privates['byrokrat\giroapp\Filesystem\FilenameWriter'] = new \byrokrat\giroapp\Filesystem\FilenameWriter(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
+    }
+
+    /**
      * Gets the private 'byrokrat\giroapp\Listener\AutogiroImportingListener' shared autowired service.
      *
      * @return \byrokrat\giroapp\Listener\AutogiroImportingListener
@@ -618,16 +633,6 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'byrokrat\giroapp\Utils\FileNameFactory' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Utils\FileNameFactory
-     */
-    protected function getFileNameFactoryService()
-    {
-        return $this->privates['byrokrat\giroapp\Utils\FileNameFactory'] = new \byrokrat\giroapp\Utils\FileNameFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
-    }
-
-    /**
      * Gets the private 'byrokrat\id\IdFactoryInterface' shared service.
      *
      * @return \byrokrat\id\PersonalIdFactory
@@ -674,7 +679,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getFileExportCwdDumperService()
     {
-        return $this->privates['file_export_cwd_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener(($this->privates['fs_cwd'] ?? $this->getFsCwdService()), ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
+        return $this->privates['file_export_cwd_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener(($this->privates['fs_cwd'] ?? $this->getFsCwdService()), ($this->privates['byrokrat\giroapp\Filesystem\FilenameWriter'] ?? $this->getFilenameWriterService()));
     }
 
     /**
@@ -684,10 +689,10 @@ class ProjectServiceContainer extends Container
      */
     protected function getFileExportDumperService()
     {
-        $a = new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/exports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
-        ($this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] = new \byrokrat\giroapp\Utils\FilesystemConfigurator())->configureFilesystem($a);
+        $a = new \byrokrat\giroapp\Filesystem\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/exports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
+        ($this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator())->createCurrentDirectory($a);
 
-        return $this->privates['file_export_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
+        return $this->privates['file_export_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Filesystem\FilenameWriter'] ?? $this->getFilenameWriterService()));
     }
 
     /**
@@ -697,10 +702,10 @@ class ProjectServiceContainer extends Container
      */
     protected function getFileImportDumperService()
     {
-        $a = new \byrokrat\giroapp\Utils\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/imports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
-        ($this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Utils\FilesystemConfigurator'] = new \byrokrat\giroapp\Utils\FilesystemConfigurator())->configureFilesystem($a);
+        $a = new \byrokrat\giroapp\Filesystem\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/imports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
+        ($this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator())->createCurrentDirectory($a);
 
-        return $this->privates['file_import_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Utils\FileNameFactory'] ?? $this->getFileNameFactoryService()));
+        return $this->privates['file_import_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Filesystem\FilenameWriter'] ?? $this->getFilenameWriterService()));
     }
 
     /**
@@ -720,11 +725,11 @@ class ProjectServiceContainer extends Container
     /**
      * Gets the private 'fs_cwd' shared autowired service.
      *
-     * @return \byrokrat\giroapp\Utils\Filesystem
+     * @return \byrokrat\giroapp\Filesystem\Filesystem
      */
     protected function getFsCwdService()
     {
-        return $this->privates['fs_cwd'] = new \byrokrat\giroapp\Utils\Filesystem('.', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
+        return $this->privates['fs_cwd'] = new \byrokrat\giroapp\Filesystem\Filesystem('.', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
     }
 
     /**

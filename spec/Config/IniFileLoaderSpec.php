@@ -7,8 +7,8 @@ namespace spec\byrokrat\giroapp\Config;
 use byrokrat\giroapp\Config\IniFileLoader;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Config\IniRepository;
-use byrokrat\giroapp\Utils\Filesystem;
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\Filesystem;
+use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -20,7 +20,7 @@ class IniFileLoaderSpec extends ObjectBehavior
         $this->shouldHaveType(IniFileLoader::CLASS);
     }
 
-    function it_loads_configs(Filesystem $fs, File $file, ConfigManager $manager)
+    function it_loads_configs(Filesystem $fs, FileInterface $file, ConfigManager $manager)
     {
         $this->beConstructedWith('foobar', $fs);
 

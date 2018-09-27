@@ -6,13 +6,13 @@ namespace spec\byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Utils\File;
+use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class FileEventSpec extends ObjectBehavior
 {
-    function let(File $file)
+    function let(FileInterface $file)
     {
         $this->beConstructedWith('', $file);
     }
