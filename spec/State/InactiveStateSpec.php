@@ -68,4 +68,9 @@ class InactiveStateSpec extends ObjectBehavior
     {
         $this->shouldBePurgeable();
     }
+
+    function it_is_not_paused()
+    {
+        $this->shouldNotBePaused();
+    }
 }

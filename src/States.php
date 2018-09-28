@@ -20,8 +20,6 @@
 
 namespace byrokrat\giroapp;
 
-use byrokrat\giroapp\State;
-
 /**
  * Donor state identifiers
  */
@@ -71,4 +69,19 @@ interface States
      * Revocation request has been sent to the bank
      */
     const REVOCATION_SENT = 'REVOCATION_SENT';
+
+    /**
+     * Mandate is awaiting to be paused
+     */
+    const PAUSE_MANDATE = 'PAUSE_MANDATE';
+
+    /**
+     * Pause request has been sent to the bank
+     */
+    const PAUSE_SENT = 'PAUSE_SENT';
+
+    /**
+     * Mandate is paused
+     */
+    const PAUSED = 'PAUSED';
 }

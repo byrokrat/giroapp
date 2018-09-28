@@ -72,4 +72,9 @@ interface StateInterface
      * Check if a donor with this state can be safely removed
      */
     public function isPurgeable(): bool;
+
+    /**
+     * Check if a donor with this state is paused
+     */
+    public function isPaused(): bool;
 }

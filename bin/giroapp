@@ -39,6 +39,7 @@ $env->registerCommand($container->get(ExportCommand::CLASS));
 $env->registerCommand($container->get(ImportCommand::CLASS));
 $env->registerCommand($container->get(LsCommand::CLASS));
 $env->registerCommand($container->get(MigrateCommand::CLASS));
+$env->registerCommand($container->get(PauseCommand::CLASS));
 $env->registerCommand($container->get(PurgeCommand::CLASS));
 $env->registerCommand($container->get(RemoveCommand::CLASS));
 $env->registerCommand($container->get(RevokeCommand::CLASS));

@@ -14,6 +14,9 @@ use byrokrat\giroapp\State\MandateSentState;
 use byrokrat\giroapp\State\MandateApprovedState;
 use byrokrat\giroapp\State\RevokeMandateState;
 use byrokrat\giroapp\State\RevocationSentState;
+use byrokrat\giroapp\State\PauseMandateState;
+use byrokrat\giroapp\State\PauseSentState;
+use byrokrat\giroapp\State\PausedState;
 use byrokrat\giroapp\States;
 use PhpSpec\ObjectBehavior;
 
@@ -28,7 +31,10 @@ class StatePoolSpec extends ObjectBehavior
         MandateSentState $mandateSent,
         MandateApprovedState $mandateApproved,
         RevokeMandateState $revokeMandate,
-        RevocationSentState $revocationSent
+        RevocationSentState $revocationSent,
+        PauseMandateState $pauseMandate,
+        PauseSentState $pauseSent,
+        PausedState $paused
     ) {
         $this->beConstructedWith(
             $active,
@@ -39,7 +45,10 @@ class StatePoolSpec extends ObjectBehavior
             $mandateSent,
             $mandateApproved,
             $revokeMandate,
-            $revocationSent
+            $revocationSent,
+            $pauseMandate,
+            $pauseSent,
+            $paused
         );
     }
 
@@ -101,5 +110,20 @@ class StatePoolSpec extends ObjectBehavior
     function it_creates_revocation_sent_state($revocationSent)
     {
         $this->getState(States::REVOCATION_SENT)->shouldReturn($revocationSent);
+    }
+
+    function it_creates_pause_mandate_state($pauseMandate)
+    {
+        $this->getState(States::PAUSE_MANDATE)->shouldReturn($pauseMandate);
+    }
+
+    function it_creates_pause_sent_state($pauseSent)
+    {
+        $this->getState(States::PAUSE_SENT)->shouldReturn($pauseSent);
+    }
+
+    function it_creates_paused_state($paused)
+    {
+        $this->getState(States::PAUSED)->shouldReturn($paused);
     }
 }

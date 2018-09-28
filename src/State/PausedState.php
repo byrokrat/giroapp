@@ -22,48 +22,22 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\WriterInterface;
+use byrokrat\giroapp\States;
 
-abstract class AbstractState implements StateInterface
+class PausedState extends AbstractState
 {
-    public function getNextStateId(): string
+    public function getStateId(): string
     {
-        return $this->getStateId();
+        return States::PAUSED;
     }
 
-    public function isExportable(): bool
+    public function getDescription(): string
     {
-        return $this->getStateId() != $this->getNextStateId();
-    }
-
-    public function export(Donor $donor, WriterInterface $writer): void
-    {
-        // Intentionally empty for non-exportable states
-    }
-
-    public function isActive(): bool
-    {
-        return false;
-    }
-
-    public function isAwaitingResponse(): bool
-    {
-        return false;
-    }
-
-    public function isError(): bool
-    {
-        return false;
-    }
-
-    public function isPurgeable(): bool
-    {
-        return false;
+        return 'Donor is paused (no registered transaction)';
     }
 
     public function isPaused(): bool
     {
-        return false;
+        return true;
     }
 }

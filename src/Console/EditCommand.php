@@ -103,15 +103,18 @@ final class EditCommand implements CommandInterface
         );
 
         $states = [
-            'a' => States::ACTIVE,
-            'e' => States::ERROR,
-            'i' => States::INACTIVE,
-            'n' => States::NEW_MANDATE,
-            'd' => States::NEW_DIGITAL_MANDATE,
+            'a'  => States::ACTIVE,
+            'e'  => States::ERROR,
+            'i'  => States::INACTIVE,
+            'n'  => States::NEW_MANDATE,
+            'd'  => States::NEW_DIGITAL_MANDATE,
             'ns' => States::MANDATE_SENT,
-            'p' => States::MANDATE_APPROVED,
-            'r' => States::REVOKE_MANDATE,
+            'ap' => States::MANDATE_APPROVED,
+            'r'  => States::REVOKE_MANDATE,
             'rs' => States::REVOCATION_SENT,
+            'pr' => States::PAUSE_MANDATE,
+            'ps' => States::PAUSE_SENT,
+            'p'  => States::PAUSED,
         ];
 
         $donor->setState(

@@ -22,48 +22,29 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
+use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
 
-abstract class AbstractState implements StateInterface
+class PauseMandateState extends AbstractState
 {
-    public function getNextStateId(): string
+    public function getDescription(): string
     {
-        return $this->getStateId();
+        return 'Mandate is awaiting to be paused';
     }
 
-    public function isExportable(): bool
+    public function getStateId(): string
     {
-        return $this->getStateId() != $this->getNextStateId();
+        return States::PAUSE_MANDATE;
+    }
+
+    public function getNextStateId(): string
+    {
+        return States::PAUSE_SENT;
     }
 
     public function export(Donor $donor, WriterInterface $writer): void
     {
-        // Intentionally empty for non-exportable states
-    }
-
-    public function isActive(): bool
-    {
-        return false;
-    }
-
-    public function isAwaitingResponse(): bool
-    {
-        return false;
-    }
-
-    public function isError(): bool
-    {
-        return false;
-    }
-
-    public function isPurgeable(): bool
-    {
-        return false;
-    }
-
-    public function isPaused(): bool
-    {
-        return false;
+        $writer->deletePayments($donor->getPayerNumber());
     }
 }

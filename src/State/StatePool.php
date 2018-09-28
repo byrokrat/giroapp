@@ -43,7 +43,10 @@ class StatePool
         MandateSentState $mandateSent,
         MandateApprovedState $mandateApproved,
         RevokeMandateState $revokeMandate,
-        RevocationSentState $revocationSent
+        RevocationSentState $revocationSent,
+        PauseMandateState $pauseMandate,
+        PauseSentState $pauseSent,
+        PausedState $paused
     ) {
         $this->pool = [
             States::ACTIVE              => $active,
@@ -55,6 +58,9 @@ class StatePool
             States::MANDATE_APPROVED    => $mandateApproved,
             States::REVOKE_MANDATE      => $revokeMandate,
             States::REVOCATION_SENT     => $revocationSent,
+            States::PAUSE_MANDATE       => $pauseMandate,
+            States::PAUSE_SENT          => $pauseSent,
+            States::PAUSED              => $paused,
         ];
     }
 

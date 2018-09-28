@@ -70,4 +70,9 @@ class RevokeMandateStateSpec extends ObjectBehavior
     {
         $this->shouldNotBePurgeable();
     }
+
+    function it_is_not_paused()
+    {
+        $this->shouldNotBePaused();
+    }
 }

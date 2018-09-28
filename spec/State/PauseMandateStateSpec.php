@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\State;
 
-use byrokrat\giroapp\State\ActiveState;
+use byrokrat\giroapp\State\PauseMandateState;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
@@ -12,11 +12,11 @@ use byrokrat\autogiro\Writer\WriterInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class ActiveStateSpec extends ObjectBehavior
+class PauseMandateStateSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(ActiveState::CLASS);
+        $this->shouldHaveType(PauseMandateState::CLASS);
     }
 
     function it_implements_the_state_interface()
@@ -26,12 +26,12 @@ class ActiveStateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getStateId()->shouldEqual(States::ACTIVE);
+        $this->getStateId()->shouldEqual(States::PAUSE_MANDATE);
     }
 
     function it_contains_next_id()
     {
-        $this->getNextStateId()->shouldEqual(States::ACTIVE);
+        $this->getNextStateId()->shouldEqual(States::PAUSE_SENT);
     }
 
     function it_contains_a_description()
@@ -39,19 +39,21 @@ class ActiveStateSpec extends ObjectBehavior
         $this->getDescription()->shouldBeString();
     }
 
-    function it_is_not_exportable()
+    function it_is_exportable()
     {
-        $this->shouldNotBeExportable();
+        $this->shouldBeExportable();
     }
 
     function it_can_be_exported(Donor $donor, WriterInterface $writer)
     {
+        $donor->getPayerNumber()->willReturn('foobar');
         $this->export($donor, $writer);
+        $writer->deletePayments('foobar')->shouldHaveBeenCalled();
     }
 
-    function it_is_active()
+    function it_is_not_active()
     {
-        $this->shouldBeActive();
+        $this->shouldNotBeActive();
     }
 
     function it_is_not_awaiting_response()

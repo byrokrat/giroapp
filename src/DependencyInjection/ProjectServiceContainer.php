@@ -40,6 +40,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Console\\ImportCommand' => 'getImportCommandService',
             'byrokrat\\giroapp\\Console\\LsCommand' => 'getLsCommandService',
             'byrokrat\\giroapp\\Console\\MigrateCommand' => 'getMigrateCommandService',
+            'byrokrat\\giroapp\\Console\\PauseCommand' => 'getPauseCommandService',
             'byrokrat\\giroapp\\Console\\PurgeCommand' => 'getPurgeCommandService',
             'byrokrat\\giroapp\\Console\\RemoveCommand' => 'getRemoveCommandService',
             'byrokrat\\giroapp\\Console\\RevokeCommand' => 'getRevokeCommandService',
@@ -132,6 +133,9 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\State\\MandateSentState' => true,
             'byrokrat\\giroapp\\State\\NewDigitalMandateState' => true,
             'byrokrat\\giroapp\\State\\NewMandateState' => true,
+            'byrokrat\\giroapp\\State\\PauseMandateState' => true,
+            'byrokrat\\giroapp\\State\\PauseSentState' => true,
+            'byrokrat\\giroapp\\State\\PausedState' => true,
             'byrokrat\\giroapp\\State\\RevocationSentState' => true,
             'byrokrat\\giroapp\\State\\RevokeMandateState' => true,
             'byrokrat\\giroapp\\State\\StatePool' => true,
@@ -268,6 +272,22 @@ class ProjectServiceContainer extends Container
 
         $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+
+        return $instance;
+    }
+
+    /**
+     * Gets the public 'byrokrat\giroapp\Console\PauseCommand' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Console\PauseCommand
+     */
+    protected function getPauseCommandService()
+    {
+        $this->services['byrokrat\giroapp\Console\PauseCommand'] = $instance = new \byrokrat\giroapp\Console\PauseCommand(($this->privates['byrokrat\giroapp\State\StatePool'] ?? $this->getStatePoolService()));
+
+        $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+        $instance->setValidators(($this->privates['byrokrat\giroapp\Console\Helper\Validators'] ?? $this->getValidatorsService()));
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
 
         return $instance;
     }
@@ -431,6 +451,15 @@ class ProjectServiceContainer extends Container
         $instance->addListener('MANDATE_INVALIDATED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
         }, 1 => 'dispatchWarning'), 10);
+        $instance->addListener('MANDATE_PAUSE_REQUESTED', array(0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
+        }, 1 => 'dispatchInfo'), 10);
+        $instance->addListener('MANDATE_PAUSED', array(0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
+        }, 1 => 'dispatchInfo'), 10);
+        $instance->addListener('MANDATE_RESTARTED', array(0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? $this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener());
+        }, 1 => 'dispatchInfo'), 10);
         $instance->addListener('ERROR', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
         }, 1 => 'onLogEvent'), 10);
@@ -489,6 +518,15 @@ class ProjectServiceContainer extends Container
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
         }, 1 => 'onDonorUpdated'));
         $instance->addListener('MANDATE_INVALIDATED', array(0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
+        }, 1 => 'onDonorUpdated'));
+        $instance->addListener('MANDATE_PAUSE_REQUESTED', array(0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
+        }, 1 => 'onDonorUpdated'));
+        $instance->addListener('MANDATE_PAUSED', array(0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
+        }, 1 => 'onDonorUpdated'));
+        $instance->addListener('MANDATE_RESTARTED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
         }, 1 => 'onDonorUpdated'));
 
@@ -627,7 +665,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getStatePoolService()
     {
-        return $this->privates['byrokrat\giroapp\State\StatePool'] = new \byrokrat\giroapp\State\StatePool(new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()), ($this->services['configs'] ?? $this->getConfigsService())->getConfig("trans_day_of_month"), ($this->services['configs'] ?? $this->getConfigsService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState());
+        return $this->privates['byrokrat\giroapp\State\StatePool'] = new \byrokrat\giroapp\State\StatePool(new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()), ($this->services['configs'] ?? $this->getConfigsService())->getConfig("trans_day_of_month"), ($this->services['configs'] ?? $this->getConfigsService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState(), new \byrokrat\giroapp\State\PauseMandateState(), new \byrokrat\giroapp\State\PauseSentState(), new \byrokrat\giroapp\State\PausedState());
     }
 
     /**

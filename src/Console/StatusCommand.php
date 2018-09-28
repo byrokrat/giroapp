@@ -46,6 +46,7 @@ final class StatusCommand implements CommandInterface
         $wrapper->addOption('waiting-count', null, InputOption::VALUE_NONE, 'Show only awaiting response count');
         $wrapper->addOption('error-count', null, InputOption::VALUE_NONE, 'Show only error count');
         $wrapper->addOption('purgeable-count', null, InputOption::VALUE_NONE, 'Show only purgeable count');
+        $wrapper->addOption('paused-count', null, InputOption::VALUE_NONE, 'Show only paused count');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -57,6 +58,7 @@ final class StatusCommand implements CommandInterface
             'waiting-count' => 0,
             'error-count' => 0,
             'purgeable-count' => 0,
+            'paused-count' => 0,
         ];
 
         foreach ($this->donorMapper->findAll() as $donor) {
@@ -80,6 +82,10 @@ final class StatusCommand implements CommandInterface
             if ($donor->getState()->isPurgeable()) {
                 $counts['purgeable-count']++;
             }
+
+            if ($donor->getState()->isPaused()) {
+                $counts['paused-count']++;
+            }
         }
 
         foreach (array_keys($counts) as $key) {
@@ -97,6 +103,7 @@ final class StatusCommand implements CommandInterface
         $output->writeln($this->format('Awaiting response', $counts['waiting-count']));
         $output->writeln($this->format('Errors', $counts['error-count']));
         $output->writeln($this->format('Purgeables', $counts['purgeable-count']));
+        $output->writeln($this->format('Paused', $counts['paused-count']));
     }
 
     private function format(string $desc, int $count): string

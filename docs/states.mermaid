@@ -32,4 +32,5 @@ subgraph PAUSE
   PAUSE_SENT--import pause-->PAUSED
 end
 
-ACTIVE-.->PAUSE_MANDATE
+ACTIVE--request pause-->PAUSE_MANDATE
+PAUSED--export restart-->ACTIVE
