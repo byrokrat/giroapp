@@ -20,38 +20,44 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Config;
+namespace byrokrat\giroapp\Filesystem;
 
-use byrokrat\giroapp\Filesystem\FilesystemInterface;
-
-final class IniFileLoader
+final class HashedFile implements FileInterface
 {
     /**
      * @var string
      */
-    private $iniFileName;
+    private $filename;
 
     /**
-     * @var FilesystemInterface
+     * @var string
      */
-    private $filesystem;
+    private $content;
 
-    public function __construct(string $iniFileName, FilesystemInterface $filesystem)
+    /**
+     * @var string
+     */
+    private $hash;
+
+    public function __construct(string $filename, string $content, string $hash)
     {
-        $this->iniFileName = $iniFileName;
-        $this->filesystem = $filesystem;
+        $this->filename = $filename;
+        $this->content = $content;
+        $this->hash = $hash;
     }
 
-    public function loadIniFile(ConfigManager $manager): void
+    public function getFilename(): string
     {
-        if (!$this->filesystem->isFile($this->iniFileName)) {
-            return;
-        }
+        return $this->filename;
+    }
 
-        $manager->loadRepository(
-            new IniRepository(
-                $this->filesystem->readFile($this->iniFileName)->getContent()
-            )
-        );
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->hash;
     }
 }

@@ -31,6 +31,7 @@ use byrokrat\giroapp\State\StatePool;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\autogiro\Writer\WriterInterface;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -56,11 +57,18 @@ final class ExportCommand implements CommandInterface
         $this->statePool = $statePool;
     }
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Adapter $adapter): void
     {
-        $wrapper->setName('export');
-        $wrapper->setDescription('Export a file to autogirot');
-        $wrapper->setHelp('Create a file with new set of autogiro instructions');
+        $adapter->setName('export');
+        $adapter->setDescription('Export a file to autogirot');
+        $adapter->setHelp('Create a file with new set of autogiro instructions');
+        $adapter->addOption(
+            'filename',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Name of exported file',
+            'giroapp-export.txt'
+        );
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -73,10 +81,7 @@ final class ExportCommand implements CommandInterface
                 $donor->setState($this->statePool->getState($donor->getState()->getNextStateId()));
                 $this->dispatcher->dispatch(
                     Events::DONOR_UPDATED,
-                    new DonorEvent(
-                        "Exported mandate <info>{$donor->getMandateKey()}</info>",
-                        $donor
-                    )
+                    new DonorEvent("Exported mandate <info>{$donor->getMandateKey()}</info>", $donor)
                 );
                 $exported = true;
             }
@@ -87,7 +92,7 @@ final class ExportCommand implements CommandInterface
                 Events::FILE_EXPORTED,
                 new FileEvent(
                     'Generating file to export',
-                    new Sha256File('export', $this->autogiroWriter->getContent())
+                    new Sha256File($input->getOption('filename'), $this->autogiroWriter->getContent())
                 )
             );
         }

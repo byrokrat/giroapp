@@ -8,8 +8,8 @@ use byrokrat\giroapp\Listener\FileDumpingListener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Filesystem\Filesystem;
-use byrokrat\giroapp\Filesystem\FilenameWriter;
+use byrokrat\giroapp\Filesystem\FilesystemInterface;
+use byrokrat\giroapp\Filesystem\FileProcessorInterface;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use PhpSpec\ObjectBehavior;
@@ -17,9 +17,9 @@ use Prophecy\Argument;
 
 class FileDumpingListenerSpec extends ObjectBehavior
 {
-    function let(Filesystem $fs, FilenameWriter $nameWriter)
+    function let(FilesystemInterface $fs, FileProcessorInterface $fileProcessor)
     {
-        $this->beConstructedWith($fs, $nameWriter);
+        $this->beConstructedWith($fs, $fileProcessor);
     }
 
     function it_is_initializable()
@@ -29,16 +29,16 @@ class FileDumpingListenerSpec extends ObjectBehavior
 
     function it_writes_imports_to_filesystem(
         $fs,
-        $nameWriter,
+        $fileProcessor,
         FileEvent $event,
         FileInterface $file,
-        FileInterface $renamedFile,
+        FileInterface $processedFile,
         Dispatcher $dispatcher
     ) {
         $event->getFile()->willReturn($file);
-        $nameWriter->rename($file)->willReturn($renamedFile);
-        $renamedFile->getFilename()->willReturn('foobar');
-        $fs->writeFile($renamedFile)->shouldBeCalled();
+        $fileProcessor->processFile($file)->willReturn($processedFile);
+        $processedFile->getFilename()->willReturn('foobar');
+        $fs->writeFile($processedFile)->shouldBeCalled();
         $dispatcher->dispatch(Events::INFO, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $this->onFileEvent($event, '', $dispatcher);
     }

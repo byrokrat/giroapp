@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Filesystem;
 
 final class FilesystemConfigurator
 {
-    public function createCurrentDirectory(Filesystem $filesystem): void
+    public function createCurrentDirectory(FilesystemInterface $filesystem): void
     {
         if (!$filesystem->exists('')) {
             $filesystem->mkdir('');

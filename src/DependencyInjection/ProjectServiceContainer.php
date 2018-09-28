@@ -90,10 +90,12 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Config\\OrgBankgiroFactory' => true,
             'byrokrat\\giroapp\\Config\\OrgIdFactory' => true,
             'byrokrat\\giroapp\\Console\\Helper\\Validators' => true,
-            'byrokrat\\giroapp\\Filesystem\\FileInterface' => true,
-            'byrokrat\\giroapp\\Filesystem\\FilenameWriter' => true,
             'byrokrat\\giroapp\\Filesystem\\Filesystem' => true,
             'byrokrat\\giroapp\\Filesystem\\FilesystemConfigurator' => true,
+            'byrokrat\\giroapp\\Filesystem\\FilesystemInterface' => true,
+            'byrokrat\\giroapp\\Filesystem\\HashedFile' => true,
+            'byrokrat\\giroapp\\Filesystem\\NullProcessor' => true,
+            'byrokrat\\giroapp\\Filesystem\\RenamingProcessor' => true,
             'byrokrat\\giroapp\\Filesystem\\Sha256File' => true,
             'byrokrat\\giroapp\\Filter\\ExportableFilter' => true,
             'byrokrat\\giroapp\\Filter\\FilterContainer' => true,
@@ -134,10 +136,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\State\\RevokeMandateState' => true,
             'byrokrat\\giroapp\\State\\StatePool' => true,
             'byrokrat\\giroapp\\State\\TransactionDateFactory' => true,
-            'byrokrat\\giroapp\\Utils\\File' => true,
-            'byrokrat\\giroapp\\Utils\\FileNameFactory' => true,
-            'byrokrat\\giroapp\\Utils\\Filesystem' => true,
-            'byrokrat\\giroapp\\Utils\\FilesystemConfigurator' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
             'byrokrat\\giroapp\\Xml\\XmlFormTranslator' => true,
             'byrokrat\\giroapp\\Xml\\XmlMandateParser' => true,
@@ -508,13 +506,13 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'byrokrat\giroapp\Filesystem\FilenameWriter' shared autowired service.
+     * Gets the private 'byrokrat\giroapp\Filesystem\RenamingProcessor' shared autowired service.
      *
-     * @return \byrokrat\giroapp\Filesystem\FilenameWriter
+     * @return \byrokrat\giroapp\Filesystem\RenamingProcessor
      */
-    protected function getFilenameWriterService()
+    protected function getRenamingProcessorService()
     {
-        return $this->privates['byrokrat\giroapp\Filesystem\FilenameWriter'] = new \byrokrat\giroapp\Filesystem\FilenameWriter(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
+        return $this->privates['byrokrat\giroapp\Filesystem\RenamingProcessor'] = new \byrokrat\giroapp\Filesystem\RenamingProcessor(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? $this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()));
     }
 
     /**
@@ -679,7 +677,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getFileExportCwdDumperService()
     {
-        return $this->privates['file_export_cwd_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener(($this->privates['fs_cwd'] ?? $this->getFsCwdService()), ($this->privates['byrokrat\giroapp\Filesystem\FilenameWriter'] ?? $this->getFilenameWriterService()));
+        return $this->privates['file_export_cwd_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener(($this->privates['fs_cwd'] ?? $this->getFsCwdService()), new \byrokrat\giroapp\Filesystem\NullProcessor());
     }
 
     /**
@@ -692,7 +690,7 @@ class ProjectServiceContainer extends Container
         $a = new \byrokrat\giroapp\Filesystem\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/exports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
         ($this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator())->createCurrentDirectory($a);
 
-        return $this->privates['file_export_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Filesystem\FilenameWriter'] ?? $this->getFilenameWriterService()));
+        return $this->privates['file_export_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Filesystem\RenamingProcessor'] ?? $this->getRenamingProcessorService()));
     }
 
     /**
@@ -705,7 +703,7 @@ class ProjectServiceContainer extends Container
         $a = new \byrokrat\giroapp\Filesystem\Filesystem($this->getEnv('string:GIROAPP_PATH').'/var/imports', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? $this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
         ($this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] ?? $this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator())->createCurrentDirectory($a);
 
-        return $this->privates['file_import_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Filesystem\FilenameWriter'] ?? $this->getFilenameWriterService()));
+        return $this->privates['file_import_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Filesystem\RenamingProcessor'] ?? $this->getRenamingProcessorService()));
     }
 
     /**

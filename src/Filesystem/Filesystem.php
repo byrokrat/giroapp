@@ -26,10 +26,7 @@ use byrokrat\giroapp\Exception\UnableToReadFileException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Finder\Finder;
 
-/**
- * Wrapper class to access the file system
- */
-class Filesystem
+final class Filesystem implements FilesystemInterface
 {
     /**
      * @var string
@@ -68,9 +65,6 @@ class Filesystem
         return $this->fs->exists($path) && is_file($path) && is_readable($path);
     }
 
-    /**
-     * @throws UnableToReadFileException if file does not exist
-     */
     public function readFile(string $path): FileInterface
     {
         if (!$this->isFile($path)) {

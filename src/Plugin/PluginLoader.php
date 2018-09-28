@@ -23,17 +23,17 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Plugin\PluginInterface;
-use byrokrat\giroapp\Filesystem\Filesystem;
+use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Exception\InvalidPluginException;
 
 class PluginLoader
 {
     /**
-     * @var Filesystem
+     * @var FilesystemInterface
      */
     private $filesystem;
 
-    public function __construct(Filesystem $filesystem)
+    public function __construct(FilesystemInterface $filesystem)
     {
         $this->filesystem = $filesystem;
     }

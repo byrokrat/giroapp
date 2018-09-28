@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Plugin\PluginLoader;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
-use byrokrat\giroapp\Filesystem\Filesystem;
+use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Exception\InvalidPluginException;
 use Symfony\Component\Finder\Finder;
 use PhpSpec\ObjectBehavior;
@@ -14,7 +14,7 @@ use Prophecy\Argument;
 
 class PluginLoaderSpec extends ObjectBehavior
 {
-    function let(Filesystem $filesystem)
+    function let(FilesystemInterface $filesystem)
     {
         $this->beConstructedWith($filesystem);
     }

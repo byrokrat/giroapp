@@ -25,31 +25,31 @@ namespace byrokrat\giroapp\Listener;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Filesystem\Filesystem;
-use byrokrat\giroapp\Filesystem\FilenameWriter;
+use byrokrat\giroapp\Filesystem\FilesystemInterface;
+use byrokrat\giroapp\Filesystem\FileProcessorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 class FileDumpingListener
 {
     /**
-     * @var Filesystem
+     * @var FilesystemInterface
      */
     private $filesystem;
 
     /**
-     * @var FilenameWriter
+     * @var FileProcessorInterface
      */
-    private $nameWriter;
+    private $fileProcessor;
 
-    public function __construct(Filesystem $filesystem, FilenameWriter $nameWriter)
+    public function __construct(FilesystemInterface $filesystem, FileProcessorInterface $fileProcessor)
     {
         $this->filesystem = $filesystem;
-        $this->nameWriter = $nameWriter;
+        $this->fileProcessor = $fileProcessor;
     }
 
     public function onFileEvent(FileEvent $event, string $eventName, Dispatcher $dispatcher): void
     {
-        $file = $this->nameWriter->rename($event->getFile());
+        $file = $this->fileProcessor->processFile($event->getFile());
 
         $this->filesystem->writeFile($file);
 

@@ -18,37 +18,9 @@
  * Copyright 2016-18 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
 namespace byrokrat\giroapp\Filesystem;
 
-use byrokrat\giroapp\Utils\SystemClock;
-
-class FilenameWriter
+interface FileProcessorInterface
 {
-    const PREFIX = 'AG';
-
-    /**
-     * @var SystemClock
-     */
-    private $systemClock;
-
-    public function __construct(SystemClock $systemClock)
-    {
-        $this->systemClock = $systemClock;
-    }
-
-    public function rename(FileInterface $file): FileInterface
-    {
-        return new Sha256File(
-            sprintf(
-                '%s_%s_%s_%s.txt',
-                self::PREFIX,
-                $this->systemClock->getNow()->format('Ymd\THis'),
-                $file->getFilename(),
-                substr($file->getChecksum(), 0, 5)
-            ),
-            $file->getContent()
-        );
-    }
+    public function processFile(FileInterface $file): FileInterface;
 }

@@ -33,20 +33,20 @@ services:
 
     file_import_dumper:
         class: byrokrat\giroapp\Listener\FileDumpingListener
-        arguments: ['@fs_imports']
+        arguments: ['@fs_imports', '@byrokrat\giroapp\Filesystem\RenamingProcessor']
         tags:
             - { name: event_listener, event: FILE_IMPORTED,            method: onFileEvent, priority: -10 }
             - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED, method: onFileEvent, priority: -10 }
 
     file_export_dumper:
         class: byrokrat\giroapp\Listener\FileDumpingListener
-        arguments: ['@fs_exports']
+        arguments: ['@fs_exports', '@byrokrat\giroapp\Filesystem\RenamingProcessor']
         tags:
             - { name: event_listener, event: FILE_EXPORTED, method: onFileEvent, priority: -9 }
 
     file_export_cwd_dumper:
         class: byrokrat\giroapp\Listener\FileDumpingListener
-        arguments: ['@fs_cwd']
+        arguments: ['@fs_cwd', '@byrokrat\giroapp\Filesystem\NullProcessor']
         tags:
             - { name: event_listener, event: FILE_EXPORTED, method: onFileEvent, priority: -10 }
 

@@ -4,24 +4,25 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Filesystem;
 
-use byrokrat\giroapp\Filesystem\Sha256File;
+use byrokrat\giroapp\Filesystem\HashedFile;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class Sha256FileSpec extends ObjectBehavior
+class HashedFileSpec extends ObjectBehavior
 {
     const FILENAME = 'filename';
     const CONTENT = 'content';
+    const HASH = 'hash';
 
     function let()
     {
-        $this->beConstructedWith(self::FILENAME, self::CONTENT);
+        $this->beConstructedWith(self::FILENAME, self::CONTENT, self::HASH);
     }
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(Sha256File::CLASS);
+        $this->shouldHaveType(HashedFile::CLASS);
     }
 
     function it_is_a_file()
@@ -39,8 +40,8 @@ class Sha256FileSpec extends ObjectBehavior
         $this->getContent()->shouldEqual(self::CONTENT);
     }
 
-    function it_can_compute_a_content_hash()
+    function it_contains_hash()
     {
-        $this->getChecksum()->shouldEqual(hash('sha256', self::CONTENT));
+        $this->getChecksum()->shouldEqual(self::HASH);
     }
 }

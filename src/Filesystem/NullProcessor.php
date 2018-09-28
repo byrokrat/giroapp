@@ -20,38 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Config;
+namespace byrokrat\giroapp\Filesystem;
 
-use byrokrat\giroapp\Filesystem\FilesystemInterface;
-
-final class IniFileLoader
+final class NullProcessor implements FileProcessorInterface
 {
-    /**
-     * @var string
-     */
-    private $iniFileName;
-
-    /**
-     * @var FilesystemInterface
-     */
-    private $filesystem;
-
-    public function __construct(string $iniFileName, FilesystemInterface $filesystem)
+    public function processFile(FileInterface $file): FileInterface
     {
-        $this->iniFileName = $iniFileName;
-        $this->filesystem = $filesystem;
-    }
-
-    public function loadIniFile(ConfigManager $manager): void
-    {
-        if (!$this->filesystem->isFile($this->iniFileName)) {
-            return;
-        }
-
-        $manager->loadRepository(
-            new IniRepository(
-                $this->filesystem->readFile($this->iniFileName)->getContent()
-            )
-        );
+        return $file;
     }
 }
