@@ -9,8 +9,9 @@
 * Export no longer writes to stdout, it generates files instead.
 * Renaming in the `Xml` namespace.
 * You now need to create one `XmlFormInterface` object for each supporten xml form.
-* Supports plugins.
+* Now supports plugins.
 * Added `state_desc` to donor schema. Run `giroapp migrate` to update database.
 * Settings are now read from `giroapp.ini`. See `giroapp.ini.dist` for an example.
 * Removed the `init` command.
 * Now released as a phar executable.
+* Partial support for pausing donors using `pause` command.
