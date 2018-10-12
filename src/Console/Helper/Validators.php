@@ -181,39 +181,6 @@ class Validators
         });
     }
 
-    /**
-     * @return string[]
-     */
-    public function getSuggestedCities(): array
-    {
-        return [
-            'Stockholm',
-            'Göteborg',
-            'Malmö',
-            'Uppsala',
-            'Västerås',
-            'Örebro',
-            'Linköping',
-            'Helsingborg',
-            'Norrköping',
-            'Jönköping',
-            'Lund',
-            'Umeå',
-            'stockholm',
-            'göteborg',
-            'malmö',
-            'uppsala',
-            'västerås',
-            'örebro',
-            'linköping',
-            'helsingborg',
-            'norrköping',
-            'jönköping',
-            'lund',
-            'umeå',
-        ];
-    }
-
     public function getChoiceValidator(array $choices): callable
     {
         return function ($val) use ($choices) {

@@ -168,8 +168,6 @@ final class EditCommand implements CommandInterface
                     Helper\QuestionFactory::createQuestion(
                         $descs['postal-city'],
                         $donor->getPostalAddress()->getPostalCity()
-                    )->setAutocompleterValues(
-                        $this->validators->getSuggestedCities()
                     ),
                     $this->validators->getStringFilter()
                 )

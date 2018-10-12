@@ -134,11 +134,6 @@ class ValidatorsSpec extends ObjectBehavior
         $this->getStateValidator(['unvalid'])->shouldNotValidate('unvalid');
     }
 
-    function it_contains_suggested_cities()
-    {
-        $this->getSuggestedCities()->shouldBeArray();
-    }
-
     public function getMatchers(): array
     {
         return [

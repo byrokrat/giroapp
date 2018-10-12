@@ -180,9 +180,7 @@ final class AddCommand implements CommandInterface
                 ),
                 $inputReader->readInput(
                     'postal-city',
-                    Helper\QuestionFactory::createQuestion($descs['postal-city'], '')->setAutocompleterValues(
-                        $this->validators->getSuggestedCities()
-                    ),
+                    Helper\QuestionFactory::createQuestion($descs['postal-city'], ''),
                     $this->validators->getStringFilter()
                 )
             )
