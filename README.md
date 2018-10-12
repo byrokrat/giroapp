@@ -30,6 +30,12 @@ for example be better from a security perspective).
 Change the user directory path by creating a `GIROAPP_PATH` environment variable
 pointing to the desired directory.
 
+### Adding plugins
+
+Giroapp supports dynamic [plugins](docs/plugins.md). Officially supported plugins:
+
+* [Mailer](https://github.com/byrokrat/giroapp-mailer-plugin): send mails on giroapp events.
+
 ## Building
 
 Giroapp uses [bob](https://github.com/CHH/bob) to run tests and build artifacts.
