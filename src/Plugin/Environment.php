@@ -85,7 +85,7 @@ final class Environment implements EnvironmentInterface
 
     public function readConfig(string $key): string
     {
-        return $this->configManager->getConfig($key)->getValue();
+        return (string)$this->configManager->getConfig($key)->getValue();
     }
 
     public function registerCommand(CommandInterface $command): void
