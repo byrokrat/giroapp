@@ -56,16 +56,16 @@
         },
         {
             "name": "byrokrat/autogiro",
-            "version": "1.0.0-beta4",
+            "version": "1.0.0-beta5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/byrokrat/autogiro.git",
-                "reference": "f4dd3660de41df3a56ae7e6d47d2424f158f874f"
+                "reference": "9583885c94db0943f417e58796c40ab2b577a330"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/byrokrat/autogiro/zipball/f4dd3660de41df3a56ae7e6d47d2424f158f874f",
-                "reference": "f4dd3660de41df3a56ae7e6d47d2424f158f874f",
+                "url": "https://api.github.com/repos/byrokrat/autogiro/zipball/9583885c94db0943f417e58796c40ab2b577a330",
+                "reference": "9583885c94db0943f417e58796c40ab2b577a330",
                 "shasum": ""
             },
             "require": {
@@ -99,7 +99,7 @@
             "keywords": [
                 "autogiro"
             ],
-            "time": "2018-10-10T18:29:28+00:00"
+            "time": "2018-10-13T08:01:37+00:00"
         },
         {
             "name": "byrokrat/banking",
@@ -736,7 +736,7 @@
                 "symfony/web-profiler-bundle": ">=2,<2.3.19|>=2.4,<2.4.9|>=2.5,<2.5.4",
                 "symfony/yaml": ">=2,<2.0.22|>=2.1,<2.1.7",
                 "thelia/backoffice-default-template": ">=2.1,<2.1.2",
-                "thelia/thelia": ">=2.1.0-beta1,<2.1.3|>=2.1,<2.1.2",
+                "thelia/thelia": ">=2.1,<2.1.2|>=2.1.0-beta1,<2.1.3",
                 "theonedemon/phpwhois": "<=4.2.5",
                 "titon/framework": ">=0,<9.9.99",
                 "truckersmp/phpwhois": "<=4.3.1",
@@ -792,7 +792,7 @@
                 }
             ],
             "description": "Prevents installation of composer packages with known security vulnerabilities: no API, simply require it",
-            "time": "2018-10-11T11:25:15+00:00"
+            "time": "2018-10-12T22:19:58+00:00"
         },
         {
             "name": "symfony/console",
