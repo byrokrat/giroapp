@@ -61,17 +61,29 @@ class AutogiroVisitor extends Visitor
     public function beforeOpening(Node $node): void
     {
         /** @var string $payeeBgcNr */
-        $payeeBgcNr = $node->getChild('PayeeBgcNumber')->getValue();
+        $payeeBgcNr = (string)$node->getChild('PayeeBgcNumber')->getValue();
 
-        /** @var AccountNumber $payeeBankgiro */
+        /** @var ?AccountNumber $payeeBankgiro */
         $payeeBankgiro = $node->getChild('PayeeBankgiro')->getValueFrom('Object');
 
-        if ($payeeBgcNr != $this->orgBgcNr->getValue()) {
-            throw new \RuntimeException('File contains invalid payee BGC customer number');
+        if ($payeeBgcNr && $payeeBgcNr != $this->orgBgcNr->getValue()) {
+            throw new \RuntimeException(
+                sprintf(
+                    'File contains invalid payee BGC customer number, found: %s, expexting: %s',
+                    $payeeBgcNr,
+                    $this->orgBgcNr->getValue()
+                )
+            );
         }
 
-        if (!$payeeBankgiro->equals($this->orgBankgiro)) {
-            throw new \RuntimeException('File contains invalid payee bankgiro account number');
+        if ($payeeBankgiro && !$payeeBankgiro->equals($this->orgBankgiro)) {
+            throw new \RuntimeException(
+                sprintf(
+                    'File contains invalid payee bankgiro account number, found: %s, expexting: %s',
+                    $payeeBankgiro->getNumber(),
+                    $this->orgBankgiro->getNumber()
+                )
+            );
         }
     }
 }

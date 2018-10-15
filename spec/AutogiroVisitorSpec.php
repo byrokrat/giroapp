@@ -61,4 +61,25 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $payeeBg->equals($orgBg)->willReturn(true);
         $this->shouldThrow(\RuntimeException::CLASS)->during('beforeOpening', [$node]);
     }
+
+    function it_ignores_missing__bgc_nr_in_opening_node($orgBgcNr, $orgBg, Node $node, AccountNumber $payeeBg)
+    {
+        $orgBgcNr->getValue()->willReturn('org-bgc-nr');
+        $node->getChild('PayeeBgcNumber')->willReturn($node);
+        $node->getValue()->willReturn(null);
+        $node->getChild('PayeeBankgiro')->willReturn($node);
+        $node->getValueFrom('Object')->willReturn($payeeBg);
+        $payeeBg->equals($orgBg)->willReturn(true);
+        $this->beforeOpening($node);
+    }
+
+    function it_ignores_missing_bg_in_opening_node($orgBgcNr, $orgBg, Node $node)
+    {
+        $orgBgcNr->getValue()->willReturn('org-bgc-nr');
+        $node->getChild('PayeeBgcNumber')->willReturn($node);
+        $node->getValue()->willReturn('org-bgc-nr');
+        $node->getChild('PayeeBankgiro')->willReturn($node);
+        $node->getValueFrom('Object')->willReturn(null);
+        $this->beforeOpening($node);
+    }
 }
