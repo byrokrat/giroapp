@@ -36,7 +36,7 @@ class ApplicationWrapper
         $this->userDir = $this->directory . '/giroapp_path';
         mkdir($this->userDir);
         putenv("GIROAPP_PATH={$this->userDir}");
-        $this->executable = realpath(getcwd() . '/' . $executable) ;
+        $this->executable = realpath(getcwd() . '/' . $executable);
 
         if ($debug) {
             $this->debugDump = function (string $str, string $pre = '') {
