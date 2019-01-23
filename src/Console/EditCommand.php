@@ -209,7 +209,10 @@ final class EditCommand implements CommandInterface
             );
         }
 
+        /** @var array */
         $attrKeys = $input->getOption('attr-key');
+
+        /** @var array */
         $attrValues = $input->getOption('attr-value');
 
         for ($count = 0;; $count++) {

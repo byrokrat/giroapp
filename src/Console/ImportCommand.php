@@ -67,7 +67,10 @@ final class ImportCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $file = ($filename = $input->getArgument('filename'))
+        /** @var string */
+        $filename = $input->getArgument('filename');
+
+        $file = ($filename)
             ? $this->filesystem->readFile($filename)
             : new Sha256File('STDIN', $this->stdin->getContent());
 

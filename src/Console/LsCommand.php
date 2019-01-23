@@ -77,13 +77,15 @@ final class LsCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $filter = $this->filterContainer->getFilter(
-            $input->getOption('filter')
-        );
+        /** @var string */
+        $filterId = $input->getOption('filter');
 
-        $formatter = $this->formatterContainer->getFormatter(
-            $input->getOption('format')
-        );
+        $filter = $this->filterContainer->getFilter($filterId);
+
+        /** @var string */
+        $formatId = $input->getOption('format');
+
+        $formatter = $this->formatterContainer->getFormatter($formatId);
 
         $formatter->initialize($output);
 

@@ -87,12 +87,15 @@ final class ExportCommand implements CommandInterface
             }
         }
 
+        /** @var string */
+        $filename = $input->getOption('filename');
+
         if ($exported) {
             $this->dispatcher->dispatch(
                 Events::FILE_EXPORTED,
                 new FileEvent(
                     'Generating file to export',
-                    new Sha256File($input->getOption('filename'), $this->autogiroWriter->getContent())
+                    new Sha256File($filename, $this->autogiroWriter->getContent())
                 )
             );
         }
