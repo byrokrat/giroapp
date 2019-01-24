@@ -63,7 +63,7 @@ final class LsCommand implements CommandInterface
             null,
             InputOption::VALUE_REQUIRED,
             sprintf(
-                'Set donor filter, possible values are: %s',
+                'Set donor filter, possible values: %s',
                 implode(", ", array_filter($this->filterContainer->getFilterNames()))
             ),
             ''
@@ -73,7 +73,10 @@ final class LsCommand implements CommandInterface
             'format',
             null,
             InputOption::VALUE_REQUIRED,
-            "Set output format ({$this->formatterContainer->getFormatterNames()})",
+            sprintf(
+                'Set output format, possible values: %s',
+                implode(", ", array_filter($this->formatterContainer->getFormatterNames()))
+            ),
             'list'
         );
     }

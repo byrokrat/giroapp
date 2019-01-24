@@ -54,8 +54,8 @@ class FormatterContainer
         return $this->formatters[$name];
     }
 
-    public function getFormatterNames(): string
+    public function getFormatterNames(): array
     {
-        return '"' . implode('" / "', array_keys($this->formatters)) . '"';
+        return array_keys($this->formatters);
     }
 }

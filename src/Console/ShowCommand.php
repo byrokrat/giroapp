@@ -56,7 +56,10 @@ final class ShowCommand implements CommandInterface
             'format',
             null,
             InputOption::VALUE_REQUIRED,
-            "Set output format ({$this->formatterContainer->getFormatterNames()})",
+            sprintf(
+                'Set output format, possible values: %s',
+                implode(", ", array_filter($this->formatterContainer->getFormatterNames()))
+            ),
             'human'
         );
     }
