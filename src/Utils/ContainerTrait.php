@@ -20,37 +20,34 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Filter;
+namespace byrokrat\giroapp\Utils;
 
-use byrokrat\giroapp\Utils\ContainerTrait;
-
-class FilterContainer
+trait ContainerTrait
 {
-    use ContainerTrait;
+    /** @var array */
+    private $items = [];
 
-    public function __construct()
+    protected function addItem(string $key, $item): void
     {
-        $this->addFilter(new ActiveFilter);
-        $this->addFilter(new InactiveFilter);
-        $this->addFilter(new ExportableFilter);
-        $this->addFilter(new ErrorFilter);
-        $this->addFilter(new PausedFilter);
-        $this->addFilter(new PurgeableFilter);
-        $this->addFilter(new AwaitingResponseFilter);
+        $this->items[$key] = $item;
     }
 
-    public function addFilter(FilterInterface $filter): void
+    protected function getItem(string $key)
     {
-        $this->addItem($filter->getName(), $filter);
+        if (!isset($this->items[$key])) {
+            throw new \RuntimeException("Item $key does not exist");
+        }
+
+        return $this->items[$key];
     }
 
-    public function getFilter(string $name): FilterInterface
+    public function getItemKeys(): array
     {
-        return $this->getItem($name);
+        return array_filter(array_keys($this->items));
     }
 
-    public function getNegatedFilter(string $name): FilterInterface
+    public function getItems(): array
     {
-        return new NegatedFilter($this->getFilter($name));
+        return $this->items;
     }
 }

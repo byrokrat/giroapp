@@ -20,29 +20,27 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Formatter;
+namespace byrokrat\giroapp\Sorter;
 
-use byrokrat\giroapp\Utils\ContainerTrait;
+use byrokrat\giroapp\Model\Donor;
 
-class FormatterContainer
+final class DescendingSorter implements SorterInterface
 {
-    use ContainerTrait;
+    /** @var SorterInterface */
+    private $wrapped;
 
-    public function __construct()
+    public function __construct(SorterInterface $wrapped)
     {
-        $this->addFormatter(new ListFormatter);
-        $this->addFormatter(new CsvFormatter);
-        $this->addFormatter(new HumanFormatter);
-        $this->addFormatter(new JsonFormatter);
+        $this->wrapped = $wrapped;
     }
 
-    public function addFormatter(FormatterInterface $formatter): void
+    public function getName(): string
     {
-        $this->addItem($formatter->getName(), $formatter);
+        return '';
     }
 
-    public function getFormatter(string $name): FormatterInterface
+    public function compareDonors(Donor $left, Donor $right): int
     {
-        return $this->getItem($name);
+        return $this->wrapped->compareDonors($left, $right) * -1;
     }
 }

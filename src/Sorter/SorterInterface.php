@@ -18,31 +18,23 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Sorter;
 
-namespace byrokrat\giroapp\Formatter;
+use byrokrat\giroapp\Model\Donor;
 
-use byrokrat\giroapp\Utils\ContainerTrait;
-
-class FormatterContainer
+interface SorterInterface
 {
-    use ContainerTrait;
+    /**
+     * Get unique sorter name
+     */
+    public function getName(): string;
 
-    public function __construct()
-    {
-        $this->addFormatter(new ListFormatter);
-        $this->addFormatter(new CsvFormatter);
-        $this->addFormatter(new HumanFormatter);
-        $this->addFormatter(new JsonFormatter);
-    }
-
-    public function addFormatter(FormatterInterface $formatter): void
-    {
-        $this->addItem($formatter->getName(), $formatter);
-    }
-
-    public function getFormatter(string $name): FormatterInterface
-    {
-        return $this->getItem($name);
-    }
+    /**
+     * Compare donors
+     *
+     * Returns an integer less than, equal to, or greater than zero if the first
+     * donor is considered to be respectively less than, equal to, or greater
+     * than the second.
+     */
+    public function compareDonors(Donor $left, Donor $right): int;
 }

@@ -11,6 +11,7 @@ Plugins may register
 * Commands
 * Donor filters
 * Donor formatters
+* Donor sorters
 
 Here is an example plugin that sends notifications on application error:
 
@@ -81,7 +82,7 @@ return new Plugin(
 );
 ```
 
-> For a list of possible event names see [Events](src/Events.php).
+> For a list of possible event names see [Events](../src/Events.php).
 
 ## Listener priorities
 

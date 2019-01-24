@@ -9,6 +9,7 @@ use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
+use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use PhpSpec\ObjectBehavior;
@@ -47,6 +48,13 @@ class PluginSpec extends ObjectBehavior
         $this->beConstructedWith($formatter);
         $this->loadPlugin($env);
         $env->registerDonorFormatter($formatter)->shouldHaveBeenCalled();
+    }
+
+    function it_registers_sorters(SorterInterface $sorter, EnvironmentInterface $env)
+    {
+        $this->beConstructedWith($sorter);
+        $this->loadPlugin($env);
+        $env->registerDonorSorter($sorter)->shouldHaveBeenCalled();
     }
 
     function it_registers_xml_forms(XmlFormInterface $xmlForm, EnvironmentInterface $env)

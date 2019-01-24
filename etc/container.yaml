@@ -52,6 +52,9 @@ services:
     byrokrat\giroapp\Formatter\:
         resource: '../src/Formatter/*'
 
+    byrokrat\giroapp\Sorter\:
+        resource: '../src/Sorter/*'
+
     byrokrat\giroapp\Model\Builder\:
         resource: '../src/Model/Builder/*'
 

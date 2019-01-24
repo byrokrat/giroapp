@@ -20,37 +20,32 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Filter;
+namespace byrokrat\giroapp\Sorter;
 
 use byrokrat\giroapp\Utils\ContainerTrait;
 
-class FilterContainer
+class SorterContainer
 {
     use ContainerTrait;
 
     public function __construct()
     {
-        $this->addFilter(new ActiveFilter);
-        $this->addFilter(new InactiveFilter);
-        $this->addFilter(new ExportableFilter);
-        $this->addFilter(new ErrorFilter);
-        $this->addFilter(new PausedFilter);
-        $this->addFilter(new PurgeableFilter);
-        $this->addFilter(new AwaitingResponseFilter);
+        $this->addSorter(new NullSorter);
+        $this->addSorter(new NameSorter);
+        $this->addSorter(new StateSorter);
+        $this->addSorter(new PayerNumberSorter);
+        $this->addSorter(new AmountSorter);
+        $this->addSorter(new CreatedSorter);
+        $this->addSorter(new UpdatedSorter);
     }
 
-    public function addFilter(FilterInterface $filter): void
+    public function addSorter(SorterInterface $sorter): void
     {
-        $this->addItem($filter->getName(), $filter);
+        $this->addItem($sorter->getName(), $sorter);
     }
 
-    public function getFilter(string $name): FilterInterface
+    public function getSorter(string $name): SorterInterface
     {
         return $this->getItem($name);
-    }
-
-    public function getNegatedFilter(string $name): FilterInterface
-    {
-        return new NegatedFilter($this->getFilter($name));
     }
 }

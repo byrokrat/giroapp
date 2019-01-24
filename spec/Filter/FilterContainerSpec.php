@@ -28,7 +28,7 @@ class FilterContainerSpec extends ObjectBehavior
     {
         $filter->getName()->willReturn('foobar');
         $this->addFilter($filter);
-        $this->getFilterNames()->shouldContain('foobar');
+        $this->getItemKeys()->shouldContain('foobar');
     }
 
     function it_can_negate_filter(FilterInterface $filter)

@@ -94,6 +94,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Filter\\ExportableFilter' => true,
             'byrokrat\\giroapp\\Filter\\FilterContainer' => true,
             'byrokrat\\giroapp\\Filter\\InactiveFilter' => true,
+            'byrokrat\\giroapp\\Filter\\NegatedFilter' => true,
             'byrokrat\\giroapp\\Filter\\PausedFilter' => true,
             'byrokrat\\giroapp\\Filter\\PurgeableFilter' => true,
             'byrokrat\\giroapp\\Formatter\\CsvFormatter' => true,
@@ -120,6 +121,15 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Model\\Builder\\DonorBuilder' => true,
             'byrokrat\\giroapp\\Model\\Builder\\MandateKeyFactory' => true,
             'byrokrat\\giroapp\\Plugin\\PluginLoader' => true,
+            'byrokrat\\giroapp\\Sorter\\AmountSorter' => true,
+            'byrokrat\\giroapp\\Sorter\\CreatedSorter' => true,
+            'byrokrat\\giroapp\\Sorter\\DescendingSorter' => true,
+            'byrokrat\\giroapp\\Sorter\\NameSorter' => true,
+            'byrokrat\\giroapp\\Sorter\\NullSorter' => true,
+            'byrokrat\\giroapp\\Sorter\\PayerNumberSorter' => true,
+            'byrokrat\\giroapp\\Sorter\\SorterContainer' => true,
+            'byrokrat\\giroapp\\Sorter\\StateSorter' => true,
+            'byrokrat\\giroapp\\Sorter\\UpdatedSorter' => true,
             'byrokrat\\giroapp\\State\\ActiveState' => true,
             'byrokrat\\giroapp\\State\\ErrorState' => true,
             'byrokrat\\giroapp\\State\\InactiveState' => true,
@@ -248,7 +258,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getLsCommandService()
     {
-        $this->services['byrokrat\giroapp\Console\LsCommand'] = $instance = new \byrokrat\giroapp\Console\LsCommand(($this->privates['byrokrat\giroapp\Filter\FilterContainer'] ?? ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] = new \byrokrat\giroapp\Filter\FilterContainer())), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer())));
+        $this->services['byrokrat\giroapp\Console\LsCommand'] = $instance = new \byrokrat\giroapp\Console\LsCommand(($this->privates['byrokrat\giroapp\Filter\FilterContainer'] ?? ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] = new \byrokrat\giroapp\Filter\FilterContainer())), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer())), ($this->privates['byrokrat\giroapp\Sorter\SorterContainer'] ?? ($this->privates['byrokrat\giroapp\Sorter\SorterContainer'] = new \byrokrat\giroapp\Sorter\SorterContainer())));
 
         $instance->setDonorMapper(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
 
@@ -379,7 +389,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getEnvironmentInterfaceService()
     {
-        $this->services['byrokrat\giroapp\Plugin\EnvironmentInterface'] = $instance = new \byrokrat\giroapp\Plugin\Environment(($this->services['Symfony\Component\Console\Application'] ?? ($this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '$app_version$'))), ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()), ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] ?? ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] = new \byrokrat\giroapp\Filter\FilterContainer())), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer())), ($this->services['configs'] ?? $this->getConfigsService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator())));
+        $this->services['byrokrat\giroapp\Plugin\EnvironmentInterface'] = $instance = new \byrokrat\giroapp\Plugin\Environment(($this->services['Symfony\Component\Console\Application'] ?? ($this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '$app_version$'))), ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()), ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] ?? ($this->privates['byrokrat\giroapp\Filter\FilterContainer'] = new \byrokrat\giroapp\Filter\FilterContainer())), ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] ?? ($this->privates['byrokrat\giroapp\Formatter\FormatterContainer'] = new \byrokrat\giroapp\Formatter\FormatterContainer())), ($this->privates['byrokrat\giroapp\Sorter\SorterContainer'] ?? ($this->privates['byrokrat\giroapp\Sorter\SorterContainer'] = new \byrokrat\giroapp\Sorter\SorterContainer())), ($this->services['configs'] ?? $this->getConfigsService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator())));
 
         $a = new \byrokrat\giroapp\Filesystem\Filesystem($this->getEnv('string:GIROAPP_PATH').'/plugins', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
         ($this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] ?? ($this->privates['byrokrat\giroapp\Filesystem\FilesystemConfigurator'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator()))->createCurrentDirectory($a);

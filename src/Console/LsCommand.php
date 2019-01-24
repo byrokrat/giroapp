@@ -26,66 +26,86 @@ use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\Filter\FilterContainer;
 use byrokrat\giroapp\Filter\CombinedFilter;
 use byrokrat\giroapp\Formatter\FormatterContainer;
+use byrokrat\giroapp\Sorter\SorterContainer;
+use byrokrat\giroapp\Sorter\DescendingSorter;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Command to list donors in database
- */
 final class LsCommand implements CommandInterface
 {
     use DonorMapperProperty;
 
-    /**
-     * @var FilterContainer
-     */
+    /** @var FilterContainer */
     private $filterContainer;
 
-    /**
-     * @var FormatterContainer
-     */
+    /** @var FormatterContainer */
     private $formatterContainer;
 
-    public function __construct(FilterContainer $filterContainer, FormatterContainer $formatterContainer)
-    {
+    /** @var SorterContainer */
+    private $sorterContainer;
+
+    public function __construct(
+        FilterContainer $filterContainer,
+        FormatterContainer $formatterContainer,
+        SorterContainer $sorterContainer
+    ) {
         $this->filterContainer = $filterContainer;
         $this->formatterContainer = $formatterContainer;
+        $this->sorterContainer = $sorterContainer;
     }
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Adapter $adapter): void
     {
-        $wrapper->setName('ls');
-        $wrapper->setDescription('List donors');
-        $wrapper->setHelp('List donors in database');
+        $adapter->setName('ls');
+        $adapter->setDescription('List donors');
+        $adapter->setHelp('List donors in database');
 
-        $wrapper->addOption(
+        $adapter->addOption(
             'filter',
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             sprintf(
                 'Use donor filter, possible values: %s',
-                implode(", ", $this->filterContainer->getFilterNames())
+                implode(", ", $this->filterContainer->getItemKeys())
             )
         );
 
-        $wrapper->addOption(
+        $adapter->addOption(
             'filter-not',
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             sprintf(
                 'Use negated filter, possible values: %s',
-                implode(", ", $this->filterContainer->getFilterNames())
+                implode(", ", $this->filterContainer->getItemKeys())
             )
         );
 
-        $wrapper->addOption(
+        $adapter->addOption(
+            'sorter',
+            null,
+            InputOption::VALUE_REQUIRED,
+            sprintf(
+                'Set donor sorter, possible values: %s',
+                implode(", ", $this->sorterContainer->getItemKeys())
+            ),
+            ''
+        );
+
+        $adapter->addOption(
+            'desc',
+            null,
+            InputOption::VALUE_NONE,
+            'Sort donors in descending order'
+        );
+
+        $adapter->addOption(
             'format',
             null,
             InputOption::VALUE_REQUIRED,
             sprintf(
                 'Set output format, possible values: %s',
-                implode(", ", $this->formatterContainer->getFormatterNames())
+                implode(", ", $this->formatterContainer->getItemKeys())
             ),
             'list'
         );
@@ -93,12 +113,7 @@ final class LsCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        /** @var string */
-        $formatId = $input->getOption('format');
-
-        $formatter = $this->formatterContainer->getFormatter($formatId);
-
-        $formatter->initialize($output);
+        $donors = [];
 
         $filter = new CombinedFilter(
             ...array_merge(
@@ -109,8 +124,27 @@ final class LsCommand implements CommandInterface
 
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($filter->filterDonor($donor)) {
-                $formatter->formatDonor($donor);
+                $donors[] = $donor;
             }
+        }
+
+        /** @var string */
+        $sorterId = $input->getOption('sorter');
+        $sorter = $this->sorterContainer->getSorter($sorterId);
+
+        if ($input->getOption('desc')) {
+            $sorter = new DescendingSorter($sorter);
+        }
+
+        usort($donors, [$sorter, 'compareDonors']);
+
+        /** @var string */
+        $formatId = $input->getOption('format');
+        $formatter = $this->formatterContainer->getFormatter($formatId);
+        $formatter->initialize($output);
+
+        foreach ($donors as $donor) {
+            $formatter->formatDonor($donor);
         }
 
         $formatter->finalize();

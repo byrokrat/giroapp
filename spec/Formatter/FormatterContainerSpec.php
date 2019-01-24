@@ -16,17 +16,17 @@ class FormatterContainerSpec extends ObjectBehavior
         $this->shouldHaveType(FormatterContainer::CLASS);
     }
 
-    function it_can_add_filter(FormatterInterface $formatter)
+    function it_can_add_formatter(FormatterInterface $formatter)
     {
         $formatter->getName()->willReturn('foobar');
         $this->addFormatter($formatter);
         $this->getFormatter('foobar')->shouldReturn($formatter);
     }
 
-    function it_can_get_filter_names(FormatterInterface $formatter)
+    function it_can_get_formatter_names(FormatterInterface $formatter)
     {
         $formatter->getName()->willReturn('foobar');
         $this->addFormatter($formatter);
-        $this->getFormatterNames()->shouldContain('foobar');
+        $this->getItemKeys()->shouldContain('foobar');
     }
 }

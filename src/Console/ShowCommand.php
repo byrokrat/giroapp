@@ -58,7 +58,7 @@ final class ShowCommand implements CommandInterface
             InputOption::VALUE_REQUIRED,
             sprintf(
                 'Set output format, possible values: %s',
-                implode(", ", $this->formatterContainer->getFormatterNames())
+                implode(", ", $this->formatterContainer->getItemKeys())
             ),
             'human'
         );
