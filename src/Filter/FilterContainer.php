@@ -35,8 +35,13 @@ class FilterContainer
     public function __construct()
     {
         $this->addFilter(new NullFilter);
-        $this->addFilter(new ExportableFilter);
+        $this->addFilter(new ActiveFilter);
         $this->addFilter(new InactiveFilter);
+        $this->addFilter(new ExportableFilter);
+        $this->addFilter(new ErrorFilter);
+        $this->addFilter(new PausedFilter);
+        $this->addFilter(new PurgeableFilter);
+        $this->addFilter(new AwaitingResponseFilter);
     }
 
     public function addFilter(FilterInterface $filter): void
@@ -53,8 +58,8 @@ class FilterContainer
         return $this->filters[$name];
     }
 
-    public function getFilterNames(): string
+    public function getFilterNames(): array
     {
-        return '"' . implode('" / "', array_keys($this->filters)) . '"';
+        return array_keys($this->filters);
     }
 }

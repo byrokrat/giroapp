@@ -62,7 +62,10 @@ final class LsCommand implements CommandInterface
             'filter',
             null,
             InputOption::VALUE_REQUIRED,
-            "Set donor filter ({$this->filterContainer->getFilterNames()})",
+            sprintf(
+                'Set donor filter, possible values are: %s',
+                implode(", ", array_filter($this->filterContainer->getFilterNames()))
+            ),
             ''
         );
 
