@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\giroapp\Filesystem\Filesystem;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use Symfony\Component\Console\Input\InputArgument;
@@ -33,21 +34,14 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Streamer\Stream;
 
-/**
- * Command to import a file from autogirot
- */
 final class ImportCommand implements CommandInterface
 {
     use DispatcherProperty;
 
-    /**
-     * @var Filesystem
-     */
+    /** @var Filesystem */
     private $filesystem;
 
-    /**
-     * @var Stream
-     */
+    /** @var Stream */
     private $stdin;
 
     public function __construct(Filesystem $filesystem, Stream $stdin = null)
@@ -56,26 +50,52 @@ final class ImportCommand implements CommandInterface
         $this->stdin = $stdin ?: new Stream(STDIN);
     }
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Adapter $adapter): void
     {
-        $wrapper->setName('import');
-        $wrapper->setDescription('Import a file from autogirot');
-        $wrapper->setHelp('Import a file with data from autogirot');
-        $wrapper->addArgument('filename', InputArgument::OPTIONAL, 'The name of the file to import');
-        $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import even if a pre-condition fails.');
+        $adapter
+            ->setName('import')
+            ->setDescription('Import a file from autogirot')
+            ->setHelp('Import a file with data from autogirot')
+            ->addArgument(
+                'path',
+                InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
+                'One or more paths to import'
+            )
+            ->addOption(
+                'force',
+                'f',
+                InputOption::VALUE_NONE,
+                'Force import even if a precondition fails'
+            )
+        ;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        /** @var string */
-        $filename = $input->getArgument('filename');
+        $force = !!$input->getOption('force');
 
-        $file = ($filename)
-            ? $this->filesystem->readFile($filename)
-            : new Sha256File('STDIN', $this->stdin->getContent());
+        $paths = (array)$input->getArgument('path');
 
+        if (empty($paths)) {
+            $this->importFile(new Sha256File('STDIN', $this->stdin->getContent()), $force);
+        }
+
+        foreach ($paths as $path) {
+            if ($this->filesystem->isFile($path)) {
+                $this->importFile($this->filesystem->readFile($path), $force);
+                continue;
+            }
+
+            foreach ($this->filesystem->readDir($path) as $file) {
+                $this->importFile($file, $force);
+            }
+        }
+    }
+
+    private function importFile(FileInterface $file, bool $force): void
+    {
         $this->dispatcher->dispatch(
-            $input->getOption('force') ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
+            $force ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
             new FileEvent(
                 "Importing file <info>{$file->getFilename()}</info>",
                 $file

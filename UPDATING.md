@@ -10,3 +10,4 @@
 * Adds support for negated filters using the `--filter-not` option.
 * Added sorters.
 * Added posibility to load custom donor states through plugins.
+* Supports importing files from multiple files and directories.

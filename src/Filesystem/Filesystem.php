@@ -77,6 +77,13 @@ final class Filesystem implements FilesystemInterface
         );
     }
 
+    public function readDir(string $path): iterable
+    {
+        foreach ($this->getFinderFor($path)->files() as $fileInfo) {
+            yield $fileInfo->getRealPath() => new Sha256File($fileInfo->getFilename(), $fileInfo->getContents());
+        }
+    }
+
     public function writeFile(FileInterface $file): void
     {
         $this->fs->dumpFile($this->getAbsolutePath($file->getFilename()), $file->getContent());

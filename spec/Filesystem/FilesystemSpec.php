@@ -89,6 +89,12 @@ class FilesystemSpec extends ObjectBehavior
         $this->readFile($filename)->shouldBeLike(new Sha256File($filename, file_get_contents(__FILE__)));
     }
 
+    function it_can_read_dir($fs)
+    {
+        $this->beConstructedWith(__DIR__, $fs);
+        $this->readDir('.')->shouldHaveKey(__FILE__);
+    }
+
     function it_can_write_file($fs, FileInterface $file)
     {
         $file->getFilename()->willReturn('name');

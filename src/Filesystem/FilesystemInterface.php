@@ -53,6 +53,13 @@ interface FilesystemInterface
     public function readFile(string $path): FileInterface;
 
     /**
+     * Read all files from path (file or directory)
+     *
+     * @return FileInterface[]
+     */
+    public function readDir(string $path): iterable;
+
+    /**
      * Write a file to filesystem
      */
     public function writeFile(FileInterface $file): void;
