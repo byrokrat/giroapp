@@ -34,7 +34,6 @@ class FilterContainer
 
     public function __construct()
     {
-        $this->addFilter(new NullFilter);
         $this->addFilter(new ActiveFilter);
         $this->addFilter(new InactiveFilter);
         $this->addFilter(new ExportableFilter);

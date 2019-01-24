@@ -24,8 +24,16 @@ namespace byrokrat\giroapp\Filter;
 
 use byrokrat\giroapp\Model\Donor;
 
-final class NullFilter implements FilterInterface
+final class CombinedFilter implements FilterInterface
 {
+    /** @var FilterInterface[] */
+    private $filters;
+
+    public function __construct(FilterInterface ...$filters)
+    {
+        $this->filters = $filters;
+    }
+
     public function getName(): string
     {
         return '';
@@ -33,6 +41,12 @@ final class NullFilter implements FilterInterface
 
     public function filterDonor(Donor $donor): bool
     {
+        foreach ($this->filters as $filter) {
+            if (!$filter->filterDonor($donor)) {
+                return false;
+            }
+        }
+
         return true;
     }
 }

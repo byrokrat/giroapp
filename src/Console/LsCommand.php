@@ -24,6 +24,7 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\Filter\FilterContainer;
+use byrokrat\giroapp\Filter\CombinedFilter;
 use byrokrat\giroapp\Formatter\FormatterContainer;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -61,12 +62,11 @@ final class LsCommand implements CommandInterface
         $wrapper->addOption(
             'filter',
             null,
-            InputOption::VALUE_REQUIRED,
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             sprintf(
                 'Set donor filter, possible values: %s',
-                implode(", ", array_filter($this->filterContainer->getFilterNames()))
-            ),
-            ''
+                implode(", ", $this->filterContainer->getFilterNames())
+            )
         );
 
         $wrapper->addOption(
@@ -75,7 +75,7 @@ final class LsCommand implements CommandInterface
             InputOption::VALUE_REQUIRED,
             sprintf(
                 'Set output format, possible values: %s',
-                implode(", ", array_filter($this->formatterContainer->getFormatterNames()))
+                implode(", ", $this->formatterContainer->getFormatterNames())
             ),
             'list'
         );
@@ -84,16 +84,15 @@ final class LsCommand implements CommandInterface
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         /** @var string */
-        $filterId = $input->getOption('filter');
-
-        $filter = $this->filterContainer->getFilter($filterId);
-
-        /** @var string */
         $formatId = $input->getOption('format');
 
         $formatter = $this->formatterContainer->getFormatter($formatId);
 
         $formatter->initialize($output);
+
+        $filter = new CombinedFilter(
+            ...array_map([$this->filterContainer, 'getFilter'], (array)$input->getOption('filter'))
+        );
 
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($filter->filterDonor($donor)) {
