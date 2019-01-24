@@ -57,6 +57,11 @@ class FilterContainer
         return $this->filters[$name];
     }
 
+    public function getNegatedFilter(string $name): FilterInterface
+    {
+        return new NegatedFilter($this->getFilter($name));
+    }
+
     public function getFilterNames(): array
     {
         return array_keys($this->filters);

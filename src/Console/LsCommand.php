@@ -64,7 +64,17 @@ final class LsCommand implements CommandInterface
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             sprintf(
-                'Set donor filter, possible values: %s',
+                'Use donor filter, possible values: %s',
+                implode(", ", $this->filterContainer->getFilterNames())
+            )
+        );
+
+        $wrapper->addOption(
+            'filter-not',
+            null,
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            sprintf(
+                'Use negated filter, possible values: %s',
                 implode(", ", $this->filterContainer->getFilterNames())
             )
         );
@@ -91,7 +101,10 @@ final class LsCommand implements CommandInterface
         $formatter->initialize($output);
 
         $filter = new CombinedFilter(
-            ...array_map([$this->filterContainer, 'getFilter'], (array)$input->getOption('filter'))
+            ...array_merge(
+                array_map([$this->filterContainer, 'getFilter'], (array)$input->getOption('filter')),
+                array_map([$this->filterContainer, 'getNegatedFilter'], (array)$input->getOption('filter-not'))
+            )
         );
 
         foreach ($this->donorMapper->findAll() as $donor) {

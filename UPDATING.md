@@ -7,3 +7,4 @@
 
 * Added more filters.
 * Multiple filters are now allowed with the `ls` command.
+* Adds support for negated filters using the `--filter-not` option.

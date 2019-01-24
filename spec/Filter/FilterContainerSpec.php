@@ -6,6 +6,7 @@ namespace spec\byrokrat\giroapp\Filter;
 
 use byrokrat\giroapp\Filter\FilterContainer;
 use byrokrat\giroapp\Filter\FilterInterface;
+use byrokrat\giroapp\Filter\NegatedFilter;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -28,5 +29,12 @@ class FilterContainerSpec extends ObjectBehavior
         $filter->getName()->willReturn('foobar');
         $this->addFilter($filter);
         $this->getFilterNames()->shouldContain('foobar');
+    }
+
+    function it_can_negate_filter(FilterInterface $filter)
+    {
+        $filter->getName()->willReturn('foobar');
+        $this->addFilter($filter);
+        $this->getNegatedFilter('foobar')->shouldBeLike(new NegatedFilter($filter->getWrappedObject()));
     }
 }
