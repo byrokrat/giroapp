@@ -27,7 +27,7 @@ use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\autogiro\Writer\WriterInterface;
 use Symfony\Component\Console\Input\InputInterface;
@@ -47,14 +47,14 @@ final class ExportCommand implements CommandInterface
     private $autogiroWriter;
 
     /**
-     * @var StatePool
+     * @var StateCollection
      */
-    private $statePool;
+    private $stateCollection;
 
-    public function __construct(WriterInterface $autogiroWriter, StatePool $statePool)
+    public function __construct(WriterInterface $autogiroWriter, StateCollection $stateCollection)
     {
         $this->autogiroWriter = $autogiroWriter;
-        $this->statePool = $statePool;
+        $this->stateCollection = $stateCollection;
     }
 
     public function configure(Adapter $adapter): void
@@ -78,7 +78,7 @@ final class ExportCommand implements CommandInterface
         foreach ($this->donorMapper->findAll() as $donor) {
             if ($donor->getState()->isExportable()) {
                 $donor->exportToAutogiro($this->autogiroWriter);
-                $donor->setState($this->statePool->getState($donor->getState()->getNextStateId()));
+                $donor->setState($this->stateCollection->getState($donor->getState()->getNextStateId()));
                 $this->dispatcher->dispatch(
                     Events::DONOR_UPDATED,
                     new DonorEvent("Exported mandate <info>{$donor->getMandateKey()}</info>", $donor)

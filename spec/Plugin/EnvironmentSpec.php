@@ -16,6 +16,8 @@ use byrokrat\giroapp\Formatter\FormatterContainer;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterContainer;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\State\StateCollection;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use byrokrat\giroapp\Xml\XmlFormTranslator;
 use Symfony\Component\Console\Application;
@@ -32,6 +34,7 @@ class EnvironmentSpec extends ObjectBehavior
         FilterContainer $filterContainer,
         FormatterContainer $formatterContainer,
         SorterContainer $sorterContainer,
+        StateCollection $stateCollection,
         ConfigManager $configManager,
         XmlFormTranslator $xmlFormTranslator
     ) {
@@ -41,6 +44,7 @@ class EnvironmentSpec extends ObjectBehavior
             $filterContainer,
             $formatterContainer,
             $sorterContainer,
+            $stateCollection,
             $configManager,
             $xmlFormTranslator
         );
@@ -92,6 +96,12 @@ class EnvironmentSpec extends ObjectBehavior
     {
         $this->registerDonorSorter($sorter);
         $sorterContainer->addSorter($sorter)->shouldHaveBeenCalled();
+    }
+
+    function it_can_register_states($stateCollection, StateInterface $state)
+    {
+        $this->registerDonorState($state);
+        $stateCollection->addState($state)->shouldHaveBeenCalled();
     }
 
     function it_can_register_xml_forms($xmlFormTranslator, XmlFormInterface $xmlForm)

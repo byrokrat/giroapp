@@ -26,6 +26,7 @@ use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -58,6 +59,9 @@ final class Plugin implements PluginInterface
             }
             if ($item instanceof SorterInterface) {
                 $environment->registerDonorSorter($item);
+            }
+            if ($item instanceof StateInterface) {
+                $environment->registerDonorState($item);
             }
             if ($item instanceof XmlFormInterface) {
                 $environment->registerXmlForm($item);

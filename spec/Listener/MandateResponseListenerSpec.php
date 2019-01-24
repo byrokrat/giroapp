@@ -12,7 +12,7 @@ use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\States;
 use byrokrat\id\IdInterface;
 use byrokrat\banking\AccountNumber;
@@ -31,7 +31,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
         Node $statusNode,
         Donor $donor,
         DonorMapper $donorMapper,
-        StatePool $statePool,
+        StateCollection $stateCollection,
         StateInterface $errorState,
         StateInterface $inactiveState,
         StateInterface $approvedState
@@ -59,11 +59,11 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donor->getPayerNumber()->willReturn('');
         $donor->getMandateKey()->willReturn('');
 
-        $statePool->getState(States::MANDATE_APPROVED)->willReturn($approvedState);
-        $statePool->getState(States::INACTIVE)->willReturn($inactiveState);
-        $statePool->getState(States::ERROR)->willReturn($errorState);
+        $stateCollection->getState(States::MANDATE_APPROVED)->willReturn($approvedState);
+        $stateCollection->getState(States::INACTIVE)->willReturn($inactiveState);
+        $stateCollection->getState(States::ERROR)->willReturn($errorState);
 
-        $this->beConstructedWith($donorMapper, $statePool);
+        $this->beConstructedWith($donorMapper, $stateCollection);
     }
 
     function it_is_initializable()

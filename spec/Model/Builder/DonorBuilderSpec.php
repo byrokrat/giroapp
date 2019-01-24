@@ -8,7 +8,7 @@ use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Model\Builder\MandateKeyFactory;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Utils\SystemClock;
@@ -28,16 +28,16 @@ class DonorBuilderSpec extends ObjectBehavior
         MandateKeyFactory $keyFactory,
         IdInterface $id,
         AccountNumber $account,
-        StatePool $statePool,
+        StateCollection $stateCollection,
         StateInterface $state,
         SystemClock $systemClock,
         \DateTimeImmutable $datetime
     ) {
         $id->format('Ssk')->willReturn(self::PAYER_NUMBER);
         $keyFactory->createMandateKey($id, $account)->willReturn(self::MANDATE_KEY);
-        $statePool->getState(Argument::any())->willReturn($state);
+        $stateCollection->getState(Argument::any())->willReturn($state);
         $systemClock->getNow()->willReturn($datetime);
-        $this->beConstructedWith($keyFactory, $statePool, $systemClock);
+        $this->beConstructedWith($keyFactory, $stateCollection, $systemClock);
     }
 
     function it_is_initializable()
@@ -112,9 +112,9 @@ class DonorBuilderSpec extends ObjectBehavior
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
     }
 
-    function it_uses_default_values($id, $account, $statePool, $state, $datetime)
+    function it_uses_default_values($id, $account, $stateCollection, $state, $datetime)
     {
-        $statePool->getState(States::NEW_MANDATE)->shouldBeCalled()->willReturn($state);
+        $stateCollection->getState(States::NEW_MANDATE)->shouldBeCalled()->willReturn($state);
         $this->setId($id)
             ->setAccount($account)
             ->setName('name')
@@ -141,8 +141,15 @@ class DonorBuilderSpec extends ObjectBehavior
             );
     }
 
-    function it_can_set_values($id, $account, PostalAddress $postalAddress, SEK $amount, $statePool, $state, $datetime)
-    {
+    function it_can_set_values(
+        $id,
+        $account,
+        PostalAddress $postalAddress,
+        SEK $amount,
+        $stateCollection,
+        $state,
+        $datetime
+    ) {
         $createdDonor = $this->setId($id)
             ->setAccount($account)
             ->setName('name')
@@ -157,7 +164,7 @@ class DonorBuilderSpec extends ObjectBehavior
             ->setAttribute('baz', 'bal')
             ->buildDonor();
 
-        $statePool->getState(States::NEW_DIGITAL_MANDATE)->shouldBeCalled()->willReturn($state);
+        $stateCollection->getState(States::NEW_DIGITAL_MANDATE)->shouldBeCalled()->willReturn($state);
 
         $createdDonor->shouldBeLike(
             new Donor(

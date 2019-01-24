@@ -24,6 +24,7 @@ use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -58,6 +59,11 @@ interface EnvironmentInterface
      * Register a custom donor sorter
      */
     public function registerDonorSorter(SorterInterface $donorSorter): void;
+
+    /**
+     * Register a custom donor state
+     */
+    public function registerDonorState(StateInterface $donorState): void;
 
     /**
      * Register an xml form definition

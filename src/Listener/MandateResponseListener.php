@@ -27,7 +27,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\NodeEvent;
-use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\States;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
@@ -42,14 +42,14 @@ class MandateResponseListener
     private $donorMapper;
 
     /**
-     * @var StatePool
+     * @var StateCollection
      */
-    private $statePool;
+    private $stateCollection;
 
-    public function __construct(DonorMapper $donorMapper, StatePool $statePool)
+    public function __construct(DonorMapper $donorMapper, StateCollection $stateCollection)
     {
         $this->donorMapper = $donorMapper;
-        $this->statePool = $statePool;
+        $this->stateCollection = $stateCollection;
     }
 
     public function onMandateResponseReceived(NodeEvent $nodeEvent, string $eventName, Dispatcher $dispatcher): void
@@ -107,19 +107,19 @@ class MandateResponseListener
         $donorEvent = new DonorEvent("{$donor->getMandateKey()}: $status", $donor);
 
         if ($node->hasChild('CreatedFlag')) {
-            $donor->setState($this->statePool->getState(States::MANDATE_APPROVED), $status);
+            $donor->setState($this->stateCollection->getState(States::MANDATE_APPROVED), $status);
             $dispatcher->dispatch(Events::MANDATE_APPROVED, $donorEvent);
             return;
         }
 
         if ($node->hasChild('DeletedFlag')) {
-            $donor->setState($this->statePool->getState(States::INACTIVE), $status);
+            $donor->setState($this->stateCollection->getState(States::INACTIVE), $status);
             $dispatcher->dispatch(Events::MANDATE_REVOKED, $donorEvent);
             return;
         }
 
         if ($node->hasChild('ErrorFlag')) {
-            $donor->setState($this->statePool->getState(States::ERROR), $status);
+            $donor->setState($this->stateCollection->getState(States::ERROR), $status);
             $dispatcher->dispatch(Events::MANDATE_INVALIDATED, $donorEvent);
             return;
         }

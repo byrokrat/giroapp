@@ -26,7 +26,7 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\State\StateCollection;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,13 +36,13 @@ final class PauseCommand implements CommandInterface
     use Helper\DonorArgument, DispatcherProperty;
 
     /**
-     * @var StatePool
+     * @var StateCollection
      */
-    private $statePool;
+    private $stateCollection;
 
-    public function __construct(StatePool $statePool)
+    public function __construct(StateCollection $stateCollection)
     {
-        $this->statePool = $statePool;
+        $this->stateCollection = $stateCollection;
     }
 
     public function configure(Adapter $adapter): void
@@ -63,7 +63,7 @@ final class PauseCommand implements CommandInterface
                 throw new \RuntimeException('Unable to restart donor that is not paused.');
             }
 
-            $donor->setState($this->statePool->getState(States::MANDATE_APPROVED));
+            $donor->setState($this->stateCollection->getState(States::MANDATE_APPROVED));
 
             $this->dispatcher->dispatch(
                 Events::MANDATE_RESTARTED,
@@ -77,7 +77,7 @@ final class PauseCommand implements CommandInterface
             throw new \RuntimeException('Unable to pause non active donor.');
         }
 
-        $donor->setState($this->statePool->getState(States::PAUSE_MANDATE));
+        $donor->setState($this->stateCollection->getState(States::PAUSE_MANDATE));
 
         $this->dispatcher->dispatch(
             Events::MANDATE_PAUSE_REQUESTED,

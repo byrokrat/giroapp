@@ -10,6 +10,7 @@ use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use PhpSpec\ObjectBehavior;
@@ -55,6 +56,13 @@ class PluginSpec extends ObjectBehavior
         $this->beConstructedWith($sorter);
         $this->loadPlugin($env);
         $env->registerDonorSorter($sorter)->shouldHaveBeenCalled();
+    }
+
+    function it_registers_states(StateInterface $state, EnvironmentInterface $env)
+    {
+        $this->beConstructedWith($state);
+        $this->loadPlugin($env);
+        $env->registerDonorState($state)->shouldHaveBeenCalled();
     }
 
     function it_registers_xml_forms(XmlFormInterface $xmlForm, EnvironmentInterface $env)

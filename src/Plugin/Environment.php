@@ -31,6 +31,8 @@ use byrokrat\giroapp\Formatter\FormatterContainer;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterContainer;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\State\StateCollection;
+use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use byrokrat\giroapp\Xml\XmlFormTranslator;
 use Symfony\Component\Console\Application;
@@ -65,6 +67,11 @@ final class Environment implements EnvironmentInterface
     private $sorterContainer;
 
     /**
+     * @var StateCollection
+     */
+    private $stateCollection;
+
+    /**
      * @var ConfigManager
      */
     private $configManager;
@@ -80,6 +87,7 @@ final class Environment implements EnvironmentInterface
         FilterContainer $filterContainer,
         FormatterContainer $formatterContainer,
         SorterContainer $sorterContainer,
+        StateCollection $stateCollection,
         ConfigManager $configManager,
         XmlFormTranslator $xmlFormTranslator
     ) {
@@ -88,6 +96,7 @@ final class Environment implements EnvironmentInterface
         $this->filterContainer = $filterContainer;
         $this->formatterContainer = $formatterContainer;
         $this->sorterContainer = $sorterContainer;
+        $this->stateCollection = $stateCollection;
         $this->configManager = $configManager;
         $this->xmlFormTranslator = $xmlFormTranslator;
     }
@@ -120,6 +129,11 @@ final class Environment implements EnvironmentInterface
     public function registerDonorSorter(SorterInterface $donorSorter): void
     {
         $this->sorterContainer->addSorter($donorSorter);
+    }
+
+    public function registerDonorState(StateInterface $donorState): void
+    {
+        $this->stateCollection->addState($donorState);
     }
 
     public function registerXmlForm(XmlFormInterface $xmlForm): void

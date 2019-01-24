@@ -27,7 +27,7 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\State\StateCollection;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -39,6 +39,14 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 final class EditCommand implements CommandInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
+
+    /** @var StateCollection */
+    private $stateCollection;
+
+    public function __construct(StateCollection $stateCollection)
+    {
+        $this->stateCollection = $stateCollection;
+    }
 
     /**
      * Maps option names to free text descriptions
@@ -102,20 +110,7 @@ final class EditCommand implements CommandInterface
             )
         );
 
-        $states = [
-            'a'  => States::ACTIVE,
-            'e'  => States::ERROR,
-            'i'  => States::INACTIVE,
-            'n'  => States::NEW_MANDATE,
-            'd'  => States::NEW_DIGITAL_MANDATE,
-            'ns' => States::MANDATE_SENT,
-            'ap' => States::MANDATE_APPROVED,
-            'r'  => States::REVOKE_MANDATE,
-            'rs' => States::REVOCATION_SENT,
-            'pr' => States::PAUSE_MANDATE,
-            'ps' => States::PAUSE_SENT,
-            'p'  => States::PAUSED,
-        ];
+        $states = (array)array_combine($this->stateCollection->getItemKeys(), $this->stateCollection->getItemKeys());
 
         $donor->setState(
             $inputReader->readInput(

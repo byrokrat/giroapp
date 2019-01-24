@@ -12,6 +12,7 @@ Plugins may register
 * Donor filters
 * Donor formatters
 * Donor sorters
+* Donor states
 
 Here is an example plugin that sends notifications on application error:
 

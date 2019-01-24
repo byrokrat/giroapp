@@ -22,17 +22,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\Utils\ContainerTrait;
 
-/**
- * Collection of state objects
- */
-class StatePool
+class StateCollection
 {
-    /**
-     * @var array
-     */
-    private $pool;
+    use ContainerTrait;
 
     public function __construct(
         ActiveState $active,
@@ -48,33 +42,27 @@ class StatePool
         PauseSentState $pauseSent,
         PausedState $paused
     ) {
-        $this->pool = [
-            States::ACTIVE              => $active,
-            States::ERROR               => $error,
-            States::INACTIVE            => $inactive,
-            States::NEW_MANDATE         => $newMandate,
-            States::NEW_DIGITAL_MANDATE => $newDigitalMandate,
-            States::MANDATE_SENT        => $mandateSent,
-            States::MANDATE_APPROVED    => $mandateApproved,
-            States::REVOKE_MANDATE      => $revokeMandate,
-            States::REVOCATION_SENT     => $revocationSent,
-            States::PAUSE_MANDATE       => $pauseMandate,
-            States::PAUSE_SENT          => $pauseSent,
-            States::PAUSED              => $paused,
-        ];
+        $this->addState($active);
+        $this->addState($error);
+        $this->addState($inactive);
+        $this->addState($newMandate);
+        $this->addState($newDigitalMandate);
+        $this->addState($mandateSent);
+        $this->addState($mandateApproved);
+        $this->addState($revokeMandate);
+        $this->addState($revocationSent);
+        $this->addState($pauseMandate);
+        $this->addState($pauseSent);
+        $this->addState($paused);
     }
 
-    /**
-     * @throws \RuntimeException If state id is unknown
-     */
+    public function addState(StateInterface $state): void
+    {
+        $this->addItem($state->getStateId(), $state);
+    }
+
     public function getState(string $stateId): StateInterface
     {
-        $stateId = strtoupper($stateId);
-
-        if (!isset($this->pool[$stateId])) {
-            throw new \RuntimeException("Unknown state id $stateId");
-        }
-
-        return $this->pool[$stateId];
+        return $this->getItem($stateId);
     }
 }

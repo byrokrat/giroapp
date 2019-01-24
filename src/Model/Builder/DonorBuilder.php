@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Model\Builder;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Utils\SystemClock;
@@ -43,9 +43,9 @@ class DonorBuilder
     private $keyFactory;
 
     /**
-     * @var StatePool;
+     * @var StateCollection;
      */
-    private $statePool;
+    private $stateCollection;
 
     /**
      * @var SystemClock
@@ -107,10 +107,13 @@ class DonorBuilder
      */
     private $donationAmount;
 
-    public function __construct(MandateKeyFactory $keyFactory, StatePool $statePool, SystemClock $systemClock)
-    {
+    public function __construct(
+        MandateKeyFactory $keyFactory,
+        StateCollection $stateCollection,
+        SystemClock $systemClock
+    ) {
         $this->keyFactory = $keyFactory;
-        $this->statePool = $statePool;
+        $this->stateCollection = $stateCollection;
         $this->systemClock = $systemClock;
     }
 
@@ -256,9 +259,9 @@ class DonorBuilder
         switch ($this->getMandateSource()) {
             case Donor::MANDATE_SOURCE_PAPER:
             case Donor::MANDATE_SOURCE_ONLINE_FORM:
-                return $this->statePool->getState(States::NEW_MANDATE);
+                return $this->stateCollection->getState(States::NEW_MANDATE);
             case Donor::MANDATE_SOURCE_DIGITAL:
-                return $this->statePool->getState(States::NEW_DIGITAL_MANDATE);
+                return $this->stateCollection->getState(States::NEW_DIGITAL_MANDATE);
         }
 
         throw new \RuntimeException('Unable to build donor, invalid donor state');

@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console\Helper;
 
-use byrokrat\giroapp\State\StatePool;
+use byrokrat\giroapp\State\StateCollection;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\id\IdFactoryInterface;
@@ -49,20 +49,20 @@ class Validators
     private $idFactory;
 
     /**
-     * @var StatePool
+     * @var StateCollection
      */
-    private $statePool;
+    private $stateCollection;
 
     public function __construct(
         AccountFactoryInterface $accountFactory,
         AccountFactoryInterface $bankgiroFactory,
         IdFactoryInterface $idFactory,
-        StatePool $statePool
+        StateCollection $stateCollection
     ) {
         $this->accountFactory = $accountFactory;
         $this->bankgiroFactory = $bankgiroFactory;
         $this->idFactory = $idFactory;
-        $this->statePool = $statePool;
+        $this->stateCollection = $stateCollection;
     }
 
     public function getDonorKeyValidator(): callable
@@ -202,6 +202,6 @@ class Validators
 
     public function getStateValidator(array $choices): callable
     {
-        return (new Rule)->pre($this->getChoiceValidator($choices))->post([$this->statePool, 'getState']);
+        return (new Rule)->pre($this->getChoiceValidator($choices))->post([$this->stateCollection, 'getState']);
     }
 }
