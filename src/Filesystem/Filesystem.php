@@ -72,7 +72,7 @@ final class Filesystem implements FilesystemInterface
         }
 
         return new Sha256File(
-            $path,
+            basename($path),
             (string)file_get_contents($this->getAbsolutePath($path))
         );
     }

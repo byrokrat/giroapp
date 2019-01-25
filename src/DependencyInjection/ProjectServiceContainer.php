@@ -482,9 +482,15 @@ class ProjectServiceContainer extends Container
         $instance->addListener('FILE_FORCEFULLY_IMPORTED', array(0 => function () {
             return ($this->privates['file_import_dumper'] ?? $this->getFileImportDumperService());
         }, 1 => 'onFileEvent'), -10);
+        $instance->addListener('EXECUTION_STOPED', array(0 => function () {
+            return ($this->privates['file_import_dumper'] ?? $this->getFileImportDumperService());
+        }, 1 => 'onEXECUTIONSTOPED'));
         $instance->addListener('FILE_EXPORTED', array(0 => function () {
             return ($this->privates['file_export_dumper'] ?? $this->getFileExportDumperService());
         }, 1 => 'onFileEvent'), -9);
+        $instance->addListener('EXECUTION_STOPED', array(0 => function () {
+            return ($this->privates['file_export_dumper'] ?? $this->getFileExportDumperService());
+        }, 1 => 'onEXECUTIONSTOPED'));
         $instance->addListener('FILE_EXPORTED', array(0 => function () {
             return ($this->privates['file_export_cwd_dumper'] ?? $this->getFileExportCwdDumperService());
         }, 1 => 'onFileEvent'), -10);

@@ -77,7 +77,7 @@ class FilesystemSpec extends ObjectBehavior
     {
         $fs->exists(__FILE__)->willReturn(true);
         $fs->isAbsolutePath(__FILE__)->willReturn(true)->shouldBeCalled();
-        $this->readFile(__FILE__)->shouldBeLike(new Sha256File(__FILE__, file_get_contents(__FILE__)));
+        $this->readFile(__FILE__)->shouldBeLike(new Sha256File(basename(__FILE__), file_get_contents(__FILE__)));
     }
 
     function it_can_read_relative_paths($fs)

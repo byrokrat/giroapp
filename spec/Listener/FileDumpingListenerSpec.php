@@ -5,13 +5,10 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Listener\FileDumpingListener;
-use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\FileProcessorInterface;
 use byrokrat\giroapp\Filesystem\FileInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -32,14 +29,16 @@ class FileDumpingListenerSpec extends ObjectBehavior
         $fileProcessor,
         FileEvent $event,
         FileInterface $file,
-        FileInterface $processedFile,
-        Dispatcher $dispatcher
+        FileInterface $processedFile
     ) {
         $event->getFile()->willReturn($file);
+
         $fileProcessor->processFile($file)->willReturn($processedFile);
         $processedFile->getFilename()->willReturn('foobar');
+
         $fs->writeFile($processedFile)->shouldBeCalled();
-        $dispatcher->dispatch(Events::INFO, Argument::type(LogEvent::CLASS))->shouldBeCalled();
-        $this->onFileEvent($event, '', $dispatcher);
+
+        $this->onFileEvent($event);
+        $this->onExecutionStoped();
     }
 }
