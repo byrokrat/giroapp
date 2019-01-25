@@ -20,32 +20,34 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Sorter;
+namespace byrokrat\giroapp\Utils;
 
-use byrokrat\giroapp\Utils\ContainerTrait;
-
-class SorterContainer
+trait CollectionTrait
 {
-    use ContainerTrait;
+    /** @var array */
+    private $items = [];
 
-    public function __construct()
+    protected function addItem(string $key, $item): void
     {
-        $this->addSorter(new NullSorter);
-        $this->addSorter(new NameSorter);
-        $this->addSorter(new StateSorter);
-        $this->addSorter(new PayerNumberSorter);
-        $this->addSorter(new AmountSorter);
-        $this->addSorter(new CreatedSorter);
-        $this->addSorter(new UpdatedSorter);
+        $this->items[$key] = $item;
     }
 
-    public function addSorter(SorterInterface $sorter): void
+    protected function getItem(string $key)
     {
-        $this->addItem($sorter->getName(), $sorter);
+        if (!isset($this->items[$key])) {
+            throw new \RuntimeException("Item $key does not exist");
+        }
+
+        return $this->items[$key];
     }
 
-    public function getSorter(string $name): SorterInterface
+    public function getItemKeys(): array
     {
-        return $this->getItem($name);
+        return array_filter(array_keys($this->items));
+    }
+
+    public function getItems(): array
+    {
+        return $this->items;
     }
 }

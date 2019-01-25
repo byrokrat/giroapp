@@ -4,17 +4,17 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Filter;
 
-use byrokrat\giroapp\Filter\FilterContainer;
+use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Filter\NegatedFilter;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class FilterContainerSpec extends ObjectBehavior
+class FilterCollectionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(FilterContainer::CLASS);
+        $this->shouldHaveType(FilterCollection::CLASS);
     }
 
     function it_can_add_filter(FilterInterface $filter)

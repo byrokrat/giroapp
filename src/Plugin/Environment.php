@@ -25,11 +25,11 @@ namespace byrokrat\giroapp\Plugin;
 use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Config\ConfigManager;
-use byrokrat\giroapp\Filter\FilterContainer;
+use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
-use byrokrat\giroapp\Formatter\FormatterContainer;
+use byrokrat\giroapp\Formatter\FormatterCollection;
 use byrokrat\giroapp\Formatter\FormatterInterface;
-use byrokrat\giroapp\Sorter\SorterContainer;
+use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
@@ -52,19 +52,19 @@ final class Environment implements EnvironmentInterface
     private $dispatcher;
 
     /**
-     * @var FilterContainer
+     * @var FilterCollection
      */
-    private $filterContainer;
+    private $filterCollection;
 
     /**
-     * @var FormatterContainer
+     * @var FormatterCollection
      */
-    private $formatterContainer;
+    private $formatterCollection;
 
     /**
-     * @var SorterContainer
+     * @var SorterCollection
      */
-    private $sorterContainer;
+    private $sorterCollection;
 
     /**
      * @var StateCollection
@@ -84,18 +84,18 @@ final class Environment implements EnvironmentInterface
     public function __construct(
         Application $application,
         EventDispatcherInterface $dispatcher,
-        FilterContainer $filterContainer,
-        FormatterContainer $formatterContainer,
-        SorterContainer $sorterContainer,
+        FilterCollection $filterCollection,
+        FormatterCollection $formatterCollection,
+        SorterCollection $sorterCollection,
         StateCollection $stateCollection,
         ConfigManager $configManager,
         XmlFormTranslator $xmlFormTranslator
     ) {
         $this->application = $application;
         $this->dispatcher = $dispatcher;
-        $this->filterContainer = $filterContainer;
-        $this->formatterContainer = $formatterContainer;
-        $this->sorterContainer = $sorterContainer;
+        $this->filterCollection = $filterCollection;
+        $this->formatterCollection = $formatterCollection;
+        $this->sorterCollection = $sorterCollection;
         $this->stateCollection = $stateCollection;
         $this->configManager = $configManager;
         $this->xmlFormTranslator = $xmlFormTranslator;
@@ -118,17 +118,17 @@ final class Environment implements EnvironmentInterface
 
     public function registerDonorFilter(FilterInterface $donorFilter): void
     {
-        $this->filterContainer->addFilter($donorFilter);
+        $this->filterCollection->addFilter($donorFilter);
     }
 
     public function registerDonorFormatter(FormatterInterface $donorFormatter): void
     {
-        $this->formatterContainer->addFormatter($donorFormatter);
+        $this->formatterCollection->addFormatter($donorFormatter);
     }
 
     public function registerDonorSorter(SorterInterface $donorSorter): void
     {
-        $this->sorterContainer->addSorter($donorSorter);
+        $this->sorterCollection->addSorter($donorSorter);
     }
 
     public function registerDonorState(StateInterface $donorState): void

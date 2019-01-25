@@ -10,11 +10,11 @@ use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Config\ConfigInterface;
-use byrokrat\giroapp\Filter\FilterContainer;
+use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
-use byrokrat\giroapp\Formatter\FormatterContainer;
+use byrokrat\giroapp\Formatter\FormatterCollection;
 use byrokrat\giroapp\Formatter\FormatterInterface;
-use byrokrat\giroapp\Sorter\SorterContainer;
+use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
@@ -31,9 +31,9 @@ class EnvironmentSpec extends ObjectBehavior
     function let(
         Application $application,
         EventDispatcherInterface $dispatcher,
-        FilterContainer $filterContainer,
-        FormatterContainer $formatterContainer,
-        SorterContainer $sorterContainer,
+        FilterCollection $filterCollection,
+        FormatterCollection $formatterCollection,
+        SorterCollection $sorterCollection,
         StateCollection $stateCollection,
         ConfigManager $configManager,
         XmlFormTranslator $xmlFormTranslator
@@ -41,9 +41,9 @@ class EnvironmentSpec extends ObjectBehavior
         $this->beConstructedWith(
             $application,
             $dispatcher,
-            $filterContainer,
-            $formatterContainer,
-            $sorterContainer,
+            $filterCollection,
+            $formatterCollection,
+            $sorterCollection,
             $stateCollection,
             $configManager,
             $xmlFormTranslator
@@ -80,22 +80,22 @@ class EnvironmentSpec extends ObjectBehavior
         $dispatcher->addSubscriber($subscriber)->shouldHaveBeenCalled();
     }
 
-    function it_can_register_filters($filterContainer, FilterInterface $filter)
+    function it_can_register_filters($filterCollection, FilterInterface $filter)
     {
         $this->registerDonorFilter($filter);
-        $filterContainer->addFilter($filter)->shouldHaveBeenCalled();
+        $filterCollection->addFilter($filter)->shouldHaveBeenCalled();
     }
 
-    function it_can_register_formatters($formatterContainer, FormatterInterface $formatter)
+    function it_can_register_formatters($formatterCollection, FormatterInterface $formatter)
     {
         $this->registerDonorFormatter($formatter);
-        $formatterContainer->addFormatter($formatter)->shouldHaveBeenCalled();
+        $formatterCollection->addFormatter($formatter)->shouldHaveBeenCalled();
     }
 
-    function it_can_register_sorters($sorterContainer, SorterInterface $sorter)
+    function it_can_register_sorters($sorterCollection, SorterInterface $sorter)
     {
         $this->registerDonorSorter($sorter);
-        $sorterContainer->addSorter($sorter)->shouldHaveBeenCalled();
+        $sorterCollection->addSorter($sorter)->shouldHaveBeenCalled();
     }
 
     function it_can_register_states($stateCollection, StateInterface $state)

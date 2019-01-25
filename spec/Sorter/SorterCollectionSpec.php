@@ -4,16 +4,16 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Sorter;
 
-use byrokrat\giroapp\Sorter\SorterContainer;
+use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class SorterContainerSpec extends ObjectBehavior
+class SorterCollectionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(SorterContainer::CLASS);
+        $this->shouldHaveType(SorterCollection::CLASS);
     }
 
     function it_contains_sorter(SorterInterface $sorter)

@@ -23,10 +23,10 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
-use byrokrat\giroapp\Filter\FilterContainer;
+use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\CombinedFilter;
-use byrokrat\giroapp\Formatter\FormatterContainer;
-use byrokrat\giroapp\Sorter\SorterContainer;
+use byrokrat\giroapp\Formatter\FormatterCollection;
+use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\DescendingSorter;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -36,23 +36,23 @@ final class LsCommand implements CommandInterface
 {
     use DonorMapperProperty;
 
-    /** @var FilterContainer */
-    private $filterContainer;
+    /** @var FilterCollection */
+    private $filterCollection;
 
-    /** @var FormatterContainer */
-    private $formatterContainer;
+    /** @var FormatterCollection */
+    private $formatterCollection;
 
-    /** @var SorterContainer */
-    private $sorterContainer;
+    /** @var SorterCollection */
+    private $sorterCollection;
 
     public function __construct(
-        FilterContainer $filterContainer,
-        FormatterContainer $formatterContainer,
-        SorterContainer $sorterContainer
+        FilterCollection $filterCollection,
+        FormatterCollection $formatterCollection,
+        SorterCollection $sorterCollection
     ) {
-        $this->filterContainer = $filterContainer;
-        $this->formatterContainer = $formatterContainer;
-        $this->sorterContainer = $sorterContainer;
+        $this->filterCollection = $filterCollection;
+        $this->formatterCollection = $formatterCollection;
+        $this->sorterCollection = $sorterCollection;
     }
 
     public function configure(Adapter $adapter): void
@@ -67,7 +67,7 @@ final class LsCommand implements CommandInterface
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             sprintf(
                 'Use donor filter, possible values: %s',
-                implode(", ", $this->filterContainer->getItemKeys())
+                implode(", ", $this->filterCollection->getItemKeys())
             )
         );
 
@@ -77,7 +77,7 @@ final class LsCommand implements CommandInterface
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             sprintf(
                 'Use negated filter, possible values: %s',
-                implode(", ", $this->filterContainer->getItemKeys())
+                implode(", ", $this->filterCollection->getItemKeys())
             )
         );
 
@@ -87,7 +87,7 @@ final class LsCommand implements CommandInterface
             InputOption::VALUE_REQUIRED,
             sprintf(
                 'Set donor sorter, possible values: %s',
-                implode(", ", $this->sorterContainer->getItemKeys())
+                implode(", ", $this->sorterCollection->getItemKeys())
             ),
             ''
         );
@@ -105,7 +105,7 @@ final class LsCommand implements CommandInterface
             InputOption::VALUE_REQUIRED,
             sprintf(
                 'Set output format, possible values: %s',
-                implode(", ", $this->formatterContainer->getItemKeys())
+                implode(", ", $this->formatterCollection->getItemKeys())
             ),
             'list'
         );
@@ -117,8 +117,8 @@ final class LsCommand implements CommandInterface
 
         $filter = new CombinedFilter(
             ...array_merge(
-                array_map([$this->filterContainer, 'getFilter'], (array)$input->getOption('filter')),
-                array_map([$this->filterContainer, 'getNegatedFilter'], (array)$input->getOption('filter-not'))
+                array_map([$this->filterCollection, 'getFilter'], (array)$input->getOption('filter')),
+                array_map([$this->filterCollection, 'getNegatedFilter'], (array)$input->getOption('filter-not'))
             )
         );
 
@@ -130,7 +130,7 @@ final class LsCommand implements CommandInterface
 
         /** @var string */
         $sorterId = $input->getOption('sorter');
-        $sorter = $this->sorterContainer->getSorter($sorterId);
+        $sorter = $this->sorterCollection->getSorter($sorterId);
 
         if ($input->getOption('desc')) {
             $sorter = new DescendingSorter($sorter);
@@ -140,7 +140,7 @@ final class LsCommand implements CommandInterface
 
         /** @var string */
         $formatId = $input->getOption('format');
-        $formatter = $this->formatterContainer->getFormatter($formatId);
+        $formatter = $this->formatterCollection->getFormatter($formatId);
         $formatter->initialize($output);
 
         foreach ($donors as $donor) {

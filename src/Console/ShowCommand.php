@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Formatter\FormatterContainer;
+use byrokrat\giroapp\Formatter\FormatterCollection;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,13 +35,13 @@ final class ShowCommand implements CommandInterface
     use Helper\DonorArgument;
 
     /**
-     * @var FormatterContainer
+     * @var FormatterCollection
      */
-    private $formatterContainer;
+    private $formatterCollection;
 
-    public function __construct(FormatterContainer $formatterContainer)
+    public function __construct(FormatterCollection $formatterCollection)
     {
-        $this->formatterContainer = $formatterContainer;
+        $this->formatterCollection = $formatterCollection;
     }
 
     public function configure(Adapter $wrapper): void
@@ -58,7 +58,7 @@ final class ShowCommand implements CommandInterface
             InputOption::VALUE_REQUIRED,
             sprintf(
                 'Set output format, possible values: %s',
-                implode(", ", $this->formatterContainer->getItemKeys())
+                implode(", ", $this->formatterCollection->getItemKeys())
             ),
             'human'
         );
@@ -69,7 +69,7 @@ final class ShowCommand implements CommandInterface
         /** @var string */
         $formatId = $input->getOption('format');
 
-        $formatter = $this->formatterContainer->getFormatter($formatId);
+        $formatter = $this->formatterCollection->getFormatter($formatId);
 
         $formatter->initialize($output);
 

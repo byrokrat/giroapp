@@ -20,28 +20,31 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Formatter;
+namespace byrokrat\giroapp\Sorter;
 
-use byrokrat\giroapp\Utils\ContainerTrait;
+use byrokrat\giroapp\Utils\CollectionTrait;
 
-class FormatterContainer
+class SorterCollection
 {
-    use ContainerTrait;
+    use CollectionTrait;
 
     public function __construct()
     {
-        $this->addFormatter(new ListFormatter);
-        $this->addFormatter(new CsvFormatter);
-        $this->addFormatter(new HumanFormatter);
-        $this->addFormatter(new JsonFormatter);
+        $this->addSorter(new NullSorter);
+        $this->addSorter(new NameSorter);
+        $this->addSorter(new StateSorter);
+        $this->addSorter(new PayerNumberSorter);
+        $this->addSorter(new AmountSorter);
+        $this->addSorter(new CreatedSorter);
+        $this->addSorter(new UpdatedSorter);
     }
 
-    public function addFormatter(FormatterInterface $formatter): void
+    public function addSorter(SorterInterface $sorter): void
     {
-        $this->addItem($formatter->getName(), $formatter);
+        $this->addItem($sorter->getName(), $sorter);
     }
 
-    public function getFormatter(string $name): FormatterInterface
+    public function getSorter(string $name): SorterInterface
     {
         return $this->getItem($name);
     }

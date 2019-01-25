@@ -22,11 +22,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Utils\ContainerTrait;
+use byrokrat\giroapp\Utils\CollectionTrait;
 
 class StateCollection
 {
-    use ContainerTrait;
+    use CollectionTrait;
 
     public function __construct(
         ActiveState $active,

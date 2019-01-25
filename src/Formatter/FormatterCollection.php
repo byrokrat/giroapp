@@ -20,37 +20,29 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Filter;
+namespace byrokrat\giroapp\Formatter;
 
-use byrokrat\giroapp\Utils\ContainerTrait;
+use byrokrat\giroapp\Utils\CollectionTrait;
 
-class FilterContainer
+class FormatterCollection
 {
-    use ContainerTrait;
+    use CollectionTrait;
 
     public function __construct()
     {
-        $this->addFilter(new ActiveFilter);
-        $this->addFilter(new InactiveFilter);
-        $this->addFilter(new ExportableFilter);
-        $this->addFilter(new ErrorFilter);
-        $this->addFilter(new PausedFilter);
-        $this->addFilter(new PurgeableFilter);
-        $this->addFilter(new AwaitingResponseFilter);
+        $this->addFormatter(new ListFormatter);
+        $this->addFormatter(new CsvFormatter);
+        $this->addFormatter(new HumanFormatter);
+        $this->addFormatter(new JsonFormatter);
     }
 
-    public function addFilter(FilterInterface $filter): void
+    public function addFormatter(FormatterInterface $formatter): void
     {
-        $this->addItem($filter->getName(), $filter);
+        $this->addItem($formatter->getName(), $formatter);
     }
 
-    public function getFilter(string $name): FilterInterface
+    public function getFormatter(string $name): FormatterInterface
     {
         return $this->getItem($name);
-    }
-
-    public function getNegatedFilter(string $name): FilterInterface
-    {
-        return new NegatedFilter($this->getFilter($name));
     }
 }
