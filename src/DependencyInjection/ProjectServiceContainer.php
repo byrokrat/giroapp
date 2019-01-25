@@ -449,6 +449,9 @@ class ProjectServiceContainer extends Container
         $instance->addListener('MANDATE_REVOKED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
         }, 1 => 'dispatchInfo'), 10);
+        $instance->addListener('MANDATE_REVOCATION_REQUESTED', array(0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
+        }, 1 => 'dispatchInfo'), 10);
         $instance->addListener('DONOR_REMOVED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
         }, 1 => 'dispatchInfo'), 10);
@@ -525,6 +528,9 @@ class ProjectServiceContainer extends Container
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
         }, 1 => 'onDonorUpdated'));
         $instance->addListener('MANDATE_REVOKED', array(0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
+        }, 1 => 'onDonorUpdated'));
+        $instance->addListener('MANDATE_REVOCATION_REQUESTED', array(0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
         }, 1 => 'onDonorUpdated'));
         $instance->addListener('MANDATE_INVALIDATED', array(0 => function () {

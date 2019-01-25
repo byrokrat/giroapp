@@ -20,9 +20,6 @@
 
 namespace byrokrat\giroapp;
 
-/**
- * List of giroapp event names
- */
 interface Events
 {
     /**
@@ -89,6 +86,11 @@ interface Events
      * A mandate revoked, expects a DonorEvent
      */
     const MANDATE_REVOKED = 'MANDATE_REVOKED';
+
+    /**
+     * Mandate revocation requested, expects a DonorEvent
+     */
+    const MANDATE_REVOCATION_REQUESTED = 'MANDATE_REVOCATION_REQUESTED';
 
     /**
      * A mandate is invalid and could not be approved, expects a DonorEvent

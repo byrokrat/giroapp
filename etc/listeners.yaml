@@ -15,6 +15,7 @@ services:
             - { name: event_listener, event: DONOR_UPDATED,            method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: MANDATE_APPROVED,         method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: MANDATE_REVOKED,          method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_REVOCATION_REQUESTED, method: dispatchInfo, priority: 10 }
             - { name: event_listener, event: DONOR_REMOVED,            method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: MANDATE_INVALIDATED,      method: dispatchWarning, priority: 10 }
             - { name: event_listener, event: MANDATE_PAUSE_REQUESTED,  method: dispatchInfo,    priority: 10 }
@@ -90,6 +91,7 @@ services:
             - { name: event_listener, event: DONOR_UPDATED,           method: onDonorUpdated }
             - { name: event_listener, event: MANDATE_APPROVED,        method: onDonorUpdated }
             - { name: event_listener, event: MANDATE_REVOKED,         method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_REVOCATION_REQUESTED, method: onDonorUpdated }
             - { name: event_listener, event: MANDATE_INVALIDATED,     method: onDonorUpdated }
             - { name: event_listener, event: MANDATE_PAUSE_REQUESTED, method: onDonorUpdated }
             - { name: event_listener, event: MANDATE_PAUSED,          method: onDonorUpdated }
