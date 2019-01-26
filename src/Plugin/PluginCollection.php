@@ -20,21 +20,24 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Formatter;
+namespace byrokrat\giroapp\Plugin;
 
-use byrokrat\giroapp\Utils\CollectionTrait;
-
-class FormatterCollection
+final class PluginCollection implements PluginInterface
 {
-    use CollectionTrait;
+    /**
+     * @var PluginInterface[]
+     */
+    private $plugins;
 
-    public function addFormatter(FormatterInterface $formatter): void
+    public function __construct(PluginInterface ...$plugins)
     {
-        $this->addItem($formatter->getName(), $formatter);
+        $this->plugins = $plugins;
     }
 
-    public function getFormatter(string $name): FormatterInterface
+    public function loadPlugin(EnvironmentInterface $environment): void
     {
-        return $this->getItem($name);
+        foreach ($this->plugins as $plugin) {
+            $plugin->loadPlugin($environment);
+        }
     }
 }

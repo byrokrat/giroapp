@@ -30,13 +30,10 @@ services:
         arguments: ['%app.ini_file_name%']
 
     byrokrat\giroapp\Console\:
-        public: true
         resource: '../src/Console/*'
-        exclude: '../src/Console/{Adapter,Helper/InputReader}.php'
 
     byrokrat\giroapp\Console\ValidateCommand:
         class: ~
-        public: true
         arguments:
             - '@fs_user_dir'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
@@ -61,9 +58,18 @@ services:
     byrokrat\giroapp\Plugin\EnvironmentInterface:
         class: byrokrat\giroapp\Plugin\Environment
         public: true
-        configurator: 'byrokrat\giroapp\Plugin\PluginLoader:loadPlugins'
+        configurator: 'byrokrat\giroapp\Plugin\PluginCollection:loadPlugin'
 
-    byrokrat\giroapp\Plugin\PluginLoader:
+    byrokrat\giroapp\Plugin\PluginCollection:
+        class: ~
+        arguments:
+            - '@byrokrat\giroapp\Plugin\FilesystemLoadingPlugin'
+            - '@byrokrat\giroapp\Plugin\CorePlugin'
+
+    byrokrat\giroapp\Plugin\CorePlugin:
+        class: ~
+
+    byrokrat\giroapp\Plugin\FilesystemLoadingPlugin:
         class: ~
         arguments: ['@fs_plugins']
 

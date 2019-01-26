@@ -28,34 +28,6 @@ class StateCollection
 {
     use CollectionTrait;
 
-    public function __construct(
-        ActiveState $active,
-        ErrorState $error,
-        InactiveState $inactive,
-        NewMandateState $newMandate,
-        NewDigitalMandateState $newDigitalMandate,
-        MandateSentState $mandateSent,
-        MandateApprovedState $mandateApproved,
-        RevokeMandateState $revokeMandate,
-        RevocationSentState $revocationSent,
-        PauseMandateState $pauseMandate,
-        PauseSentState $pauseSent,
-        PausedState $paused
-    ) {
-        $this->addState($active);
-        $this->addState($error);
-        $this->addState($inactive);
-        $this->addState($newMandate);
-        $this->addState($newDigitalMandate);
-        $this->addState($mandateSent);
-        $this->addState($mandateApproved);
-        $this->addState($revokeMandate);
-        $this->addState($revocationSent);
-        $this->addState($pauseMandate);
-        $this->addState($pauseSent);
-        $this->addState($paused);
-    }
-
     public function addState(StateInterface $state): void
     {
         $this->addItem($state->getStateId(), $state);

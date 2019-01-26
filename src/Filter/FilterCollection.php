@@ -28,17 +28,6 @@ class FilterCollection
 {
     use CollectionTrait;
 
-    public function __construct()
-    {
-        $this->addFilter(new ActiveFilter);
-        $this->addFilter(new InactiveFilter);
-        $this->addFilter(new ExportableFilter);
-        $this->addFilter(new ErrorFilter);
-        $this->addFilter(new PausedFilter);
-        $this->addFilter(new PurgeableFilter);
-        $this->addFilter(new AwaitingResponseFilter);
-    }
-
     public function addFilter(FilterInterface $filter): void
     {
         $this->addItem($filter->getName(), $filter);

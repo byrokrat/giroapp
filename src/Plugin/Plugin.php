@@ -30,7 +30,7 @@ use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final class Plugin implements PluginInterface
+class Plugin implements PluginInterface
 {
     /**
      * @var object[]

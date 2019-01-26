@@ -21,8 +21,6 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console;
-
 require __DIR__ . '/../vendor/autoload.php';
 
 use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
@@ -31,20 +29,6 @@ use Symfony\Component\Console\Application;
 
 $container = new ProjectServiceContainer;
 
-$env = $container->get(EnvironmentInterface::CLASS);
-
-$env->registerCommand($container->get(AddCommand::CLASS));
-$env->registerCommand($container->get(EditCommand::CLASS));
-$env->registerCommand($container->get(ExportCommand::CLASS));
-$env->registerCommand($container->get(ImportCommand::CLASS));
-$env->registerCommand($container->get(LsCommand::CLASS));
-$env->registerCommand($container->get(MigrateCommand::CLASS));
-$env->registerCommand($container->get(PauseCommand::CLASS));
-$env->registerCommand($container->get(PurgeCommand::CLASS));
-$env->registerCommand($container->get(RemoveCommand::CLASS));
-$env->registerCommand($container->get(RevokeCommand::CLASS));
-$env->registerCommand($container->get(ShowCommand::CLASS));
-$env->registerCommand($container->get(StatusCommand::CLASS));
-$env->registerCommand($container->get(ValidateCommand::CLASS));
+$container->get(EnvironmentInterface::CLASS);
 
 $container->get(Application::CLASS)->run();

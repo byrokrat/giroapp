@@ -22,11 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Plugin;
 
-use byrokrat\giroapp\Plugin\PluginInterface;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Exception\InvalidPluginException;
 
-class PluginLoader
+final class FilesystemLoadingPlugin implements PluginInterface
 {
     /**
      * @var FilesystemInterface
@@ -38,7 +37,7 @@ class PluginLoader
         $this->filesystem = $filesystem;
     }
 
-    public function loadPlugins(EnvironmentInterface $environment): void
+    public function loadPlugin(EnvironmentInterface $environment): void
     {
         $finder = $this->filesystem->getFinderFor('')
             ->files()

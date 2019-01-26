@@ -28,17 +28,6 @@ class SorterCollection
 {
     use CollectionTrait;
 
-    public function __construct()
-    {
-        $this->addSorter(new NullSorter);
-        $this->addSorter(new NameSorter);
-        $this->addSorter(new StateSorter);
-        $this->addSorter(new PayerNumberSorter);
-        $this->addSorter(new AmountSorter);
-        $this->addSorter(new CreatedSorter);
-        $this->addSorter(new UpdatedSorter);
-    }
-
     public function addSorter(SorterInterface $sorter): void
     {
         $this->addItem($sorter->getName(), $sorter);
