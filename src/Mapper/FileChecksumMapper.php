@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Mapper;
 
+use byrokrat\giroapp\Exception\FileDoesNotExistException;
+use byrokrat\giroapp\Exception\FileExistsException;
 use byrokrat\giroapp\Mapper\Schema\FileChecksumSchema;
 use byrokrat\giroapp\Model\FileChecksum;
 use hanneskod\yaysondb\CollectionInterface;
@@ -64,18 +66,16 @@ class FileChecksumMapper
             return $this->checksumSchema->fromArray($this->collection->read($key));
         }
 
-        throw new \RuntimeException("Unknown checksum $key");
+        throw new FileDoesNotExistException("Unknown checksum $key");
     }
 
     /**
      * Insert a checksum object to database
-     *
-     * @throws \RuntimeException if checksum already exists
      */
     public function insert(FileChecksum $fileChecksum): void
     {
         if ($this->hasKey($fileChecksum->getChecksum())) {
-            throw new \RuntimeException('Unable to insert, checksum already exists');
+            throw new FileExistsException('Unable to insert, checksum already exists');
         }
 
         $this->collection->insert(

@@ -26,6 +26,7 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use byrokrat\giroapp\State\StateCollection;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -60,7 +61,7 @@ final class PauseCommand implements CommandInterface
 
         if ($input->getOption('restart')) {
             if (!$donor->getState()->isPaused()) {
-                throw new \RuntimeException('Unable to restart donor that is not paused.');
+                throw new InvalidStateTransitionException('Unable to restart donor that is not paused.');
             }
 
             $donor->setState($this->stateCollection->getState(States::MANDATE_APPROVED));
@@ -74,7 +75,7 @@ final class PauseCommand implements CommandInterface
         }
 
         if (!$donor->getState()->isActive()) {
-            throw new \RuntimeException('Unable to pause non active donor.');
+            throw new InvalidStateTransitionException('Unable to pause non active donor.');
         }
 
         $donor->setState($this->stateCollection->getState(States::PAUSE_MANDATE));

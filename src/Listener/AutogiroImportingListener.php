@@ -54,7 +54,7 @@ class AutogiroImportingListener
         try {
             $this->parser->parse($event->getFile()->getContent())->accept($this->visitor);
         } catch (AutogiroException $e) {
-            throw new InvalidAutogiroFileException('Invalid autogiro file', 0, $e);
+            throw new InvalidAutogiroFileException("Invalid autogiro file: {$e->getMessage()}");
         }
     }
 }

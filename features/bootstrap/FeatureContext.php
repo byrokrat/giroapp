@@ -141,6 +141,23 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then I get a :classname error
+     */
+    public function iGetAError($classname)
+    {
+        $expectedCode = constant("byrokrat\giroapp\Exception\\$classname::CODE");
+
+        if ($expectedCode != $this->result->getReturnCode()) {
+            throw new \Exception(sprintf(
+                'Expected return code %s of exception class %s, found %s',
+                $expectedCode,
+                $classname,
+                $this->result->getReturnCode()
+            ));
+        }
+    }
+
+    /**
      * @Then the database contains donor :donor with :field matching :expected
      */
     public function theDatabaseContainsDonorWithMatching($donor, $field, $expected): void

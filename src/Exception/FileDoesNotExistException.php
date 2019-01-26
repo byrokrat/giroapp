@@ -21,9 +21,9 @@
 namespace byrokrat\giroapp\Exception;
 
 /**
- * Exception thrown when and autogiro file is invalid
+ * Exception thrown when a file does not exist in store
  */
-class InvalidAutogiroFileException extends RuntimeException
+class FileDoesNotExistException extends RuntimeException
 {
-    const CODE = 210;
+    const CODE = 121;
 }

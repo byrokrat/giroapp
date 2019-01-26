@@ -20,11 +20,10 @@
 
 namespace byrokrat\giroapp\Exception;
 
-use byrokrat\giroapp\Exception as AppException;
-
 /**
  * Exception thrown when configuration is missing or invalid
  */
-class InvalidConfigException extends \RuntimeException implements AppException
+class InvalidConfigException extends RuntimeException
 {
+    const CODE = 220;
 }

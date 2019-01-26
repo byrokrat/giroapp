@@ -20,10 +20,7 @@
 
 namespace byrokrat\giroapp\Exception;
 
-/**
- * Exception thrown when and autogiro file is invalid
- */
-class InvalidAutogiroFileException extends RuntimeException
+class UnableToBuildDonorException extends RuntimeException
 {
-    const CODE = 210;
+    const CODE = 302;
 }

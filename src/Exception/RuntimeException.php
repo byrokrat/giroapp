@@ -20,10 +20,15 @@
 
 namespace byrokrat\giroapp\Exception;
 
-/**
- * Exception thrown when and autogiro file is invalid
- */
-class InvalidAutogiroFileException extends RuntimeException
+use byrokrat\giroapp\Exception as AppException;
+
+class RuntimeException extends \RuntimeException implements AppException
 {
-    const CODE = 210;
+    /** Default error code */
+    const CODE = 1;
+
+    public function __construct(string $message)
+    {
+        parent::__construct($message, static::CODE);
+    }
 }

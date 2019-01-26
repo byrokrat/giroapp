@@ -20,11 +20,10 @@
 
 namespace byrokrat\giroapp\Exception;
 
-use byrokrat\giroapp\Exception as AppException;
-
 /**
  * Exception thrown when an xml form specification contains an invalid value
  */
-class InvalidXmlFormException extends \RuntimeException implements AppException
+class InvalidXmlFormException extends RuntimeException
 {
+    const CODE = 241;
 }

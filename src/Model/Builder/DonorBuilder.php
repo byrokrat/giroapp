@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Model\Builder;
 
+use byrokrat\giroapp\Exception\UnableToBuildDonorException;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\StateCollection;
@@ -230,7 +231,7 @@ class DonorBuilder
     private function getMandateSource(): string
     {
         if (!isset($this->mandateSource)) {
-            throw new \RuntimeException('Unable to build Donor, mandate source not set');
+            throw new UnableToBuildDonorException('Unable to build Donor, mandate source not set');
         }
 
         return $this->mandateSource;
@@ -242,7 +243,7 @@ class DonorBuilder
             return $this->id;
         }
 
-        throw new \RuntimeException('Unable to build Donor, id not set');
+        throw new UnableToBuildDonorException('Unable to build Donor, id not set');
     }
 
     private function getAccount(): AccountNumber
@@ -251,7 +252,7 @@ class DonorBuilder
             return $this->account;
         }
 
-        throw new \RuntimeException('Unable to build Donor, account not set');
+        throw new UnableToBuildDonorException('Unable to build Donor, account not set');
     }
 
     private function getState(): StateInterface
@@ -264,7 +265,7 @@ class DonorBuilder
                 return $this->stateCollection->getState(States::NEW_DIGITAL_MANDATE);
         }
 
-        throw new \RuntimeException('Unable to build donor, invalid donor state');
+        throw new UnableToBuildDonorException('Unable to build donor, invalid donor state');
     }
 
     private function getPayerNumber(): string
@@ -282,7 +283,7 @@ class DonorBuilder
             return $this->name;
         }
 
-        throw new \RuntimeException('Unable to build Donor, name not set');
+        throw new UnableToBuildDonorException('Unable to build Donor, name not set');
     }
 
     private function getPostalAddress(): PostalAddress

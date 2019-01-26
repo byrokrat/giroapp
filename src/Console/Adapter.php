@@ -24,8 +24,8 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\Exception\RuntimeException;
 use byrokrat\giroapp\Listener\OutputtingSubscriber;
-use byrokrat\giroapp\Listener\ExitStatusSubscriber;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -62,16 +62,24 @@ final class Adapter extends SymfonyCommand
             throw new \InvalidArgumentException('Output must implement ConsoleOutputInterface');
         }
 
-        $exitStatus = new ExitStatusSubscriber;
-
-        $this->dispatcher->addSubscriber($exitStatus);
-
         $this->dispatcher->addSubscriber(new OutputtingSubscriber($output, $output->getErrorOutput()));
 
         try {
             $this->dispatcher->dispatch(Events::EXECUTION_STARTED, new LogEvent('Execution started'));
             $this->command->execute($input, $output);
             $this->dispatcher->dispatch(Events::EXECUTION_STOPED, new LogEvent('Execution successful'));
+        } catch (RuntimeException $e) {
+            $this->dispatcher->dispatch(
+                Events::ERROR,
+                new LogEvent(
+                    $e->getMessage(),
+                    [
+                        'code' => $e->getCode(),
+                    ]
+                )
+            );
+
+            return $e->getCode();
         } catch (\Exception $e) {
             $this->dispatcher->dispatch(
                 Events::ERROR,
@@ -80,12 +88,15 @@ final class Adapter extends SymfonyCommand
                     [
                         'class' => get_class($e),
                         'file' => $e->getFile(),
-                        'line' => $e->getLine()
+                        'line' => $e->getLine(),
+                        'trace' => $e->getTraceAsString(),
                     ]
                 )
             );
+
+            return $e->getCode() ?: 1;
         }
 
-        return $exitStatus->getExitStatus();
+        return 0;
     }
 }

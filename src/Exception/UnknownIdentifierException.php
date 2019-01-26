@@ -21,9 +21,9 @@
 namespace byrokrat\giroapp\Exception;
 
 /**
- * Exception thrown when and autogiro file is invalid
+ * Exception thrown when a collection identifier can not be found
  */
-class InvalidAutogiroFileException extends RuntimeException
+class UnknownIdentifierException extends RuntimeException
 {
-    const CODE = 210;
+    const CODE = 102;
 }

@@ -11,3 +11,4 @@
 * Added sorters.
 * Added posibility to load custom donor states through plugins.
 * Supports importing files from multiple files and directories.
+* Better exception handling with error codes.

@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Utils;
 
+use byrokrat\giroapp\Exception\UnknownIdentifierException;
+
 trait CollectionTrait
 {
     /** @var array */
@@ -35,7 +37,7 @@ trait CollectionTrait
     protected function getItem(string $key)
     {
         if (!isset($this->items[$key])) {
-            throw new \RuntimeException("Item $key does not exist");
+            throw new UnknownIdentifierException("'$key' does not exist");
         }
 
         return $this->items[$key];

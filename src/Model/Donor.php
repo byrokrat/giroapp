@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Model;
 
+use byrokrat\giroapp\Exception\UnknownIdentifierException;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
@@ -307,13 +308,11 @@ class Donor
 
     /**
      * Get attribute
-     *
-     * @throws \RuntimeException if attribute is not set
      */
     public function getAttribute(string $key): string
     {
         if (!$this->hasAttribute($key)) {
-            throw new \RuntimeException("Unknown attribute $key");
+            throw new UnknownIdentifierException("Unknown attribute $key");
         }
 
         return $this->attributes[$key];

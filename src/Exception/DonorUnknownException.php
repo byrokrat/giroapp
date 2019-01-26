@@ -21,9 +21,9 @@
 namespace byrokrat\giroapp\Exception;
 
 /**
- * Exception thrown when and autogiro file is invalid
+ * Exception thrown when a donor already exist
  */
-class InvalidAutogiroFileException extends RuntimeException
+class DonorUnknownException extends RuntimeException
 {
-    const CODE = 210;
+    const CODE = 113;
 }

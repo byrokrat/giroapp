@@ -29,6 +29,10 @@ use Symfony\Component\Console\Application;
 
 $container = new ProjectServiceContainer;
 
-$container->get(EnvironmentInterface::CLASS);
-
-$container->get(Application::CLASS)->run();
+try {
+    $container->get(EnvironmentInterface::CLASS);
+    $container->get(Application::CLASS)->run();
+} catch (\Exception $e) {
+    echo "ERROR: {$e->getMessage()} \n";
+    exit($e->getCode() ?: 1);
+}

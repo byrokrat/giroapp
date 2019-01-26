@@ -20,11 +20,10 @@
 
 namespace byrokrat\giroapp\Exception;
 
-use byrokrat\giroapp\Exception as AppException;
-
 /**
  * Exception thrown when a plugin is broken
  */
-class InvalidPluginException extends \RuntimeException implements AppException
+class InvalidPluginException extends RuntimeException
 {
+    const CODE = 230;
 }

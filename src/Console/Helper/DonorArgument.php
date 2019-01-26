@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Console\Helper;
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
 use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Console\Adapter;
+use byrokrat\giroapp\Exception\DonorDoesNotExistException;
 use byrokrat\giroapp\Model\Donor;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,9 +54,6 @@ trait DonorArgument
         );
     }
 
-    /**
-     * @throws \RuntimeException if Donor can not be found
-     */
     public function readDonor(InputInterface $input): Donor
     {
         $key = $this->validators->getDonorKeyValidator()($input->getArgument('donor'));
@@ -72,12 +70,11 @@ trait DonorArgument
             }
         }
 
-        throw new \RuntimeException("Unable to find donor $key");
+        throw new DonorDoesNotExistException("Unable to find donor $key");
     }
 
     /**
      * @return iterable & Donor[]
-     * @throws \RuntimeException if Donor can not be found
      */
     public function readAllDonors(InputInterface $input): iterable
     {
@@ -96,7 +93,7 @@ trait DonorArgument
         }
 
         if (!$count) {
-            throw new \RuntimeException("Unable to find donor $key");
+            throw new DonorDoesNotExistException("Unable to find donor $key");
         }
     }
 }

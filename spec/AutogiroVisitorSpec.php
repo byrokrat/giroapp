@@ -8,6 +8,7 @@ use byrokrat\giroapp\AutogiroVisitor;
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
+use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\AccountNumber;
@@ -47,8 +48,10 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $node->getValue()->willReturn('org-bgc-nr');
         $node->getChild('PayeeBankgiro')->willReturn($node);
         $node->getValueFrom('Object')->willReturn($payeeBg);
+        $orgBg->getNumber()->willReturn('');
         $payeeBg->equals($orgBg)->willReturn(false);
-        $this->shouldThrow(\RuntimeException::CLASS)->during('beforeOpening', [$node]);
+        $payeeBg->getNumber()->willReturn('');
+        $this->shouldThrow(InvalidAutogiroFileException::CLASS)->during('beforeOpening', [$node]);
     }
 
     function it_throws_on_invalid_bgc_nr_in_opening_node($orgBgcNr, $orgBg, Node $node, AccountNumber $payeeBg)
@@ -59,7 +62,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $node->getChild('PayeeBankgiro')->willReturn($node);
         $node->getValueFrom('Object')->willReturn($payeeBg);
         $payeeBg->equals($orgBg)->willReturn(true);
-        $this->shouldThrow(\RuntimeException::CLASS)->during('beforeOpening', [$node]);
+        $this->shouldThrow(InvalidAutogiroFileException::CLASS)->during('beforeOpening', [$node]);
     }
 
     function it_ignores_missing__bgc_nr_in_opening_node($orgBgcNr, $orgBg, Node $node, AccountNumber $payeeBg)

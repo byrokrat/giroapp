@@ -22,6 +22,9 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Mapper;
 
+use byrokrat\giroapp\Exception\DonorDoesNotExistException;
+use byrokrat\giroapp\Exception\DonorExistsException;
+use byrokrat\giroapp\Exception\DonorUnknownException;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
@@ -73,7 +76,7 @@ class DonorMapper
             return $this->donorSchema->fromArray($this->collection->read($key));
         }
 
-        throw new \RuntimeException("unknown donor key: $key");
+        throw new DonorUnknownException("unknown donor key: $key");
     }
 
     /**
@@ -88,8 +91,6 @@ class DonorMapper
 
     /**
      * Find active donor mandate identified by payer number.
-     *
-     * @throws \RuntimeException if donor is not found
      */
     public function findByActivePayerNumber(string $payerNumber): Donor
     {
@@ -101,7 +102,7 @@ class DonorMapper
         );
 
         if (empty($doc)) {
-            throw new \RuntimeException("Unknown payer number: $payerNumber");
+            throw new DonorUnknownException("Unknown payer number: $payerNumber");
         }
 
         return $this->donorSchema->fromArray($doc);
@@ -131,13 +132,11 @@ class DonorMapper
 
     /**
      * Save a new donor
-     *
-     * @throws \RuntimeException if mandate key already exists in database
      */
     public function create(Donor $donor): void
     {
         if ($this->hasKey($donor->getMandateKey())) {
-            throw new \RuntimeException(
+            throw new DonorExistsException(
                 sprintf(
                     'A donor with ID %s and bank account %s already exists',
                     $donor->getDonorId()->format('S-sk'),
@@ -151,13 +150,11 @@ class DonorMapper
 
     /**
      * Update an existing donor
-     *
-     * @throws \RuntimeException if mandate key does not exist in database
      */
     public function update(Donor $donor): void
     {
         if (!$this->hasKey($donor->getMandateKey())) {
-            throw new \RuntimeException(
+            throw new DonorDoesNotExistException(
                 sprintf(
                     'Unable to update donor %s, does not exist in database',
                     $donor->getMandateKey()
@@ -181,7 +178,7 @@ class DonorMapper
         ]);
 
         if ($this->collection->findOne($expr)) {
-            throw new \RuntimeException(
+            throw new DonorExistsException(
                 sprintf(
                     "Unable to save donor %s, a mandate already exists. Try '%s' for more information.",
                     $donor->getMandateKey(),

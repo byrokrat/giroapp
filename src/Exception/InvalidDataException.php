@@ -18,38 +18,12 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
-namespace byrokrat\giroapp\Listener;
-
-use byrokrat\giroapp\Events;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+namespace byrokrat\giroapp\Exception;
 
 /**
- * Capture application exit status
+ * Exception thrown when data is invalid
  */
-class ExitStatusSubscriber implements EventSubscriberInterface
+class InvalidDataException extends RuntimeException
 {
-    /**
-     * @var integer
-     */
-    private $status = 0;
-
-    public static function getSubscribedEvents()
-    {
-        return [
-            Events::ERROR => 'onFailure',
-            Events::WARNING => 'onFailure',
-        ];
-    }
-
-    public function getExitStatus(): int
-    {
-        return $this->status;
-    }
-
-    public function onFailure(): void
-    {
-        $this->status = 1;
-    }
+    const CODE = 101;
 }

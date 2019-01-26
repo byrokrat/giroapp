@@ -26,6 +26,7 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
+use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\AccountNumber;
@@ -67,7 +68,7 @@ class AutogiroVisitor extends Visitor
         $payeeBankgiro = $node->getChild('PayeeBankgiro')->getValueFrom('Object');
 
         if ($payeeBgcNr && $payeeBgcNr != $this->orgBgcNr->getValue()) {
-            throw new \RuntimeException(
+            throw new InvalidAutogiroFileException(
                 sprintf(
                     'File contains invalid payee BGC customer number, found: %s, expexting: %s',
                     $payeeBgcNr,
@@ -77,7 +78,7 @@ class AutogiroVisitor extends Visitor
         }
 
         if ($payeeBankgiro && !$payeeBankgiro->equals($this->orgBankgiro)) {
-            throw new \RuntimeException(
+            throw new InvalidAutogiroFileException(
                 sprintf(
                     'File contains invalid payee bankgiro account number, found: %s, expexting: %s',
                     $payeeBankgiro->getNumber(),
