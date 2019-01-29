@@ -42,7 +42,7 @@ final class OrgBankgiroFactory
     public function createAccount(ConfigInterface $config): AccountNumber
     {
         try {
-            return $this->decorated->createAccount((string)$config->getValue());
+            return $this->decorated->createAccount($config->getValue());
         } catch (InvalidAccountNumberException $e) {
             return new NullOrgBankgiro;
         }

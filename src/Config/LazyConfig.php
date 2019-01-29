@@ -34,8 +34,19 @@ final class LazyConfig implements ConfigInterface
         $this->valueFactory = $valueFactory;
     }
 
-    public function getValue()
+    public function getValue(): string
     {
-        return ($this->valueFactory)();
+        $value = ($this->valueFactory)();
+
+        if (!is_string($value)) {
+            throw new \LogicException('Value factory must return string, found: ' . gettype($value));
+        }
+
+        return $value;
+    }
+
+    public function __toString(): string
+    {
+        return $this->getValue();
     }
 }

@@ -34,4 +34,12 @@ class LazyConfigSpec extends ObjectBehavior
         });
         $this->getValue()->shouldReturn('foobar');
     }
+
+    function it_fails_on_no_string_value()
+    {
+        $this->beConstructedWith(function () {
+            return 123;
+        });
+        $this->shouldThrow(\LogicException::CLASS)->during('getValue');
+    }
 }

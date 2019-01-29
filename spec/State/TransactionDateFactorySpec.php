@@ -14,6 +14,7 @@ class TransactionDateFactorySpec extends ObjectBehavior
 {
     function let(SystemClock $systemClock, ConfigInterface $dayOfMonth, ConfigInterface $minDaysInFuture)
     {
+        $minDaysInFuture->getValue()->willReturn('');
         $this->beConstructedWith($systemClock, $dayOfMonth, $minDaysInFuture);
     }
 
@@ -46,7 +47,7 @@ class TransactionDateFactorySpec extends ObjectBehavior
     function it_finds_date_in_next_month_if_day_not_x_days_in_future($systemClock, $dayOfMonth, $minDaysInFuture)
     {
         $dayOfMonth->getValue()->willReturn(28);
-        $minDaysInFuture->getValue()->willReturn(5);
+        $minDaysInFuture->getValue()->willReturn('5');
         $systemClock->getNow()->willReturn(new \DateTimeImmutable('2017-07-24'));
         $this->createNextTransactionDate()->shouldBeLike(new \DateTimeImmutable('2017-08-28'));
     }

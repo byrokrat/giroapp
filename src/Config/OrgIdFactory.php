@@ -42,7 +42,7 @@ final class OrgIdFactory
     public function createId(ConfigInterface $config): IdInterface
     {
         try {
-            return $this->decorated->createId((string)$config->getValue());
+            return $this->decorated->createId($config->getValue());
         } catch (UnableToCreateIdException $e) {
             return new NullOrgId;
         }

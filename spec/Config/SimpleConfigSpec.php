@@ -13,7 +13,7 @@ class SimpleConfigSpec extends ObjectBehavior
 {
     function let()
     {
-        $this->beConstructedWith(null);
+        $this->beConstructedWith('');
     }
 
     function it_is_initializable()

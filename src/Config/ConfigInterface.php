@@ -26,8 +26,11 @@ interface ConfigInterface
 {
     /**
      * Get configuration value
-     *
-     * @return mixed
      */
-    public function getValue();
+    public function getValue(): string;
+
+    /**
+     * Megically cast to string
+     */
+    public function __toString(): string;
 }

@@ -22,12 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Config;
 
+use byrokrat\giroapp\Exception\InvalidConfigException;
+
 class ConfigManager
 {
     /**
      * @var array
      */
     private $configs = [];
+
+    public function __construct(RepositoryInterface ...$repos)
+    {
+        foreach ($repos as $repo) {
+            $this->loadRepository($repo);
+        }
+    }
 
     public function loadRepository(RepositoryInterface $configs): void
     {
@@ -37,7 +46,21 @@ class ConfigManager
     public function getConfig(string $name): ConfigInterface
     {
         return new LazyConfig(function () use ($name) {
-            return $this->configs[$name] ?? null;
+            $value = $this->configs[$name] ?? '';
+
+            if (!is_string($value)) {
+                throw new InvalidConfigException("Configuration '$name' must be string, found: " . gettype($value));
+            }
+
+            $value = preg_replace_callback(
+                '/%([^%]+)%/',
+                function ($matches) {
+                    return $this->getConfig($matches[1])->getValue();
+                },
+                $value
+            );
+
+            return $value;
         });
     }
 }

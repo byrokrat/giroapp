@@ -41,6 +41,6 @@ class AutogiroWriterFactory
 
     public function createWriter(ConfigInterface $bgcNr, AccountNumber $bankgiro): WriterInterface
     {
-        return $this->decorated->createWriter((string)$bgcNr->getValue(), $bankgiro);
+        return $this->decorated->createWriter($bgcNr->getValue(), $bankgiro);
     }
 }
