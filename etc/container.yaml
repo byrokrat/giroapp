@@ -28,13 +28,12 @@ services:
 
     byrokrat\giroapp\Config\ConfigManager:
         class: ~
-        arguments: ['@ini_default_values']
+        arguments: ['@base_dir_repository']
         configurator: 'byrokrat\giroapp\Config\IniFileLoader:loadIniFile'
 
-    ini_default_values:
+    base_dir_repository:
         class: byrokrat\giroapp\Config\ArrayRepository
-        arguments:
-            - base_dir: '%env(GIROAPP_PATH)%'
+        arguments: [base_dir: '%env(GIROAPP_PATH)%']
 
     byrokrat\giroapp\Config\IniFileLoader:
         class: ~
@@ -56,7 +55,7 @@ services:
     byrokrat\giroapp\Console\ValidateCommand:
         class: ~
         arguments:
-            - '@fs_base_dir'
+            - '@fs_data'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
 
     byrokrat\giroapp\Console\Helper\Validators:

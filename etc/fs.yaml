@@ -6,10 +6,6 @@ services:
     byrokrat\giroapp\Filesystem\:
         resource: '../src/Filesystem/*'
 
-    fs_base_dir:
-        class: byrokrat\giroapp\Filesystem\Filesystem
-        arguments: ["@=service('ini').getConfigValue('base_dir')"]
-
     fs_cwd:
         class: byrokrat\giroapp\Filesystem\Filesystem
         arguments: ["."]

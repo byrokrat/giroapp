@@ -20,7 +20,7 @@
                 "state": {
                     "description": "Mandate state id",
                     "type": "string",
-                    "pattern": "^[A-Z_]+$"
+                    "pattern": "^[A-Za-z_ -]+$"
                 },
                 "state-desc": {
                     "description": "Mandate state description",
@@ -29,7 +29,7 @@
                 "mandate_source": {
                     "description": "Mandate source descriptor",
                     "type": "string",
-                    "pattern": "^[A-Z_]+$"
+                    "pattern": "^[A-Za-z_ -]+$"
                 },
                 "payer_number": {
                     "description": "Payer number identifying donor",

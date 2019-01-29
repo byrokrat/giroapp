@@ -69,7 +69,7 @@ final class ValidateCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $donorData = json_decode($this->filesystem->readFile('data/donors.json')->getContent());
+        $donorData = json_decode($this->filesystem->readFile('donors.json')->getContent());
         $this->validator->validate($donorData, $this->donorSchema);
         $errors = '';
 

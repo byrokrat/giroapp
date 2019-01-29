@@ -53,6 +53,7 @@ class ProjectServiceContainer extends Container
             'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
             'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => true,
             'Symfony\\Component\\Filesystem\\Filesystem' => true,
+            'base_dir_repository' => true,
             'byrokrat\\autogiro\\Parser\\ParserFactory' => true,
             'byrokrat\\autogiro\\Parser\\ParserInterface' => true,
             'byrokrat\\autogiro\\Writer\\WriterFactory' => true,
@@ -162,14 +163,12 @@ class ProjectServiceContainer extends Container
             'file_import_dumper' => true,
             'flysystem_data_dir' => true,
             'flysystem_data_dir_adapter' => true,
-            'fs_base_dir' => true,
             'fs_cwd' => true,
             'fs_data' => true,
             'fs_exports' => true,
             'fs_external_data' => true,
             'fs_imports' => true,
             'fs_plugins' => true,
-            'ini_default_values' => true,
             'organization_bg' => true,
             'organization_id' => true,
             'setup_data' => true,
@@ -202,55 +201,53 @@ class ProjectServiceContainer extends Container
 
         $this->services['byrokrat\giroapp\Plugin\EnvironmentInterface'] = $instance = new \byrokrat\giroapp\Plugin\Environment(($this->services['Symfony\Component\Console\Application'] ?? ($this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '$app_version$'))), $a, $b, $c, $d, $e, ($this->services['ini'] ?? $this->getIniService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator())));
 
-        $f = ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem()));
+        $f = new \byrokrat\giroapp\Filesystem\Filesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("plugins_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
+        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator(array(0 => '.'))))->createFiles($f);
+        $g = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Model\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
 
-        $g = new \byrokrat\giroapp\Filesystem\Filesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("plugins_dir"), $f);
-        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator(array(0 => '.'))))->createFiles($g);
-        $h = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Model\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
+        $h = new \byrokrat\giroapp\Console\Helper\Validators(($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? ($this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())), ($this->privates['byrokrat\banking\BankgiroFactory'] ?? ($this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory())), ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()), $e);
 
-        $i = new \byrokrat\giroapp\Console\Helper\Validators(($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? ($this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())), ($this->privates['byrokrat\banking\BankgiroFactory'] ?? ($this->privates['byrokrat\banking\BankgiroFactory'] = new \byrokrat\banking\BankgiroFactory())), ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()), $e);
+        $g->setEventDispatcher($a);
+        $g->setValidators($h);
+        $i = new \byrokrat\giroapp\Console\EditCommand($e);
 
-        $h->setEventDispatcher($a);
-        $h->setValidators($i);
-        $j = new \byrokrat\giroapp\Console\EditCommand($e);
+        $j = ($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService());
 
-        $k = ($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService());
-
-        $j->setDonorMapper($k);
-        $j->setValidators($i);
-        $j->setEventDispatcher($a);
-        $l = new \byrokrat\giroapp\Console\ExportCommand((new \byrokrat\giroapp\AutogiroWriterFactory(new \byrokrat\autogiro\Writer\WriterFactory()))->createWriter(($this->services['ini'] ?? $this->getIniService())->getConfig("org_bgc_nr"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())), $e);
-        $l->setDonorMapper($k);
+        $i->setDonorMapper($j);
+        $i->setValidators($h);
+        $i->setEventDispatcher($a);
+        $k = new \byrokrat\giroapp\Console\ExportCommand((new \byrokrat\giroapp\AutogiroWriterFactory(new \byrokrat\autogiro\Writer\WriterFactory()))->createWriter(($this->services['ini'] ?? $this->getIniService())->getConfig("org_bgc_nr"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())), $e);
+        $k->setDonorMapper($j);
+        $k->setEventDispatcher($a);
+        $l = new \byrokrat\giroapp\Console\ImportCommand(($this->privates['fs_cwd'] ?? $this->getFsCwdService()));
         $l->setEventDispatcher($a);
-        $m = new \byrokrat\giroapp\Console\ImportCommand(($this->privates['fs_cwd'] ?? $this->getFsCwdService()));
-        $m->setEventDispatcher($a);
-        $n = new \byrokrat\giroapp\Console\LsCommand($b, $c, $d);
-        $n->setDonorMapper($k);
-        $o = new \byrokrat\giroapp\Console\MigrateCommand();
+        $m = new \byrokrat\giroapp\Console\LsCommand($b, $c, $d);
+        $m->setDonorMapper($j);
+        $n = new \byrokrat\giroapp\Console\MigrateCommand();
+        $n->setEventDispatcher($a);
+        $n->setDonorMapper($j);
+        $o = new \byrokrat\giroapp\Console\PauseCommand($e);
+        $o->setDonorMapper($j);
+        $o->setValidators($h);
         $o->setEventDispatcher($a);
-        $o->setDonorMapper($k);
-        $p = new \byrokrat\giroapp\Console\PauseCommand($e);
-        $p->setDonorMapper($k);
-        $p->setValidators($i);
+        $p = new \byrokrat\giroapp\Console\PurgeCommand();
         $p->setEventDispatcher($a);
-        $q = new \byrokrat\giroapp\Console\PurgeCommand();
+        $p->setDonorMapper($j);
+        $q = new \byrokrat\giroapp\Console\RemoveCommand();
+        $q->setDonorMapper($j);
+        $q->setValidators($h);
         $q->setEventDispatcher($a);
-        $q->setDonorMapper($k);
-        $r = new \byrokrat\giroapp\Console\RemoveCommand();
-        $r->setDonorMapper($k);
-        $r->setValidators($i);
+        $r = new \byrokrat\giroapp\Console\RevokeCommand();
+        $r->setDonorMapper($j);
+        $r->setValidators($h);
         $r->setEventDispatcher($a);
-        $s = new \byrokrat\giroapp\Console\RevokeCommand();
-        $s->setDonorMapper($k);
-        $s->setValidators($i);
-        $s->setEventDispatcher($a);
-        $t = new \byrokrat\giroapp\Console\ShowCommand($c);
-        $t->setDonorMapper($k);
-        $t->setValidators($i);
-        $u = new \byrokrat\giroapp\Console\StatusCommand();
-        $u->setDonorMapper($k);
+        $s = new \byrokrat\giroapp\Console\ShowCommand($c);
+        $s->setDonorMapper($j);
+        $s->setValidators($h);
+        $t = new \byrokrat\giroapp\Console\StatusCommand();
+        $t->setDonorMapper($j);
 
-        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($g), new \byrokrat\giroapp\Plugin\CorePlugin(new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\InactiveFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\PurgeableFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), new \byrokrat\giroapp\Formatter\CsvFormatter(), new \byrokrat\giroapp\Formatter\HumanFormatter(), new \byrokrat\giroapp\Formatter\JsonFormatter(), new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter(), new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? ($this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_day_of_month"), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState(), new \byrokrat\giroapp\State\PauseMandateState(), new \byrokrat\giroapp\State\PauseSentState(), new \byrokrat\giroapp\State\PausedState(), $h, $j, $l, $m, $n, $o, $p, $q, $r, $s, $t, $u, new \byrokrat\giroapp\Console\ValidateCommand(new \byrokrat\giroapp\Filesystem\Filesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("base_dir"), $f), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator()))))->loadPlugin($instance);
+        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($f), new \byrokrat\giroapp\Plugin\CorePlugin(new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\InactiveFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\PurgeableFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), new \byrokrat\giroapp\Formatter\CsvFormatter(), new \byrokrat\giroapp\Formatter\HumanFormatter(), new \byrokrat\giroapp\Formatter\JsonFormatter(), new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter(), new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? ($this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_day_of_month"), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState(), new \byrokrat\giroapp\State\PauseMandateState(), new \byrokrat\giroapp\State\PauseSentState(), new \byrokrat\giroapp\State\PausedState(), $g, $i, $k, $l, $m, $n, $o, $p, $q, $r, $s, $t, new \byrokrat\giroapp\Console\ValidateCommand(($this->privates['fs_data'] ?? $this->getFsDataService()), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator()))))->loadPlugin($instance);
 
         return $instance;
     }
@@ -603,7 +600,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getFlysystemDataDirService()
     {
-        return $this->privates['flysystem_data_dir'] = new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getFsDataService()->getAbsolutePath(".")));
+        return $this->privates['flysystem_data_dir'] = new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local(($this->privates['fs_data'] ?? $this->getFsDataService())->getAbsolutePath(".")));
     }
 
     /**
@@ -623,7 +620,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getFsDataService()
     {
-        $instance = new \byrokrat\giroapp\Filesystem\Filesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("data_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
+        $this->privates['fs_data'] = $instance = new \byrokrat\giroapp\Filesystem\Filesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("data_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
 
         (new \byrokrat\giroapp\Filesystem\FilesystemConfigurator(array(0 => '.'), array(0 => 'donors.json', 1 => 'imports.json')))->createFiles($instance);
 
