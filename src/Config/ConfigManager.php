@@ -46,7 +46,11 @@ class ConfigManager
     public function getConfig(string $name): ConfigInterface
     {
         return new LazyConfig(function () use ($name) {
-            $value = $this->configs[$name] ?? '';
+            if (!isset($this->configs[$name])) {
+                throw new InvalidConfigException("Configuration for '$name' missing.");
+            }
+
+            $value = $this->configs[$name];
 
             if (!is_string($value)) {
                 throw new InvalidConfigException("Configuration '$name' must be string, found: " . gettype($value));
@@ -55,12 +59,17 @@ class ConfigManager
             $value = preg_replace_callback(
                 '/%([^%]+)%/',
                 function ($matches) {
-                    return $this->getConfig($matches[1])->getValue();
+                    return $this->getConfigValue($matches[1]);
                 },
                 $value
             );
 
             return $value;
         });
+    }
+
+    public function getConfigValue(string $name): string
+    {
+        return $this->getConfig($name)->getValue();
     }
 }

@@ -28,9 +28,4 @@ interface ConfigInterface
      * Get configuration value
      */
     public function getValue(): string;
-
-    /**
-     * Megically cast to string
-     */
-    public function __toString(): string;
 }

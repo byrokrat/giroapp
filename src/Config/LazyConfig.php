@@ -44,9 +44,4 @@ final class LazyConfig implements ConfigInterface
 
         return $value;
     }
-
-    public function __toString(): string
-    {
-        return $this->getValue();
-    }
 }

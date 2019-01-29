@@ -24,18 +24,18 @@ class ConfigManagerSpec extends ObjectBehavior
         $this->getConfig('foo')->shouldReturnConfig('bar');
     }
 
+    function it_can_read_raw_values(RepositoryInterface $repo)
+    {
+        $repo->getConfigs()->willReturn(['foo' => 'bar']);
+        $this->loadRepository($repo);
+        $this->getConfigValue('foo')->shouldReturn('bar');
+    }
+
     function it_can_load_configs_at_construct(RepositoryInterface $repo)
     {
         $repo->getConfigs()->willReturn(['foo' => 'bar']);
         $this->beConstructedWith($repo);
         $this->getConfig('foo')->shouldReturnConfig('bar');
-    }
-
-    function it_defaults_configs_to_empty_string(RepositoryInterface $repo)
-    {
-        $repo->getConfigs()->willReturn([]);
-        $this->loadRepository($repo);
-        $this->getConfig('foo')->shouldReturnConfig('');
     }
 
     function it_merges_configs(RepositoryInterface $repoA, RepositoryInterface $repoB)
@@ -75,6 +75,13 @@ class ConfigManagerSpec extends ObjectBehavior
         $repo->getConfigs()->willReturn(['no-string' => 123]);
         $this->loadRepository($repo);
         $this->getConfig('no-string')->shouldThrowInvalidConfigException();
+    }
+
+    function it_throws_on_missing_config(RepositoryInterface $repo)
+    {
+        $repo->getConfigs()->willReturn([]);
+        $this->loadRepository($repo);
+        $this->getConfig('does-not-exist')->shouldThrowInvalidConfigException();
     }
 
     public function getMatchers(): array
