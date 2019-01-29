@@ -1,11 +1,3 @@
-parameters:
-    fs.user_dir: '%env(GIROAPP_PATH)%'
-    fs.internal_data_dir: 'data'
-    fs.external_data_dir: 'var'
-    fs.plugins_dir: '%fs.user_dir%/plugins'
-    fs.imports_dir: '%fs.user_dir%/%fs.external_data_dir%/imports'
-    fs.exports_dir: '%fs.user_dir%/%fs.external_data_dir%/exports'
-
 services:
     _defaults:
         public: false
@@ -14,28 +6,48 @@ services:
     byrokrat\giroapp\Filesystem\:
         resource: '../src/Filesystem/*'
 
-    fs_user_dir:
+    fs_base_dir:
         class: byrokrat\giroapp\Filesystem\Filesystem
-        arguments: ['%fs.user_dir%']
+        arguments: ["@=service('ini').getConfigValue('base_dir')"]
 
     fs_cwd:
         class: byrokrat\giroapp\Filesystem\Filesystem
-        arguments: ['.']
+        arguments: ["."]
 
     fs_imports:
         class: byrokrat\giroapp\Filesystem\Filesystem
-        arguments: ['%fs.imports_dir%']
-        configurator: 'byrokrat\giroapp\Filesystem\FilesystemConfigurator:createCurrentDirectory'
+        arguments: ["@=service('ini').getConfigValue('imports_dir')"]
+        configurator: 'setup_mkdir:createFiles'
 
     fs_exports:
         class: byrokrat\giroapp\Filesystem\Filesystem
-        arguments: ['%fs.exports_dir%']
-        configurator: 'byrokrat\giroapp\Filesystem\FilesystemConfigurator:createCurrentDirectory'
+        arguments: ["@=service('ini').getConfigValue('exports_dir')"]
+        configurator: 'setup_mkdir:createFiles'
 
     fs_plugins:
         class: byrokrat\giroapp\Filesystem\Filesystem
-        arguments: ['%fs.plugins_dir%']
-        configurator: 'byrokrat\giroapp\Filesystem\FilesystemConfigurator:createCurrentDirectory'
+        arguments: ["@=service('ini').getConfigValue('plugins_dir')"]
+        configurator: 'setup_mkdir:createFiles'
+
+    fs_data:
+        class: byrokrat\giroapp\Filesystem\Filesystem
+        arguments: ["@=service('ini').getConfigValue('data_dir')"]
+        configurator: 'setup_data:createFiles'
+
+    setup_data:
+        class: byrokrat\giroapp\Filesystem\FilesystemConfigurator
+        arguments:
+            - ['.']
+            - ['%db.donors%', '%db.imports%']
+
+    fs_external_data:
+        class: byrokrat\giroapp\Filesystem\Filesystem
+        arguments: ["@=service('ini').getConfigValue('external_data_dir')"]
+        configurator: 'setup_mkdir:createFiles'
+
+    setup_mkdir:
+        class: byrokrat\giroapp\Filesystem\FilesystemConfigurator
+        arguments: [['.']]
 
     Symfony\Component\Filesystem\Filesystem:
         class: ~

@@ -53,7 +53,7 @@ interface FilesystemInterface
     public function readFile(string $path): FileInterface;
 
     /**
-     * Read all files from path (file or directory)
+     * Read all files from path
      *
      * @return FileInterface[]
      */

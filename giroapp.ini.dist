@@ -1,3 +1,5 @@
+; References encolsed in % will be resolved by parser
+
 ; The name of the organization.
 org_name = ...
 
@@ -15,3 +17,22 @@ trans_day_of_month = 28
 
 ; The minimum days in the future of created transactions
 trans_min_days_in_future = 4
+
+; Base directory setting
+; Can be omitted, defaults to the directory of giroapp.ini
+; base_dir = "path/to/dir"
+
+; Directory where plugins are stored
+plugins_dir = "%base_dir%/plugins"
+
+; Directory where application data is stored
+data_dir = "%base_dir%/data"
+
+; Directory where external data is stored
+external_data_dir = "%base_dir%/var"
+
+; Directory where copies of imported files are stored
+imports_dir = "%external_data_dir%/imports"
+
+; Directory where copies of exported files are stored
+exports_dir = "%external_data_dir%/exports"

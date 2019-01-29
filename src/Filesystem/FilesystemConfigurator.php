@@ -24,10 +24,34 @@ namespace byrokrat\giroapp\Filesystem;
 
 final class FilesystemConfigurator
 {
-    public function createCurrentDirectory(FilesystemInterface $filesystem): void
+    /** @var string[] */
+    private $requiredDirs;
+
+    /** @var string[] */
+    private $requiredFiles;
+
+    /**
+     * @param string[] $requiredDirs
+     * @param string[] $requiredFiles
+     */
+    public function __construct(array $requiredDirs = [], array $requiredFiles = [])
     {
-        if (!$filesystem->exists('')) {
-            $filesystem->mkdir('');
+        $this->requiredDirs = $requiredDirs;
+        $this->requiredFiles = $requiredFiles;
+    }
+
+    public function createFiles(FilesystemInterface $filesystem): void
+    {
+        foreach ($this->requiredDirs as $dirname) {
+            if (!$filesystem->exists($dirname)) {
+                $filesystem->mkdir($dirname);
+            }
+        }
+
+        foreach ($this->requiredFiles as $filename) {
+            if (!$filesystem->exists($filename)) {
+                $filesystem->writeFile(new Sha256File($filename, ''));
+            }
         }
     }
 }

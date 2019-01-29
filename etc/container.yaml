@@ -17,17 +17,38 @@ services:
         bind:
             $filesystem: '@fs_cwd'
 
-    byrokrat\giroapp\Config\ConfigManager:
+    Symfony\Component\Console\Application:
         class: ~
-        configurator: 'byrokrat\giroapp\Config\IniFileLoader:loadIniFile'
+        arguments: ['%app.name%', '%app.version%']
+        public: true
 
-    configs:
+    ini:
         alias: byrokrat\giroapp\Config\ConfigManager
         public: true
+
+    byrokrat\giroapp\Config\ConfigManager:
+        class: ~
+        arguments: ['@ini_default_values']
+        configurator: 'byrokrat\giroapp\Config\IniFileLoader:loadIniFile'
+
+    ini_default_values:
+        class: byrokrat\giroapp\Config\ArrayRepository
+        arguments:
+            - base_dir: '%env(GIROAPP_PATH)%'
 
     byrokrat\giroapp\Config\IniFileLoader:
         class: ~
         arguments: ['%app.ini_file_name%']
+
+    organization_id:
+        class: byrokrat\id\IdInterface
+        factory: 'byrokrat\id\IdFactoryInterface:createId'
+        arguments: ["@=service('ini').getConfigValue('org_id')"]
+
+    organization_bg:
+        class: byrokrat\banking\AccountNumber
+        factory: 'byrokrat\banking\BankgiroFactory:createAccount'
+        arguments: ["@=service('ini').getConfigValue('org_bg')"]
 
     byrokrat\giroapp\Console\:
         resource: '../src/Console/*'
@@ -35,7 +56,7 @@ services:
     byrokrat\giroapp\Console\ValidateCommand:
         class: ~
         arguments:
-            - '@fs_user_dir'
+            - '@fs_base_dir'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
 
     byrokrat\giroapp\Console\Helper\Validators:
@@ -79,8 +100,8 @@ services:
     byrokrat\giroapp\State\TransactionDateFactory:
         class: ~
         arguments:
-            $dayOfMonth: "@=service('configs').getConfig('trans_day_of_month')"
-            $minDaysInFuture: "@=service('configs').getConfig('trans_min_days_in_future')"
+            $dayOfMonth: "@=service('ini').getConfig('trans_day_of_month')"
+            $minDaysInFuture: "@=service('ini').getConfig('trans_min_days_in_future')"
 
     byrokrat\giroapp\Utils\:
         resource: '../src/Utils/*'
@@ -94,16 +115,16 @@ services:
     byrokrat\giroapp\AutogiroVisitor:
         class: ~
         arguments:
-            - "@=service('configs').getConfig('org_bgc_nr')"
+            - "@=service('ini').getConfig('org_bgc_nr')"
             - '@organization_bg'
+
+    byrokrat\giroapp\AutogiroWriterFactory: ~
 
     byrokrat\autogiro\Writer\WriterInterface:
         factory: 'byrokrat\giroapp\AutogiroWriterFactory:createWriter'
         arguments:
-            - "@=service('configs').getConfig('org_bgc_nr')"
+            - "@=service('ini').getConfig('org_bgc_nr')"
             - '@organization_bg'
-
-    byrokrat\giroapp\AutogiroWriterFactory: ~
 
     byrokrat\autogiro\Writer\WriterFactory: ~
 
@@ -116,15 +137,7 @@ services:
         class: byrokrat\banking\AccountFactory
         autowire: false
 
-    byrokrat\giroapp\Config\OrgBankgiroFactory:
-        class: ~
-        arguments: ['@byrokrat\banking\BankgiroFactory']
-
     byrokrat\banking\BankgiroFactory: ~
-
-    byrokrat\giroapp\Config\OrgIdFactory:
-        class: ~
-        arguments: ['@byrokrat\id\IdFactoryInterface']
 
     byrokrat\id\IdFactoryInterface:
         class: byrokrat\id\PersonalIdFactory
@@ -135,22 +148,7 @@ services:
         class: ~
         autowire: false
 
-    organization_id:
-        class: byrokrat\id\IdInterface
-        factory: 'byrokrat\giroapp\Config\OrgIdFactory:createId'
-        arguments: ["@=service('configs').getConfig('org_id')"]
-
-    organization_bg:
-        class: byrokrat\banking\AccountNumber
-        factory: 'byrokrat\giroapp\Config\OrgBankgiroFactory:createAccount'
-        arguments: ["@=service('configs').getConfig('org_bg')"]
-
     JsonSchema\Validator: ~
-
-    Symfony\Component\Console\Application:
-        class: ~
-        arguments: ['%app.name%', '%app.version%']
-        public: true
 
     Symfony\Component\EventDispatcher\EventDispatcherInterface:
         class: 'Symfony\Component\EventDispatcher\EventDispatcher'

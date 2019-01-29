@@ -1,7 +1,6 @@
 parameters:
-    db.donors: '%fs.internal_data_dir%/donors.json'
-    db.imports: '%fs.internal_data_dir%/imports.json'
-    db.log: '%fs.external_data_dir%/log'
+    db.donors: 'donors.json'
+    db.imports: 'imports.json'
 
 services:
     _defaults:
@@ -11,22 +10,13 @@ services:
     byrokrat\giroapp\Mapper\:
         resource: '../src/Mapper/*'
 
-    flysystem_user_dir:
+    flysystem_data_dir:
         class: League\Flysystem\Filesystem
-        arguments: ['@flysystem_user_dir_adapter']
-        configurator: 'byrokrat\giroapp\Mapper\FlysystemConfigurator:createFiles'
+        arguments: ['@flysystem_data_dir_adapter']
 
-    flysystem_user_dir_adapter:
+    flysystem_data_dir_adapter:
         class: League\Flysystem\Adapter\Local
-        arguments: ['%fs.user_dir%']
-
-    byrokrat\giroapp\Mapper\FlysystemConfigurator:
-        class: ~
-        arguments:
-            -
-                - '%db.donors%'
-                - '%db.log%'
-                - '%db.imports%'
+        arguments: ["@=service('fs_data').getAbsolutePath('.')"]
 
     db:
         class: hanneskod\yaysondb\Yaysondb
@@ -46,7 +36,7 @@ services:
 
     db_donor_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.donors%', '@flysystem_user_dir']
+        arguments: ['%db.donors%', '@flysystem_data_dir']
 
     db_log_collection:
         class: hanneskod\yaysondb\Collection
@@ -54,7 +44,9 @@ services:
 
     db_log_engine:
         class: hanneskod\yaysondb\Engine\LogEngine
-        arguments: ['%fs.user_dir%/%db.log%', '@byrokrat\giroapp\Mapper\LogFormatter']
+        arguments:
+            - "@=service('fs_external_data').getAbsolutePath('log')"
+            - '@byrokrat\giroapp\Mapper\LogFormatter'
 
     byrokrat\giroapp\Mapper\FileChecksumMapper:
         class: ~
@@ -66,4 +58,4 @@ services:
 
     db_import_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.imports%', '@flysystem_user_dir']
+        arguments: ['%db.imports%', '@flysystem_data_dir']

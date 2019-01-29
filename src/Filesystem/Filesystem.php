@@ -28,25 +28,21 @@ use Symfony\Component\Finder\Finder;
 
 final class Filesystem implements FilesystemInterface
 {
-    /**
-     * @var string
-     */
-    private $currentDir;
+    /** @var string */
+    private $baseDir;
 
-    /**
-     * @var SymfonyFilesystem
-     */
+    /** @var SymfonyFilesystem */
     private $fs;
 
-    public function __construct(string $currentDir, SymfonyFilesystem $fs)
+    public function __construct(string $baseDir, SymfonyFilesystem $fs)
     {
-        $this->currentDir = $currentDir;
+        $this->baseDir = $baseDir;
         $this->fs = $fs;
     }
 
     public function getAbsolutePath(string $path): string
     {
-        return $this->fs->isAbsolutePath($path) ? $path : $this->currentDir . DIRECTORY_SEPARATOR . $path;
+        return $this->fs->isAbsolutePath($path) ? $path : $this->baseDir . DIRECTORY_SEPARATOR . $path;
     }
 
     public function exists(string $path): bool
@@ -68,7 +64,7 @@ final class Filesystem implements FilesystemInterface
     public function readFile(string $path): FileInterface
     {
         if (!$this->isFile($path)) {
-            throw new UnableToReadFileException("Unable to read {$path}");
+            throw new UnableToReadFileException("Unable to read {$this->getAbsolutePath($path)}");
         }
 
         return new Sha256File(
