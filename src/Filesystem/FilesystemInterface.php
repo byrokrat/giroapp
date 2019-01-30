@@ -21,7 +21,6 @@
 namespace byrokrat\giroapp\Filesystem;
 
 use byrokrat\giroapp\Exception\UnableToReadFileException;
-use Symfony\Component\Finder\Finder;
 
 interface FilesystemInterface
 {
@@ -63,9 +62,4 @@ interface FilesystemInterface
      * Write a file to filesystem
      */
     public function writeFile(FileInterface $file): void;
-
-    /**
-     * Get finder for path
-     */
-    public function getFinderFor(string $path): Finder;
 }

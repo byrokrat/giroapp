@@ -12,3 +12,5 @@
 * Added posibility to load custom donor states through plugins.
 * Supports importing files from multiple files and directories.
 * Better exception handling with error codes.
+* All paths are now specified using `giroapp.ini` directives. See `giroapp.ini.dist`.
+  You will need to path your local copy with the new settings.

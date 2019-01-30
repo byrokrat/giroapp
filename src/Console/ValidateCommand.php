@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Filesystem\Filesystem;
+use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Exception\InvalidDataException;
 use JsonSchema\Validator;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,7 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 final class ValidateCommand implements CommandInterface
 {
     /**
-     * @var Filesystem
+     * @var FilesystemInterface
      */
     private $filesystem;
 
@@ -49,11 +49,11 @@ final class ValidateCommand implements CommandInterface
     private $validator;
 
     /**
-     * @param Filesystem $filesystem
+     * @param FilesystemInterface $filesystem
      * @param object     $donorSchema
      * @param Validator  $validator
      */
-    public function __construct(Filesystem $filesystem, $donorSchema, Validator $validator)
+    public function __construct(FilesystemInterface $filesystem, $donorSchema, Validator $validator)
     {
         $this->filesystem = $filesystem;
         $this->donorSchema = $donorSchema;

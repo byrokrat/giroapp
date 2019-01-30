@@ -4,16 +4,15 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Filesystem;
 
-use byrokrat\giroapp\Filesystem\Filesystem;
+use byrokrat\giroapp\Filesystem\StdFilesystem;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\giroapp\Exception\UnableToReadFileException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
-use Symfony\Component\Finder\Finder;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class FilesystemSpec extends ObjectBehavior
+class StdFilesystemSpec extends ObjectBehavior
 {
     function let(SymfonyFilesystem $fs)
     {
@@ -22,7 +21,7 @@ class FilesystemSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(Filesystem::CLASS);
+        $this->shouldHaveType(StdFilesystem::CLASS);
     }
 
     function it_recognizes_absolute_paths($fs)
@@ -83,7 +82,7 @@ class FilesystemSpec extends ObjectBehavior
     function it_can_read_relative_paths($fs)
     {
         $this->beConstructedWith(__DIR__, $fs);
-        $filename = 'FilesystemSpec.php';
+        $filename = 'StdFilesystemSpec.php';
         $fs->isAbsolutePath($filename)->willReturn(false)->shouldBeCalled();
         $fs->exists(__FILE__)->willReturn(true);
         $this->readFile($filename)->shouldBeLike(new Sha256File($filename, file_get_contents(__FILE__)));
@@ -102,11 +101,5 @@ class FilesystemSpec extends ObjectBehavior
         $fs->isAbsolutePath('name')->willReturn(true)->shouldBeCalled();
         $fs->dumpFile('name', 'content')->shouldBeCalled();
         $this->writeFile($file);
-    }
-
-    function it_can_create_finders($fs)
-    {
-        $fs->isAbsolutePath(__DIR__)->willReturn(true);
-        $this->getFinderFor(__DIR__)->shouldBeLike((new Finder)->in(__DIR__));
     }
 }

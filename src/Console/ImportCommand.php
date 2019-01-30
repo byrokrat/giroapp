@@ -26,7 +26,7 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Filesystem\FileInterface;
-use byrokrat\giroapp\Filesystem\Filesystem;
+use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
@@ -38,13 +38,13 @@ final class ImportCommand implements CommandInterface
 {
     use DispatcherProperty;
 
-    /** @var Filesystem */
+    /** @var FilesystemInterface */
     private $filesystem;
 
     /** @var Stream */
     private $stdin;
 
-    public function __construct(Filesystem $filesystem, Stream $stdin = null)
+    public function __construct(FilesystemInterface $filesystem, Stream $stdin = null)
     {
         $this->filesystem = $filesystem;
         $this->stdin = $stdin ?: new Stream(STDIN);

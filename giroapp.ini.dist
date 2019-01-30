@@ -22,17 +22,23 @@ trans_min_days_in_future = 4
 ; Can be omitted, defaults to the directory of giroapp.ini
 ; base_dir = "path/to/dir"
 
+; Database driver to use, currently only 'json' is supported
+db_driver = json
+
+; Data Source Name, the information required to connect to the database
+; Values are driver specific
+db_dsn = "%base_dir%/data"
+
 ; Directory where plugins are stored
 plugins_dir = "%base_dir%/plugins"
-
-; Directory where application data is stored
-data_dir = "%base_dir%/data"
 
 ; Directory where external data is stored
 external_data_dir = "%base_dir%/var"
 
 ; Directory where copies of imported files are stored
+; Empty value turns of saving imported files
 imports_dir = "%external_data_dir%/imports"
 
 ; Directory where copies of exported files are stored
+; Empty value turns of saving exported files
 exports_dir = "%external_data_dir%/exports"

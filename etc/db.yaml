@@ -10,13 +10,13 @@ services:
     byrokrat\giroapp\Mapper\:
         resource: '../src/Mapper/*'
 
-    flysystem_data_dir:
+    flysystem_db:
         class: League\Flysystem\Filesystem
-        arguments: ['@flysystem_data_dir_adapter']
+        arguments: ['@flysystem_db_adapter']
 
-    flysystem_data_dir_adapter:
+    flysystem_db_adapter:
         class: League\Flysystem\Adapter\Local
-        arguments: ["@=service('fs_data').getAbsolutePath('.')"]
+        arguments: ["@=service('fs_db').getAbsolutePath('.')"]
 
     db:
         class: hanneskod\yaysondb\Yaysondb
@@ -36,7 +36,7 @@ services:
 
     db_donor_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.donors%', '@flysystem_data_dir']
+        arguments: ['%db.donors%', '@flysystem_db']
 
     db_log_collection:
         class: hanneskod\yaysondb\Collection
@@ -58,4 +58,4 @@ services:
 
     db_import_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.imports%', '@flysystem_data_dir']
+        arguments: ['%db.imports%', '@flysystem_db']

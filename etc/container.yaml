@@ -55,7 +55,7 @@ services:
     byrokrat\giroapp\Console\ValidateCommand:
         class: ~
         arguments:
-            - '@fs_data'
+            - '@fs_db'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
 
     byrokrat\giroapp\Console\Helper\Validators:

@@ -26,7 +26,7 @@ use byrokrat\giroapp\Exception\UnableToReadFileException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use Symfony\Component\Finder\Finder;
 
-final class Filesystem implements FilesystemInterface
+final class StdFilesystem implements FilesystemInterface
 {
     /** @var string */
     private $baseDir;
@@ -75,7 +75,7 @@ final class Filesystem implements FilesystemInterface
 
     public function readDir(string $path): iterable
     {
-        foreach ($this->getFinderFor($path)->files() as $fileInfo) {
+        foreach ((new Finder)->in($this->getAbsolutePath($path))->files() as $fileInfo) {
             yield $fileInfo->getRealPath() => new Sha256File($fileInfo->getFilename(), $fileInfo->getContents());
         }
     }
@@ -83,10 +83,5 @@ final class Filesystem implements FilesystemInterface
     public function writeFile(FileInterface $file): void
     {
         $this->fs->dumpFile($this->getAbsolutePath($file->getFilename()), $file->getContent());
-    }
-
-    public function getFinderFor(string $path): Finder
-    {
-        return (new Finder)->in($this->getAbsolutePath($path));
     }
 }

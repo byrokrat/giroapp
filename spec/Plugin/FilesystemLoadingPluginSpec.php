@@ -26,14 +26,14 @@ class FilesystemLoadingPluginSpec extends ObjectBehavior
 
     function it_fails_on_broken_plugins($filesystem, EnvironmentInterface $environment)
     {
-        $filesystem->getFinderFor('')->willReturn((new Finder)->in(__DIR__ . '/brokenplugindata'));
+        $filesystem->getAbsolutePath('')->willReturn(__DIR__ . '/brokenplugindata');
 
         $this->shouldThrow(InvalidPluginException::CLASS)->during('loadPlugin', [$environment]);
     }
 
     function it_loads_plugins($filesystem, EnvironmentInterface $environment)
     {
-        $filesystem->getFinderFor('')->willReturn((new Finder)->in(__DIR__ . '/validplugindata'));
+        $filesystem->getAbsolutePath('')->willReturn(__DIR__ . '/validplugindata');
 
         $environment->readConfig('custom-test-check')->willReturn('')->shouldBeCalled();
 

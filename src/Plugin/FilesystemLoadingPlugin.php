@@ -24,6 +24,7 @@ namespace byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Exception\InvalidPluginException;
+use Symfony\Component\Finder\Finder;
 
 final class FilesystemLoadingPlugin implements PluginInterface
 {
@@ -39,7 +40,8 @@ final class FilesystemLoadingPlugin implements PluginInterface
 
     public function loadPlugin(EnvironmentInterface $environment): void
     {
-        $finder = $this->filesystem->getFinderFor('')
+        $finder = (new Finder)
+            ->in($this->filesystem->getAbsolutePath(''))
             ->files()
             ->name('*.php')
             ->name('/\.(php)|(phar)$/i')
