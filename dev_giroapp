@@ -5,5 +5,5 @@
 # with a production database.
 
 DIR=`dirname $0`
-export GIROAPP_PATH=$DIR/.giroapp
+export GIROAPP_INI=$DIR/.giroapp/giroapp.ini
 exec $DIR/bin/giroapp "$@"

@@ -1,9 +1,7 @@
 parameters:
     app.name: 'GiroApp'
     app.version: '$app_version$'
-    env(GIROAPP_PATH): 'giroapp'
-    env(GIROAPP_INI_FILE): '%env(GIROAPP_PATH)%/giroapp.ini'
-    app.ini_file_name: '%env(GIROAPP_INI_FILE)%'
+    env(GIROAPP_INI): 'giroapp.ini'
 
 imports:
     - { resource: fs.yaml }
@@ -33,11 +31,15 @@ services:
 
     base_dir_repository:
         class: byrokrat\giroapp\Config\ArrayRepository
-        arguments: [base_dir: '%env(GIROAPP_PATH)%']
+        arguments: [base_dir: "@=service('base_dir_reader').getBaseDir()"]
+
+    base_dir_reader:
+        class: byrokrat\giroapp\Config\BaseDirReader
+        arguments: ['%env(GIROAPP_INI)%']
 
     byrokrat\giroapp\Config\IniFileLoader:
         class: ~
-        arguments: ['%app.ini_file_name%']
+        arguments: ['%env(GIROAPP_INI)%']
 
     organization_id:
         class: byrokrat\id\IdInterface

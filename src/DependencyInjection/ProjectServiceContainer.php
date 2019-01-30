@@ -53,6 +53,7 @@ class ProjectServiceContainer extends Container
             'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
             'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => true,
             'Symfony\\Component\\Filesystem\\Filesystem' => true,
+            'base_dir_reader' => true,
             'base_dir_repository' => true,
             'byrokrat\\autogiro\\Parser\\ParserFactory' => true,
             'byrokrat\\autogiro\\Parser\\ParserInterface' => true,
@@ -260,9 +261,9 @@ class ProjectServiceContainer extends Container
      */
     protected function getIniService()
     {
-        $this->services['ini'] = $instance = new \byrokrat\giroapp\Config\ConfigManager(new \byrokrat\giroapp\Config\ArrayRepository(array('base_dir' => $this->getEnv('GIROAPP_PATH'))));
+        $this->services['ini'] = $instance = new \byrokrat\giroapp\Config\ConfigManager(new \byrokrat\giroapp\Config\ArrayRepository(array('base_dir' => (new \byrokrat\giroapp\Config\BaseDirReader($this->getEnv('GIROAPP_INI')))->getBaseDir())));
 
-        (new \byrokrat\giroapp\Config\IniFileLoader($this->getEnv('GIROAPP_INI_FILE'), ($this->privates['fs_cwd'] ?? $this->getFsCwdService())))->loadIniFile($instance);
+        (new \byrokrat\giroapp\Config\IniFileLoader($this->getEnv('GIROAPP_INI'), ($this->privates['fs_cwd'] ?? $this->getFsCwdService())))->loadIniFile($instance);
 
         return $instance;
     }
@@ -701,10 +702,7 @@ class ProjectServiceContainer extends Container
         return $this->parameterBag;
     }
 
-    private $loadedDynamicParameters = array(
-        'env(GIROAPP_INI_FILE)' => false,
-        'app.ini_file_name' => false,
-    );
+    private $loadedDynamicParameters = array();
     private $dynamicParameters = array();
 
     /**
@@ -718,14 +716,7 @@ class ProjectServiceContainer extends Container
      */
     private function getDynamicParameter($name)
     {
-        switch ($name) {
-            case 'env(GIROAPP_INI_FILE)': $value = $this->getEnv('string:GIROAPP_PATH').'/giroapp.ini'; break;
-            case 'app.ini_file_name': $value = $this->getEnv('GIROAPP_INI_FILE'); break;
-            default: throw new InvalidArgumentException(sprintf('The dynamic parameter "%s" must be defined.', $name));
-        }
-        $this->loadedDynamicParameters[$name] = true;
-
-        return $this->dynamicParameters[$name] = $value;
+        throw new InvalidArgumentException(sprintf('The dynamic parameter "%s" must be defined.', $name));
     }
 
     /**
@@ -740,7 +731,7 @@ class ProjectServiceContainer extends Container
             'db.imports' => 'imports.json',
             'app.name' => 'GiroApp',
             'app.version' => '$app_version$',
-            'env(GIROAPP_PATH)' => 'giroapp',
+            'env(GIROAPP_INI)' => 'giroapp.ini',
         );
     }
 }

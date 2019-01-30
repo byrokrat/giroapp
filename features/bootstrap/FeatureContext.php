@@ -55,10 +55,6 @@ class FeatureContext implements Context
     public function aFreshInstallation(): void
     {
         $this->app = new ApplicationWrapper($this->executable, $this->debug);
-        $this->app->createIniFile(
-            file_get_contents(__DIR__ . '/../../giroapp.ini.dist')
-            . "\norg_bgc_nr = 111111\norg_bg = 58056201\norg_id = 835000-0892"
-        );
     }
 
     /**

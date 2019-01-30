@@ -22,32 +22,20 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Config;
 
-use byrokrat\giroapp\Filesystem\FilesystemInterface;
-
-final class IniFileLoader
+final class BaseDirReader
 {
     /**
      * @var string
      */
-    private $iniFileName;
+    private $path;
 
-    /**
-     * @var FilesystemInterface
-     */
-    private $filesystem;
-
-    public function __construct(string $iniFileName, FilesystemInterface $filesystem)
+    public function __construct(string $path)
     {
-        $this->iniFileName = $iniFileName;
-        $this->filesystem = $filesystem;
+        $this->path = $path;
     }
 
-    public function loadIniFile(ConfigManager $manager): void
+    public function getBaseDir(): string
     {
-        $manager->loadRepository(
-            new IniRepository(
-                $this->filesystem->readFile($this->iniFileName)->getContent()
-            )
-        );
+        return dirname($this->path);
     }
 }

@@ -14,21 +14,17 @@ Command line app for managing autogiro donations.
 
 3. Optionally rename `giroapp.phar` => `giroapp`.
 
-4. Optionally change your user directory path. See below.
+4. Copy [`giroapp.ini.dist`](giroapp.ini.dist) to `giroapp.ini` at desired location.
 
-5. Copy [`giroapp.ini.dist`](giroapp.ini.dist) to `giroapp.ini` in you user directory.
+4. Optionally specify the location of the configuration file. See below.
 
 6. Edit `giroapp.ini` to your needs.
 
-### Changing the user directory path
+### Specifying the location of giroapp.ini
 
-By default giroapp keeps database and other installation specific files in a
-directory named `giroapp` in current working directory. This might not be
-optimal for a number of reasons (something like `/var/lib/giroapp` would
-for example be better from a security perspective).
-
-Change the user directory path by creating a `GIROAPP_PATH` environment variable
-pointing to the desired directory.
+By default giroapp looks for configurations in a file called `giroapp.ini` in
+the current working directory. Tell giroapp where to look for configurations
+be defining a `GIROAPP_INI` environment variable.
 
 ### Adding plugins
 

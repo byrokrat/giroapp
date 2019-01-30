@@ -33,14 +33,14 @@ class IniFileLoaderSpec extends ObjectBehavior
         $this->loadIniFile($manager);
     }
 
-    function it_ignores_non_existing_files(FilesystemInterface $fs, ConfigManager $manager)
+    function it_fails_on_missing_config_file(FilesystemInterface $fs, ConfigManager $manager)
     {
         $this->beConstructedWith('foobar', $fs);
 
-        $fs->isFile('foobar')->willReturn(false);
+        $fs->readFile('foobar')->willThrow(\Exception::CLASS);
 
         $manager->loadRepository(Argument::any())->shouldNotBeCalled();
 
-        $this->loadIniFile($manager);
+        $this->shouldThrow(\Exception::CLASS)->during('loadIniFile', [$manager]);
     }
 }

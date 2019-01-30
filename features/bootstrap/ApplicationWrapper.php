@@ -35,8 +35,14 @@ class ApplicationWrapper
         mkdir($this->directory);
         $this->userDir = $this->directory . '/giroapp_path';
         mkdir($this->userDir);
-        putenv("GIROAPP_PATH={$this->userDir}");
         $this->executable = realpath(getcwd() . '/' . $executable);
+
+        $this->createIniFile(
+            file_get_contents(__DIR__ . '/../../giroapp.ini.dist')
+            . "\norg_bgc_nr = 111111\norg_bg = 58056201\norg_id = 835000-0892"
+        );
+
+        putenv("GIROAPP_INI={$this->userDir}/giroapp.ini");
 
         if ($debug) {
             $this->debugDump = function (string $str, string $pre = '') {
