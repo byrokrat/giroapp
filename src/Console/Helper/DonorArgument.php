@@ -23,10 +23,10 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
-use byrokrat\giroapp\DependencyInjection\ValidatorsProperty;
 use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Validator\DonorKeyValidator;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -36,7 +36,7 @@ use Symfony\Component\Console\Input\InputOption;
  */
 trait DonorArgument
 {
-    use DonorMapperProperty, ValidatorsProperty;
+    use DonorMapperProperty;
 
     protected function configureDonorArgument(Adapter $wrapper): void
     {
@@ -56,7 +56,7 @@ trait DonorArgument
 
     public function readDonor(InputInterface $input): Donor
     {
-        $key = $this->validators->getDonorKeyValidator()($input->getArgument('donor'));
+        $key = $this->getDonorKey($input);
 
         if (!$input->getOption('force-payer-number') && $this->donorMapper->hasKey($key)) {
             return $this->donorMapper->findByKey($key);
@@ -78,7 +78,7 @@ trait DonorArgument
      */
     public function readAllDonors(InputInterface $input): iterable
     {
-        $key = $this->validators->getDonorKeyValidator()($input->getArgument('donor'));
+        $key = $this->getDonorKey($input);
 
         if (!$input->getOption('force-payer-number') && $this->donorMapper->hasKey($key)) {
             yield $this->donorMapper->findByKey($key);
@@ -95,5 +95,16 @@ trait DonorArgument
         if (!$count) {
             throw new DonorDoesNotExistException("Unable to find donor $key");
         }
+    }
+
+    private function getDonorKey(InputInterface $input): string
+    {
+        $taintedKey = $input->getArgument('donor');
+
+        if (!is_string($taintedKey)) {
+            throw new \LogicException('Donor key must be string');
+        }
+
+        return (new DonorKeyValidator)->validate('donor', $taintedKey);
     }
 }

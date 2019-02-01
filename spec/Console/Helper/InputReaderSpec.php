@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\Console\Helper\InputReader;
+use byrokrat\giroapp\Validator\ValidatorInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -14,9 +15,9 @@ use Prophecy\Argument;
 
 class InputReaderSpec extends ObjectBehavior
 {
-    function let(InputInterface $input, OutputInterface $output, QuestionHelper $questionHelper)
+    function let(InputInterface $input, OutputInterface $output)
     {
-        $this->beConstructedWith($input, $output, $questionHelper);
+        $this->beConstructedWith($input, $output, new QuestionHelper);
     }
 
     function it_is_initializable()
@@ -24,32 +25,39 @@ class InputReaderSpec extends ObjectBehavior
         $this->shouldHaveType(InputReader::CLASS);
     }
 
-    function it_reads_option_if_set($input, Question $question)
+    function it_reads_option_if_set($input, ValidatorInterface $validator)
     {
-        $input->hasOption('option-name')->willReturn(true);
-        $input->getOption('option-name')->willReturn('foobar');
-        $this->readInput('option-name', $question, 'strtoupper')->shouldReturn('FOOBAR');
+        $input->hasOption('key')->willReturn(true);
+        $input->getOption('key')->willReturn('foo');
+        $validator->validate('key', 'foo')->willReturn('bar');
+        $this->readInput('key', new Question(''), $validator)->shouldReturn('bar');
     }
 
-    function it_asks_question_if_option_is_not_set($input, $output, $questionHelper, Question $question)
+    function it_asks_question_interactively($input, $output, ValidatorInterface $validator)
     {
-        $input->hasOption('option-name')->willReturn(true);
-        $input->getOption('option-name')->willReturn(null);
+        $input->hasOption('key')->willReturn(true);
+        $input->getOption('key')->willReturn('');
         $input->isInteractive()->willReturn(true);
-        $question->setValidator('strtoupper')->willReturn($question);
-        $questionHelper->ask($input, $output, $question)->willReturn('foobar');
-
-        $this->readInput('option-name', $question, 'strtoupper')->shouldReturn('foobar');
+        $validator->validate('key', '')->willReturn('foobar')->shouldBeCalled();
+        $this->readInput('key', new Question(''), $validator)->shouldReturn('foobar');
     }
 
-    function it_calls_validator_if_non_interactive($input, $output, $questionHelper, Question $question)
+    function it_reads_question_default($input, $output, ValidatorInterface $validator)
     {
-        $input->hasOption('option-name')->willReturn(true);
-        $input->getOption('option-name')->willReturn(null);
+        $input->hasOption('key')->willReturn(true);
+        $input->getOption('key')->willReturn(null);
         $input->isInteractive()->willReturn(false);
-        $question->setValidator('strtoupper')->willReturn($question);
-        $questionHelper->ask($input, $output, $question)->willReturn('foobar');
+        $question = new Question('', 'default');
+        $validator->validate('key', 'default')->willReturn('foobar')->shouldBeCalled();
+        $this->readInput('key', $question, $validator)->shouldReturn('foobar');
+    }
 
-        $this->readInput('option-name', $question, 'strtoupper')->shouldReturn('FOOBAR');
+    function it_asks_question_non_interactively($input, $output, ValidatorInterface $validator)
+    {
+        $input->hasOption('key')->willReturn(true);
+        $input->getOption('key')->willReturn(null);
+        $input->isInteractive()->willReturn(false);
+        $validator->validate('key', '')->willReturn('foobar')->shouldBeCalled();
+        $this->readInput('key', new Question(''), $validator)->shouldReturn('foobar');
     }
 }

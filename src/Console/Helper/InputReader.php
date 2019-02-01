@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console\Helper;
 
+use byrokrat\giroapp\Validator\ValidatorInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -54,27 +55,26 @@ class InputReader
         $this->questionHelper = $questionHelper;
     }
 
-    /**
-     * @return mixed Whatever is read and processed by the validator
-     */
-    public function readInput(string $option, Question $question, callable $validator)
+    public function readInput(string $key, Question $question, ValidatorInterface $validator): string
     {
         $value = null;
 
-        if ($this->input->hasOption($option)) {
-            $value = $this->input->getOption($option);
+        if ($this->input->hasOption($key)) {
+            $value = $this->input->getOption($key);
         }
 
-        if (!is_null($value)) {
-            return $validator($value);
+        if (is_string($value)) {
+            return $validator->validate($key, $value);
         }
 
-        $value = $this->questionHelper->ask(
+        $value = (string)$this->questionHelper->ask(
             $this->input,
             $this->output,
-            $question->setValidator($validator)
+            $question->setValidator(function ($answer) use ($key, $validator) {
+                return $validator->validate($key, (string)$answer);
+            })
         );
 
-        return $this->input->isInteractive() ? $value : $validator($value);
+        return $this->input->isInteractive() ? $value : $validator->validate($key, $value);
     }
 }

@@ -22,6 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Xml;
 
+use byrokrat\giroapp\Validator\AccountValidator;
+use byrokrat\giroapp\Validator\IdValidator;
+use byrokrat\giroapp\Validator\NumericValidator;
+use byrokrat\giroapp\Validator\PayerNumberValidator;
+use byrokrat\giroapp\Validator\PostalCodeValidator;
+use byrokrat\giroapp\Validator\StringValidator;
 use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
@@ -91,79 +97,88 @@ class XmlMandateParser
         $donors = [];
 
         foreach ($xml->getElements('/DocumentElement/MedgivandeViaHemsida') as $mandate) {
-            if ($this->payeeOrgNr->format('S-sk') != $mandate->readElement('/MedgivandeViaHemsida/Organisationsnr')) {
+            $orgNr = $mandate->readElement('/MedgivandeViaHemsida/Organisationsnr', new IdValidator);
+
+            if ($this->payeeOrgNr->format('S-sk') != $orgNr) {
                 throw new InvalidXmlException(sprintf(
                     'Invalid payee org nr %s, expecting %s',
-                    $mandate->readElement('/MedgivandeViaHemsida/Organisationsnr'),
+                    $orgNr,
                     $this->payeeOrgNr->format('S-sk')
                 ));
             }
 
-            if ($this->payeeBankgiro->getNumber() != $mandate->readElement('/MedgivandeViaHemsida/Bankgironr')) {
+            $bankgiro = $mandate->readElement('/MedgivandeViaHemsida/Bankgironr', new AccountValidator);
+
+            if ($this->payeeBankgiro->getNumber() != $bankgiro) {
                 throw new InvalidXmlException(sprintf(
                     'Invalid payee bankgiro %s, expecting %s',
-                    $mandate->readElement('/MedgivandeViaHemsida/Bankgironr'),
+                    $bankgiro,
                     $this->payeeBankgiro->getNumber()
                 ));
             }
 
+            $stringValidator = new StringValidator;
+
             // require this empty element to exist
-            $mandate->readElement('/MedgivandeViaHemsida/Autogiroanmälan_x002C__x0020_medgivande');
+            $mandate->readElement(
+                '/MedgivandeViaHemsida/Autogiroanmälan_x002C__x0020_medgivande',
+                $stringValidator
+            );
 
             $this->donorBuilder->reset();
 
             $this->donorBuilder->setMandateSource(Donor::MANDATE_SOURCE_ONLINE_FORM);
 
             $this->donorBuilder->setName(
-                $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_namn')
+                $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_namn', $stringValidator)
             );
 
             $this->donorBuilder->setPostalAddress(
                 new PostalAddress(
-                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_1'),
-                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_2'),
-                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_3'),
-                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postnr'),
-                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postort')
+                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_1', $stringValidator),
+                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_2', $stringValidator),
+                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_3', $stringValidator),
+                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postnr', new PostalCodeValidator),
+                    $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postort', $stringValidator)
                 )
             );
 
             if ($mandate->hasElement('/MedgivandeViaHemsida/Betalarnummer')) {
                 $this->donorBuilder->setPayerNumber(
-                    $mandate->readElement('/MedgivandeViaHemsida/Betalarnummer')
+                    $mandate->readElement('/MedgivandeViaHemsida/Betalarnummer', new PayerNumberValidator)
                 );
             }
 
             $this->donorBuilder->setAccount(
                 $this->accountFactory->createAccount(
-                    $mandate->readElement('/MedgivandeViaHemsida/Kontonr')
+                    $mandate->readElement('/MedgivandeViaHemsida/Kontonr', new AccountValidator)
                 )
             );
 
             $this->donorBuilder->setId(
                 $this->idFactory->createId(
-                    $mandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr')
+                    $mandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr', new IdValidator)
                 )
             );
 
             $this->donorBuilder->setAttribute(
                 'verification_time',
-                $mandate->readElement('/MedgivandeViaHemsida/Verifieringstid')
+                $mandate->readElement('/MedgivandeViaHemsida/Verifieringstid', new NumericValidator)
             );
 
             $this->donorBuilder->setAttribute(
                 'verification_code',
-                $mandate->readElement('/MedgivandeViaHemsida/Verifieringsreferens')
+                $mandate->readElement('/MedgivandeViaHemsida/Verifieringsreferens', $stringValidator)
             );
 
-            $formId = $mandate->readElement('/MedgivandeViaHemsida/Formulärnamn');
+            $formId = $mandate->readElement('/MedgivandeViaHemsida/Formulärnamn', $stringValidator);
 
             foreach ($mandate->getElements('/MedgivandeViaHemsida/Övrig_x0020_info/customdata') as $custom) {
                 $this->translator->writeValue(
                     $this->donorBuilder,
                     $formId,
-                    $custom->readElement('/customdata/name'),
-                    $custom->readElement('/customdata/value')
+                    $custom->readElement('/customdata/name', $stringValidator),
+                    $custom->readElement('/customdata/value', $stringValidator)
                 );
             }
 

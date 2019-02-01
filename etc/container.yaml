@@ -60,11 +60,6 @@ services:
             - '@fs_db'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
 
-    byrokrat\giroapp\Console\Helper\Validators:
-        class: ~
-        arguments:
-            $bankgiroFactory: '@byrokrat\banking\BankgiroFactory'
-
     byrokrat\giroapp\Filter\:
         resource: '../src/Filter/*'
 

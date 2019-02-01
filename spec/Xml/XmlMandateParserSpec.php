@@ -11,6 +11,12 @@ use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Exception\InvalidXmlException;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\Validator\AccountValidator;
+use byrokrat\giroapp\Validator\IdValidator;
+use byrokrat\giroapp\Validator\NumericValidator;
+use byrokrat\giroapp\Validator\PayerNumberValidator;
+use byrokrat\giroapp\Validator\PostalCodeValidator;
+use byrokrat\giroapp\Validator\StringValidator;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
@@ -49,8 +55,10 @@ class XmlMandateParserSpec extends ObjectBehavior
 
         $xmlRoot->getElements('/DocumentElement/MedgivandeViaHemsida')->willReturn([$xmlMandate]);
 
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Organisationsnr')->willReturn(self::PAYEE_ORG_NR);
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Bankgironr')->willReturn(self::PAYEE_BANKGIRO);
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Organisationsnr', new IdValidator)
+            ->willReturn(self::PAYEE_ORG_NR);
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Bankgironr', new AccountValidator)
+            ->willReturn(self::PAYEE_BANKGIRO);
     }
 
     function it_is_initializable()
@@ -60,13 +68,15 @@ class XmlMandateParserSpec extends ObjectBehavior
 
     function it_fails_on_invalid_payee_org_nr($xmlRoot, $xmlMandate)
     {
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Organisationsnr')->willReturn('not-a-valid-org-nr');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Organisationsnr', new IdValidator)
+            ->willReturn('not-a-valid-org-nr');
         $this->shouldThrow(InvalidXmlException::CLASS)->duringParse($xmlRoot);
     }
 
     function it_fails_on_invalid_payee_bankgiro($xmlRoot, $xmlMandate)
     {
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Bankgironr')->willReturn('not-a-valid-bankgiro');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Bankgironr', new AccountValidator)
+            ->willReturn('not-a-valid-bankgiro');
         $this->shouldThrow(InvalidXmlException::CLASS)->duringParse($xmlRoot);
     }
 
@@ -82,45 +92,53 @@ class XmlMandateParserSpec extends ObjectBehavior
         $translator,
         Donor $donor
     ) {
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Autogiroanmälan_x002C__x0020_medgivande')->willReturn('');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Autogiroanmälan_x002C__x0020_medgivande', new StringValidator)
+            ->willReturn('');
 
         $builder->reset()->willReturn($builder)->shouldBeCalled();
         $builder->setMandateSource(Donor::MANDATE_SOURCE_ONLINE_FORM)->willReturn($builder)->shouldBeCalled();
 
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_namn')->willReturn('name');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_namn', new StringValidator)->willReturn('name');
         $builder->setName('name')->willReturn($builder)->shouldBeCalled();
 
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_1')->willReturn('1');
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_2')->willReturn('2');
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_3')->willReturn('3');
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postnr')->willReturn('code');
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postort')->willReturn('city');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_1', new StringValidator)
+            ->willReturn('1');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_2', new StringValidator)
+            ->willReturn('2');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_3', new StringValidator)
+            ->willReturn('3');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postnr', new PostalCodeValidator)
+            ->willReturn('code');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postort', new StringValidator)
+            ->willReturn('city');
         $builder->setPostalAddress(new PostalAddress('1', '2', '3', 'code', 'city'))
             ->willReturn($builder)
             ->shouldBeCalled();
 
         $xmlMandate->hasElement('/MedgivandeViaHemsida/Betalarnummer')->willReturn(true);
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalarnummer')->willReturn('payer-number');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Betalarnummer', new PayerNumberValidator)
+            ->willReturn('payer-number');
         $builder->setPayerNumber('payer-number')->willReturn($builder)->shouldBeCalled();
 
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Kontonr')->willReturn('account');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Kontonr', new AccountValidator)->willReturn('account');
         $accountFactory->createAccount('account')->willReturn($account);
         $builder->setAccount($account)->willReturn($builder)->shouldBeCalled();
 
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr')->willReturn('id');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr', new IdValidator)
+            ->willReturn('id');
         $idFactory->createId('id')->willReturn($id);
         $builder->setId($id)->willReturn($builder)->shouldBeCalled();
 
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Verifieringstid')->willReturn('time');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Verifieringstid', new NumericValidator)->willReturn('time');
         $builder->setAttribute('verification_time', 'time')->willReturn($builder)->shouldBeCalled();
 
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Verifieringsreferens')->willReturn('code');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Verifieringsreferens', new StringValidator)->willReturn('code');
         $builder->setAttribute('verification_code', 'code')->willReturn($builder)->shouldBeCalled();
 
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Formulärnamn')->willReturn('form');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Formulärnamn', new StringValidator)->willReturn('form');
         $xmlMandate->getElements('/MedgivandeViaHemsida/Övrig_x0020_info/customdata')->willReturn([$xmlCustom]);
-        $xmlCustom->readElement('/customdata/name')->willReturn('cust_name');
-        $xmlCustom->readElement('/customdata/value')->willReturn('cust_value');
+        $xmlCustom->readElement('/customdata/name', new StringValidator)->willReturn('cust_name');
+        $xmlCustom->readElement('/customdata/value', new StringValidator)->willReturn('cust_value');
         $translator->writeValue($builder, 'form', 'cust_name', 'cust_value')->shouldBeCalled();
 
         $builder->buildDonor()->willReturn($donor)->shouldBeCalled();

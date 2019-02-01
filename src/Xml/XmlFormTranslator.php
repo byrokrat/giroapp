@@ -24,6 +24,9 @@ namespace byrokrat\giroapp\Xml;
 
 use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Exception\InvalidXmlFormException;
+use byrokrat\giroapp\Validator\EmailValidator;
+use byrokrat\giroapp\Validator\NumericValidator;
+use byrokrat\giroapp\Validator\PhoneValidator;
 use byrokrat\amount\Currency\SEK;
 
 /**
@@ -92,18 +95,24 @@ class XmlFormTranslator
 
             switch ($value) {
                 case XmlFormInterface::PHONE:
-                    $map[$key] = function ($donorBuilder, $value) {
-                        $donorBuilder->setPhone($value);
+                    $map[$key] = function ($donorBuilder, $value) use ($key) {
+                        $donorBuilder->setPhone(
+                            (new PhoneValidator)->validate($key, $value)
+                        );
                     };
                     break;
                 case XmlFormInterface::EMAIL:
-                    $map[$key] = function ($donorBuilder, $value) {
-                        $donorBuilder->setEmail($value);
+                    $map[$key] = function ($donorBuilder, $value) use ($key) {
+                        $donorBuilder->setEmail(
+                            (new EmailValidator)->validate($key, $value)
+                        );
                     };
                     break;
                 case XmlFormInterface::DONATION_AMOUNT:
-                    $map[$key] = function ($donorBuilder, $value) {
-                        $donorBuilder->setDonationAmount(new SEK($value));
+                    $map[$key] = function ($donorBuilder, $value) use ($key) {
+                        $donorBuilder->setDonationAmount(new SEK(
+                            (new NumericValidator)->validate($key, $value)
+                        ));
                     };
                     break;
                 case XmlFormInterface::COMMENT:

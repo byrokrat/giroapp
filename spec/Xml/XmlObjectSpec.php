@@ -6,6 +6,7 @@ namespace spec\byrokrat\giroapp\Xml;
 
 use byrokrat\giroapp\Xml\XmlObject;
 use byrokrat\giroapp\Exception\InvalidXmlException;
+use byrokrat\giroapp\Validator\ValidatorInterface;
 use PhpSpec\ObjectBehavior;
 use PhpSpec\Exception\Example\FailureException;
 use Prophecy\Argument;
@@ -37,22 +38,24 @@ class XmlObjectSpec extends ObjectBehavior
         $this->shouldNotHaveElement('c');
     }
 
-    function it_can_read_element()
+    function it_can_read_element(ValidatorInterface $validator)
     {
-        $this->beConstructedWith('<a><b>foobar</b></a>');
-        $this->readElement('/a/b')->shouldBeLike('foobar');
+        $this->beConstructedWith('<a><b>foo</b></a>');
+        $validator->validate('/a/b', 'foo')->willReturn('bar')->shouldBeCalled();
+        $this->readElement('/a/b', $validator)->shouldBeLike('bar');
     }
 
-    function it_reads_content_from_first_element()
+    function it_reads_content_from_first_element(ValidatorInterface $validator)
     {
         $this->beConstructedWith('<xml><a>foo</a><a>bar</a></xml>');
-        $this->readElement('/xml/a')->shouldBeLike('foo');
+        $validator->validate('/xml/a', 'foo')->willReturn('foo');
+        $this->readElement('/xml/a', $validator)->shouldBeLike('foo');
     }
 
-    function it_fails_if_element_is_not_found()
+    function it_fails_if_element_is_not_found(ValidatorInterface $validator)
     {
         $this->beConstructedWith('<xml></xml>');
-        $this->shouldThrow(InvalidXmlException::CLASS)->duringReadElement('/xml/does/not/exist');
+        $this->shouldThrow(InvalidXmlException::CLASS)->duringReadElement('/xml/does/not/exist', $validator);
     }
 
     function it_can_iterate_over_elements()

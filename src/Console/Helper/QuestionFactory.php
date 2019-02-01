@@ -25,10 +25,7 @@ namespace byrokrat\giroapp\Console\Helper;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 
-/**
- * Helper that creates simple questions
- */
-class QuestionFactory
+final class QuestionFactory
 {
     public static function createQuestion(string $question, $default = null): Question
     {

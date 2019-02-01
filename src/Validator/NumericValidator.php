@@ -20,25 +20,20 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DependencyInjection;
+namespace byrokrat\giroapp\Validator;
 
-use byrokrat\giroapp\Console\Helper\Validators;
+use hanneskod\clean\Rule;
 
-/**
- * Use this trait to automatically inject validators
- */
-trait ValidatorsProperty
+final class NumericValidator implements ValidatorInterface
 {
-    /**
-     * @var Validators
-     */
-    protected $validators;
+    use CleanValidatorTrait;
 
-    /**
-     * @required
-     */
-    public function setValidators(Validators $validators): void
+    protected function getRule(): Rule
     {
-        $this->validators = $validators;
+        return (new Rule)
+            ->msg('value must be numerical')
+            ->match(function (string $val) {
+                return empty($val) || ctype_digit($val);
+            });
     }
 }

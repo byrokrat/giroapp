@@ -22,25 +22,29 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\State\StateCollection;
+use byrokrat\giroapp\Validator;
+use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 
-/**
- * Command to edit an existing mandate
- */
 final class EditCommand implements CommandInterface
 {
-    use Helper\DonorArgument, DispatcherProperty;
+    use DependencyInjection\AccountFactoryProperty,
+        DependencyInjection\DispatcherProperty,
+        DependencyInjection\IdFactoryProperty,
+        Helper\DonorArgument;
 
-    /** @var StateCollection */
+    /**
+     * @var StateCollection
+     */
     private $stateCollection;
 
     public function __construct(StateCollection $stateCollection)
@@ -94,8 +98,10 @@ final class EditCommand implements CommandInterface
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         $donor = $this->readDonor($input);
-        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+
         $descs = self::DESCRIPTIONS;
+
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 
         $this->dispatcher->dispatch(
             Events::INFO,
@@ -106,30 +112,43 @@ final class EditCommand implements CommandInterface
             $inputReader->readInput(
                 'name',
                 Helper\QuestionFactory::createQuestion($descs['name'], $donor->getName()),
-                $this->validators->getRequiredStringValidator('Name')
+                new Validator\ValidatorCollection(
+                    new Validator\StringValidator,
+                    new Validator\NotEmptyValidator
+                )
             )
         );
 
-        $states = (array)array_combine($this->stateCollection->getItemKeys(), $this->stateCollection->getItemKeys());
+        $states = array_change_key_case(
+            (array)array_combine($this->stateCollection->getItemKeys(), $this->stateCollection->getItemKeys()),
+            CASE_LOWER
+        );
 
         $donor->setState(
-            $inputReader->readInput(
-                'state',
-                Helper\QuestionFactory::createChoiceQuestion(
-                    $descs['state'],
-                    $states,
-                    $donor->getState()->getStateId()
-                ),
-                $this->validators->getStateValidator($states)
+            $this->stateCollection->getState(
+                $inputReader->readInput(
+                    'state',
+                    Helper\QuestionFactory::createChoiceQuestion(
+                        $descs['state'],
+                        $states,
+                        $donor->getState()->getStateId()
+                    ),
+                    new Validator\ChoiceValidator($states)
+                )
             ),
             'Donor edited by user'
         );
 
         $donor->setDonationAmount(
-            $inputReader->readInput(
-                'amount',
-                Helper\QuestionFactory::createQuestion($descs['amount'], $donor->getDonationAmount()->getAmount()),
-                $this->validators->getAmountValidator()
+            new SEK(
+                $inputReader->readInput(
+                    'amount',
+                    Helper\QuestionFactory::createQuestion($descs['amount'], $donor->getDonationAmount()->getAmount()),
+                    new Validator\ValidatorCollection(
+                        new Validator\NotEmptyValidator,
+                        new Validator\NumericValidator
+                    )
+                )
             )
         );
 
@@ -138,17 +157,17 @@ final class EditCommand implements CommandInterface
                 $inputReader->readInput(
                     'address1',
                     Helper\QuestionFactory::createQuestion($descs['address1'], $donor->getPostalAddress()->getLine1()),
-                    $this->validators->getStringFilter()
+                    new Validator\StringValidator
                 ),
                 $inputReader->readInput(
                     'address2',
                     Helper\QuestionFactory::createQuestion($descs['address2'], $donor->getPostalAddress()->getLine2()),
-                    $this->validators->getStringFilter()
+                    new Validator\StringValidator
                 ),
                 $inputReader->readInput(
                     'address3',
                     Helper\QuestionFactory::createQuestion($descs['address3'], $donor->getPostalAddress()->getLine3()),
-                    $this->validators->getStringFilter()
+                    new Validator\StringValidator
                 ),
                 $inputReader->readInput(
                     'postal-code',
@@ -156,7 +175,7 @@ final class EditCommand implements CommandInterface
                         $descs['postal-code'],
                         $donor->getPostalAddress()->getPostalCode()
                     ),
-                    $this->validators->getPostalCodeValidator()
+                    new Validator\PostalCodeValidator
                 ),
                 $inputReader->readInput(
                     'postal-city',
@@ -164,7 +183,7 @@ final class EditCommand implements CommandInterface
                         $descs['postal-city'],
                         $donor->getPostalAddress()->getPostalCity()
                     ),
-                    $this->validators->getStringFilter()
+                    new Validator\StringValidator
                 )
             )
         );
@@ -173,7 +192,7 @@ final class EditCommand implements CommandInterface
             $inputReader->readInput(
                 'email',
                 Helper\QuestionFactory::createQuestion($descs['email'], $donor->getEmail()),
-                $this->validators->getEmailValidator()
+                new Validator\EmailValidator
             )
         );
 
@@ -181,7 +200,7 @@ final class EditCommand implements CommandInterface
             $inputReader->readInput(
                 'phone',
                 Helper\QuestionFactory::createQuestion($descs['phone'], $donor->getPhone()),
-                $this->validators->getPhoneValidator()
+                new Validator\PhoneValidator
             )
         );
 
@@ -189,7 +208,7 @@ final class EditCommand implements CommandInterface
             $inputReader->readInput(
                 'comment',
                 Helper\QuestionFactory::createQuestion($descs['comment'], $donor->getComment()),
-                $this->validators->getStringFilter()
+                new Validator\StringValidator
             )
         );
 
@@ -199,7 +218,7 @@ final class EditCommand implements CommandInterface
                 $inputReader->readInput(
                     '',
                     Helper\QuestionFactory::createQuestion("Attribute <info>$attrKey</info>", $attrValue),
-                    $this->validators->getStringFilter()
+                    new Validator\StringValidator
                 )
             );
         }
@@ -214,7 +233,7 @@ final class EditCommand implements CommandInterface
             $attrKey = $inputReader->readInput(
                 '',
                 Helper\QuestionFactory::createQuestion('Add an attribute (empty to skip)', $attrKeys[$count] ?? ''),
-                $this->validators->getStringFilter()
+                new Validator\StringValidator
             );
 
             if (!$attrKey) {
@@ -224,7 +243,7 @@ final class EditCommand implements CommandInterface
             $attrValue = $inputReader->readInput(
                 '',
                 Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
-                $this->validators->getStringFilter()
+                new Validator\StringValidator
             );
 
             $donor->setAttribute($attrKey, $attrValue);

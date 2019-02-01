@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Xml;
 
 use byrokrat\giroapp\Exception\InvalidXmlException;
+use byrokrat\giroapp\Validator\ValidatorInterface;
 
 /**
  * Works as a facade to the actual xml processing
@@ -67,7 +68,7 @@ class XmlObject
      *
      * @throws InvalidXmlException If no element matching query is found
      */
-    public function readElement(string $path): string
+    public function readElement(string $path, ValidatorInterface $validator): string
     {
         $result = $this->xml->xpath($path);
 
@@ -75,7 +76,7 @@ class XmlObject
             throw new InvalidXmlException("Unable to find element $path");
         }
 
-        return (string)$result[0];
+        return $validator->validate($path, (string)$result[0]);
     }
 
     /**
