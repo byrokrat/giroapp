@@ -31,6 +31,19 @@ use byrokrat\giroapp\State;
 final class CorePlugin extends Plugin
 {
     public function __construct(
+        Console\AddCommand $addCommand,
+        Console\EditCommand $editCommand,
+        Console\ExportCommand $expotCommand,
+        Console\ImportCommand $importCommand,
+        Console\LsCommand $lsCommand,
+        Console\MigrateCommand $migrateCommand,
+        Console\PauseCommand $pauseCommand,
+        Console\PurgeCommand $purgeCommand,
+        Console\RemoveCommand $removeCommand,
+        Console\RevokeCommand $revokeCommand,
+        Console\ShowCommand $showCommand,
+        Console\StatusCommand $statusCommand,
+        Console\ValidateCommand $validateCommand,
         Filter\ActiveFilter $activeFilter,
         Filter\InactiveFilter $incativeFilter,
         Filter\ExportableFilter $exportableFilter,
@@ -60,20 +73,7 @@ final class CorePlugin extends Plugin
         State\RevocationSentState $revocationSentState,
         State\PauseMandateState $pauseMandateState,
         State\PauseSentState $pauseSentState,
-        State\PausedState $pausedState,
-        Console\AddCommand $addCommand,
-        Console\EditCommand $editCommand,
-        Console\ExportCommand $expotCommand,
-        Console\ImportCommand $importCommand,
-        Console\LsCommand $lsCommand,
-        Console\MigrateCommand $migrateCommand,
-        Console\PauseCommand $pauseCommand,
-        Console\PurgeCommand $purgeCommand,
-        Console\RemoveCommand $removeCommand,
-        Console\RevokeCommand $revokeCommand,
-        Console\ShowCommand $showCommand,
-        Console\StatusCommand $statusCommand,
-        Console\ValidateCommand $validateCommand
+        State\PausedState $pausedState
     ) {
         parent::__construct(...func_get_args());
     }

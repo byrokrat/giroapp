@@ -19,20 +19,19 @@ use Symfony\Component\DependencyInjection\ParameterBag\FrozenParameterBag;
 class ProjectServiceContainer extends Container
 {
     private $parameters;
-    private $targetDirs = array();
+    private $targetDirs = [];
 
     public function __construct()
     {
         $this->parameters = $this->getDefaultParameters();
 
-        $this->services = $this->privates = array();
-        $this->methodMap = array(
+        $this->services = $this->privates = [];
+        $this->methodMap = [
             'Symfony\\Component\\Console\\Application' => 'getApplicationService',
-            'byrokrat\\giroapp\\Plugin\\EnvironmentInterface' => 'getEnvironmentInterfaceService',
             'ini' => 'getIniService',
-        );
+        ];
 
-        $this->aliases = array();
+        $this->aliases = [];
     }
 
     public function compile()
@@ -47,7 +46,7 @@ class ProjectServiceContainer extends Container
 
     public function getRemovedIds()
     {
-        return array(
+        return [
             'JsonSchema\\Validator' => true,
             'Psr\\Container\\ContainerInterface' => true,
             'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
@@ -121,7 +120,9 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Mapper\\Schema\\PostalAddressSchema' => true,
             'byrokrat\\giroapp\\Model\\Builder\\DonorBuilder' => true,
             'byrokrat\\giroapp\\Model\\Builder\\MandateKeyFactory' => true,
+            'byrokrat\\giroapp\\Plugin\\ConfiguringEnvironment' => true,
             'byrokrat\\giroapp\\Plugin\\CorePlugin' => true,
+            'byrokrat\\giroapp\\Plugin\\EnvironmentInterface' => true,
             'byrokrat\\giroapp\\Plugin\\FilesystemLoadingPlugin' => true,
             'byrokrat\\giroapp\\Plugin\\PluginCollection' => true,
             'byrokrat\\giroapp\\Sorter\\AmountSorter' => true,
@@ -174,7 +175,7 @@ class ProjectServiceContainer extends Container
             'organization_id' => true,
             'setup_db' => true,
             'setup_mkdir' => true,
-        );
+        ];
     }
 
     /**
@@ -184,26 +185,16 @@ class ProjectServiceContainer extends Container
      */
     protected function getApplicationService()
     {
-        return $this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '$app_version$');
-    }
+        $this->services['Symfony\Component\Console\Application'] = $instance = new \Symfony\Component\Console\Application('GiroApp', '$app_version$');
 
-    /**
-     * Gets the public 'byrokrat\giroapp\Plugin\EnvironmentInterface' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Plugin\Environment
-     */
-    protected function getEnvironmentInterfaceService()
-    {
         $a = ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService());
         $b = new \byrokrat\giroapp\Filter\FilterCollection();
         $c = new \byrokrat\giroapp\Formatter\FormatterCollection();
         $d = new \byrokrat\giroapp\Sorter\SorterCollection();
         $e = ($this->privates['byrokrat\giroapp\State\StateCollection'] ?? ($this->privates['byrokrat\giroapp\State\StateCollection'] = new \byrokrat\giroapp\State\StateCollection()));
 
-        $this->services['byrokrat\giroapp\Plugin\EnvironmentInterface'] = $instance = new \byrokrat\giroapp\Plugin\Environment(($this->services['Symfony\Component\Console\Application'] ?? ($this->services['Symfony\Component\Console\Application'] = new \Symfony\Component\Console\Application('GiroApp', '$app_version$'))), $a, $b, $c, $d, $e, ($this->services['ini'] ?? $this->getIniService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator())));
+        $f = new \byrokrat\giroapp\Plugin\ConfiguringEnvironment($a, $b, $c, $d, $e, ($this->services['ini'] ?? $this->getIniService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator())));
 
-        $f = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("plugins_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
-        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator(array(0 => '.'))))->createFiles($f);
         $g = new \byrokrat\giroapp\Console\AddCommand(($this->privates['byrokrat\giroapp\Model\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()));
 
         $h = ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? ($this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()));
@@ -246,8 +237,12 @@ class ProjectServiceContainer extends Container
         $t->setDonorMapper($k);
         $u = new \byrokrat\giroapp\Console\StatusCommand();
         $u->setDonorMapper($k);
+        $v = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("plugins_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
+        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'])))->createFiles($v);
 
-        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($f), new \byrokrat\giroapp\Plugin\CorePlugin(new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\InactiveFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\PurgeableFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), new \byrokrat\giroapp\Formatter\CsvFormatter(), new \byrokrat\giroapp\Formatter\HumanFormatter(), new \byrokrat\giroapp\Formatter\JsonFormatter(), new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter(), new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? ($this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_day_of_month"), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState(), new \byrokrat\giroapp\State\PauseMandateState(), new \byrokrat\giroapp\State\PauseSentState(), new \byrokrat\giroapp\State\PausedState(), $g, $j, $l, $m, $n, $o, $p, $q, $r, $s, $t, $u, new \byrokrat\giroapp\Console\ValidateCommand(($this->privates['fs_db'] ?? $this->getFsDbService()), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator()))))->loadPlugin($instance);
+        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\CorePlugin($g, $j, $l, $m, $n, $o, $p, $q, $r, $s, $t, $u, new \byrokrat\giroapp\Console\ValidateCommand(($this->privates['fs_db'] ?? $this->getFsDbService()), ($this->privates['byrokrat\giroapp\Mapper\Schema\DonorSchema'] ?? $this->getDonorSchemaService())->getJsonSchema(), new \JsonSchema\Validator()), new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\InactiveFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\PurgeableFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), new \byrokrat\giroapp\Formatter\CsvFormatter(), new \byrokrat\giroapp\Formatter\HumanFormatter(), new \byrokrat\giroapp\Formatter\JsonFormatter(), new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter(), new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? ($this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_day_of_month"), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState(), new \byrokrat\giroapp\State\PauseMandateState(), new \byrokrat\giroapp\State\PauseSentState(), new \byrokrat\giroapp\State\PausedState()), new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($v)))->loadPlugin($f);
+
+        $f->configureApplication($instance);
 
         return $instance;
     }
@@ -259,7 +254,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getIniService()
     {
-        $this->services['ini'] = $instance = new \byrokrat\giroapp\Config\ConfigManager(new \byrokrat\giroapp\Config\ArrayRepository(array('base_dir' => (new \byrokrat\giroapp\Config\BaseDirReader($this->getEnv('GIROAPP_INI')))->getBaseDir())));
+        $this->services['ini'] = $instance = new \byrokrat\giroapp\Config\ConfigManager(new \byrokrat\giroapp\Config\ArrayRepository(['base_dir' => (new \byrokrat\giroapp\Config\BaseDirReader($this->getEnv('GIROAPP_INI')))->getBaseDir()]));
 
         (new \byrokrat\giroapp\Config\IniFileLoader($this->getEnv('GIROAPP_INI'), ($this->privates['fs_cwd'] ?? $this->getFsCwdService())))->loadIniFile($instance);
 
@@ -275,129 +270,129 @@ class ProjectServiceContainer extends Container
     {
         $this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] = $instance = new \Symfony\Component\EventDispatcher\EventDispatcher();
 
-        $instance->addListener('EXECUTION_STARTED', array(0 => function () {
+        $instance->addListener('EXECUTION_STARTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchDebug'), 10);
-        $instance->addListener('EXECUTION_STOPED', array(0 => function () {
+        }, 1 => 'dispatchDebug'], 10);
+        $instance->addListener('EXECUTION_STOPED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchDebug'), 10);
-        $instance->addListener('FILE_IMPORTED', array(0 => function () {
+        }, 1 => 'dispatchDebug'], 10);
+        $instance->addListener('FILE_IMPORTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('FILE_EXPORTED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('FILE_EXPORTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('FILE_FORCEFULLY_IMPORTED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('FILE_FORCEFULLY_IMPORTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('DONOR_ADDED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('DONOR_ADDED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('DONOR_UPDATED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('DONOR_UPDATED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('MANDATE_APPROVED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('MANDATE_APPROVED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('MANDATE_REVOKED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('MANDATE_REVOKED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('MANDATE_REVOCATION_REQUESTED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('MANDATE_REVOCATION_REQUESTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('DONOR_REMOVED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('DONOR_REMOVED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('MANDATE_INVALIDATED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('MANDATE_INVALIDATED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchWarning'), 10);
-        $instance->addListener('MANDATE_PAUSE_REQUESTED', array(0 => function () {
+        }, 1 => 'dispatchWarning'], 10);
+        $instance->addListener('MANDATE_PAUSE_REQUESTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('MANDATE_PAUSED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('MANDATE_PAUSED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('MANDATE_RESTARTED', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('MANDATE_RESTARTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchInfo'), 10);
-        $instance->addListener('ERROR', array(0 => function () {
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('ERROR', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
-        }, 1 => 'onLogEvent'), 10);
-        $instance->addListener('WARNING', array(0 => function () {
+        }, 1 => 'onLogEvent'], 10);
+        $instance->addListener('WARNING', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
-        }, 1 => 'onLogEvent'), 10);
-        $instance->addListener('INFO', array(0 => function () {
+        }, 1 => 'onLogEvent'], 10);
+        $instance->addListener('INFO', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
-        }, 1 => 'onLogEvent'), 10);
-        $instance->addListener('FILE_IMPORTED', array(0 => function () {
+        }, 1 => 'onLogEvent'], 10);
+        $instance->addListener('FILE_IMPORTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\FileImportChecksumListener'] ?? $this->getFileImportChecksumListenerService());
-        }, 1 => 'onFILEIMPORTED'), 10);
-        $instance->addListener('FILE_IMPORTED', array(0 => function () {
+        }, 1 => 'onFILEIMPORTED'], 10);
+        $instance->addListener('FILE_IMPORTED', [0 => function () {
             return ($this->privates['file_import_dumper'] ?? $this->getFileImportDumperService());
-        }, 1 => 'onFileEvent'), -10);
-        $instance->addListener('FILE_FORCEFULLY_IMPORTED', array(0 => function () {
+        }, 1 => 'onFileEvent'], -10);
+        $instance->addListener('FILE_FORCEFULLY_IMPORTED', [0 => function () {
             return ($this->privates['file_import_dumper'] ?? $this->getFileImportDumperService());
-        }, 1 => 'onFileEvent'), -10);
-        $instance->addListener('EXECUTION_STOPED', array(0 => function () {
+        }, 1 => 'onFileEvent'], -10);
+        $instance->addListener('EXECUTION_STOPED', [0 => function () {
             return ($this->privates['file_import_dumper'] ?? $this->getFileImportDumperService());
-        }, 1 => 'onEXECUTIONSTOPED'));
-        $instance->addListener('FILE_EXPORTED', array(0 => function () {
+        }, 1 => 'onEXECUTIONSTOPED']);
+        $instance->addListener('FILE_EXPORTED', [0 => function () {
             return ($this->privates['file_export_dumper'] ?? $this->getFileExportDumperService());
-        }, 1 => 'onFileEvent'), -9);
-        $instance->addListener('EXECUTION_STOPED', array(0 => function () {
+        }, 1 => 'onFileEvent'], -9);
+        $instance->addListener('EXECUTION_STOPED', [0 => function () {
             return ($this->privates['file_export_dumper'] ?? $this->getFileExportDumperService());
-        }, 1 => 'onEXECUTIONSTOPED'));
-        $instance->addListener('FILE_EXPORTED', array(0 => function () {
+        }, 1 => 'onEXECUTIONSTOPED']);
+        $instance->addListener('FILE_EXPORTED', [0 => function () {
             return ($this->privates['file_export_cwd_dumper'] ?? $this->getFileExportCwdDumperService());
-        }, 1 => 'onFileEvent'), -10);
-        $instance->addListener('FILE_IMPORTED', array(0 => function () {
+        }, 1 => 'onFileEvent'], -10);
+        $instance->addListener('FILE_IMPORTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\FileImportingListener'] ?? ($this->privates['byrokrat\giroapp\Listener\FileImportingListener'] = new \byrokrat\giroapp\Listener\FileImportingListener()));
-        }, 1 => 'onFILEIMPORTED'));
-        $instance->addListener('FILE_FORCEFULLY_IMPORTED', array(0 => function () {
+        }, 1 => 'onFILEIMPORTED']);
+        $instance->addListener('FILE_FORCEFULLY_IMPORTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\FileImportingListener'] ?? ($this->privates['byrokrat\giroapp\Listener\FileImportingListener'] = new \byrokrat\giroapp\Listener\FileImportingListener()));
-        }, 1 => 'onFileImported'));
-        $instance->addListener('AUTOGIRO_FILE_IMPORTED', array(0 => function () {
+        }, 1 => 'onFileImported']);
+        $instance->addListener('AUTOGIRO_FILE_IMPORTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\AutogiroImportingListener'] ?? $this->getAutogiroImportingListenerService());
-        }, 1 => 'onAUTOGIROFILEIMPORTED'));
-        $instance->addListener('XML_FILE_IMPORTED', array(0 => function () {
+        }, 1 => 'onAUTOGIROFILEIMPORTED']);
+        $instance->addListener('XML_FILE_IMPORTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] ?? $this->getXmlImportingListenerService());
-        }, 1 => 'onXMLFILEIMPORTED'));
-        $instance->addListener('EXECUTION_STOPED', array(0 => function () {
+        }, 1 => 'onXMLFILEIMPORTED']);
+        $instance->addListener('EXECUTION_STOPED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\CommittingListener'] ?? $this->getCommittingListenerService());
-        }, 1 => 'onEXECUTIONSTOPED'));
-        $instance->addListener('MANDATE_RESPONSE_RECEIVED', array(0 => function () {
+        }, 1 => 'onEXECUTIONSTOPED']);
+        $instance->addListener('MANDATE_RESPONSE_RECEIVED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MandateResponseListener'] ?? $this->getMandateResponseListenerService());
-        }, 1 => 'onMANDATERESPONSERECEIVED'));
-        $instance->addListener('DONOR_ADDED', array(0 => function () {
+        }, 1 => 'onMANDATERESPONSERECEIVED']);
+        $instance->addListener('DONOR_ADDED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDONORADDED'));
-        $instance->addListener('DONOR_REMOVED', array(0 => function () {
+        }, 1 => 'onDONORADDED']);
+        $instance->addListener('DONOR_REMOVED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDONORREMOVED'));
-        $instance->addListener('DONOR_UPDATED', array(0 => function () {
+        }, 1 => 'onDONORREMOVED']);
+        $instance->addListener('DONOR_UPDATED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated'));
-        $instance->addListener('MANDATE_APPROVED', array(0 => function () {
+        }, 1 => 'onDonorUpdated']);
+        $instance->addListener('MANDATE_APPROVED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated'));
-        $instance->addListener('MANDATE_REVOKED', array(0 => function () {
+        }, 1 => 'onDonorUpdated']);
+        $instance->addListener('MANDATE_REVOKED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated'));
-        $instance->addListener('MANDATE_REVOCATION_REQUESTED', array(0 => function () {
+        }, 1 => 'onDonorUpdated']);
+        $instance->addListener('MANDATE_REVOCATION_REQUESTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated'));
-        $instance->addListener('MANDATE_INVALIDATED', array(0 => function () {
+        }, 1 => 'onDonorUpdated']);
+        $instance->addListener('MANDATE_INVALIDATED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated'));
-        $instance->addListener('MANDATE_PAUSE_REQUESTED', array(0 => function () {
+        }, 1 => 'onDonorUpdated']);
+        $instance->addListener('MANDATE_PAUSE_REQUESTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated'));
-        $instance->addListener('MANDATE_PAUSED', array(0 => function () {
+        }, 1 => 'onDonorUpdated']);
+        $instance->addListener('MANDATE_PAUSED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated'));
-        $instance->addListener('MANDATE_RESTARTED', array(0 => function () {
+        }, 1 => 'onDonorUpdated']);
+        $instance->addListener('MANDATE_RESTARTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated'));
+        }, 1 => 'onDonorUpdated']);
 
         return $instance;
     }
@@ -442,7 +437,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getCommittingListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(array('donors' => ($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService()), 'imports' => ($this->privates['db_import_engine'] ?? $this->getDbImportEngineService()), 'log' => ($this->privates['db_log_engine'] ?? $this->getDbLogEngineService()))));
+        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(['donors' => ($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService()), 'imports' => ($this->privates['db_import_engine'] ?? $this->getDbImportEngineService()), 'log' => ($this->privates['db_log_engine'] ?? $this->getDbLogEngineService())]));
     }
 
     /**
@@ -585,7 +580,7 @@ class ProjectServiceContainer extends Container
     protected function getFileExportDumperService()
     {
         $a = ($this->privates['byrokrat\giroapp\Filesystem\FilesystemFactory'] ?? $this->getFilesystemFactoryService())->createFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("exports_dir"));
-        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator(array(0 => '.'))))->createFiles($a);
+        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'])))->createFiles($a);
 
         return $this->privates['file_export_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Filesystem\RenamingProcessor'] ?? $this->getRenamingProcessorService()));
     }
@@ -598,7 +593,7 @@ class ProjectServiceContainer extends Container
     protected function getFileImportDumperService()
     {
         $a = ($this->privates['byrokrat\giroapp\Filesystem\FilesystemFactory'] ?? $this->getFilesystemFactoryService())->createFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("imports_dir"));
-        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator(array(0 => '.'))))->createFiles($a);
+        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'])))->createFiles($a);
 
         return $this->privates['file_import_dumper'] = new \byrokrat\giroapp\Listener\FileDumpingListener($a, ($this->privates['byrokrat\giroapp\Filesystem\RenamingProcessor'] ?? $this->getRenamingProcessorService()));
     }
@@ -632,7 +627,7 @@ class ProjectServiceContainer extends Container
     {
         $this->privates['fs_db'] = $instance = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("db_dsn"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
 
-        (new \byrokrat\giroapp\Filesystem\FilesystemConfigurator(array(0 => '.'), array(0 => 'donors.json', 1 => 'imports.json')))->createFiles($instance);
+        (new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'], [0 => 'donors.json', 1 => 'imports.json']))->createFiles($instance);
 
         return $instance;
     }
@@ -646,7 +641,7 @@ class ProjectServiceContainer extends Container
     {
         $instance = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("external_data_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
 
-        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator(array(0 => '.'))))->createFiles($instance);
+        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'])))->createFiles($instance);
 
         return $instance;
     }
@@ -700,8 +695,8 @@ class ProjectServiceContainer extends Container
         return $this->parameterBag;
     }
 
-    private $loadedDynamicParameters = array();
-    private $dynamicParameters = array();
+    private $loadedDynamicParameters = [];
+    private $dynamicParameters = [];
 
     /**
      * Computes a dynamic parameter.
@@ -724,12 +719,12 @@ class ProjectServiceContainer extends Container
      */
     protected function getDefaultParameters()
     {
-        return array(
+        return [
             'db.donors' => 'donors.json',
             'db.imports' => 'imports.json',
             'app.name' => 'GiroApp',
             'app.version' => '$app_version$',
             'env(GIROAPP_INI)' => 'giroapp.ini',
-        );
+        ];
     }
 }

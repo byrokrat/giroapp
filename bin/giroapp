@@ -24,13 +24,11 @@ declare(strict_types = 1);
 require __DIR__ . '/../vendor/autoload.php';
 
 use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
-use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use Symfony\Component\Console\Application;
 
 $container = new ProjectServiceContainer;
 
 try {
-    $container->get(EnvironmentInterface::CLASS);
     $container->get(Application::CLASS)->run();
 } catch (\Exception $e) {
     echo "ERROR: {$e->getMessage()} \n";

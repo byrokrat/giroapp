@@ -39,13 +39,8 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-final class Environment implements EnvironmentInterface
+final class ConfiguringEnvironment implements EnvironmentInterface
 {
-    /**
-     * @var Application
-     */
-    private $application;
-
     /**
      * @var EventDispatcherInterface
      */
@@ -81,8 +76,12 @@ final class Environment implements EnvironmentInterface
      */
     private $xmlFormTranslator;
 
+    /**
+     * @var CommandInterface[]
+     */
+    private $commands = [];
+
     public function __construct(
-        Application $application,
         EventDispatcherInterface $dispatcher,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
@@ -91,7 +90,6 @@ final class Environment implements EnvironmentInterface
         ConfigManager $configManager,
         XmlFormTranslator $xmlFormTranslator
     ) {
-        $this->application = $application;
         $this->dispatcher = $dispatcher;
         $this->filterCollection = $filterCollection;
         $this->formatterCollection = $formatterCollection;
@@ -108,7 +106,7 @@ final class Environment implements EnvironmentInterface
 
     public function registerCommand(CommandInterface $command): void
     {
-        $this->application->add(new Adapter($command, $this->dispatcher));
+        $this->commands[] = $command;
     }
 
     public function registerSubscriber(EventSubscriberInterface $subscriber): void
@@ -139,5 +137,12 @@ final class Environment implements EnvironmentInterface
     public function registerXmlForm(XmlFormInterface $xmlForm): void
     {
         $this->xmlFormTranslator->addXmlForm($xmlForm);
+    }
+
+    public function configureApplication(Application $application): void
+    {
+        foreach ($this->commands as $command) {
+            $application->add(new Adapter($command, $this->dispatcher));
+        }
     }
 }

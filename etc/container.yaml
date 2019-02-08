@@ -19,6 +19,27 @@ services:
         class: ~
         arguments: ['%app.name%', '%app.version%']
         public: true
+        configurator: 'byrokrat\giroapp\Plugin\ConfiguringEnvironment:configureApplication'
+
+    byrokrat\giroapp\Plugin\EnvironmentInterface:
+        alias: byrokrat\giroapp\Plugin\ConfiguringEnvironment
+
+    byrokrat\giroapp\Plugin\ConfiguringEnvironment:
+        class: ~
+        configurator: 'byrokrat\giroapp\Plugin\PluginCollection:loadPlugin'
+
+    byrokrat\giroapp\Plugin\PluginCollection:
+        class: ~
+        arguments:
+            - '@byrokrat\giroapp\Plugin\CorePlugin'
+            - '@byrokrat\giroapp\Plugin\FilesystemLoadingPlugin'
+
+    byrokrat\giroapp\Plugin\CorePlugin:
+        class: ~
+
+    byrokrat\giroapp\Plugin\FilesystemLoadingPlugin:
+        class: ~
+        arguments: ['@fs_plugins']
 
     ini:
         alias: byrokrat\giroapp\Config\ConfigManager
@@ -71,24 +92,6 @@ services:
 
     byrokrat\giroapp\Model\Builder\:
         resource: '../src/Model/Builder/*'
-
-    byrokrat\giroapp\Plugin\EnvironmentInterface:
-        class: byrokrat\giroapp\Plugin\Environment
-        public: true
-        configurator: 'byrokrat\giroapp\Plugin\PluginCollection:loadPlugin'
-
-    byrokrat\giroapp\Plugin\PluginCollection:
-        class: ~
-        arguments:
-            - '@byrokrat\giroapp\Plugin\FilesystemLoadingPlugin'
-            - '@byrokrat\giroapp\Plugin\CorePlugin'
-
-    byrokrat\giroapp\Plugin\CorePlugin:
-        class: ~
-
-    byrokrat\giroapp\Plugin\FilesystemLoadingPlugin:
-        class: ~
-        arguments: ['@fs_plugins']
 
     byrokrat\giroapp\State\:
         resource: '../src/State/*'

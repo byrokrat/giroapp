@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Plugin;
 
-use byrokrat\giroapp\Plugin\Environment;
+use byrokrat\giroapp\Plugin\ConfiguringEnvironment;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Console\CommandInterface;
@@ -26,10 +26,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class EnvironmentSpec extends ObjectBehavior
+class ConfiguringEnvironmentSpec extends ObjectBehavior
 {
     function let(
-        Application $application,
         EventDispatcherInterface $dispatcher,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
@@ -39,7 +38,6 @@ class EnvironmentSpec extends ObjectBehavior
         XmlFormTranslator $xmlFormTranslator
     ) {
         $this->beConstructedWith(
-            $application,
             $dispatcher,
             $filterCollection,
             $formatterCollection,
@@ -52,7 +50,7 @@ class EnvironmentSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(Environment::CLASS);
+        $this->shouldHaveType(ConfiguringEnvironment::CLASS);
     }
 
     function it_is_an_environment()
@@ -67,9 +65,10 @@ class EnvironmentSpec extends ObjectBehavior
         $this->readConfig('foo')->shouldReturn('bar');
     }
 
-    function it_can_register_commands($application, $dispatcher, CommandInterface $command)
+    function it_can_register_commands($dispatcher, CommandInterface $command, Application $application)
     {
         $this->registerCommand($command);
+        $this->configureApplication($application);
         $adapter = new Adapter($command->getWrappedObject(), $dispatcher->getWrappedObject());
         $application->add($adapter)->shouldHaveBeenCalled();
     }
