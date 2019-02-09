@@ -6,6 +6,7 @@ namespace spec\byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Plugin\Plugin;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
+use byrokrat\giroapp\Plugin\ApiVersionConstraint;
 use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
@@ -70,6 +71,14 @@ class PluginSpec extends ObjectBehavior
         $this->beConstructedWith($xmlForm);
         $this->loadPlugin($env);
         $env->registerXmlForm($xmlForm)->shouldHaveBeenCalled();
+    }
+
+    function it_asserts_version_constraints(EnvironmentInterface $env)
+    {
+        $constraint = new ApiVersionConstraint('', '');
+        $this->beConstructedWith($constraint);
+        $this->loadPlugin($env);
+        $env->assertApiVersion($constraint)->shouldHaveBeenCalled();
     }
 
     function it_takes_multiple_args(FilterInterface $filter, XmlFormInterface $xmlForm, EnvironmentInterface $env)

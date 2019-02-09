@@ -42,9 +42,12 @@ class Plugin implements PluginInterface
         $this->objects = $objects;
     }
 
-    public function loadPlugin(EnvironmentInterface $environment): void
+    final public function loadPlugin(EnvironmentInterface $environment): void
     {
         foreach ($this->objects as $item) {
+            if ($item instanceof ApiVersionConstraint) {
+                $environment->assertApiVersion($item);
+            }
             if ($item instanceof CommandInterface) {
                 $environment->registerCommand($item);
             }

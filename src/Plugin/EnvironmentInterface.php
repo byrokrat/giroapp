@@ -21,6 +21,7 @@
 namespace byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Console\CommandInterface;
+use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
@@ -30,6 +31,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 interface EnvironmentInterface
 {
+    /**
+     * @throws UnsupportedVersionException If API does not satisfy constraint
+     */
+    public function assertApiVersion(ApiVersionConstraint $constraint): void;
+
     /**
      * Read a giroapp config value
      */

@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Plugin;
 use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Config\ConfigManager;
+use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterCollection;
@@ -35,12 +36,18 @@ use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use byrokrat\giroapp\Xml\XmlFormTranslator;
+use Composer\Semver\Semver;
 use Symfony\Component\Console\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class ConfiguringEnvironment implements EnvironmentInterface
 {
+    /**
+     * @var ApiVersion
+     */
+    private $apiVersion;
+
     /**
      * @var EventDispatcherInterface
      */
@@ -82,6 +89,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     private $commands = [];
 
     public function __construct(
+        ApiVersion $apiVersion,
         EventDispatcherInterface $dispatcher,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
@@ -90,6 +98,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         ConfigManager $configManager,
         XmlFormTranslator $xmlFormTranslator
     ) {
+        $this->apiVersion = $apiVersion;
         $this->dispatcher = $dispatcher;
         $this->filterCollection = $filterCollection;
         $this->formatterCollection = $formatterCollection;
@@ -97,6 +106,18 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         $this->stateCollection = $stateCollection;
         $this->configManager = $configManager;
         $this->xmlFormTranslator = $xmlFormTranslator;
+    }
+
+    public function assertApiVersion(ApiVersionConstraint $constraint): void
+    {
+        if (!Semver::satisfies($this->apiVersion->getVersion(), $constraint->getConstraint())) {
+            throw new UnsupportedVersionException(sprintf(
+                'API version %s does not satisfy constraint %s in %s',
+                $this->apiVersion->getVersion(),
+                $constraint->getConstraint(),
+                $constraint->getName()
+            ));
+        }
     }
 
     public function readConfig(string $key): string

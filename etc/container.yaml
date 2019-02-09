@@ -1,6 +1,4 @@
 parameters:
-    app.name: 'GiroApp'
-    app.version: '$app_version$'
     env(GIROAPP_INI): 'giroapp.ini'
 
 imports:
@@ -17,9 +15,12 @@ services:
 
     Symfony\Component\Console\Application:
         class: ~
-        arguments: ['%app.name%', '%app.version%']
+        arguments: ['GiroApp', '@byrokrat\giroapp\Plugin\ApiVersion']
         public: true
         configurator: 'byrokrat\giroapp\Plugin\ConfiguringEnvironment:configureApplication'
+
+    byrokrat\giroapp\Plugin\ApiVersion:
+        arguments: ['$app_version$']
 
     byrokrat\giroapp\Plugin\EnvironmentInterface:
         alias: byrokrat\giroapp\Plugin\ConfiguringEnvironment

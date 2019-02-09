@@ -1,6 +1,6 @@
 # Writing plugins
 
-Giroapp plugins are `.php` or `.phar` files in the user directory under `plugins/`.
+Giroapp plugins are `.php` or `.phar` files in the plugins directory.
 
 The plugin must return a `PluginInterface` instance.
 
@@ -94,3 +94,35 @@ to `10`. This means that if you set a plugin priority to a value higher than `10
 it will be executed before the event is handled internally (and you may stop
 event propagation if needed). If you set a plugin priority to a value lower than
 `-10` the plugin will be executed after the event has been handled internally.
+
+## Specifying the supported giroapp api version
+
+A plugin may specify the giroapp version it supports using version constraints
+with the same syntax as the composer package manager, either by calling
+`assertApiVersion()` on the environment or by passing an `ApiVersionConstraint`
+directly. The constraint takes two arguments: a plugin name used for better
+error reporting and the actual constraint. The following examples are equal:
+
+<!-- @example version-constraint-full -->
+```php
+use byrokrat\giroapp\Plugin\PluginInterface;
+use byrokrat\giroapp\Plugin\EnvironmentInterface;
+use byrokrat\giroapp\Plugin\ApiVersionConstraint;
+
+return new class implements PluginInterface {
+    public function loadPlugin(EnvironmentInterface $env): void
+    {
+        $env->assertApiVersion(new ApiVersionConstraint('MyPlugin', '^1.0'));
+    }
+};
+```
+
+<!-- @example version-constraint-condensed -->
+```php
+use byrokrat\giroapp\Plugin\Plugin;
+use byrokrat\giroapp\Plugin\ApiVersionConstraint;
+
+return new Plugin(
+    new ApiVersionConstraint('MyPlugin', '^1.0')
+);
+```

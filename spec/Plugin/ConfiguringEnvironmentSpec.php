@@ -6,10 +6,13 @@ namespace spec\byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Plugin\ConfiguringEnvironment;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
+use byrokrat\giroapp\Plugin\ApiVersion;
+use byrokrat\giroapp\Plugin\ApiVersionConstraint;
 use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Config\ConfigInterface;
+use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterCollection;
@@ -38,6 +41,7 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         XmlFormTranslator $xmlFormTranslator
     ) {
         $this->beConstructedWith(
+            new ApiVersion('1.0'),
             $dispatcher,
             $filterCollection,
             $formatterCollection,
@@ -56,6 +60,17 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
     function it_is_an_environment()
     {
         $this->shouldHaveType(EnvironmentInterface::CLASS);
+    }
+
+    function it_can_validate_version_constraints()
+    {
+        $this->assertApiVersion(new ApiVersionConstraint('', '^1'));
+    }
+
+    function it_fails_if_version_is_not_supported()
+    {
+        $this->shouldThrow(UnsupportedVersionException::CLASS)
+            ->duringAssertApiVersion(new ApiVersionConstraint('', '^2'));
     }
 
     function it_can_read_configs($configManager, ConfigInterface $config)

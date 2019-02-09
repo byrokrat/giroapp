@@ -16,3 +16,4 @@
   You will need to path your local copy with the new settings.
 * Replaced `GIROAPP_PATH` environment variable with `GIROAPP_INI` pointing to the
   `giroapp.ini` to use. Update your environment accordingly.
+* Plugins may now specify api version constraints.
