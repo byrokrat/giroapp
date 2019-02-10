@@ -150,5 +150,14 @@ services:
 
     JsonSchema\Validator: ~
 
+    Psr\Log\LoggerInterface:
+        class: Apix\Log\Logger\File
+        arguments: ["@=service('ini').getConfigValue('log_file')"]
+        calls:
+            - method: setMinLevel
+              arguments: ["@=service('ini').getConfigValue('log_level')"]
+            - method: setLogFormatter
+              arguments: ['@byrokrat\giroapp\Utils\LogFormatter']
+
     Symfony\Component\EventDispatcher\EventDispatcherInterface:
         class: 'Symfony\Component\EventDispatcher\EventDispatcher'

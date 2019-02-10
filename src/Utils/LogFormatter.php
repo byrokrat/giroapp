@@ -20,28 +20,24 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Mapper;
+namespace byrokrat\giroapp\Utils;
 
-use hanneskod\yaysondb\Engine\DecoderInterface;
+use Apix\Log\LogEntry;
+use Apix\Log\LogFormatter as BaseFormatter;
 
-/**
- * Formats log messages
- */
-class LogFormatter implements DecoderInterface
+final class LogFormatter extends BaseFormatter
 {
-    public function encode(array $docs): string
+    public function format(LogEntry $log)
     {
         return sprintf(
-            '[%s] [%s] %s %s',
-            date(DATE_RFC2822),
-            $docs['severity'],
-            strip_tags($docs['message']),
-            $docs['context'] ? json_encode((object)$docs['context']) : ''
+            '[%s] [%s] %s (%s)',
+            date('Y-m-d H:i:s', $log->timestamp),
+            strtoupper($log->name),
+            self::interpolate(strip_tags($log->message), $log->context),
+            implode(', ', array_reduce(array_keys($log->context), function ($values, $key) use ($log) {
+                $values[] = "$key:{$log->context[$key]}";
+                return $values;
+            }, []))
         );
-    }
-
-    public function decode(string $source): array
-    {
-        return [];
     }
 }

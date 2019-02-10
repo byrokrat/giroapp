@@ -24,7 +24,6 @@ services:
             -
                 donors: '@db_donor_engine'
                 imports: '@db_import_engine'
-                log: '@db_log_engine'
 
     byrokrat\giroapp\Mapper\DonorMapper:
         class: ~
@@ -37,16 +36,6 @@ services:
     db_donor_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.donors%', '@flysystem_db']
-
-    db_log_collection:
-        class: hanneskod\yaysondb\Collection
-        arguments: ['@db_log_engine']
-
-    db_log_engine:
-        class: hanneskod\yaysondb\Engine\LogEngine
-        arguments:
-            - "@=service('fs_external_data').getAbsolutePath('log')"
-            - '@byrokrat\giroapp\Mapper\LogFormatter'
 
     byrokrat\giroapp\Mapper\FileChecksumMapper:
         class: ~

@@ -49,6 +49,7 @@ class ProjectServiceContainer extends Container
         return [
             'JsonSchema\\Validator' => true,
             'Psr\\Container\\ContainerInterface' => true,
+            'Psr\\Log\\LoggerInterface' => true,
             'Symfony\\Component\\DependencyInjection\\ContainerInterface' => true,
             'Symfony\\Component\\EventDispatcher\\EventDispatcherInterface' => true,
             'Symfony\\Component\\Filesystem\\Filesystem' => true,
@@ -114,7 +115,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\XmlImportingListener' => true,
             'byrokrat\\giroapp\\Mapper\\DonorMapper' => true,
             'byrokrat\\giroapp\\Mapper\\FileChecksumMapper' => true,
-            'byrokrat\\giroapp\\Mapper\\LogFormatter' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\FileChecksumSchema' => true,
             'byrokrat\\giroapp\\Mapper\\Schema\\PostalAddressSchema' => true,
@@ -149,6 +149,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\State\\RevokeMandateState' => true,
             'byrokrat\\giroapp\\State\\StateCollection' => true,
             'byrokrat\\giroapp\\State\\TransactionDateFactory' => true,
+            'byrokrat\\giroapp\\Utils\\LogFormatter' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
             'byrokrat\\giroapp\\Xml\\XmlFormTranslator' => true,
             'byrokrat\\giroapp\\Xml\\XmlMandateParser' => true,
@@ -159,8 +160,6 @@ class ProjectServiceContainer extends Container
             'db_donor_engine' => true,
             'db_import_collection' => true,
             'db_import_engine' => true,
-            'db_log_collection' => true,
-            'db_log_engine' => true,
             'file_export_cwd_dumper' => true,
             'file_export_dumper' => true,
             'file_import_dumper' => true,
@@ -320,13 +319,16 @@ class ProjectServiceContainer extends Container
         }, 1 => 'dispatchInfo'], 10);
         $instance->addListener('ERROR', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
-        }, 1 => 'onLogEvent'], 10);
+        }, 1 => 'onERROR'], 10);
         $instance->addListener('WARNING', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
-        }, 1 => 'onLogEvent'], 10);
+        }, 1 => 'onWARNING'], 10);
         $instance->addListener('INFO', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
-        }, 1 => 'onLogEvent'], 10);
+        }, 1 => 'onINFO'], 10);
+        $instance->addListener('DEBUG', [0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\LoggingListener'] ?? $this->getLoggingListenerService());
+        }, 1 => 'onDEBUG'], 10);
         $instance->addListener('FILE_IMPORTED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\FileImportChecksumListener'] ?? $this->getFileImportChecksumListenerService());
         }, 1 => 'onFILEIMPORTED'], 10);
@@ -440,7 +442,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getCommittingListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(['donors' => ($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService()), 'imports' => ($this->privates['db_import_engine'] ?? $this->getDbImportEngineService()), 'log' => ($this->privates['db_log_engine'] ?? $this->getDbLogEngineService())]));
+        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(['donors' => ($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService()), 'imports' => ($this->privates['db_import_engine'] ?? $this->getDbImportEngineService())]));
     }
 
     /**
@@ -470,7 +472,11 @@ class ProjectServiceContainer extends Container
      */
     protected function getLoggingListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\LoggingListener'] = new \byrokrat\giroapp\Listener\LoggingListener(new \hanneskod\yaysondb\Collection(($this->privates['db_log_engine'] ?? $this->getDbLogEngineService())));
+        $a = new \Apix\Log\Logger\File(($this->services['ini'] ?? $this->getIniService())->getConfigValue("log_file"));
+        $a->setMinLevel(($this->services['ini'] ?? $this->getIniService())->getConfigValue("log_level"));
+        $a->setLogFormatter(new \byrokrat\giroapp\Utils\LogFormatter());
+
+        return $this->privates['byrokrat\giroapp\Listener\LoggingListener'] = new \byrokrat\giroapp\Listener\LoggingListener($a);
     }
 
     /**
@@ -556,16 +562,6 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'db_log_engine' shared autowired service.
-     *
-     * @return \hanneskod\yaysondb\Engine\LogEngine
-     */
-    protected function getDbLogEngineService()
-    {
-        return $this->privates['db_log_engine'] = new \hanneskod\yaysondb\Engine\LogEngine($this->getFsExternalDataService()->getAbsolutePath("log"), new \byrokrat\giroapp\Mapper\LogFormatter());
-    }
-
-    /**
      * Gets the private 'file_export_cwd_dumper' shared autowired service.
      *
      * @return \byrokrat\giroapp\Listener\FileDumpingListener
@@ -631,20 +627,6 @@ class ProjectServiceContainer extends Container
         $this->privates['fs_db'] = $instance = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("db_dsn"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
 
         (new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'], [0 => 'donors.json', 1 => 'imports.json']))->createFiles($instance);
-
-        return $instance;
-    }
-
-    /**
-     * Gets the private 'fs_external_data' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Filesystem\StdFilesystem
-     */
-    protected function getFsExternalDataService()
-    {
-        $instance = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("external_data_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
-
-        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'])))->createFiles($instance);
 
         return $instance;
     }

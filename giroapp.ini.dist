@@ -42,3 +42,9 @@ imports_dir = "%external_data_dir%/imports"
 ; Directory where copies of exported files are stored
 ; Empty value turns of saving exported files
 exports_dir = "%external_data_dir%/exports"
+
+; Internal log file
+log_file = "%base_dir%/giroapp.log"
+
+; PSR-3 log level (error/warning/info/debug)
+log_level = "info"

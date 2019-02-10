@@ -32,6 +32,8 @@
         "composer/semver": "^1",
         "hanneskod/yaysondb": "^2.1.2",
         "hanneskod/clean" :"^2",
+        "psr/log": "^1",
+        "apix/log": "^1.2",
         "symfony/dependency-injection": "^4",
         "symfony/console": "^4",
         "symfony/event-dispatcher": "^4",

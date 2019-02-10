@@ -17,3 +17,4 @@
 * Replaced `GIROAPP_PATH` environment variable with `GIROAPP_INI` pointing to the
   `giroapp.ini` to use. Update your environment accordingly.
 * Plugins may now specify api version constraints.
+* Logging con now be configured in `giroapp.ini`.

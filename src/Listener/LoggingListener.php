@@ -23,31 +23,37 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Event\LogEvent;
-use hanneskod\yaysondb\Collection;
+use Psr\Log\LoggerInterface;
 
-/**
- * Write events to log
- */
-class LoggingListener
+final class LoggingListener
 {
     /**
-     * @var Collection
+     * @var LoggerInterface
      */
-    private $log;
+    private $logger;
 
-    public function __construct(Collection $log)
+    public function __construct(LoggerInterface $logger)
     {
-        $this->log = $log;
+        $this->logger = $logger;
     }
 
-    public function onLogEvent(LogEvent $event, string $eventName): void
+    public function onError(LogEvent $event): void
     {
-        $this->log->insert([
-            'message' => $event->getMessage(),
-            'severity' => $eventName,
-            'context' => $event->getContext()
-        ]);
+        $this->logger->error($event->getMessage(), $event->getContext());
+    }
 
-        $this->log->commit();
+    public function onWarning(LogEvent $event): void
+    {
+        $this->logger->warning($event->getMessage(), $event->getContext());
+    }
+
+    public function onInfo(LogEvent $event): void
+    {
+        $this->logger->info($event->getMessage(), $event->getContext());
+    }
+
+    public function onDebug(LogEvent $event): void
+    {
+        $this->logger->debug($event->getMessage(), $event->getContext());
     }
 }
