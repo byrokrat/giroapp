@@ -13,6 +13,10 @@ services:
         bind:
             $filesystem: '@fs_cwd'
 
+    byrokrat\giroapp\:
+        resource: '../src/*'
+        exclude: '../src/{Listener,Mapper}'
+
     Symfony\Component\Console\Application:
         class: ~
         arguments: ['GiroApp', '@byrokrat\giroapp\Plugin\ApiVersion']
@@ -27,16 +31,13 @@ services:
 
     byrokrat\giroapp\Plugin\ConfiguringEnvironment:
         class: ~
-        configurator: 'byrokrat\giroapp\Plugin\PluginCollection:loadPlugin'
+        configurator: 'plugins:loadPlugin'
 
-    byrokrat\giroapp\Plugin\PluginCollection:
-        class: ~
+    plugins:
+        class: byrokrat\giroapp\Plugin\PluginCollection
         arguments:
             - '@byrokrat\giroapp\Plugin\CorePlugin'
             - '@byrokrat\giroapp\Plugin\FilesystemLoadingPlugin'
-
-    byrokrat\giroapp\Plugin\CorePlugin:
-        class: ~
 
     byrokrat\giroapp\Plugin\FilesystemLoadingPlugin:
         class: ~
@@ -73,29 +74,11 @@ services:
         factory: 'byrokrat\banking\BankgiroFactory:createAccount'
         arguments: ["@=service('ini').getConfigValue('org_bg')"]
 
-    byrokrat\giroapp\Console\:
-        resource: '../src/Console/*'
-
     byrokrat\giroapp\Console\ValidateCommand:
         class: ~
         arguments:
             - '@fs_db'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
-
-    byrokrat\giroapp\Filter\:
-        resource: '../src/Filter/*'
-
-    byrokrat\giroapp\Formatter\:
-        resource: '../src/Formatter/*'
-
-    byrokrat\giroapp\Sorter\:
-        resource: '../src/Sorter/*'
-
-    byrokrat\giroapp\Model\Builder\:
-        resource: '../src/Model/Builder/*'
-
-    byrokrat\giroapp\State\:
-        resource: '../src/State/*'
 
     byrokrat\giroapp\State\TransactionDateFactory:
         class: ~
@@ -103,22 +86,15 @@ services:
             $dayOfMonth: "@=service('ini').getConfig('trans_day_of_month')"
             $minDaysInFuture: "@=service('ini').getConfig('trans_min_days_in_future')"
 
-    byrokrat\giroapp\Utils\:
-        resource: '../src/Utils/*'
-
     byrokrat\giroapp\Xml\XmlMandateParser:
         class: ~
         arguments: ['@organization_id', '@organization_bg']
-
-    byrokrat\giroapp\Xml\XmlFormTranslator: ~
 
     byrokrat\giroapp\AutogiroVisitor:
         class: ~
         arguments:
             - "@=service('ini').getConfig('org_bgc_nr')"
             - '@organization_bg'
-
-    byrokrat\giroapp\AutogiroWriterFactory: ~
 
     byrokrat\autogiro\Writer\WriterInterface:
         factory: 'byrokrat\giroapp\AutogiroWriterFactory:createWriter'
@@ -161,3 +137,5 @@ services:
 
     Symfony\Component\EventDispatcher\EventDispatcherInterface:
         class: 'Symfony\Component\EventDispatcher\EventDispatcher'
+
+    Symfony\Component\Filesystem\Filesystem: ~

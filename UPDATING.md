@@ -14,6 +14,8 @@
 * Better exception handling with error codes.
 * All paths are now specified using `giroapp.ini` directives. See `giroapp.ini.dist`.
   You will need to path your local copy with the new settings.
+* Some default directory names have changed, specificaly the `var` directory
+  is no longer used.
 * Replaced `GIROAPP_PATH` environment variable with `GIROAPP_INI` pointing to the
   `giroapp.ini` to use. Update your environment accordingly.
 * Plugins may now specify api version constraints.

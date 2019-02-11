@@ -3,9 +3,6 @@ services:
         public: false
         autowire: true
 
-    byrokrat\giroapp\Filesystem\:
-        resource: '../src/Filesystem/*'
-
     fs_cwd:
         class: byrokrat\giroapp\Filesystem\StdFilesystem
         arguments: ["."]
@@ -38,14 +35,6 @@ services:
             - ['.']
             - ['%db.donors%', '%db.imports%']
 
-    fs_external_data:
-        class: byrokrat\giroapp\Filesystem\StdFilesystem
-        arguments: ["@=service('ini').getConfigValue('external_data_dir')"]
-        configurator: 'setup_mkdir:createFiles'
-
     setup_mkdir:
         class: byrokrat\giroapp\Filesystem\FilesystemConfigurator
         arguments: [['.']]
-
-    Symfony\Component\Filesystem\Filesystem:
-        class: ~
