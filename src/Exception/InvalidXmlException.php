@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when xml is invalid
  */
-class InvalidXmlException extends RuntimeException
+final class InvalidXmlException extends \RuntimeException implements GiroappException
 {
-    const CODE = 240;
+    use ErrorCodeTrait;
 }

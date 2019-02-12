@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when an xml form specification contains an invalid value
  */
-class InvalidXmlFormException extends RuntimeException
+final class InvalidXmlFormException extends \RuntimeException implements GiroappException
 {
-    const CODE = 241;
+    use ErrorCodeTrait;
 }

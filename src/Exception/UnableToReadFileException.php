@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when a file can not be found
  */
-class UnableToReadFileException extends RuntimeException
+final class UnableToReadFileException extends \RuntimeException implements GiroappException
 {
-    const CODE = 301;
+    use ErrorCodeTrait;
 }

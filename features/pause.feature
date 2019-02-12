@@ -18,7 +18,7 @@ Feature: Pause mandates
      | payer-number | state  |
      | 12345        | PAUSED |
    When I run "pause 12345"
-   Then I get a "InvalidStateTransitionException" error
+   Then I get a "INVALID_STATE_TRANSITION_EXCEPTION" error
 
   Scenario: I restart a mandate
     Given a fresh installation
@@ -35,4 +35,4 @@ Feature: Pause mandates
      | payer-number | state  |
      | 12345        | ACTIVE |
    When I run "pause 12345 --restart"
-   Then I get a "InvalidStateTransitionException" error
+   Then I get a "INVALID_STATE_TRANSITION_EXCEPTION" error

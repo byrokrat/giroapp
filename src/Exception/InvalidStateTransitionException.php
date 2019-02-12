@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when an invalid donor state transition is attempted
  */
-class InvalidStateTransitionException extends RuntimeException
+final class InvalidStateTransitionException extends \RuntimeException implements GiroappException
 {
-    const CODE = 250;
+    use ErrorCodeTrait;
 }

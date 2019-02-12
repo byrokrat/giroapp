@@ -20,7 +20,9 @@
 
 namespace byrokrat\giroapp\Exception;
 
-class UnableToBuildDonorException extends RuntimeException
+use byrokrat\giroapp\Exception as GiroappException;
+
+final class UnableToBuildDonorException extends \RuntimeException implements GiroappException
 {
-    const CODE = 302;
+    use ErrorCodeTrait;
 }

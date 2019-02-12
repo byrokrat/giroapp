@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when a collection identifier can not be found
  */
-class UnknownIdentifierException extends RuntimeException
+final class UnknownIdentifierException extends \RuntimeException implements GiroappException
 {
-    const CODE = 102;
+    use ErrorCodeTrait;
 }

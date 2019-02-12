@@ -21,8 +21,28 @@
 namespace byrokrat\giroapp;
 
 /**
- * Base exception, all thrown exceptions implement this interface
+ * Exception flag interface and collection of app error codes
+ *
+ * NOTE that error codes and exceptions may change without warning before version 1.0.0
  */
 interface Exception
 {
+    const GENERIC_ERROR = 1;
+    const DONOR_DOES_NOT_EXIST_EXCEPTION = 111;
+    const DONOR_EXISTS_EXCEPTION = 112;
+    const DONOR_UNKNOWN_EXCEPTION = 113;
+    const FILE_DOES_NOT_EXIST_EXCEPTION = 121;
+    const FILE_EXISTS_EXCEPTION = 122;
+    const INVALID_AUTOGIRO_FILE_EXCEPTION = 210;
+    const INVALID_CONFIG_EXCEPTION = 220;
+    const INVALID_DATA_EXCEPTION = 101;
+    const INVALID_PLUGIN_EXCEPTION = 230;
+    const INVALID_STATE_TRANSITION_EXCEPTION = 250;
+    const INVALID_XML_EXCEPTION = 240;
+    const INVALID_XML_FORM_EXCEPTION = 241;
+    const UNABLE_TO_BUILD_DONOR_EXCEPTION = 302;
+    const UNABLE_TO_READ_FILE_EXCEPTION = 301;
+    const UNKNOWN_IDENTIFIER_EXCEPTION = 102;
+    const UNSUPPORTED_VERSION_EXCEPTION = 104;
+    const VALIDATOR_EXCEPTION = 103;
 }

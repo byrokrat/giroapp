@@ -10,4 +10,4 @@ Feature: Removing donors
       | 12345        | INACTIVE |
     When I run "remove 12345"
     And I run "show 12345"
-    Then I get a "DonorDoesNotExistException" error
+    Then I get a "DONOR_DOES_NOT_EXIST_EXCEPTION" error

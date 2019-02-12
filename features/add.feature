@@ -15,12 +15,12 @@ Feature: Adding new donors
   Scenario: I fail to supply an account number
     Given a fresh installation
     When I run "add --payer-number 1 --id 8203232775 --name foo --amount 100"
-    Then I get a "ValidatorException" error
+    Then I get a "VALIDATOR_EXCEPTION" error
 
   Scenario: I fail to supply an id number
     Given a fresh installation
     When I run "add --payer-number 1 --account 50001111116 --name foo --amount 100"
-    Then I get a "ValidatorException" error
+    Then I get a "VALIDATOR_EXCEPTION" error
 
   Scenario: I add a donor that already exists
     Given a fresh installation
@@ -28,4 +28,4 @@ Feature: Adding new donors
       | payer-number | name | account     | id         | state  | amount |
       | 1            | foo  | 50001111116 | 8203232775 | ACTIVE | 100    |
     When I run "add --payer-number 1 --account 50001111116 --id 8203232775 --name foo --amount 100"
-    Then I get a "DonorExistsException" error
+    Then I get a "DONOR_EXISTS_EXCEPTION" error

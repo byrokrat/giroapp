@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Exception\RuntimeException;
+use byrokrat\giroapp\Exception as GiroappException;
 use byrokrat\giroapp\Listener\OutputtingSubscriber;
 use Symfony\Component\Console\Command\Command as SymfonyCommand;
 use Symfony\Component\Console\Input\InputInterface;
@@ -68,7 +68,7 @@ final class Adapter extends SymfonyCommand
             $this->dispatcher->dispatch(Events::EXECUTION_STARTED, new LogEvent('Execution started'));
             $this->command->execute($input, $output);
             $this->dispatcher->dispatch(Events::EXECUTION_STOPED, new LogEvent('Execution successful'));
-        } catch (RuntimeException $e) {
+        } catch (GiroappException $e) {
             $this->dispatcher->dispatch(
                 Events::ERROR,
                 new LogEvent(
@@ -94,7 +94,7 @@ final class Adapter extends SymfonyCommand
                 )
             );
 
-            return $e->getCode() ?: 1;
+            return $e->getCode() ?: GiroappException::GENERIC_ERROR;
         }
 
         return 0;

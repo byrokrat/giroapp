@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when a file already exist in store
  */
-class FileExistsException extends RuntimeException
+final class FileExistsException extends \RuntimeException implements GiroappException
 {
-    const CODE = 122;
+    use ErrorCodeTrait;
 }

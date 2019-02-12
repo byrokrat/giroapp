@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when data is invalid
  */
-class InvalidDataException extends RuntimeException
+final class InvalidDataException extends \RuntimeException implements GiroappException
 {
-    const CODE = 101;
+    use ErrorCodeTrait;
 }

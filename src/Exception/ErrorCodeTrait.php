@@ -20,15 +20,28 @@
 
 namespace byrokrat\giroapp\Exception;
 
-use byrokrat\giroapp\Exception as AppException;
-
-class RuntimeException extends \RuntimeException implements AppException
+trait ErrorCodeTrait
 {
-    /** Default error code */
-    const CODE = 1;
-
-    public function __construct(string $message)
+    public function __construct(string $message = '', int $code = 0, \Throwable $previous = null)
     {
-        parent::__construct($message, static::CODE);
+        if (!$code) {
+            $const = 'self::'
+                . rtrim(
+                    preg_replace_callback(
+                        '/[A-Z][a-z]+/',
+                        function (array $matches) {
+                            return strtoupper($matches[0]) . '_';
+                        },
+                        (new \ReflectionClass($this))->getShortName()
+                    ),
+                    '_'
+                );
+
+            if (defined($const)) {
+                $code = (int)constant($const);
+            }
+        }
+
+        parent::__construct($message, $code, $previous);
     }
 }

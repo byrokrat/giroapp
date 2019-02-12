@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when a validator fails
  */
-class ValidatorException extends RuntimeException
+final class ValidatorException extends \RuntimeException implements GiroappException
 {
-    const CODE = 103;
+    use ErrorCodeTrait;
 }

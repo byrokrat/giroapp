@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when a donor already exist
  */
-class DonorUnknownException extends RuntimeException
+final class DonorUnknownException extends \RuntimeException implements GiroappException
 {
-    const CODE = 113;
+    use ErrorCodeTrait;
 }

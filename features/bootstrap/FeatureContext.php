@@ -145,17 +145,17 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then I get a :classname error
+     * @Then I get a :error error
      */
-    public function iGetAError($classname)
+    public function iGetAError($error)
     {
-        $expectedCode = constant("byrokrat\giroapp\Exception\\$classname::CODE");
+        $expectedCode = constant("byrokrat\giroapp\Exception::$error");
 
         if ($expectedCode != $this->result->getReturnCode()) {
             throw new \Exception(sprintf(
                 'Expected return code %s of exception class %s, found %s',
                 $expectedCode,
-                $classname,
+                $error,
                 $this->result->getReturnCode()
             ));
         }

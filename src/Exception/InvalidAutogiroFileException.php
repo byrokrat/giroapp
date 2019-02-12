@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when and autogiro file is invalid
  */
-class InvalidAutogiroFileException extends RuntimeException
+final class InvalidAutogiroFileException extends \RuntimeException implements GiroappException
 {
-    const CODE = 210;
+    use ErrorCodeTrait;
 }

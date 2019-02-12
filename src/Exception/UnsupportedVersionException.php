@@ -20,10 +20,12 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Exception as GiroappException;
+
 /**
  * Exception thrown when the api version does not satisfy a constraint
  */
-class UnsupportedVersionException extends RuntimeException
+final class UnsupportedVersionException extends \RuntimeException implements GiroappException
 {
-    const CODE = 104;
+    use ErrorCodeTrait;
 }
