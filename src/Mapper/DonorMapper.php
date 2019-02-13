@@ -28,6 +28,7 @@ use byrokrat\giroapp\Exception\DonorUnknownException;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\DonorCollection;
 use byrokrat\giroapp\Utils\SystemClock;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
@@ -80,13 +81,15 @@ class DonorMapper
     }
 
     /**
-     * Get an iterable containing all Donor objects in storage
+     * Get Donor objects in storage
      */
-    public function findAll(): iterable
+    public function findAll(): DonorCollection
     {
-        foreach ($this->collection as $doc) {
-            yield $this->donorSchema->fromArray($doc);
-        }
+        return new DonorCollection(function () {
+            foreach ($this->collection as $doc) {
+                yield $this->donorSchema->fromArray($doc);
+            }
+        });
     }
 
     /**
@@ -109,15 +112,17 @@ class DonorMapper
     }
 
     /**
-     * Get an iterable containing all donor objects identified by payer number
+     * Get all donor objects identified by payer number
      *
      * NOTE: This may include older deleted mandates.
      */
-    public function findByPayerNumber(string $payerNumber): iterable
+    public function findByPayerNumber(string $payerNumber): DonorCollection
     {
-        foreach ($this->collection->find(y::doc(['payer_number' => y::equals($payerNumber)])) as $doc) {
-            yield $this->donorSchema->fromArray($doc);
-        }
+        return new DonorCollection(function () use ($payerNumber){
+            foreach ($this->collection->find(y::doc(['payer_number' => y::equals($payerNumber)])) as $doc) {
+                yield $this->donorSchema->fromArray($doc);
+            }
+        });
     }
 
     /**

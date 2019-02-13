@@ -113,20 +113,12 @@ final class LsCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $donors = [];
-
         $filter = new CombinedFilter(
             ...array_merge(
                 array_map([$this->filterCollection, 'getFilter'], (array)$input->getOption('filter')),
                 array_map([$this->filterCollection, 'getNegatedFilter'], (array)$input->getOption('filter-not'))
             )
         );
-
-        foreach ($this->donorMapper->findAll() as $donor) {
-            if ($filter->filterDonor($donor)) {
-                $donors[] = $donor;
-            }
-        }
 
         /** @var string */
         $sorterId = $input->getOption('sorter');
@@ -136,14 +128,12 @@ final class LsCommand implements CommandInterface
             $sorter = new DescendingSorter($sorter);
         }
 
-        usort($donors, [$sorter, 'compareDonors']);
-
         /** @var string */
         $formatId = $input->getOption('format');
         $formatter = $this->formatterCollection->getFormatter($formatId);
         $formatter->initialize($output);
 
-        foreach ($donors as $donor) {
+        foreach ($this->donorMapper->findAll()->filter($filter)->sort($sorter) as $donor) {
             $formatter->formatDonor($donor);
         }
 
