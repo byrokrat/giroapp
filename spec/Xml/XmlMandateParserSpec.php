@@ -9,6 +9,7 @@ use byrokrat\giroapp\Xml\XmlObject;
 use byrokrat\giroapp\Xml\XmlFormTranslator;
 use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Exception\InvalidXmlException;
+use byrokrat\giroapp\MandateSources;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Validator\AccountValidator;
@@ -96,7 +97,7 @@ class XmlMandateParserSpec extends ObjectBehavior
             ->willReturn('');
 
         $builder->reset()->willReturn($builder)->shouldBeCalled();
-        $builder->setMandateSource(Donor::MANDATE_SOURCE_ONLINE_FORM)->willReturn($builder)->shouldBeCalled();
+        $builder->setMandateSource(MandateSources::MANDATE_SOURCE_ONLINE_FORM)->willReturn($builder)->shouldBeCalled();
 
         $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_namn', new StringValidator)->willReturn('name');
         $builder->setName('name')->willReturn($builder)->shouldBeCalled();

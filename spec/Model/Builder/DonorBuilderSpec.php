@@ -10,6 +10,7 @@ use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\States;
+use byrokrat\giroapp\MandateSources;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\id\IdInterface;
@@ -48,7 +49,7 @@ class DonorBuilderSpec extends ObjectBehavior
     function it_fails_if_id_is_not_set($account)
     {
         $this->setAccount($account)
-            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
+            ->setMandateSource(MandateSources::MANDATE_SOURCE_PAPER)
             ->setName('name');
 
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
@@ -57,7 +58,7 @@ class DonorBuilderSpec extends ObjectBehavior
     function it_fails_if_account_is_not_set($id)
     {
         $this->setId($id)
-            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
+            ->setMandateSource(MandateSources::MANDATE_SOURCE_PAPER)
             ->setName('name');
 
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
@@ -66,7 +67,7 @@ class DonorBuilderSpec extends ObjectBehavior
     function it_fails_if_name_is_not_set($id, $account)
     {
         $this->setId($id)
-            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
+            ->setMandateSource(MandateSources::MANDATE_SOURCE_PAPER)
             ->setAccount($account);
 
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
@@ -96,7 +97,7 @@ class DonorBuilderSpec extends ObjectBehavior
         $this->setId($id)
             ->setAccount($account)
             ->setName('name')
-            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
+            ->setMandateSource(MandateSources::MANDATE_SOURCE_PAPER)
             ->buildDonor()
             ->shouldHaveType(Donor::CLASS);
     }
@@ -106,7 +107,7 @@ class DonorBuilderSpec extends ObjectBehavior
         $this->setId($id)
             ->setAccount($account)
             ->setName('name')
-            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
+            ->setMandateSource(MandateSources::MANDATE_SOURCE_PAPER)
             ->reset();
 
         $this->shouldThrow(\RuntimeException::CLASS)->during('buildDonor');
@@ -118,14 +119,14 @@ class DonorBuilderSpec extends ObjectBehavior
         $this->setId($id)
             ->setAccount($account)
             ->setName('name')
-            ->setMandateSource(Donor::MANDATE_SOURCE_PAPER)
+            ->setMandateSource(MandateSources::MANDATE_SOURCE_PAPER)
             ->buildDonor()
             ->shouldBeLike(
                 new Donor(
                     self::MANDATE_KEY,
                     $state->getWrappedObject(),
                     'Mandate created',
-                    Donor::MANDATE_SOURCE_PAPER,
+                    MandateSources::MANDATE_SOURCE_PAPER,
                     self::PAYER_NUMBER,
                     $account->getWrappedObject(),
                     $id->getWrappedObject(),
@@ -153,7 +154,7 @@ class DonorBuilderSpec extends ObjectBehavior
         $createdDonor = $this->setId($id)
             ->setAccount($account)
             ->setName('name')
-            ->setMandateSource(Donor::MANDATE_SOURCE_DIGITAL)
+            ->setMandateSource(MandateSources::MANDATE_SOURCE_DIGITAL)
             ->setPayerNumber('payer-number')
             ->setPostalAddress($postalAddress)
             ->setEmail('email')
@@ -171,7 +172,7 @@ class DonorBuilderSpec extends ObjectBehavior
                 self::MANDATE_KEY,
                 $state->getWrappedObject(),
                 'Mandate created',
-                Donor::MANDATE_SOURCE_DIGITAL,
+                MandateSources::MANDATE_SOURCE_DIGITAL,
                 'payer-number',
                 $account->getWrappedObject(),
                 $id->getWrappedObject(),

@@ -35,21 +35,6 @@ use byrokrat\autogiro\Writer\WriterInterface;
 class Donor
 {
     /**
-     * Indicator that mandate exists printed on paper
-     */
-    const MANDATE_SOURCE_PAPER = 'MANDATE_SOURCE_PAPER';
-
-    /**
-     * Indicator that mandate is from an online form (eg. mandate from homepage)
-     */
-    const MANDATE_SOURCE_ONLINE_FORM = 'MANDATE_SOURCE_ONLINE_FORM';
-
-    /**
-     * Indicator that mandate is digital
-     */
-    const MANDATE_SOURCE_DIGITAL = 'MANDATE_SOURCE_DIGITAL';
-
-    /**
      * @var string
      */
     private $mandateKey;
@@ -125,10 +110,13 @@ class Donor
     private $updated;
 
     /**
-     * @var array Loaded attributes
+     * @var string[] Loaded attributes
      */
     private $attributes;
 
+    /**
+     * @param string[] $attributes
+     */
     public function __construct(
         string $mandateKey,
         StateInterface $state,
@@ -320,6 +308,8 @@ class Donor
 
     /**
      * Get all loaded attributes
+     *
+     * @return string[]
      */
     public function getAttributes(): array
     {

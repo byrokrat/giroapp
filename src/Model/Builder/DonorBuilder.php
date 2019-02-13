@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Model\Builder;
 
 use byrokrat\giroapp\Exception\UnableToBuildDonorException;
+use byrokrat\giroapp\MandateSources;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\StateCollection;
@@ -258,10 +259,10 @@ class DonorBuilder
     private function getState(): StateInterface
     {
         switch ($this->getMandateSource()) {
-            case Donor::MANDATE_SOURCE_PAPER:
-            case Donor::MANDATE_SOURCE_ONLINE_FORM:
+            case MandateSources::MANDATE_SOURCE_PAPER:
+            case MandateSources::MANDATE_SOURCE_ONLINE_FORM:
                 return $this->stateCollection->getState(States::NEW_MANDATE);
-            case Donor::MANDATE_SOURCE_DIGITAL:
+            case MandateSources::MANDATE_SOURCE_DIGITAL:
                 return $this->stateCollection->getState(States::NEW_DIGITAL_MANDATE);
         }
 

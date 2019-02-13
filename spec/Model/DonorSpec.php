@@ -6,6 +6,7 @@ namespace spec\byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\MandateSources;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
@@ -39,7 +40,7 @@ class DonorSpec extends ObjectBehavior
             self::MANDATE_KEY,
             $state,
             self::STATE_DESC,
-            Donor::MANDATE_SOURCE_PAPER,
+            MandateSources::MANDATE_SOURCE_PAPER,
             self::PAYER_NUMBER,
             $account,
             $donorId,
@@ -92,7 +93,7 @@ class DonorSpec extends ObjectBehavior
 
     function it_contains_mandate_source()
     {
-        $this->getMandateSource()->shouldEqual(Donor::MANDATE_SOURCE_PAPER);
+        $this->getMandateSource()->shouldEqual(MandateSources::MANDATE_SOURCE_PAPER);
     }
 
     function it_contains_a_payer_number()

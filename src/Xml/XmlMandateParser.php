@@ -28,6 +28,7 @@ use byrokrat\giroapp\Validator\NumericValidator;
 use byrokrat\giroapp\Validator\PayerNumberValidator;
 use byrokrat\giroapp\Validator\PostalCodeValidator;
 use byrokrat\giroapp\Validator\StringValidator;
+use byrokrat\giroapp\MandateSources;
 use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
@@ -127,7 +128,7 @@ class XmlMandateParser
 
             $this->donorBuilder->reset();
 
-            $this->donorBuilder->setMandateSource(Donor::MANDATE_SOURCE_ONLINE_FORM);
+            $this->donorBuilder->setMandateSource(MandateSources::MANDATE_SOURCE_ONLINE_FORM);
 
             $this->donorBuilder->setName(
                 $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_namn', $stringValidator)

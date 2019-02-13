@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\MandateSources;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Model\Builder\DonorBuilder;
@@ -104,12 +105,12 @@ final class AddCommand implements CommandInterface
 
         $this->donorBuilder->reset();
 
-        $sources = ['p' => Donor::MANDATE_SOURCE_PAPER, 'o' => Donor::MANDATE_SOURCE_ONLINE_FORM];
+        $sources = ['p' => MandateSources::MANDATE_SOURCE_PAPER, 'o' => MandateSources::MANDATE_SOURCE_ONLINE_FORM];
 
         $this->donorBuilder->setMandateSource(
             $inputReader->readInput(
                 'source',
-                Helper\QuestionFactory::createChoiceQuestion($descs['source'], $sources, Donor::MANDATE_SOURCE_PAPER),
+                Helper\QuestionFactory::createChoiceQuestion($descs['source'], $sources, MandateSources::MANDATE_SOURCE_PAPER),
                 new Validator\ChoiceValidator($sources)
             )
         );

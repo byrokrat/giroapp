@@ -6,12 +6,12 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Behat\Tester\Exception\PendingException;
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\MandateSources;
 
 class FeatureContext implements Context
 {
     const DEFAULT_DONOR_ROW = [
-        'source' => Donor::MANDATE_SOURCE_PAPER,
+        'source' => MandateSources::MANDATE_SOURCE_PAPER,
         'payer-number' => '1',
         'state' => 'ACTIVE',
         'account' => '50001111116',
