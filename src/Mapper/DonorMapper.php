@@ -24,7 +24,6 @@ namespace byrokrat\giroapp\Mapper;
 
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
 use byrokrat\giroapp\Exception\DonorExistsException;
-use byrokrat\giroapp\Exception\DonorUnknownException;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
@@ -77,7 +76,7 @@ class DonorMapper
             return $this->donorSchema->fromArray($this->collection->read($key));
         }
 
-        throw new DonorUnknownException("unknown donor key: $key");
+        throw new DonorDoesNotExistException("unknown donor key: $key");
     }
 
     /**
@@ -105,7 +104,7 @@ class DonorMapper
         );
 
         if (empty($doc)) {
-            throw new DonorUnknownException("Unknown payer number: $payerNumber");
+            throw new DonorDoesNotExistException("Unknown payer number: $payerNumber");
         }
 
         return $this->donorSchema->fromArray($doc);
@@ -118,7 +117,7 @@ class DonorMapper
      */
     public function findByPayerNumber(string $payerNumber): DonorCollection
     {
-        return new DonorCollection(function () use ($payerNumber){
+        return new DonorCollection(function () use ($payerNumber) {
             foreach ($this->collection->find(y::doc(['payer_number' => y::equals($payerNumber)])) as $doc) {
                 yield $this->donorSchema->fromArray($doc);
             }

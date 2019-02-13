@@ -110,7 +110,11 @@ final class AddCommand implements CommandInterface
         $this->donorBuilder->setMandateSource(
             $inputReader->readInput(
                 'source',
-                Helper\QuestionFactory::createChoiceQuestion($descs['source'], $sources, MandateSources::MANDATE_SOURCE_PAPER),
+                Helper\QuestionFactory::createChoiceQuestion(
+                    $descs['source'],
+                    $sources,
+                    MandateSources::MANDATE_SOURCE_PAPER
+                ),
                 new Validator\ChoiceValidator($sources)
             )
         );

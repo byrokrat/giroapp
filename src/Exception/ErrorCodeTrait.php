@@ -27,7 +27,7 @@ trait ErrorCodeTrait
         if (!$code) {
             $const = 'self::'
                 . rtrim(
-                    preg_replace_callback(
+                    (string)preg_replace_callback(
                         '/[A-Z][a-z]+/',
                         function (array $matches) {
                             return strtoupper($matches[0]) . '_';

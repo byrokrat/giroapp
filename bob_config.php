@@ -9,10 +9,10 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
-task('default', ['test', 'examples', 'phpstan', 'sniff', 'phar', 'behat-phar']);
+task('default', ['test', 'phar', 'behat-phar']);
 
-desc('Run unit and feature tests');
-task('test', ['phpspec', 'behat']);
+desc('Run all tests');
+task('test', ['phpspec', 'behat', 'examples', 'phpstan', 'sniff']);
 
 desc('Run phpspec unit tests');
 task('phpspec', ['update_container'], function() {
