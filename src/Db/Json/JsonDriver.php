@@ -20,32 +20,45 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Db\Json;
 
 use byrokrat\giroapp\Db\DriverInterface;
+use byrokrat\giroapp\Db\DonorRepositoryInterface;
+use byrokrat\giroapp\Db\ImportHistoryInterface;
+use byrokrat\giroapp\Utils\SystemClock;
 use hanneskod\yaysondb\Yaysondb;
 
-class CommittingListener
+final class JsonDriver implements DriverInterface
 {
-    /**
-     * @var Yaysondb
-     */
+    /** @var Yaysondb */
     private $db;
 
-    /**
-     * @var DriverInterface
-     */
-    private $dbDriver;
+    /** @var SystemClock */
+    private $systemClock;
 
-    public function __construct(Yaysondb $db, DriverInterface $dbDriver)
+    public function __construct(Yaysondb $db, SystemClock $systemClock)
     {
         $this->db = $db;
-        $this->dbDriver = $dbDriver;
+        $this->systemClock = $systemClock;
     }
 
-    public function onExecutionStoped(): void
+    public function getDonorRepository(): DonorRepositoryInterface
+    {
+        return new JsonDonorRepository($this->db->collection('donors'), $this->systemClock);
+    }
+
+    public function getImportHistory(): ImportHistoryInterface
+    {
+        return new JsonImportHistory($this->db->collection('imports'), $this->systemClock);
+    }
+
+    public function commit(): void
     {
         $this->db->commit();
-        $this->dbDriver->commit();
+    }
+
+    public function rollback(): void
+    {
+        $this->db->reset();
     }
 }

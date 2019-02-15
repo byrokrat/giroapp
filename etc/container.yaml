@@ -80,6 +80,25 @@ services:
             - '@fs_db'
             - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
 
+    byrokrat\giroapp\Db\DriverFactoryInterface:
+        factory: 'byrokrat\giroapp\Db\DriverFactoryCollection:getDriverFactory'
+        arguments: ["@=service('ini').getConfigValue('db_driver')"]
+
+    byrokrat\giroapp\Db\DriverInterface:
+        factory: 'byrokrat\giroapp\Db\DriverFactoryInterface:createDriver'
+        arguments: ["@=service('ini').getConfigValue('db_dsn')"]
+
+    byrokrat\giroapp\Db\DonorRepositoryInterface:
+        factory: 'byrokrat\giroapp\Db\DriverInterface:getDonorRepository'
+
+    byrokrat\giroapp\Db\DonorQueryInterface:
+        class: byrokrat\giroapp\Db\DonorQueryDecorator
+        arguments: ['@byrokrat\giroapp\Db\DonorRepositoryInterface']
+        public: true
+
+    byrokrat\giroapp\Db\ImportHistoryInterface:
+        factory: 'byrokrat\giroapp\Db\DriverInterface:getImportHistory'
+
     byrokrat\giroapp\State\TransactionDateFactory:
         class: ~
         arguments:

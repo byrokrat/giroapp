@@ -8,6 +8,7 @@ use byrokrat\giroapp\Plugin\Plugin;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Plugin\ApiVersionConstraint;
 use byrokrat\giroapp\Console\CommandInterface;
+use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
@@ -29,6 +30,13 @@ class PluginSpec extends ObjectBehavior
         $this->beConstructedWith($command);
         $this->loadPlugin($env);
         $env->registerCommand($command)->shouldHaveBeenCalled();
+    }
+
+    function it_registers_database_drivers(DriverFactoryInterface $driverFactory, EnvironmentInterface $env)
+    {
+        $this->beConstructedWith($driverFactory);
+        $this->loadPlugin($env);
+        $env->registerDatabaseDriver($driverFactory)->shouldHaveBeenCalled();
     }
 
     function it_registers_subscribers(EventSubscriberInterface $subscriber, EnvironmentInterface $env)

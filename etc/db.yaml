@@ -1,6 +1,5 @@
 parameters:
     db.donors: 'donors.json'
-    db.imports: 'imports.json'
 
 services:
     _defaults:
@@ -23,7 +22,6 @@ services:
         arguments:
             -
                 donors: '@db_donor_engine'
-                imports: '@db_import_engine'
 
     byrokrat\giroapp\Mapper\DonorMapper:
         class: ~
@@ -36,15 +34,3 @@ services:
     db_donor_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
         arguments: ['%db.donors%', '@flysystem_db']
-
-    byrokrat\giroapp\Mapper\FileChecksumMapper:
-        class: ~
-        arguments: ['@db_import_collection']
-
-    db_import_collection:
-        class: hanneskod\yaysondb\Collection
-        arguments: ['@db_import_engine']
-
-    db_import_engine:
-        class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.imports%', '@flysystem_db']

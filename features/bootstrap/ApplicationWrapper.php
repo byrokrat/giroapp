@@ -58,7 +58,7 @@ class ApplicationWrapper
     public function __destruct()
     {
         if (is_dir($this->cwd)) {
-            exec("rm -rf {$this->cwd}");
+            exec("rm -rf '{$this->cwd}'");
         }
     }
 

@@ -20,39 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Mapper\Schema;
+namespace byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Model\FileChecksum;
+use byrokrat\giroapp\Db\ImportHistoryInterface;
+use byrokrat\giroapp\Event\FileEvent;
 
-/**
- * Maps FileChecksum objects to arrays
- */
-class FileChecksumSchema
+class ImportHistoryListener
 {
     /**
-     * Schema type identifier
+     * @var ImportHistoryInterface
      */
-    const TYPE = 'giroapp/filechecksum:alpha2';
+    private $importHistory;
 
-    /**
-     * @return string[] Returns FileChecksum as string array
-     */
-    public function toArray(FileChecksum $checksum) : array
+    public function __construct(ImportHistoryInterface $importHistory)
     {
-        return [
-            'type' => self::TYPE,
-            'filename' => $checksum->getFilename(),
-            'checksum' => $checksum->getChecksum(),
-            'datetime' => $checksum->getDatetime()->format(\DateTime::W3C)
-        ];
+        $this->importHistory = $importHistory;
     }
 
-    public function fromArray(array $doc) : FileChecksum
+    public function onFileImported(FileEvent $event): void
     {
-        return new FileChecksum(
-            $doc['filename'],
-            $doc['checksum'],
-            new \DateTimeImmutable($doc['datetime'])
-        );
+        $this->importHistory->addToImportHistory($event->getFile());
     }
 }

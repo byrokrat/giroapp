@@ -19,6 +19,11 @@
             "byrokrat\\giroapp\\": ["src/"]
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "spec\\byrokrat\\giroapp\\": ["spec/"]
+        }
+    },
     "require": {
         "php": ">=7.1",
         "ext-mbstring": "*",

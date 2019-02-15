@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Console\CommandInterface;
+use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
@@ -47,6 +48,9 @@ class Plugin implements PluginInterface
         foreach ($this->objects as $item) {
             if ($item instanceof ApiVersionConstraint) {
                 $environment->assertApiVersion($item);
+            }
+            if ($item instanceof DriverFactoryInterface) {
+                $environment->registerDatabaseDriver($item);
             }
             if ($item instanceof CommandInterface) {
                 $environment->registerCommand($item);

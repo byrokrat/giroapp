@@ -12,6 +12,8 @@ use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Config\ConfigInterface;
+use byrokrat\giroapp\Db\DriverFactoryCollection;
+use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
@@ -32,6 +34,7 @@ use Prophecy\Argument;
 class ConfiguringEnvironmentSpec extends ObjectBehavior
 {
     function let(
+        DriverFactoryCollection $dbDriverFactoryCollection,
         EventDispatcherInterface $dispatcher,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
@@ -42,6 +45,7 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
     ) {
         $this->beConstructedWith(
             new ApiVersion('1.0'),
+            $dbDriverFactoryCollection,
             $dispatcher,
             $filterCollection,
             $formatterCollection,
@@ -86,6 +90,12 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $this->configureApplication($application);
         $adapter = new Adapter($command->getWrappedObject(), $dispatcher->getWrappedObject());
         $application->add($adapter)->shouldHaveBeenCalled();
+    }
+
+    function it_can_register_db_drivers($dbDriverFactoryCollection, DriverFactoryInterface $driverFactory)
+    {
+        $this->registerDatabaseDriver($driverFactory);
+        $dbDriverFactoryCollection->addDriverFactory($driverFactory)->shouldHaveBeenCalled();
     }
 
     function it_can_register_subscribers($dispatcher, EventSubscriberInterface $subscriber)

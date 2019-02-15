@@ -33,7 +33,7 @@ services:
         class: byrokrat\giroapp\Filesystem\FilesystemConfigurator
         arguments:
             - ['.']
-            - ['%db.donors%', '%db.imports%']
+            - ['%db.donors%']
 
     setup_mkdir:
         class: byrokrat\giroapp\Filesystem\FilesystemConfigurator

@@ -25,6 +25,8 @@ namespace byrokrat\giroapp\Plugin;
 use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Config\ConfigManager;
+use byrokrat\giroapp\Db\DriverFactoryCollection;
+use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
@@ -47,6 +49,11 @@ final class ConfiguringEnvironment implements EnvironmentInterface
      * @var ApiVersion
      */
     private $apiVersion;
+
+    /**
+     * @var DriverFactoryCollection
+     */
+    private $dbDriverFactoryCollection;
 
     /**
      * @var EventDispatcherInterface
@@ -90,6 +97,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
 
     public function __construct(
         ApiVersion $apiVersion,
+        DriverFactoryCollection $dbDriverFactoryCollection,
         EventDispatcherInterface $dispatcher,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
@@ -99,6 +107,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         XmlFormTranslator $xmlFormTranslator
     ) {
         $this->apiVersion = $apiVersion;
+        $this->dbDriverFactoryCollection = $dbDriverFactoryCollection;
         $this->dispatcher = $dispatcher;
         $this->filterCollection = $filterCollection;
         $this->formatterCollection = $formatterCollection;
@@ -128,6 +137,11 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function registerCommand(CommandInterface $command): void
     {
         $this->commands[] = $command;
+    }
+
+    public function registerDatabaseDriver(DriverFactoryInterface $driverFactory): void
+    {
+        $this->dbDriverFactoryCollection->addDriverFactory($driverFactory);
     }
 
     public function registerSubscriber(EventSubscriberInterface $subscriber): void

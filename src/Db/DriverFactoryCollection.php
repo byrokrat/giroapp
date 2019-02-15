@@ -20,47 +20,21 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Model;
+namespace byrokrat\giroapp\Db;
 
-/**
- * Models a file checksum entity
- */
-class FileChecksum
+use byrokrat\giroapp\Utils\CollectionTrait;
+
+class DriverFactoryCollection
 {
-    /**
-     * @var string
-     */
-    private $filename;
+    use CollectionTrait;
 
-    /**
-     * @var string
-     */
-    private $checksum;
-
-    /**
-     * @var \DateTimeImmutable
-     */
-    private $datetime;
-
-    public function __construct(string $filename, string $checksum, \DateTimeImmutable $datetime)
+    public function addDriverFactory(DriverFactoryInterface $driverFactory): void
     {
-        $this->filename = $filename;
-        $this->checksum = $checksum;
-        $this->datetime = $datetime;
+        $this->addItem($driverFactory->getDriverName(), $driverFactory);
     }
 
-    public function getFilename(): string
+    public function getDriverFactory(string $driverName): DriverFactoryInterface
     {
-        return $this->filename;
-    }
-
-    public function getChecksum(): string
-    {
-        return $this->checksum;
-    }
-
-    public function getDatetime(): \DateTimeImmutable
-    {
-        return $this->datetime;
+        return $this->getItem($driverName);
     }
 }

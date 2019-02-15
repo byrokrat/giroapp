@@ -153,7 +153,7 @@ class FeatureContext implements Context
 
         if ($expectedCode != $this->result->getReturnCode()) {
             throw new \Exception(sprintf(
-                'Expected return code %s of exception class %s, found %s',
+                'Expected return code %s (%s), found %s',
                 $expectedCode,
                 $error,
                 $this->result->getReturnCode()

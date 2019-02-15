@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Model;
 
-use byrokrat\giroapp\Model\FileChecksum;
+use byrokrat\giroapp\Model\FileThatWasImported;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class FileChecksumSpec extends ObjectBehavior
+class FileThatWasImportedSpec extends ObjectBehavior
 {
     const FILENAME = 'fname';
     const CHECKSUM = 'check';
@@ -20,7 +20,7 @@ class FileChecksumSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(FileChecksum::CLASS);
+        $this->shouldHaveType(FileThatWasImported::CLASS);
     }
 
     function it_contains_a_filename()

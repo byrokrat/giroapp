@@ -25,7 +25,7 @@ use byrokrat\giroapp\Exception as GiroappException;
 /**
  * Exception thrown when a file already exist in store
  */
-final class FileExistsException extends \RuntimeException implements GiroappException
+final class FileAlreadyImportedException extends \RuntimeException implements GiroappException
 {
     use ErrorCodeTrait;
 }

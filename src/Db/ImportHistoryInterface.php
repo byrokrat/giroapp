@@ -18,34 +18,21 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Db;
 
-namespace byrokrat\giroapp\Listener;
+use byrokrat\giroapp\Exception\FileAlreadyImportedException;
+use byrokrat\giroapp\Filesystem\FileInterface;
+use byrokrat\giroapp\Model\FileThatWasImported;
 
-use byrokrat\giroapp\Db\DriverInterface;
-use hanneskod\yaysondb\Yaysondb;
-
-class CommittingListener
+interface ImportHistoryInterface
 {
     /**
-     * @var Yaysondb
+     * @throws FileAlreadyImportedException If file was previously imported
      */
-    private $db;
+    public function addToImportHistory(FileInterface $file): void;
 
     /**
-     * @var DriverInterface
+     * Check if file was previously imported
      */
-    private $dbDriver;
-
-    public function __construct(Yaysondb $db, DriverInterface $dbDriver)
-    {
-        $this->db = $db;
-        $this->dbDriver = $dbDriver;
-    }
-
-    public function onExecutionStoped(): void
-    {
-        $this->db->commit();
-        $this->dbDriver->commit();
-    }
+    public function fileWasImported(FileInterface $file): ?FileThatWasImported;
 }

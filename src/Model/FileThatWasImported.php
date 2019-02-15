@@ -20,32 +20,38 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Model;
 
-use byrokrat\giroapp\Db\DriverInterface;
-use hanneskod\yaysondb\Yaysondb;
-
-class CommittingListener
+class FileThatWasImported
 {
-    /**
-     * @var Yaysondb
-     */
-    private $db;
+    /** @var string */
+    private $filename;
 
-    /**
-     * @var DriverInterface
-     */
-    private $dbDriver;
+    /** @var string */
+    private $checksum;
 
-    public function __construct(Yaysondb $db, DriverInterface $dbDriver)
+    /** @var \DateTimeImmutable */
+    private $datetime;
+
+    public function __construct(string $filename, string $checksum, \DateTimeImmutable $datetime)
     {
-        $this->db = $db;
-        $this->dbDriver = $dbDriver;
+        $this->filename = $filename;
+        $this->checksum = $checksum;
+        $this->datetime = $datetime;
     }
 
-    public function onExecutionStoped(): void
+    public function getFilename(): string
     {
-        $this->db->commit();
-        $this->dbDriver->commit();
+        return $this->filename;
+    }
+
+    public function getChecksum(): string
+    {
+        return $this->checksum;
+    }
+
+    public function getDatetime(): \DateTimeImmutable
+    {
+        return $this->datetime;
     }
 }

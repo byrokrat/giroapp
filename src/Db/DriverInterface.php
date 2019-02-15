@@ -18,14 +18,15 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\Exception;
+namespace byrokrat\giroapp\Db;
 
-use byrokrat\giroapp\Exception as GiroappException;
-
-/**
- * Exception thrown when a file does not exist in store
- */
-final class FileDoesNotExistException extends \RuntimeException implements GiroappException
+interface DriverInterface
 {
-    use ErrorCodeTrait;
+    public function getDonorRepository(): DonorRepositoryInterface;
+
+    public function getImportHistory(): ImportHistoryInterface;
+
+    public function commit(): void;
+
+    public function rollback(): void;
 }

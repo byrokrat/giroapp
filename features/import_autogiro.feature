@@ -34,6 +34,19 @@ Feature: Importing files
         """
     Then I get a "INVALID_AUTOGIRO_FILE_EXCEPTION" error
 
+  Scenario: I import the same file twice
+    When I import:
+        """
+        01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
+        092017081799000000000
+        """
+    And I import:
+        """
+        01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
+        092017081799000000000
+        """
+    Then I get a "FILE_ALREADY_IMPORTED_EXCEPTION" error
+
   Scenario: I import an autogiro file approving a mandate register request
     Given there are donors:
       | payer-number | state        |

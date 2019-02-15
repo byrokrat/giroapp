@@ -30,7 +30,7 @@ services:
             - { name: event_listener, priority: 10, event: INFO }
             - { name: event_listener, priority: 10, event: DEBUG }
 
-    byrokrat\giroapp\Listener\FileImportChecksumListener:
+    byrokrat\giroapp\Listener\ImportHistoryListener:
         class: ~
         tags:
             - { name: event_listener, event: FILE_IMPORTED, priority: 10 }

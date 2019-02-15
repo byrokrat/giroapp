@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Console;
+use byrokrat\giroapp\Db;
 use byrokrat\giroapp\Filter;
 use byrokrat\giroapp\Formatter;
 use byrokrat\giroapp\Sorter;
@@ -44,6 +45,7 @@ final class CorePlugin extends Plugin
         Console\ShowCommand $showCommand,
         Console\StatusCommand $statusCommand,
         Console\ValidateCommand $validateCommand,
+        Db\Json\JsonDriverFactory $jsonDriverFactory,
         Filter\ActiveFilter $activeFilter,
         Filter\InactiveFilter $incativeFilter,
         Filter\ExportableFilter $exportableFilter,
