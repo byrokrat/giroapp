@@ -6,50 +6,90 @@ namespace spec\byrokrat\giroapp\Mapper\Schema;
 
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Mapper\Schema\PostalAddressSchema;
-use byrokrat\giroapp\Model\DonorState\DonorStateFactory;
-use byrokrat\giroapp\Model\DonorState\DonorState;
-use byrokrat\giroapp\Model\DonorState\ActiveState;
+use byrokrat\giroapp\State\StateCollection;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\ActiveState;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\banking\AccountFactory;
+use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\id\IdFactory;
-use byrokrat\id\PersonalId;
+use byrokrat\id\IdFactoryInterface;
+use byrokrat\id\IdInterface;
 use hanneskod\yaysondb\Expression\ExpressionInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class DonorSchemaSpec extends ObjectBehavior
 {
+    const MANDATE_KEY = 'mandate-key';
+    const MANDATE_SOURCE = 'mandate-source';
+    const PAYER_NUMBER = 'payer-number';
+    const STATE = 'state';
+    const STATE_DESC = 'state-desc';
+    const NAME = 'name';
+    const ACCOUNT = 'account';
+    const ID = 'id';
+    const ADDRESS = 'address';
+    const EMAIL = 'email';
+    const PHONE = 'phone';
+    const AMOUNT = '100';
+    const COMMENT = 'comment';
+    const FORMATTED_DATE = '2017-11-04T13:25:19+01:00';
+    const ATTR_KEY = 'ATTR_KEY';
+    const ATTR_VALUE = 'ATTR_VALUE';
+
     /**
      * @var array A schema formatted document to test against
      */
     private $schemaDocument = [
-        'type' => DonorSchema::TYPE_VERSION,
-        'mandateKey' => 'mandate-key',
-        'state' => 'state',
-        'mandateSource' => 'mandate-source',
-        'payerNumber' => 'payer-number',
-        'account' => 'account',
-        'donorId' => 'id',
-        'name' => 'name',
-        'address' => ['foobar'],
-        'email' => 'email',
-        'phone' => 'phone',
-        'donationAmount' => '1',
-        'comment' => 'comment'
+        'type' => DonorSchema::TYPE,
+        'mandate_key' => self::MANDATE_KEY,
+        'mandate_source' => self::MANDATE_SOURCE,
+        'payer_number' => self::PAYER_NUMBER,
+        'state' => self::STATE,
+        'state_desc' => self::STATE_DESC,
+        'name' => self::NAME,
+        'account' => self::ACCOUNT,
+        'donor_id' => self::ID,
+        'address' => [self::ADDRESS],
+        'email' => self::EMAIL,
+        'phone' => self::PHONE,
+        'donation_amount' => self::AMOUNT,
+        'comment' => self::COMMENT,
+        'created' => self::FORMATTED_DATE,
+        'updated' => self::FORMATTED_DATE,
+        'attributes' => [self::ATTR_KEY => self::ATTR_VALUE]
     ];
 
     function let(
         PostalAddressSchema $postalAddressSchema,
-        DonorStateFactory $donorStateFactory,
-        AccountFactory $accountFactory,
-        IdFactory $idFactory
+        PostalAddress $address,
+        StateCollection $stateCollection,
+        StateInterface $state,
+        AccountFactoryInterface $accountFactory,
+        AccountNumber $account,
+        IdFactoryInterface $idFactory,
+        IdInterface $id,
+        \DateTimeImmutable $datetime
     ) {
+        $postalAddressSchema->fromArray([self::ADDRESS])->willReturn($address);
+        $postalAddressSchema->toArray($address)->willReturn([self::ADDRESS]);
+
+        $stateCollection->getState(self::STATE)->willReturn($state);
+        $state->getStateId()->willReturn(self::STATE);
+
+        $accountFactory->createAccount(self::ACCOUNT)->willReturn($account);
+        $account->getNumber()->willReturn(self::ACCOUNT);
+
+        $idFactory->createId(self::ID)->willReturn($id);
+        $id->format('S-sk')->willReturn(self::ID);
+
+        $datetime->format(\DateTime::W3C)->willReturn(self::FORMATTED_DATE);
+
         $this->beConstructedWith(
             $postalAddressSchema,
-            $donorStateFactory,
+            $stateCollection,
             $accountFactory,
             $idFactory
         );
@@ -60,110 +100,58 @@ class DonorSchemaSpec extends ObjectBehavior
         $this->shouldHaveType(DonorSchema::CLASS);
     }
 
-    function it_can_create_donor(
-        $postalAddressSchema,
-        $donorStateFactory,
-        $accountFactory,
-        $idFactory,
-        DonorState $donorState,
-        AccountNumber $account,
-        PersonalId $id,
-        PostalAddress $address
-    ) {
-        $postalAddressSchema->fromArray(['foobar'])->willReturn($address);
-        $donorStateFactory->createDonorState('state')->willReturn($donorState);
-        $accountFactory->createAccount('account')->willReturn($account);
-        $idFactory->create('id')->willReturn($id);
-
+    function it_can_create_donors($state, $account, $id, $address)
+    {
         $this->fromArray($this->schemaDocument)->shouldBeLike(
             new Donor(
-                'mandate-key',
-                $donorState->getWrappedObject(),
-                'mandate-source',
-                'payer-number',
+                self::MANDATE_KEY,
+                $state->getWrappedObject(),
+                self::STATE_DESC,
+                self::MANDATE_SOURCE,
+                self::PAYER_NUMBER,
                 $account->getWrappedObject(),
                 $id->getWrappedObject(),
-                'name',
+                self::NAME,
                 $address->getWrappedObject(),
-                'email',
-                'phone',
-                new SEK('1'),
-                'comment'
+                self::EMAIL,
+                self::PHONE,
+                new SEK(self::AMOUNT),
+                self::COMMENT,
+                new \DateTimeImmutable(self::FORMATTED_DATE),
+                new \DateTimeImmutable(self::FORMATTED_DATE),
+                [self::ATTR_KEY => self::ATTR_VALUE]
             )
         );
     }
 
-    function it_can_create_array(
-        $postalAddressSchema,
-        AccountNumber $account,
-        PersonalId $id,
-        PostalAddress $address,
-        DonorState $donorState,
-        SEK $amount
-    ) {
-        $postalAddressSchema->toArray($address)->willReturn(['foobar']);
-        $donorState->getId()->willReturn('state');
-        $account->getNumber()->willReturn('account');
-        $id->format('S-sk')->willReturn('id');
-        $amount->getAmount()->willReturn('1');
+    function it_can_create_arrays($account, $id, $address, $state, $datetime, SEK $amount)
+    {
+        $amount->getAmount()->willReturn(self::AMOUNT);
 
         $donor = new Donor(
-            'mandate-key',
-            $donorState->getWrappedObject(),
-            'mandate-source',
-            'payer-number',
+            self::MANDATE_KEY,
+            $state->getWrappedObject(),
+            self::STATE_DESC,
+            self::MANDATE_SOURCE,
+            self::PAYER_NUMBER,
             $account->getWrappedObject(),
             $id->getWrappedObject(),
-            'name',
+            self::NAME,
             $address->getWrappedObject(),
-            'email',
-            'phone',
+            self::EMAIL,
+            self::PHONE,
             $amount->getWrappedObject(),
-            'comment'
+            self::COMMENT,
+            $datetime->getWrappedObject(),
+            $datetime->getWrappedObject(),
+            [self::ATTR_KEY => self::ATTR_VALUE]
         );
 
         $this->toArray($donor)->shouldBeLike($this->schemaDocument);
     }
 
-    function it_can_create_payer_number_search_expressions()
+    function it_contains_json_schema()
     {
-        $this->getPayerNumberSearchExpression('1234')->shouldMatchDocument([
-            'payerNumber' => '1234'
-        ]);
-
-        $this->getPayerNumberSearchExpression('1234')->shouldNotMatchDocument([
-            'payerNumber' => 'not-1234'
-        ]);
-
-        $this->getPayerNumberSearchExpression('1234')->shouldNotMatchDocument([
-            'not-payer-number' => '1234'
-        ]);
-    }
-
-    function it_can_create_mandate_key_search_expressions()
-    {
-        $this->getMandateKeySearchExpression('1234')->shouldMatchDocument([
-            'mandateKey' => '1234'
-        ]);
-
-        $this->getMandateKeySearchExpression('1234')->shouldNotMatchDocument([
-            'mandateKey' => 'not-1234'
-        ]);
-
-        $this->getMandateKeySearchExpression('1234')->shouldNotMatchDocument([
-            'not-mandate-key' => '1234'
-        ]);
-    }
-
-    function getMatchers()
-    {
-        return [
-            'matchDocument' => function (ExpressionInterface $expression, $doc) {
-                return $expression->evaluate($doc);
-            },
-            'notMatchDocument' => function (ExpressionInterface $expression, $doc) {
-                return !$expression->evaluate($doc);
-            }
-        ];
+        $this->getJsonSchema()->shouldBeObject();
     }
 }

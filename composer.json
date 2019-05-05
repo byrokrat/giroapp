@@ -4,7 +4,7 @@
     "keywords": ["autogiro"],
     "homepage": "https://github.com/byrokrat/giroapp",
     "type": "project",
-    "license": "GPL-3.0",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Hannes Forsgård",
@@ -19,28 +19,38 @@
             "byrokrat\\giroapp\\": ["src/"]
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "spec\\byrokrat\\giroapp\\": ["spec/"]
+        }
+    },
     "require": {
-        "php": "^7.0",
+        "php": ">=7.1",
         "ext-mbstring": "*",
         "ext-bcmath": "*",
-        "byrokrat/amount": "^1.0",
-        "byrokrat/autogiro": "dev-master",
-        "byrokrat/banking": "^1.4",
-        "byrokrat/id": "^1.0",
-        "hanneskod/yaysondb": "^2.1",
-        "hanneskod/classtools": "^1.1",
-        "symfony/dependency-injection": "^3.3",
-        "symfony/config": "^3.3",
-        "symfony/yaml": "^3.3",
-        "symfony/expression-language": "^3.3",
-        "symfony/console": "^3.3",
-        "symfony/event-dispatcher": "^3.3",
-        "symfony/finder": "^3.3",
-        "hashids/hashids": "^2"
+        "ext-simplexml": "*",
+        "roave/security-advisories": "dev-master",
+        "byrokrat/amount": "^2",
+        "byrokrat/autogiro": "^1.0@beta",
+        "byrokrat/banking": "^2.1",
+        "byrokrat/id": "^2.0",
+        "composer/semver": "^1",
+        "hanneskod/yaysondb": "^2.1.2",
+        "hanneskod/clean" :"^2",
+        "psr/log": "^1",
+        "apix/log": "^1.2",
+        "symfony/dependency-injection": "^4",
+        "symfony/console": "^4",
+        "symfony/event-dispatcher": "^4",
+        "symfony/finder": "^4",
+        "symfony/filesystem": "^4",
+        "hashids/hashids": "^2",
+        "fzaninotto/Streamer": "0.*",
+        "justinrainbow/json-schema": "^5"
     },
     "require-dev": {
-        "phpspec/phpspec": "^3.4",
-        "behat/behat": "^3.3",
-        "squizlabs/php_codesniffer": "^3.0"
+        "symfony/config": "^4",
+        "symfony/yaml": "^4",
+        "symfony/expression-language": "^4"
     }
 }

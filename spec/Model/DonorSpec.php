@@ -5,35 +5,42 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorState\DonorState;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\MandateSources;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
 use byrokrat\amount\Currency\SEK;
-use byrokrat\autogiro\Writer\Writer;
+use byrokrat\autogiro\Writer\WriterInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class DonorSpec extends ObjectBehavior
 {
     const MANDATE_KEY = 'mandate-key';
+    const STATE_DESC = 'state-desc';
     const PAYER_NUMBER = 'payer-number';
     const NAME = 'name';
     const EMAIL = 'email';
     const PHONE = 'phone';
     const COMMENT = 'comment';
+    const ATTR_KEY = 'ATTR_KEY';
+    const ATTR_VALUE = 'ATTR_VALUE';
 
     function let(
-        DonorState $state,
+        StateInterface $state,
         AccountNumber $account,
         PersonalId $donorId,
         PostalAddress $address,
-        SEK $donationAmount
+        SEK $donationAmount,
+        \DateTimeImmutable $created,
+        \DateTimeImmutable $updated
     ) {
         $this->beConstructedWith(
             self::MANDATE_KEY,
             $state,
-            Donor::MANDATE_SOURCE_PAPER,
+            self::STATE_DESC,
+            MandateSources::MANDATE_SOURCE_PAPER,
             self::PAYER_NUMBER,
             $account,
             $donorId,
@@ -42,7 +49,10 @@ class DonorSpec extends ObjectBehavior
             self::EMAIL,
             self::PHONE,
             $donationAmount,
-            self::COMMENT
+            self::COMMENT,
+            $created,
+            $updated,
+            [self::ATTR_KEY => self::ATTR_VALUE]
         );
     }
 
@@ -61,16 +71,29 @@ class DonorSpec extends ObjectBehavior
         $this->getState()->shouldEqual($state);
     }
 
-    function it_can_set_state(DonorState $newState)
+    function it_contains_a_state_desc()
+    {
+        $this->getStateDesc()->shouldEqual(self::STATE_DESC);
+    }
+
+    function it_can_set_state(StateInterface $newState)
     {
         $this->getState()->shouldNotEqual($newState);
-        $this->setState($newState);
+        $this->setState($newState, 'desc');
         $this->getState()->shouldEqual($newState);
+        $this->getStateDesc()->shouldEqual('desc');
+    }
+
+    function it_reads_default_state_descs(StateInterface $newState)
+    {
+        $newState->getDescription()->willReturn('foobar');
+        $this->setState($newState);
+        $this->getStateDesc()->shouldEqual('foobar');
     }
 
     function it_contains_mandate_source()
     {
-        $this->getMandateSource()->shouldEqual(Donor::MANDATE_SOURCE_PAPER);
+        $this->getMandateSource()->shouldEqual(MandateSources::MANDATE_SOURCE_PAPER);
     }
 
     function it_contains_a_payer_number()
@@ -109,14 +132,14 @@ class DonorSpec extends ObjectBehavior
 
     function it_contains_an_address($address)
     {
-        $this->getAddress()->shouldEqual($address);
+        $this->getPostalAddress()->shouldEqual($address);
     }
 
     function it_can_set_address(PostalAddress $newAddress)
     {
-        $this->getAddress()->shouldNotEqual($newAddress);
-        $this->setAddress($newAddress);
-        $this->getAddress()->shouldEqual($newAddress);
+        $this->getPostalAddress()->shouldNotEqual($newAddress);
+        $this->setPostalAddress($newAddress);
+        $this->getPostalAddress()->shouldEqual($newAddress);
     }
 
     function it_contains_an_email()
@@ -167,9 +190,57 @@ class DonorSpec extends ObjectBehavior
         $this->getComment()->shouldEqual($newComment);
     }
 
-    function it_is_exportable_to_autogiro($state, Writer $writer)
+    function it_contains_a_created_date($created)
+    {
+        $this->getCreated()->shouldEqual($created);
+    }
+
+    function it_contains_an_updated_date($updated)
+    {
+        $this->getUpdated()->shouldEqual($updated);
+    }
+
+    function it_can_set_updated_date(\DateTimeImmutable $newUpdated)
+    {
+        $this->setUpdated($newUpdated);
+        $this->getUpdated()->shouldEqual($newUpdated);
+    }
+
+    function it_is_exportable_to_autogiro($state, WriterInterface $writer)
     {
         $this->exportToAutogiro($writer);
         $state->export($this->getWrappedObject(), $writer)->shouldHaveBeenCalled();
+    }
+
+    function it_contains_attributes()
+    {
+        $this->getAttribute(self::ATTR_KEY)->shouldReturn(self::ATTR_VALUE);
+    }
+
+    function it_can_check_for_attribute()
+    {
+        $this->hasAttribute('foobar')->shouldReturn(false);
+    }
+
+    function it_recognizes_loaded_attributes()
+    {
+        $this->setAttribute('foobar', 'baz');
+        $this->hasAttribute('foobar')->shouldReturn(true);
+    }
+
+    function it_can_read_attributes()
+    {
+        $this->setAttribute('foobar', 'baz');
+        $this->getAttribute('foobar')->shouldReturn('baz');
+    }
+
+    function it_throws_exception_if_attribute_does_not_exist()
+    {
+        $this->shouldThrow(\RuntimeException::CLASS)->duringGetAttribute('foobar');
+    }
+
+    function it_can_show_all_attributes()
+    {
+        $this->getAttributes()->shouldReturn([self::ATTR_KEY => self::ATTR_VALUE]);
     }
 }

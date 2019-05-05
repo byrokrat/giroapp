@@ -15,43 +15,91 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\Filesystem\FileInterface;
+use byrokrat\giroapp\Filesystem\FilesystemInterface;
+use byrokrat\giroapp\Filesystem\Sha256File;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\ImportEvent;
+use Streamer\Stream;
 
-/**
- * Command to import a file from autogirot
- */
-class ImportCommand implements CommandInterface
+final class ImportCommand implements CommandInterface
 {
-    public function configure(Command $command)
+    use DispatcherProperty;
+
+    /** @var FilesystemInterface */
+    private $filesystem;
+
+    /** @var Stream */
+    private $stdin;
+
+    public function __construct(FilesystemInterface $filesystem, Stream $stdin = null)
     {
-        $command->setName('import');
-        $command->setDescription('Import a file from autogirot');
-        $command->setHelp('Import a file with data from autogirot');
-        $command->addArgument('filename', InputArgument::REQUIRED, 'The name of the file to import');
+        $this->filesystem = $filesystem;
+        $this->stdin = $stdin ?: new Stream(STDIN);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function configure(Adapter $adapter): void
     {
-        if (!is_readable($input->getArgument('filename')) || !is_file($input->getArgument('filename'))) {
-            throw new \RuntimeException("Unable to read file {$input->getArgument('filename')}");
+        $adapter
+            ->setName('import')
+            ->setDescription('Import a file from autogirot')
+            ->setHelp('Import a file with data from autogirot')
+            ->addArgument(
+                'path',
+                InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
+                'One or more paths to import'
+            )
+            ->addOption(
+                'force',
+                'f',
+                InputOption::VALUE_NONE,
+                'Force import even if a precondition fails'
+            )
+        ;
+    }
+
+    public function execute(InputInterface $input, OutputInterface $output): void
+    {
+        $force = !!$input->getOption('force');
+
+        $paths = (array)$input->getArgument('path');
+
+        if (empty($paths)) {
+            $this->importFile(new Sha256File('STDIN', $this->stdin->getContent()), $force);
         }
 
-        $container->get('event_dispatcher')->dispatch(
-            Events::IMPORT_EVENT,
-            new ImportEvent(file_get_contents($input->getArgument('filename')))
+        foreach ($paths as $path) {
+            if ($this->filesystem->isFile($path)) {
+                $this->importFile($this->filesystem->readFile($path), $force);
+                continue;
+            }
+
+            foreach ($this->filesystem->readDir($path) as $file) {
+                $this->importFile($file, $force);
+            }
+        }
+    }
+
+    private function importFile(FileInterface $file, bool $force): void
+    {
+        $this->dispatcher->dispatch(
+            $force ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
+            new FileEvent(
+                "Importing file <info>{$file->getFilename()}</info>",
+                $file
+            )
         );
     }
 }

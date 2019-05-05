@@ -15,237 +15,268 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
-use byrokrat\giroapp\Builder\DonorBuilder;
-use Symfony\Component\Console\Command\Command;
+use byrokrat\giroapp\DependencyInjection;
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\MandateSources;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\Model\Builder\DonorBuilder;
+use byrokrat\giroapp\Validator;
+use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Console\Question\Question;
-use byrokrat\giroapp\Events;
-use byrokrat\banking\AccountFactory;
-use byrokrat\id\IdFactory;
-use byrokrat\amount\Currency\SEK;
-use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\giroapp\Event\DonorEvent;
+use Symfony\Component\Console\Helper\QuestionHelper;
 
-/**
- * Command to add a new mandate
- */
-class AddCommand implements CommandInterface
+final class AddCommand implements CommandInterface
 {
+    use DependencyInjection\AccountFactoryProperty,
+        DependencyInjection\DispatcherProperty,
+        DependencyInjection\IdFactoryProperty;
+
     /**
-     * @var Command
+     * Maps option names to free text descriptions
      */
-    private $command;
+    private const DESCRIPTIONS = [
+        'source' => 'Mandate source',
+        'id' => 'Donor personal id',
+        'payer-number' => 'Payer number',
+        'account' => 'Donor account number',
+        'name' => 'Donor name',
+        'amount' => 'Monthly donation amount',
+        'address1' => 'Donor address line 1',
+        'address2' => 'Donor address line 2',
+        'address3' => 'Donor address line 3',
+        'postal-code' => 'Donor postal code',
+        'postal-city' => 'Donor postal city',
+        'email' => 'Donor contact email address',
+        'phone' => 'Donor contact phone number',
+        'comment' => 'Comment'
+    ];
 
-    public function configure(Command $command)
+    /**
+     * @var DonorBuilder
+     */
+    private $donorBuilder;
+
+    public function __construct(DonorBuilder $donorBuilder)
     {
-        $this->command = $command;
-        $command->setName('add');
-        $command->setDescription('Add a new donor');
-        $command->setHelp('Register a new traditional printed mandate in database');
-        $command->addOption('payer-number', null, InputOption::VALUE_REQUIRED, 'Unique payer identifier');
-        $command->addOption('account', null, InputOption::VALUE_REQUIRED, 'Payer account number');
-        $command->addOption('id', null, InputOption::VALUE_REQUIRED, 'Payer personal number or organisation number');
-        $command->addOption('name', null, InputOption::VALUE_REQUIRED, 'Payer name');
-        $command->addOption('address1', null, InputOption::VALUE_OPTIONAL, 'Address field 1');
-        $command->addOption('address2', null, InputOption::VALUE_OPTIONAL, 'Address field 2');
-        $command->addOption('postal-code', null, InputOption::VALUE_OPTIONAL, 'Postal code');
-        $command->addOption('postal-city', null, InputOption::VALUE_OPTIONAL, 'Postal city');
-        $command->addOption('co-address', null, InputOption::VALUE_OPTIONAL, 'C/o address');
-        $command->addOption('email', null, InputOption::VALUE_OPTIONAL, 'Contact email address');
-        $command->addOption('phone', null, InputOption::VALUE_OPTIONAL, 'Contact phone number');
-        $command->addOption('amount', null, InputOption::VALUE_OPTIONAL, 'Monthly donation amount');
-        $command->addOption('comment', null, InputOption::VALUE_OPTIONAL, 'Comment');
+        $this->donorBuilder = $donorBuilder;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function configure(Adapter $adapter): void
     {
-        $donorBuilder = $container->get('donor_builder');
-        $donorMapper = $container->get('donor_mapper');
-        $accountFactory = $container->get('account_factory');
-        $idFactory = $container->get('id_factory');
+        $adapter->setName('add');
+        $adapter->setDescription('Add a new donor');
+        $adapter->setHelp('Register a new mandate in database');
 
-        $this->setPayerNumber(
-            $this->getProperty('payer-number', 'Unique ID number for donor', '', $input, $output),
-            $donorBuilder
-        );
-        $this->setAccount(
-            $this->getProperty('account', 'Donor account number', '', $input, $output),
-            $donorBuilder,
-            $accountFactory
-        );
-        $this->setId(
-            $this->getProperty('id', 'Donor personal id number or organisation number', '', $input, $output),
-            $donorBuilder,
-            $idFactory
-        );
-        $this->setName(
-            $this->getProperty('name', 'Donor name', '', $input, $output),
-            $donorBuilder
-        );
-        $this->setPostalAddress(
-            [
-                'address1' => $this->getProperty('address1', 'Donor Address line 1', '', $input, $output),
-                'address2' => $this->getProperty('address2', 'Donor Address line 2', '', $input, $output),
-                'postalCode' => $this->getProperty('postal-code', 'Donor Postal code', '', $input, $output),
-                'postalCity' => $this-> getProperty('postal-city', 'Donor Address city', '', $input, $output),
-                'coAddress' => $this->getProperty('co-address', 'C/o Address', '', $input, $output),
-            ],
-            $donorBuilder
-        );
-        $this->setEmail(
-            $this->getProperty('email', 'Contact email address', '', $input, $output),
-            $donorBuilder
-        );
-        $this->setPhone(
-            $this->getProperty('phone', 'Contact phone number', '', $input, $output),
-            $donorBuilder
-        );
-        $this->setDonationAmount(
-            $this->getProperty('amount', 'Monthly donation amount', '0', $input, $output),
-            $donorBuilder
-        );
-        $this->setComment(
-            $this->getProperty('comment', 'Comment', '', $input, $output),
-            $donorBuilder
-        );
-
-        $donor = $donorBuilder->buildDonor();
-        if ($donorMapper->hasKey($donor->getMandateKey())) {
-            throw new \RunTimeException('A donor with this ID number and bank account already exists');
+        foreach (self::DESCRIPTIONS as $option => $desc) {
+            $adapter->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
-        $donorMapper->save($donor);
-        $container->get('event_dispatcher')->dispatch(
-            Events::MANDATE_ADDED_EVENT,
-            new DonorEvent("Created new donor", $donor)
+
+        $adapter->addOption(
+            'attr-key',
+            null,
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Attribute key'
         );
-        $output->writeln('New donor saved');
+
+        $adapter->addOption(
+            'attr-value',
+            null,
+            InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
+            'Attribute value'
+        );
     }
 
-    private function getProperty(
-        string $key,
-        string $desc,
-        string $default,
-        InputInterface $input,
-        OutputInterface $output
-    ): string {
-        $value = $input->getOption($key);
+    public function execute(InputInterface $input, OutputInterface $output): void
+    {
+        $descs = self::DESCRIPTIONS;
 
-        if (!$value) {
-            $value = $this->command->getHelper('question')->ask(
-                $input,
-                $output,
-                new Question("$desc: ", $default)
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+
+        $this->donorBuilder->reset();
+
+        $sources = ['p' => MandateSources::MANDATE_SOURCE_PAPER, 'o' => MandateSources::MANDATE_SOURCE_ONLINE_FORM];
+
+        $this->donorBuilder->setMandateSource(
+            $inputReader->readInput(
+                'source',
+                Helper\QuestionFactory::createChoiceQuestion(
+                    $descs['source'],
+                    $sources,
+                    MandateSources::MANDATE_SOURCE_PAPER
+                ),
+                new Validator\ChoiceValidator($sources)
+            )
+        );
+
+        /** @var \byrokrat\id\IdInterface */
+        $id = null;
+
+        $inputReader->readInput(
+            'id',
+            Helper\QuestionFactory::createQuestion($descs['id']),
+            new Validator\ValidatorCollection(
+                new Validator\IdValidator,
+                new Validator\CallbackValidator(function (string $value) use (&$id) {
+                    $id = $this->idFactory->createId($value);
+                })
+            )
+        );
+
+        $this->donorBuilder->setId($id);
+
+        $this->donorBuilder->setPayerNumber(
+            $inputReader->readInput(
+                'payer-number',
+                Helper\QuestionFactory::createQuestion($descs['payer-number'], $id->format('Ssk')),
+                new Validator\PayerNumberValidator
+            )
+        );
+
+        /** @var \byrokrat\banking\AccountNumber */
+        $account = null;
+
+        $inputReader->readInput(
+            'account',
+            Helper\QuestionFactory::createQuestion($descs['account'])->setAutocompleterValues(
+                ["3300,{$id->format('Ssk')}"]
+            ),
+            new Validator\ValidatorCollection(
+                new Validator\AccountValidator,
+                new Validator\CallbackValidator(function (string $value) use (&$account) {
+                    $account = $this->accountFactory->createAccount($value);
+                })
+            )
+        );
+
+        $this->donorBuilder->setAccount($account);
+
+        $this->donorBuilder->setName(
+            $inputReader->readInput(
+                'name',
+                Helper\QuestionFactory::createQuestion($descs['name']),
+                new Validator\ValidatorCollection(
+                    new Validator\StringValidator,
+                    new Validator\NotEmptyValidator
+                )
+            )
+        );
+
+        $this->donorBuilder->setDonationAmount(
+            new SEK(
+                $inputReader->readInput(
+                    'amount',
+                    Helper\QuestionFactory::createQuestion($descs['amount']),
+                    new Validator\ValidatorCollection(
+                        new Validator\NotEmptyValidator,
+                        new Validator\NumericValidator
+                    )
+                )
+            )
+        );
+
+        $this->donorBuilder->setPostalAddress(
+            new PostalAddress(
+                $inputReader->readInput(
+                    'address1',
+                    Helper\QuestionFactory::createQuestion($descs['address1'], ''),
+                    new Validator\StringValidator
+                ),
+                $inputReader->readInput(
+                    'address2',
+                    Helper\QuestionFactory::createQuestion($descs['address2'], ''),
+                    new Validator\StringValidator
+                ),
+                $inputReader->readInput(
+                    'address3',
+                    Helper\QuestionFactory::createQuestion($descs['address3'], ''),
+                    new Validator\StringValidator
+                ),
+                $inputReader->readInput(
+                    'postal-code',
+                    Helper\QuestionFactory::createQuestion($descs['postal-code'], ''),
+                    new Validator\PostalCodeValidator
+                ),
+                $inputReader->readInput(
+                    'postal-city',
+                    Helper\QuestionFactory::createQuestion($descs['postal-city'], ''),
+                    new Validator\StringValidator
+                )
+            )
+        );
+
+        $this->donorBuilder->setEmail(
+            $inputReader->readInput(
+                'email',
+                Helper\QuestionFactory::createQuestion($descs['email'], ''),
+                new Validator\EmailValidator
+            )
+        );
+
+        $this->donorBuilder->setPhone(
+            $inputReader->readInput(
+                'phone',
+                Helper\QuestionFactory::createQuestion($descs['phone'], ''),
+                new Validator\PhoneValidator
+            )
+        );
+
+        $this->donorBuilder->setComment(
+            $inputReader->readInput(
+                'comment',
+                Helper\QuestionFactory::createQuestion($descs['comment'], ''),
+                new Validator\StringValidator
+            )
+        );
+
+        /** @var array */
+        $attrKeys = $input->getOption('attr-key');
+
+        /** @var array */
+        $attrValues = $input->getOption('attr-value');
+
+        for ($count = 0;; $count++) {
+            $attrKey = $inputReader->readInput(
+                '',
+                Helper\QuestionFactory::createQuestion('Add an attribute (empty to skip)', $attrKeys[$count] ?? ''),
+                new Validator\StringValidator
             );
-        }
-        return $value;
-    }
 
-    private function setPayerNumber(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
-        if (is_numeric($value) && strlen($value) <= 16) {
-            $donorBuilder->setPayerNumber($value);
-        } else {
-            throw new \Exception('Payer number must be numerical, and max 16 digits');
-        }
-    }
+            if (!$attrKey) {
+                break;
+            }
 
-    private function setAccount(
-        $value,
-        DonorBuilder $donorBuilder,
-        AccountFactory $accountFactory
-    ) {
-        if ($value) {
-            $newAccount = $accountFactory->createAccount($value);
-            $donorBuilder->setAccount($newAccount);
-        } else {
-            throw new \Exception('Donor needs an account number');
-        }
-    }
-
-    private function setId(
-        string $value,
-        DonorBuilder $donorBuilder,
-        IdFactory $idFactory
-    ) {
-        $newId = $idFactory->create($value);
-        $donorBuilder->setId($newId);
-    }
-
-    private function setName(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
-        if ($value) {
-            $donorBuilder->setName($value);
-        } else {
-            throw new \Exception('Donor needs a name');
-        }
-    }
-
-    private function setPostalAddress(
-        array $values,
-        DonorBuilder $donorBuilder
-    ) {
-        if ($values) {
-            $newPostalAddress = new PostalAddress(
-                $values['postalCode'],
-                $values['postalCity'],
-                $values['address1'],
-                $values['address2'],
-                $values['coAddress']
+            $attrValue = $inputReader->readInput(
+                '',
+                Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
+                new Validator\StringValidator
             );
 
-            $donorBuilder->setPostalAddress($newPostalAddress);
+            $this->donorBuilder->setAttribute($attrKey, $attrValue);
         }
-    }
 
-    private function setEmail(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
-        if ($value) {
-            $donorBuilder->setEmail($value);
-        }
-    }
+        $donor = $this->donorBuilder->buildDonor();
 
-    private function setPhone(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
-        if ($value) {
-            $donorBuilder->setPhone($value);
-        }
-    }
-
-    private function setDonationAmount(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
-        if ($value) {
-            $newDonationAmount = new SEK($value);
-            $donorBuilder->setDonationAmount($newDonationAmount);
-        }
-    }
-
-    private function setComment(
-        string $value,
-        DonorBuilder $donorBuilder
-    ) {
-        if ($value) {
-            $donorBuilder->setComment($value);
-        }
+        $this->dispatcher->dispatch(
+            Events::DONOR_ADDED,
+            new DonorEvent(
+                sprintf(
+                    'Added donor <info>%s</info> with mandate key <info>%s</info>',
+                    $donor->getName(),
+                    $donor->getMandateKey()
+                ),
+                $donor
+            )
+        );
     }
 }

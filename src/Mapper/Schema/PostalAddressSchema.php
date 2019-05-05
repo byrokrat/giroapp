@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 declare(strict_types = 1);
@@ -25,39 +25,38 @@ namespace byrokrat\giroapp\Mapper\Schema;
 use byrokrat\giroapp\Model\PostalAddress;
 
 /**
- * Takes a Address object and transforms it to an array
+ * Maps PostalAddress objects to arrays
  */
-
 class PostalAddressSchema
 {
     /**
-     * Databyse object type & version
+     * Schema type identifier
      */
-    const TYPE_VERSION = 'giroapp/postaladdress:0.1';
+    const TYPE = 'giroapp/postaladdress:alpha2';
 
     /**
-     * @Return string[] Returns PostalAddress as string array
+     * @return string[] Returns PostalAddress as string array
      */
     public function toArray(PostalAddress $address) : array
     {
         return [
-            'coAddress' => $address->getCoAddress(),
-            'address1' => $address->getAddress1(),
-            'address2' => $address->getAddress2(),
-            'postalCode' => $address->getPostalCode(),
-            'postalCity' => $address->getPostalCity(),
-            'type' => self::TYPE_VERSION
+            'type' => self::TYPE,
+            'line1' => $address->getLine1(),
+            'line2' => $address->getLine2(),
+            'line3' => $address->getLine3(),
+            'postal_code' => $address->getPostalCode(),
+            'postal_city' => $address->getPostalCity()
         ];
     }
 
     public function fromArray(array $doc) : PostalAddress
     {
         return new PostalAddress(
-            $doc['postalCode'],
-            $doc['postalCity'],
-            $doc['address1'],
-            $doc['address2'],
-            $doc['coAddress']
+            $doc['line1'],
+            $doc['line2'],
+            $doc['line3'],
+            $doc['postal_code'],
+            $doc['postal_city']
         );
     }
 }

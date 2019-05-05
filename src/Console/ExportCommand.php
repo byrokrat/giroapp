@@ -15,48 +15,89 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\State\StateCollection;
+use byrokrat\giroapp\Filesystem\Sha256File;
+use byrokrat\autogiro\Writer\WriterInterface;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use byrokrat\autogiro\Writer\WriterFactory;
-use byrokrat\banking\BankgiroFactory;
 
 /**
  * Command to create autogiro files
  */
-class ExportCommand implements CommandInterface
+final class ExportCommand implements CommandInterface
 {
-    public function configure(Command $command)
+    use DonorMapperProperty, DispatcherProperty;
+
+    /**
+     * @var WriterInterface
+     */
+    private $autogiroWriter;
+
+    /**
+     * @var StateCollection
+     */
+    private $stateCollection;
+
+    public function __construct(WriterInterface $autogiroWriter, StateCollection $stateCollection)
     {
-        $command->setName('export');
-        $command->setDescription('Export a file to autogirot');
-        $command->setHelp('Create a file with new set of autogiro actions');
+        $this->autogiroWriter = $autogiroWriter;
+        $this->stateCollection = $stateCollection;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function configure(Adapter $adapter): void
     {
-        $settings = $container->get('settings_mapper');
-
-        $writer = (new WriterFactory)->createWriter(
-            $settings->findByKey('bgc_customer_number'),
-            (new BankgiroFactory)->createAccount($settings->findByKey('bankgiro'))
+        $adapter->setName('export');
+        $adapter->setDescription('Export a file to autogirot');
+        $adapter->setHelp('Create a file with new set of autogiro instructions');
+        $adapter->addOption(
+            'filename',
+            null,
+            InputOption::VALUE_REQUIRED,
+            'Name of exported file',
+            'giroapp-export.txt'
         );
+    }
 
-        $donorMapper = $container->get('donor_mapper');
+    public function execute(InputInterface $input, OutputInterface $output): void
+    {
+        $exported = false;
 
-        foreach ($donorMapper->findAll() as $donor) {
-            $donor->exportToAutogiro($writer);
-            $donorMapper->save($donor);
+        foreach ($this->donorMapper->findAll() as $donor) {
+            if ($donor->getState()->isExportable()) {
+                $donor->exportToAutogiro($this->autogiroWriter);
+                $donor->setState($this->stateCollection->getState($donor->getState()->getNextStateId()));
+                $this->dispatcher->dispatch(
+                    Events::DONOR_UPDATED,
+                    new DonorEvent("Exported mandate <info>{$donor->getMandateKey()}</info>", $donor)
+                );
+                $exported = true;
+            }
         }
 
-        $output->write($writer->getContent());
+        /** @var string */
+        $filename = $input->getOption('filename');
+
+        if ($exported) {
+            $this->dispatcher->dispatch(
+                Events::FILE_EXPORTED,
+                new FileEvent(
+                    'Generating file to export',
+                    new Sha256File($filename, $this->autogiroWriter->getContent())
+                )
+            );
+        }
     }
 }

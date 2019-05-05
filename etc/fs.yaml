@@ -1,20 +1,40 @@
 services:
-    filesystem:
-        class: League\Flysystem\Filesystem
-        arguments: ['@filesystem_adapter']
-        configurator: 'filesystem_configurator:createFiles'
+    _defaults:
+        public: false
+        autowire: true
 
-    filesystem_adapter:
-        class: League\Flysystem\Adapter\Local
-        arguments: ['%user.dir%']
+    fs_cwd:
+        class: byrokrat\giroapp\Filesystem\StdFilesystem
+        arguments: ["."]
 
-    filesystem_configurator:
-        class: byrokrat\giroapp\DI\FilesystemConfigurator
+    fs_imports:
+        class: byrokrat\giroapp\Filesystem\FilesystemInterface
+        factory: 'byrokrat\giroapp\Filesystem\FilesystemFactory:createFilesystem'
+        arguments: ["@=service('ini').getConfigValue('imports_dir')"]
+        configurator: 'setup_mkdir:createFiles'
+
+    fs_exports:
+        class: byrokrat\giroapp\Filesystem\FilesystemInterface
+        factory: 'byrokrat\giroapp\Filesystem\FilesystemFactory:createFilesystem'
+        arguments: ["@=service('ini').getConfigValue('exports_dir')"]
+        configurator: 'setup_mkdir:createFiles'
+
+    fs_plugins:
+        class: byrokrat\giroapp\Filesystem\StdFilesystem
+        arguments: ["@=service('ini').getConfigValue('plugins_dir')"]
+        configurator: 'setup_mkdir:createFiles'
+
+    fs_db:
+        class: byrokrat\giroapp\Filesystem\StdFilesystem
+        arguments: ["@=service('ini').getConfigValue('db_dsn')"]
+        configurator: 'setup_db:createFiles'
+
+    setup_db:
+        class: byrokrat\giroapp\Filesystem\FilesystemConfigurator
         arguments:
-            -
-                - '%db.settings%'
-                - '%db.donors%'
-                - '%db.transactions%'
-                - '%db.log%'
-            -
-                - '%plugins.dir%'
+            - ['.']
+            - ['%db.donors%']
+
+    setup_mkdir:
+        class: byrokrat\giroapp\Filesystem\FilesystemConfigurator
+        arguments: [['.']]

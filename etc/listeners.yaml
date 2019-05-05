@@ -1,0 +1,98 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+
+    byrokrat\giroapp\Listener\MonitoringListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: EXECUTION_STARTED,        method: dispatchDebug,   priority: 10 }
+            - { name: event_listener, event: EXECUTION_STOPED,         method: dispatchDebug,   priority: 10 }
+            - { name: event_listener, event: FILE_IMPORTED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: FILE_EXPORTED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED, method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: DONOR_ADDED,              method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: DONOR_UPDATED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_APPROVED,         method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_REVOKED,          method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_REVOCATION_REQUESTED, method: dispatchInfo, priority: 10 }
+            - { name: event_listener, event: DONOR_REMOVED,            method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_INVALIDATED,      method: dispatchWarning, priority: 10 }
+            - { name: event_listener, event: MANDATE_PAUSE_REQUESTED,  method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_PAUSED,           method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: MANDATE_RESTARTED,        method: dispatchInfo,    priority: 10 }
+
+    byrokrat\giroapp\Listener\LoggingListener:
+        class: ~
+        tags:
+            - { name: event_listener, priority: 10, event: ERROR }
+            - { name: event_listener, priority: 10, event: WARNING }
+            - { name: event_listener, priority: 10, event: INFO }
+            - { name: event_listener, priority: 10, event: DEBUG }
+
+    byrokrat\giroapp\Listener\ImportHistoryListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: FILE_IMPORTED, priority: 10 }
+
+    file_import_dumper:
+        class: byrokrat\giroapp\Listener\FileDumpingListener
+        arguments: ['@fs_imports', '@byrokrat\giroapp\Filesystem\RenamingProcessor']
+        tags:
+            - { name: event_listener, event: FILE_IMPORTED,            method: onFileEvent, priority: -10 }
+            - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED, method: onFileEvent, priority: -10 }
+            - { name: event_listener, event: EXECUTION_STOPED }
+
+    file_export_dumper:
+        class: byrokrat\giroapp\Listener\FileDumpingListener
+        arguments: ['@fs_exports', '@byrokrat\giroapp\Filesystem\RenamingProcessor']
+        tags:
+            - { name: event_listener, event: FILE_EXPORTED, method: onFileEvent, priority: -9 }
+            - { name: event_listener, event: EXECUTION_STOPED }
+
+    file_export_cwd_dumper:
+        class: byrokrat\giroapp\Listener\FileDumpingListener
+        arguments: ['@fs_cwd', '@byrokrat\giroapp\Filesystem\NullProcessor']
+        tags:
+            - { name: event_listener, event: FILE_EXPORTED, method: onFileEvent, priority: -10 }
+
+    byrokrat\giroapp\Listener\FileImportingListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: FILE_IMPORTED }
+            - { name: event_listener, event: FILE_FORCEFULLY_IMPORTED, method: onFileImported }
+
+    byrokrat\giroapp\Listener\AutogiroImportingListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: AUTOGIRO_FILE_IMPORTED }
+
+    byrokrat\giroapp\Listener\XmlImportingListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: XML_FILE_IMPORTED }
+
+    byrokrat\giroapp\Listener\CommittingListener:
+        class: ~
+        arguments: ['@db']
+        tags:
+            - { name: event_listener, event: EXECUTION_STOPED }
+
+    byrokrat\giroapp\Listener\MandateResponseListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: MANDATE_RESPONSE_RECEIVED }
+
+    byrokrat\giroapp\Listener\DonorPersistingListener:
+        class: ~
+        tags:
+            - { name: event_listener, event: DONOR_ADDED   }
+            - { name: event_listener, event: DONOR_REMOVED }
+            - { name: event_listener, event: DONOR_UPDATED,           method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_APPROVED,        method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_REVOKED,         method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_REVOCATION_REQUESTED, method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_INVALIDATED,     method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_PAUSE_REQUESTED, method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_PAUSED,          method: onDonorUpdated }
+            - { name: event_listener, event: MANDATE_RESTARTED,       method: onDonorUpdated }

@@ -1,0 +1,47 @@
+; References encolsed in % will be resolved by parser
+
+; The name of the organization.
+org_name = ...
+
+; Organization state id number (organisationsnummer)
+org_id = ...
+
+; BGC customer number of organization
+org_bgc_nr = ...
+
+; Bankgiro account number of organization
+org_bg = ...
+
+; The day of month when transactions are to be performed
+trans_day_of_month = 28
+
+; The minimum days in the future of created transactions
+trans_min_days_in_future = 4
+
+; Base directory setting
+; Can be omitted, defaults to the directory of giroapp.ini
+; base_dir = "path/to/dir"
+
+; Database driver to use, currently only 'json' is supported
+db_driver = json
+
+; Data Source Name, the information required to connect to the database
+; Values are driver specific
+db_dsn = "%base_dir%/data"
+
+; Directory where plugins are stored
+plugins_dir = "%base_dir%/plugins"
+
+; Directory where copies of imported files are stored
+; Empty value turns of saving imported files
+imports_dir = "%base_dir%/imports"
+
+; Directory where copies of exported files are stored
+; Empty value turns of saving exported files
+exports_dir = "%base_dir%/exports"
+
+; Internal log file
+log_file = "%base_dir%/giroapp.log"
+
+; PSR-3 log level (error/warning/info/debug)
+log_level = "info"

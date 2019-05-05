@@ -3,14 +3,28 @@ sudo: false
 language: php
 
 php:
-  - 7.1
-  - 7.0
+    - 7.3
+    - 7.2
+    - 7.1
 
 install:
-  - composer install
+    - composer install
+    - composer global require chh/bob:^1@alpha
+    - export PATH=$PATH:$HOME/.config/composer/vendor/bin/:$HOME/.composer/vendor/bin/
+    - bob install_dev_tools
 
 script:
-  - vendor/bin/phpspec run --verbose
-  - vendor/bin/behat --verbose
-  - vendor/bin/phpcs --standard=PSR2 src
-  - vendor/bin/phpcs --standard=spec/ruleset.xml spec
+    - phpspec run --verbose
+    - behat --suite=debug
+    - bob phar
+    - behat --suite=phar
+
+deploy:
+    provider: releases
+    api_key:
+        secure: KZecGRK+1K1LLpmnhozDie8CknkGx+lLZdDjPXD90CgEDiGyl4vV4k0hR7PM4Lxhdcpw04a48z6j7Z78WCvZQtjrOscmTfz3mw3ofan9MKFr94z4sI0Kgd/qHIbW4XuGaQjSKqyV/3vcLZ861QRIPoD0bkWmuGyC9xttcva0HAr/LVbSZicdxHk249W437evEFgc6rkTD21vQzYNJROaA6cWx2Dg0M8ay5y20H5cC8HBQA4P8Q0IYTOYh6yQmxaRir0UZmKXaly9zR9YtQDCStczq186N9/Znf+7PKjExcqa2mACM0n4spAAiS+1Dao8Wxp3oH/48iCEHgUbzvaxnoh4uqtoJNxnKgXlpsScLZoI6y4kgiJ8d/aEFyF10xjnBFpTAaDCLldmDK4HVl6peXCTdOlnojN4OfbvQdx59nKpgJ5Fa8pl5lupqZH+fL2ntuoGufG9QkMoZ8YcFC9ia8f//V8+gXcXu9eD/wRuO1OeNCXE8/1d6gge66nwslYAXcafbH2Z+m1soYZbvZTn017UQP224ykN+jVg812KMjj/NSBiEPiF2A5KVs073VBqoN4v4JYfMCLuQwVldvxciQSwnbwPGmZ8R6agj/OXmMOiNk6+BGpHZwIPYokJZ/2yczA7CZAX6ZZLAurY8N2RJUNm6Z+jV5NLT2C4IbZTGTo=
+    file: giroapp.phar
+    skip_cleanup: true
+    on:
+        tags: true
+        repo: byrokrat/giroapp

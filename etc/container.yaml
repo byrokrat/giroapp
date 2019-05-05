@@ -1,71 +1,160 @@
 parameters:
-    plugins.dir: 'plugins'
+    env(GIROAPP_INI): 'giroapp.ini'
 
 imports:
-    - { resource: db.yaml }
     - { resource: fs.yaml }
+    - { resource: db.yaml }
+    - { resource: listeners.yaml }
 
 services:
-    event_dispatcher:
-        class: Symfony\Component\EventDispatcher\EventDispatcher
-        configurator: 'plugin_loader:loadPlugins'
+    _defaults:
+        public: false
+        autowire: true
+        bind:
+            $filesystem: '@fs_cwd'
 
-    plugin_loader:
-        class: byrokrat\giroapp\DI\PluginLoader
-        arguments: ['%user.dir%/%plugins.dir%', '@filesystem']
+    byrokrat\giroapp\:
+        resource: '../src/*'
+        exclude: '../src/{Listener,Mapper}'
 
-    log_listener:
-        class: byrokrat\giroapp\Listener\LoggingListener
-        arguments: ['@db_log_collection']
-        tags:
-            - { name: event_listener, event: ERROR_EVENT, method: onLogEvent, priority: 10 }
-            - { name: event_listener, event: WARNING_EVENT, method: onLogEvent, priority: 10 }
-            - { name: event_listener, event: INFO_EVENT, method: onLogEvent, priority: 10 }
+    Symfony\Component\Console\Application:
+        class: ~
+        arguments: ['GiroApp', '@byrokrat\giroapp\Plugin\ApiVersion']
+        public: true
+        configurator: 'byrokrat\giroapp\Plugin\ConfiguringEnvironment:configureApplication'
 
-    abort_listener:
-        class: byrokrat\giroapp\Listener\AbortingListener
-        tags:
-            - { name: event_listener, event: ERROR_EVENT, priority: 1 }
+    byrokrat\giroapp\Plugin\ApiVersion:
+        arguments: ['$app_version$']
 
-    import_listener:
-        class: byrokrat\giroapp\Listener\ImportListener
-        arguments: ["@=service('autogiro_parser_factory').createParser()"]
-        tags:
-            - { name: event_listener, event: IMPORT_EVENT, priority: 10 }
+    byrokrat\giroapp\Plugin\EnvironmentInterface:
+        alias: byrokrat\giroapp\Plugin\ConfiguringEnvironment
 
-    invalid_node_filtering_listener:
-        class: byrokrat\giroapp\Listener\InvalidNodeFilteringListener
-        arguments: ['@bankgiro_factory', '@settings_mapper']
-        tags:
-            - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 10 }
+    byrokrat\giroapp\Plugin\ConfiguringEnvironment:
+        class: ~
+        configurator: 'plugins:loadPlugin'
 
-    comitting_listener:
-        class: byrokrat\giroapp\Listener\CommittingListener
-        arguments: ['@db_handle']
-        tags:
-            - { name: event_listener, event: EXECUTION_END_EVENT, priority: 1 }
+    plugins:
+        class: byrokrat\giroapp\Plugin\PluginCollection
+        arguments:
+            - '@byrokrat\giroapp\Plugin\CorePlugin'
+            - '@byrokrat\giroapp\Plugin\FilesystemLoadingPlugin'
 
-    mandate_response_listener:
-        class: byrokrat\giroapp\Listener\MandateResponseListener
-        arguments: ['@donor_mapper']
-        tags:
-            - { name: event_listener, event: MANDATE_RESPONSE_EVENT, priority: 1 }
+    byrokrat\giroapp\Plugin\FilesystemLoadingPlugin:
+        class: ~
+        arguments: ['@fs_plugins']
 
-    autogiro_parser_factory:
-        class: byrokrat\autogiro\Parser\ParserFactory
+    ini:
+        alias: byrokrat\giroapp\Config\ConfigManager
+        public: true
 
-    bankgiro_factory:
-        class: byrokrat\banking\BankgiroFactory
+    byrokrat\giroapp\Config\ConfigManager:
+        class: ~
+        arguments: ['@base_dir_repository']
+        configurator: 'byrokrat\giroapp\Config\IniFileLoader:loadIniFile'
 
-    account_factory:
+    base_dir_repository:
+        class: byrokrat\giroapp\Config\ArrayRepository
+        arguments: [base_dir: "@=service('base_dir_reader').getBaseDir()"]
+
+    base_dir_reader:
+        class: byrokrat\giroapp\Config\BaseDirReader
+        arguments: ['%env(GIROAPP_INI)%']
+
+    byrokrat\giroapp\Config\IniFileLoader:
+        class: ~
+        arguments: ['%env(GIROAPP_INI)%']
+
+    organization_id:
+        class: byrokrat\id\IdInterface
+        factory: 'byrokrat\id\IdFactoryInterface:createId'
+        arguments: ["@=service('ini').getConfigValue('org_id')"]
+
+    organization_bg:
+        class: byrokrat\banking\AccountNumber
+        factory: 'byrokrat\banking\BankgiroFactory:createAccount'
+        arguments: ["@=service('ini').getConfigValue('org_bg')"]
+
+    byrokrat\giroapp\Console\ValidateCommand:
+        class: ~
+        arguments:
+            - '@fs_db'
+            - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
+
+    byrokrat\giroapp\Db\DriverFactoryInterface:
+        factory: 'byrokrat\giroapp\Db\DriverFactoryCollection:getDriverFactory'
+        arguments: ["@=service('ini').getConfigValue('db_driver')"]
+
+    byrokrat\giroapp\Db\DriverInterface:
+        factory: 'byrokrat\giroapp\Db\DriverFactoryInterface:createDriver'
+        arguments: ["@=service('ini').getConfigValue('db_dsn')"]
+
+    byrokrat\giroapp\Db\DonorRepositoryInterface:
+        factory: 'byrokrat\giroapp\Db\DriverInterface:getDonorRepository'
+
+    byrokrat\giroapp\Db\DonorQueryInterface:
+        class: byrokrat\giroapp\Db\DonorQueryDecorator
+        arguments: ['@byrokrat\giroapp\Db\DonorRepositoryInterface']
+        public: true
+
+    byrokrat\giroapp\Db\ImportHistoryInterface:
+        factory: 'byrokrat\giroapp\Db\DriverInterface:getImportHistory'
+
+    byrokrat\giroapp\State\TransactionDateFactory:
+        class: ~
+        arguments:
+            $dayOfMonth: "@=service('ini').getConfig('trans_day_of_month')"
+            $minDaysInFuture: "@=service('ini').getConfig('trans_min_days_in_future')"
+
+    byrokrat\giroapp\Xml\XmlMandateParser:
+        class: ~
+        arguments: ['@organization_id', '@organization_bg']
+
+    byrokrat\giroapp\AutogiroVisitor:
+        class: ~
+        arguments:
+            - "@=service('ini').getConfig('org_bgc_nr')"
+            - '@organization_bg'
+
+    byrokrat\autogiro\Writer\WriterInterface:
+        factory: 'byrokrat\giroapp\AutogiroWriterFactory:createWriter'
+        arguments:
+            - "@=service('ini').getConfig('org_bgc_nr')"
+            - '@organization_bg'
+
+    byrokrat\autogiro\Writer\WriterFactory: ~
+
+    byrokrat\autogiro\Parser\ParserInterface:
+        factory: 'byrokrat\autogiro\Parser\ParserFactory:createParser'
+
+    byrokrat\autogiro\Parser\ParserFactory: ~
+
+    byrokrat\banking\AccountFactoryInterface:
         class: byrokrat\banking\AccountFactory
+        autowire: false
 
-    id_factory:
+    byrokrat\banking\BankgiroFactory: ~
+
+    byrokrat\id\IdFactoryInterface:
         class: byrokrat\id\PersonalIdFactory
+        autowire: false
+        arguments: ['@byrokrat\id\OrganizationIdFactory']
 
-    donor_builder:
-        class: byrokrat\giroapp\Builder\DonorBuilder
-        arguments: ['@mandate_key_builder']
+    byrokrat\id\OrganizationIdFactory:
+        class: ~
+        autowire: false
 
-    mandate_key_builder:
-        class: byrokrat\giroapp\Builder\MandateKeyBuilder
+    JsonSchema\Validator: ~
+
+    Psr\Log\LoggerInterface:
+        class: Apix\Log\Logger\File
+        arguments: ["@=service('ini').getConfigValue('log_file')"]
+        calls:
+            - method: setMinLevel
+              arguments: ["@=service('ini').getConfigValue('log_level')"]
+            - method: setLogFormatter
+              arguments: ['@byrokrat\giroapp\Utils\LogFormatter']
+
+    Symfony\Component\EventDispatcher\EventDispatcherInterface:
+        class: 'Symfony\Component\EventDispatcher\EventDispatcher'
+
+    Symfony\Component\Filesystem\Filesystem: ~

@@ -1,0 +1,8 @@
+{
+    "ignore": [
+        "features/*",
+        "spec/*",
+        "src/DependencyInjection/ProjectServiceContainer.php",
+        "bob_config.php"
+    ]
+}

@@ -15,18 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
+use byrokrat\giroapp\Db\DriverInterface;
 use hanneskod\yaysondb\Yaysondb;
 
-/**
- * Commits changes in database
- */
 class CommittingListener
 {
     /**
@@ -34,13 +32,20 @@ class CommittingListener
      */
     private $db;
 
-    public function __construct(Yaysondb $db)
+    /**
+     * @var DriverInterface
+     */
+    private $dbDriver;
+
+    public function __construct(Yaysondb $db, DriverInterface $dbDriver)
     {
         $this->db = $db;
+        $this->dbDriver = $dbDriver;
     }
 
-    public function onExecutionEndEvent()
+    public function onExecutionStoped(): void
     {
         $this->db->commit();
+        $this->dbDriver->commit();
     }
 }

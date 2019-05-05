@@ -1,72 +1,36 @@
 parameters:
-    db.settings: 'data/settings.json'
-    db.donors: 'data/donors.json'
-    db.transactions: 'data/transactions.json'
-    db.log: 'var/log'
+    db.donors: 'donors.json'
 
 services:
-    db_handle:
+    _defaults:
+        public: false
+        autowire: true
+
+    byrokrat\giroapp\Mapper\:
+        resource: '../src/Mapper/*'
+
+    flysystem_db:
+        class: League\Flysystem\Filesystem
+        arguments: ['@flysystem_db_adapter']
+
+    flysystem_db_adapter:
+        class: League\Flysystem\Adapter\Local
+        arguments: ["@=service('fs_db').getAbsolutePath('.')"]
+
+    db:
         class: hanneskod\yaysondb\Yaysondb
         arguments:
             -
-                settings: '@db_settings_engine'
-                donors: '@db_donors_engine'
-                transactions: '@db_transactions_engine'
-                log: '@db_log_engine'
+                donors: '@db_donor_engine'
 
-    settings_mapper:
-        class: byrokrat\giroapp\Mapper\SettingsMapper
-        arguments: ['@db_settings_collection']
+    byrokrat\giroapp\Mapper\DonorMapper:
+        class: ~
+        arguments: ['@db_donor_collection']
 
-    db_settings_collection:
+    db_donor_collection:
         class: hanneskod\yaysondb\Collection
-        arguments: ['@db_settings_engine']
+        arguments: ['@db_donor_engine']
 
-    db_settings_engine:
+    db_donor_engine:
         class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.settings%', '@filesystem']
-
-    donor_mapper:
-        class: byrokrat\giroapp\Mapper\DonorMapper
-        arguments: ['@db_donors_collection', '@donor_schema']
-
-    donor_schema:
-        class: byrokrat\giroapp\Mapper\Schema\DonorSchema
-        arguments: ['@postal_address_schema', '@donor_state_factory', '@account_factory', '@id_factory']
-
-    db_donors_collection:
-        class: hanneskod\yaysondb\Collection
-        arguments: ['@db_donors_engine']
-
-    db_donors_engine:
-        class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.donors%', '@filesystem']
-
-    transaction_mapper:
-        class: byrokrat\giroapp\Mapper\TransactionMapper
-        arguments: ['@db_transactions_collection']
-
-    db_transactions_collection:
-        class: hanneskod\yaysondb\Collection
-        arguments: ['@db_transactions_engine']
-
-    db_transactions_engine:
-        class: hanneskod\yaysondb\Engine\FlysystemEngine
-        arguments: ['%db.transactions%', '@filesystem']
-
-    db_log_collection:
-        class: hanneskod\yaysondb\Collection
-        arguments: ['@db_log_engine']
-
-    db_log_engine:
-        class: hanneskod\yaysondb\Engine\LogEngine
-        arguments: ['%user.dir%/%db.log%', '@db_log_formatter']
-
-    db_log_formatter:
-        class: byrokrat\giroapp\LogFormatter
-
-    postal_address_schema:
-        class: byrokrat\giroapp\Mapper\Schema\PostalAddressSchema
-
-    donor_state_factory:
-        class: byrokrat\giroapp\Model\DonorState\DonorStateFactory
+        arguments: ['%db.donors%', '@flysystem_db']

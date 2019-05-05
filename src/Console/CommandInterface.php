@@ -15,17 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Interface for giroapp console commands
@@ -33,12 +31,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 interface CommandInterface
 {
     /**
-     * Configure the symfony command
+     * Configure command
      */
-    public function configure(Command $command);
+    public function configure(Adapter $wrapper): void;
 
     /**
      * Execute command
      */
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container);
+    public function execute(InputInterface $input, OutputInterface $output): void;
 }

@@ -15,78 +15,120 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 namespace byrokrat\giroapp;
 
-/**
- * List of giroapp event names
- */
 interface Events
 {
     /**
-     * Execution about to start
+     * Execution about to start, expects a LogEvent
      */
-    const EXECUTION_START_EVENT = 'EXECUTION_START_EVENT';
+    const EXECUTION_STARTED = 'EXECUTION_STARTED';
 
     /**
-     * Execution about to end
+     * Execution about to end, expects a LogEvent
      */
-    const EXECUTION_END_EVENT = 'EXECUTION_END_EVENT';
+    const EXECUTION_STOPED = 'EXECUTION_STOPED';
 
     /**
-     * A bank file imported, expects an ImportEvent
+     * A file imported, expects an FileEvent
      */
-    const IMPORT_EVENT = 'IMPORT_EVENT';
+    const FILE_IMPORTED = 'FILE_IMPORTED';
+
+    /**
+     * A file exported, expects an FileEvent
+     */
+    const FILE_EXPORTED = 'FILE_EXPORTED';
+
+    /**
+     * A file forcefully imported, expects an FileEvent
+     */
+    const FILE_FORCEFULLY_IMPORTED = 'FILE_FORCEFULLY_IMPORTED';
+
+    /**
+     * An autogiro file imported, expects an FileEvent
+     */
+    const AUTOGIRO_FILE_IMPORTED = 'AUTOGIRO_FILE_IMPORTED';
+
+    /**
+     * An XML file imported, expects an XmlEvent
+     */
+    const XML_FILE_IMPORTED = 'XML_FILE_IMPORTED';
+
+    /**
+     * A donor added, expects a DonorEvent
+     */
+    const DONOR_ADDED = 'DONOR_ADDED';
+
+    /**
+     * A donor updated, expects a DonorEvent
+     */
+    const DONOR_UPDATED = 'DONOR_UPDATED';
+
+    /**
+     * A donor removed, expects a DonorEvent
+     */
+    const DONOR_REMOVED = 'DONOR_REMOVED';
 
     /**
      * A mandate response received from bank, expects a NodeEvent
      */
-    const MANDATE_RESPONSE_EVENT = 'MANDATE_RESPONSE_EVENT';
+    const MANDATE_RESPONSE_RECEIVED = 'MANDATE_RESPONSE_RECEIVED';
 
     /**
-     * A mandate has been added, expects a DonorEvent
+     * A mandate approved by the bank, expects a DonorEvent
      */
-    const MANDATE_ADDED_EVENT = 'MANDATE_ADDED_EVENT';
+    const MANDATE_APPROVED = 'MANDATE_APPROVED';
 
     /**
-     * A mandate has been edited, expects a DonorEvent
+     * A mandate revoked, expects a DonorEvent
      */
-    const MANDATE_EDITED_EVENT = 'MANDATE_EDITED_EVENT';
+    const MANDATE_REVOKED = 'MANDATE_REVOKED';
 
     /**
-     * A mandate has been approved by the bank, expects a DonorEvent
+     * Mandate revocation requested, expects a DonorEvent
      */
-    const MANDATE_APPROVED_EVENT = 'MANDATE_APPROVED_EVENT';
-
-    /**
-     * A mandate has been revoked, expects a DonorEvent
-     */
-    const MANDATE_REVOKED_EVENT = 'MANDATE_REVOKED_EVENT';
+    const MANDATE_REVOCATION_REQUESTED = 'MANDATE_REVOCATION_REQUESTED';
 
     /**
      * A mandate is invalid and could not be approved, expects a DonorEvent
      */
-    const MANDATE_INVALID_EVENT = 'MANDATE_INVALID_EVENT';
+    const MANDATE_INVALIDATED = 'MANDATE_INVALIDATED';
+
+    /**
+     * A mandate pause has been requested, expects a DonorEvent
+     */
+    const MANDATE_PAUSE_REQUESTED = 'MANDATE_PAUSE_REQUESTED';
+
+    /**
+     * A mandate has been paused, expects a DonorEvent
+     */
+    const MANDATE_PAUSED = 'MANDATE_PAUSED';
+
+    /**
+     * A mandate has been restarted, expects a DonorEvent
+     */
+    const MANDATE_RESTARTED = 'MANDATE_RESTARTED';
 
     /**
      * An unexpected and unrecoverable error, expects a LogEvent
      */
-    const ERROR_EVENT = 'ERROR_EVENT';
+    const ERROR = 'ERROR';
 
     /**
      * An unexpected but recoverable situation, expects a LogEvent
      */
-    const WARNING_EVENT = 'WARNING_EVENT';
+    const WARNING = 'WARNING';
 
     /**
      * Present information to user, expects a LogEvent
      */
-    const INFO_EVENT = 'INFO_EVENT';
+    const INFO = 'INFO';
 
     /**
      * Present debug information to user, expects a LogEvent
      */
-    const DEBUG_EVENT = 'DEBUG_EVENT';
+    const DEBUG = 'DEBUG';
 }

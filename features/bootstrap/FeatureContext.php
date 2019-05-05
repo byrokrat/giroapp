@@ -6,18 +6,19 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Behat\Tester\Exception\PendingException;
+use byrokrat\giroapp\MandateSources;
 
 class FeatureContext implements Context
 {
     const DEFAULT_DONOR_ROW = [
+        'source' => MandateSources::MANDATE_SOURCE_PAPER,
         'payer-number' => '1',
-        'state' => 'ActiveState',
-        'mandate-source' => 'MANDATE_SOURCE_PAPER',
+        'state' => 'ACTIVE',
         'account' => '50001111116',
         'id' => '8203232775',
         'name' => 'name',
-        'email' => 'email',
-        'phone' => 'phone',
+        'email' => 'email@host.com',
+        'phone' => '1234',
         'amount' => '0',
         'comment' => 'comment'
     ];
@@ -28,86 +29,95 @@ class FeatureContext implements Context
     private $app;
 
     /**
+     * @var bool
+     */
+    private $debug;
+
+    /**
+     * @var string
+     */
+    private $executable;
+
+    /**
      * @var Result Result from the last app invocation
      */
     private $result;
 
+    public function __construct(bool $debug, string $executable)
+    {
+        $this->debug = $debug;
+        $this->executable = $executable;
+    }
+
     /**
      * @Given a fresh installation
      */
-    public function aFreshInstallation()
+    public function aFreshInstallation(): void
     {
-        $this->app = new ApplicationWrapper;
-        $this->result = $this->app->init();
+        $this->app = new ApplicationWrapper($this->executable, $this->debug);
     }
 
     /**
-     * @Given an orgnization :name with bankgiro :bg and bgc customer number :custNr
+     * @Given a configuration file:
      */
-    public function anOrgnizationWithBankgiroAndBgcCustomerNumber($name, $bg, $custNr)
+    public function aConfigurationFile(PyStringNode $ini)
     {
-        $this->result = $this->app->init("--org-name='$name' --bankgiro='$bg' --bgc-customer-number='$custNr'");
-    }
-
-    /**
-     * @Given the explicit payer number strategy
-     */
-    public function theExplicitPayerNumberStrategy()
-    {
-        $this->result = $this->app->init('--payer-number-strategy explicit');
-    }
-
-    /**
-     * @Given the ID payer number strategy
-     */
-    public function theIdPayerNumberStrategy()
-    {
-        $this->result = $this->app->init('--payer-number-strategy id');
+        $this->app->createIniFile(
+            file_get_contents(__DIR__ . '/../../giroapp.ini.dist')
+            . "\n"
+            . (string)$ini
+        );
     }
 
     /**
      * @Given there are donors:
      */
-    public function thereAreDonors(TableNode $table)
+    public function thereAreDonors(TableNode $table): void
     {
-        $container = $this->app->getContainer();
-
         foreach ($table->getHash() as $row) {
             $row = array_merge(self::DEFAULT_DONOR_ROW, $row);
 
-            $donor = $container->get('donor_builder')
-                ->setMandateSource(constant("byrokrat\\giroapp\\Model\\Donor::{$row['mandate-source']}"))
-                ->setPayerNumber($row['payer-number'])
-                ->setId($container->get('id_factory')->create($row['id']))
-                ->setAccount($container->get('account_factory')->createAccount($row['account']))
-                ->setName($row['name'])
-                ->setEmail($row['email'])
-                ->setPhone($row['phone'])
-                ->setDonationAmount(new byrokrat\amount\Currency\SEK($row['amount']))
-                ->setComment($row['comment'])
-                ->buildDonor();
+            $this->iRun(sprintf(
+                'add --source %s --payer-number %s --account %s --id %s --name %s --email %s --phone %s --amount %s --comment %s',
+                $row['source'],
+                $row['payer-number'],
+                $row['account'],
+                $row['id'],
+                $row['name'],
+                $row['email'],
+                $row['phone'],
+                $row['amount'],
+                $row['comment']
+            ));
 
-            $stateClass = "byrokrat\\giroapp\\Model\\DonorState\\{$row['state']}";
+            $this->thereIsNoError();
 
-            $donor->setState(new $stateClass);
+            $this->iRun(sprintf('edit %s --state %s', $row['payer-number'], $row['state']));
 
-            $container->get('donor_mapper')->save($donor);
-            $container->get('db_handle')->commit();
+            $this->thereIsNoError();
         }
+    }
+
+    /**
+     * @Given a plugin:
+     */
+    public function aPlugin(PyStringNode $content): void
+    {
+        $this->app->createPlugin((string)$content);
     }
 
     /**
      * @When I run :command
      */
-    public function iRun($command)
+    public function iRun($command): void
     {
-        $this->result = $this->app->execute($command);
+        $this->result = $this->app->executeVerbose($command);
     }
 
     /**
      * @When I import:
      */
-    public function iImport(PyStringNode $content)
+    public function iImport(PyStringNode $content): void
     {
         $this->result = $this->app->import(
             $this->app->createFile((string)$content)
@@ -115,68 +125,19 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then the donor database contains:
+     * @Then there is no error
      */
-    public function theDonorDatabaseContains(TableNode $table)
+    public function thereIsNoError(): void
     {
-        $container = $this->app->getContainer();
-
-        foreach ($table->getHash() as $row) {
-            foreach ($container->get('donor_mapper')->findAll() as $donor) {
-                if (isset($row['mandate-source']) && $donor->getMandateSource() != constant("byrokrat\\giroapp\\Model\\Donor::{$row['mandate-source']}")) {
-                    continue;
-                }
-
-                if (isset($row['payer-number']) && $donor->getPayerNumber() != $row['payer-number']) {
-                    continue;
-                }
-
-                if (isset($row['id']) && (string)$donor->getDonorId() != (string)$container->get('id_factory')->create($row['id'])) {
-                    continue;
-                }
-
-                if (isset($row['account']) && !$donor->getAccount()->equals($container->get('account_factory')->createAccount($row['account']))) {
-                    continue;
-                }
-
-                if (isset($row['name']) && $donor->getName() != $row['name']) {
-                    continue;
-                }
-
-                if (isset($row['email']) && $donor->getEmail() != $row['email']) {
-                    continue;
-                }
-
-                if (isset($row['phone']) && $donor->getPhone() != $row['phone']) {
-                    continue;
-                }
-
-                if (isset($row['amount']) && !$donor->getDonationAmount()->equals(new byrokrat\amount\Currency\SEK($row['amount']))) {
-                    continue;
-                }
-
-                if (isset($row['comment']) && $donor->getComment() != $row['comment']) {
-                    continue;
-                }
-
-                if (isset($row['state'])) {
-                    $stateClass = "byrokrat\\giroapp\\Model\\DonorState\\{$row['state']}";
-                    if (!$donor->getState() instanceof $stateClass) {
-                        continue;
-                    }
-                }
-
-                return true;
-            }
-
-            throw new Exception("Unable to find donor in database");
+        if ($this->result->isError()) {
+            throw new \Exception("Error: {$this->result->getErrorOutput()}");
         }
     }
 
     /**
      * @Then I get an error
      */
-    public function iGetAnError()
+    public function iGetAnError(): void
     {
         if (!$this->result->isError()) {
             throw new \Exception('App invocation should result in an error');
@@ -184,9 +145,66 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then I get a :error error
+     */
+    public function iGetAError($error)
+    {
+        $expectedCode = constant("byrokrat\giroapp\Exception::$error");
+
+        if ($expectedCode != $this->result->getReturnCode()) {
+            throw new \Exception(sprintf(
+                'Expected return code %s (%s), found %s',
+                $expectedCode,
+                $error,
+                $this->result->getReturnCode()
+            ));
+        }
+    }
+
+    /**
+     * @Then the database contains donor :donor with :field matching :expected
+     */
+    public function theDatabaseContainsDonorWithMatching($donor, $field, $expected): void
+    {
+        $this->result = $this->app->execute("show $donor --format=json");
+        $this->thereIsNoError();
+        $data = json_decode($this->result->getOutput(), true);
+        if (!isset($data[$field]) || $data[$field] != $expected) {
+            throw new \Exception("Unable to find $field: $expected in database");
+        }
+    }
+
+    /**
+     * @Then the exported file matches:
+     */
+    public function theExportedFileMatches(PyStringNode $string): void
+    {
+        $this->multilinePregMatch(
+            explode("\n", (string)$string),
+            explode("\n", $this->app->getLastExportedFile())
+        );
+    }
+
+    /**
+     * @Then the output contains a line like :regexp
+     */
+    public function theOutputContainsALineLike($regexp): void
+    {
+        $output = explode("\n", $this->result->getOutput());
+
+        foreach ($output as $line) {
+            if (preg_match($regexp, $line)) {
+                return;
+            }
+        }
+
+        throw new \Exception("Unable to find $regexp in {$this->result->getOutput()}");
+    }
+
+    /**
      * @Then the output contains :string
      */
-    public function theOutputContains($string)
+    public function theOutputContains($string): void
     {
         if (!preg_match("/$string/i", $this->result->getOutput())) {
             throw new \Exception("Unable to find $string in output {$this->result->getOutput()}");
@@ -196,10 +214,24 @@ class FeatureContext implements Context
     /**
      * @Then the output does not contain :string
      */
-    public function theOutputDoesNotContain($string)
+    public function theOutputDoesNotContain($string): void
     {
         if (preg_match("/$string/i", $this->result->getOutput())) {
             throw new \Exception("$string should not be in output");
+        }
+    }
+
+    private function multilinePregMatch(array $regexes, array $strings): void
+    {
+        if (count($regexes) != count($strings)) {
+            $source = implode("\n", $strings);
+            throw new \Exception("Not the same number of regexes as lines in '$source'");
+        }
+
+        foreach ($regexes as $lineNr => $regexp) {
+            if (!preg_match("/^$regexp\s*$/", $strings[$lineNr])) {
+                throw new \Exception("Unable to find '$regexp' in '{$strings[$lineNr]}'");
+            }
         }
     }
 }

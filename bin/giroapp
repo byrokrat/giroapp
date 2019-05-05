@@ -16,26 +16,21 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console;
+require __DIR__ . '/../vendor/autoload.php';
 
-require __DIR__.'/../vendor/autoload.php';
-
+use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
 use Symfony\Component\Console\Application;
 
-$version = trim(file_get_contents(__DIR__.'/../version'));
+$container = new ProjectServiceContainer;
 
-$app = new Application('GiroApp', $version);
-
-$app->add(new CommandWrapper(new AddCommand));
-$app->add(new CommandWrapper(new EditCommand));
-$app->add(new CommandWrapper(new ExportCommand));
-$app->add(new CommandWrapper(new ImportCommand));
-$app->add(new CommandWrapper(new InitCommand));
-$app->add(new CommandWrapper(new StatusCommand));
-
-$app->run();
+try {
+    $container->get(Application::CLASS)->run();
+} catch (\Exception $e) {
+    echo "ERROR: {$e->getMessage()} \n";
+    exit($e->getCode() ?: 1);
+}

@@ -1,0 +1,15 @@
+{
+    "main": "bin/giroapp",
+    "output": "giroapp.phar",
+    "directories": [
+        "src",
+        "vendor"
+    ],
+    "compactors": [
+        "KevinGH\\Box\\Compactor\\Php"
+    ],
+    "replacement-sigil": "$",
+    "git-tag": "app_version",
+    "algorithm": "SHA512",
+    "chmod": "0550"
+}

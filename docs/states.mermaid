@@ -1,0 +1,36 @@
+graph TD
+
+ACTIVE
+INACTIVE
+NEW_MANDATE
+NEW_DIGITAL_MANDATE
+MANDATE_SENT
+MANDATE_APPROVED
+REVOKE_MANDATE
+REVOCATION_SENT
+PAUSE_MANDATE
+PAUSE_SENT
+PAUSED
+
+subgraph REGISTRATION
+  NEW_MANDATE--export mandate-->MANDATE_SENT
+  NEW_DIGITAL_MANDATE--export mandate-->MANDATE_SENT
+  MANDATE_SENT--import registration-->MANDATE_APPROVED
+  MANDATE_APPROVED--export transaction-->ACTIVE
+  ACTIVE-.import transaction report.->ACTIVE
+end
+
+subgraph REVOCATION
+  REVOKE_MANDATE--export revocation-->REVOCATION_SENT
+  REVOCATION_SENT--import revocation-->INACTIVE
+end
+
+ACTIVE-.->REVOKE_MANDATE
+
+subgraph PAUSE
+  PAUSE_MANDATE--export pause-->PAUSE_SENT
+  PAUSE_SENT--import pause-->PAUSED
+end
+
+ACTIVE--request pause-->PAUSE_MANDATE
+PAUSED--export restart-->ACTIVE

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+# A simple wrapper script that enables running a
+# development version of giroapp without interfering
+# with a production database.
+
+DIR=`dirname $0`
+export GIROAPP_INI=$DIR/.giroapp/giroapp.ini
+exec $DIR/bin/giroapp "$@"

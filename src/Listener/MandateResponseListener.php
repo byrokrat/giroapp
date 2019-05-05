@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 declare(strict_types = 1);
@@ -27,11 +27,9 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\NodeEvent;
-use byrokrat\giroapp\Model\DonorState\MandateApprovedState;
-use byrokrat\giroapp\Model\DonorState\InactiveState;
-use byrokrat\giroapp\Model\DonorState\ErrorState;
-use byrokrat\autogiro\Messages;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use byrokrat\giroapp\State\StateCollection;
+use byrokrat\giroapp\States;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
  * Add or reject mandates based on autogiro response
@@ -43,27 +41,30 @@ class MandateResponseListener
      */
     private $donorMapper;
 
-    public function __construct(DonorMapper $donorMapper)
+    /**
+     * @var StateCollection
+     */
+    private $stateCollection;
+
+    public function __construct(DonorMapper $donorMapper, StateCollection $stateCollection)
     {
         $this->donorMapper = $donorMapper;
+        $this->stateCollection = $stateCollection;
     }
 
-    public function onMandateResponseEvent(NodeEvent $nodeEvent, string $name, EventDispatcherInterface $dispatcher)
+    public function onMandateResponseReceived(NodeEvent $nodeEvent, string $eventName, Dispatcher $dispatcher): void
     {
         $node = $nodeEvent->getNode();
 
         $donor = $this->donorMapper->findByActivePayerNumber(
-            $node->getChild('payer_number')->getValue()
+            $node->getValueFrom('PayerNumber')
         );
 
-        // validate id if present in node
-        if ($node->getChild('id')->hasAttribute('id')) {
-            /** @var \byrokrat\id\Id */
-            $nodeId = $node->getChild('id')->getAttribute('id');
-
+        /** @var \byrokrat\id\IdInterface $nodeId */
+        if ($nodeId = $node->getChild('StateId')->getValueFrom('Object')) {
             if ($donor->getDonorId()->format('S-sk') != $nodeId->format('S-sk')) {
                 $dispatcher->dispatch(
-                    Events::WARNING_EVENT,
+                    Events::WARNING,
                     new LogEvent(
                         sprintf(
                             "Invalid mandate response for payer number '%s', found donor id '%s', expecting '%s'",
@@ -80,14 +81,11 @@ class MandateResponseListener
             }
         }
 
-        // validate account if present in node
-        if ($node->getChild('account')->hasAttribute('account')) {
-            /** @var \byrokrat\banking\AccountNumber */
-            $nodeAccount = $node->getChild('account')->getAttribute('account');
-
+        /** @var \byrokrat\banking\AccountNumber $nodeAccount */
+        if ($nodeAccount = $node->getChild('Account')->getValueFrom('Object')) {
             if (!$donor->getAccount()->equals($nodeAccount)) {
                 $dispatcher->dispatch(
-                    Events::WARNING_EVENT,
+                    Events::WARNING,
                     new LogEvent(
                         sprintf(
                             "Invalid mandate response for payer number '%s', found account '%s', expecting '%s'",
@@ -104,45 +102,39 @@ class MandateResponseListener
             }
         }
 
-        $donorEvent = new DonorEvent(
-            sprintf(
-                '%s (%s)',
-                $node->getChild('info')->getAttribute('message'),
-                $node->getChild('comment')->getAttribute('message')
-            ),
-            $donor
-        );
+        $status = (string)$node->getChild('Status')->getValueFrom('Text');
 
-        switch ($node->getChild('info')->getAttribute('message_id')) {
-            case Messages::MANDATE_DELETED_BY_PAYER:
-            case Messages::MANDATE_DELETED_BY_RECIPIENT:
-            case Messages::MANDATE_DELETED_DUE_TO_CLOSED_RECIPIENT_BG:
-            case Messages::MANDATE_DELETED_DUE_TO_CLOSED_PAYER_BG:
-                $donor->setState(new InactiveState);
-                $dispatcher->dispatch(Events::MANDATE_REVOKED_EVENT, $donorEvent);
-                break;
+        $donorEvent = new DonorEvent("{$donor->getMandateKey()}: $status", $donor);
 
-            case Messages::MANDATE_CREATED_BY_RECIPIENT:
-                $donor->setState(new MandateApprovedState);
-                $dispatcher->dispatch(Events::MANDATE_APPROVED_EVENT, $donorEvent);
-                break;
-
-            case Messages::MANDATE_UPDATED_PAYER_NUMBER_BY_RECIPIENT:
-            case Messages::MANDATE_ACCOUNT_RESPONSE_FROM_BANK:
-            case Messages::MANDATE_DELETED_DUE_TO_UNANSWERED_ACCOUNT_REQUEST:
-                $donor->setState(new ErrorState);
-                $dispatcher->dispatch(Events::MANDATE_INVALID_EVENT, $donorEvent);
-                break;
-
-            default:
-                $dispatcher->dispatch(
-                    Events::WARNING_EVENT,
-                    new LogEvent("Invalid mandate response info code: {$node->getChild('info')->getValue()}")
-                );
-                $nodeEvent->stopPropagation();
-                return;
+        if ($node->hasChild('CreatedFlag')) {
+            $donor->setState($this->stateCollection->getState(States::MANDATE_APPROVED), $status);
+            $dispatcher->dispatch(Events::MANDATE_APPROVED, $donorEvent);
+            return;
         }
 
-        $this->donorMapper->save($donor);
+        if ($node->hasChild('DeletedFlag')) {
+            $donor->setState($this->stateCollection->getState(States::INACTIVE), $status);
+            $dispatcher->dispatch(Events::MANDATE_REVOKED, $donorEvent);
+            return;
+        }
+
+        if ($node->hasChild('ErrorFlag')) {
+            $donor->setState($this->stateCollection->getState(States::ERROR), $status);
+            $dispatcher->dispatch(Events::MANDATE_INVALIDATED, $donorEvent);
+            return;
+        }
+
+        $dispatcher->dispatch(
+            Events::WARNING,
+            new LogEvent(
+                sprintf(
+                    '%s: invalid mandate status code: %s',
+                    $donor->getMandateKey(),
+                    (string)$node->getChild('Status')->getValueFrom('Number')
+                )
+            )
+        );
+
+        $nodeEvent->stopPropagation();
     }
 }

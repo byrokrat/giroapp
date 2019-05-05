@@ -5,16 +5,16 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Listener\LoggingListener;
-use hanneskod\yaysondb\Collection;
 use byrokrat\giroapp\Event\LogEvent;
+use Psr\Log\LoggerInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class LoggingListenerSpec extends ObjectBehavior
 {
-    function let(Collection $collection)
+    function let(LoggerInterface $logger)
     {
-        $this->beConstructedWith($collection);
+        $this->beConstructedWith($logger);
     }
 
     function it_is_initializable()
@@ -22,19 +22,43 @@ class LoggingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(LoggingListener::CLASS);
     }
 
-    function it_logs_log_events(LogEvent $event, $collection)
+    function it_logs_errors($logger, LogEvent $event)
     {
         $event->getMessage()->willReturn('msg');
         $event->getContext()->willReturn(['context']);
 
-        $collection->insert([
-            'message' => 'msg',
-            'severity' => 'ERR',
-            'context' => ['context']
-        ])->shouldBeCalled();
+        $logger->error('msg', ['context'])->shouldBeCalled();
 
-        $collection->commit()->shouldBeCalled();
+        $this->onError($event);
+    }
 
-        $this->onLogEvent($event, 'ERR');
+    function it_logs_warnings($logger, LogEvent $event)
+    {
+        $event->getMessage()->willReturn('msg');
+        $event->getContext()->willReturn(['context']);
+
+        $logger->warning('msg', ['context'])->shouldBeCalled();
+
+        $this->onWarning($event);
+    }
+
+    function it_logs_infos($logger, LogEvent $event)
+    {
+        $event->getMessage()->willReturn('msg');
+        $event->getContext()->willReturn(['context']);
+
+        $logger->info('msg', ['context'])->shouldBeCalled();
+
+        $this->onInfo($event);
+    }
+
+    function it_logs_debugs($logger, LogEvent $event)
+    {
+        $event->getMessage()->willReturn('msg');
+        $event->getContext()->willReturn(['context']);
+
+        $logger->debug('msg', ['context'])->shouldBeCalled();
+
+        $this->onDebug($event);
     }
 }

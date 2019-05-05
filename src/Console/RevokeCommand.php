@@ -15,32 +15,47 @@
  * You should have received a copy of the GNU General Public License
  * along with byrokrat\giroapp. If not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016-17 Hannes Forsgård
+ * Copyright 2016-19 Hannes Forsgård
  */
 
 declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use Symfony\Component\Console\Command\Command;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\State\RevokeMandateState;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * Command to revoke a mandate
- */
-class RevokeCommand implements CommandInterface
+final class RevokeCommand implements CommandInterface
 {
-    public function configure(Command $command)
+    use Helper\DonorArgument, DispatcherProperty;
+
+    public function configure(Adapter $wrapper): void
     {
-        $command->setName('revoke');
-        $command->setDescription('Revoke a donor mandate');
-        $command->setHelp('Revoke a mandate and stop receiving donations from donor');
+        $wrapper->setName('revoke');
+        $wrapper->setDescription('Revoke a donor mandate');
+        $wrapper->setHelp('Revoke a mandate and stop receiving donations from donor');
+        $this->configureDonorArgument($wrapper);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output, ContainerInterface $container)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
-        // TODO implement...
+        $donor = $this->readDonor($input);
+
+        $donor->setState(new RevokeMandateState);
+
+        $this->dispatcher->dispatch(
+            Events::MANDATE_REVOCATION_REQUESTED,
+            new DonorEvent(
+                sprintf(
+                    'Requested revocation of mandate <info>%s</info>',
+                    $donor->getMandateKey()
+                ),
+                $donor
+            )
+        );
     }
 }
