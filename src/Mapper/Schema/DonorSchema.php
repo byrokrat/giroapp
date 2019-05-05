@@ -98,6 +98,14 @@ class DonorSchema
 
     public function fromArray(array $doc): Donor
     {
+        if ( ! isset($doc['created']) )
+        {
+            $doc['created']=date("Y-m-d H:i:s");
+        }
+        if ( ! isset($doc['updated']) )
+        {
+            $doc['updated']=date("Y-m-d H:i:s");
+        }
         return new Donor(
             $doc['mandate_key'],
             $this->stateCollection->getState($doc['state']),
