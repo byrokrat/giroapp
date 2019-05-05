@@ -98,12 +98,10 @@ class DonorSchema
 
     public function fromArray(array $doc): Donor
     {
-        if ( ! isset($doc['created']) )
-        {
+        if (! isset($doc['created'])) {
             $doc['created']=date("Y-m-d H:i:s");
         }
-        if ( ! isset($doc['updated']) )
-        {
+        if (! isset($doc['updated'])) {
             $doc['updated']=date("Y-m-d H:i:s");
         }
         return new Donor(
