@@ -32,7 +32,7 @@ use byrokrat\giroapp\MandateSources;
 use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\giroapp\Exception\InvalidXmlException;
+use byrokrat\giroapp\Exception\InvalidDataException;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
@@ -101,7 +101,7 @@ class XmlMandateParser
             $orgNr = $mandate->readElement('/MedgivandeViaHemsida/Organisationsnr', new IdValidator);
 
             if ($this->payeeOrgNr->format('S-sk') != $orgNr) {
-                throw new InvalidXmlException(sprintf(
+                throw new InvalidDataException(sprintf(
                     'Invalid payee org nr %s, expecting %s',
                     $orgNr,
                     $this->payeeOrgNr->format('S-sk')
@@ -110,8 +110,8 @@ class XmlMandateParser
 
             $bankgiro = $mandate->readElement('/MedgivandeViaHemsida/Bankgironr', new AccountValidator);
 
-            if ($this->payeeBankgiro->getNumber() != $bankgiro) {
-                throw new InvalidXmlException(sprintf(
+            if (preg_replace('/\D/', '', $this->payeeBankgiro->getNumber()) != preg_replace('/\D/', '', $bankgiro)) {
+                throw new InvalidDataException(sprintf(
                     'Invalid payee bankgiro %s, expecting %s',
                     $bankgiro,
                     $this->payeeBankgiro->getNumber()
@@ -164,7 +164,7 @@ class XmlMandateParser
 
             $this->donorBuilder->setAttribute(
                 'verification_time',
-                $mandate->readElement('/MedgivandeViaHemsida/Verifieringstid', new NumericValidator)
+                $mandate->readElement('/MedgivandeViaHemsida/Verifieringstid', $stringValidator)
             );
 
             $this->donorBuilder->setAttribute(

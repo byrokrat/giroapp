@@ -19,6 +19,7 @@ class PostalCodeValidatorSpec extends ObjectBehavior
     function it_returns_valid_content()
     {
         $this->validate('', '123 45')->shouldReturn('12345');
+        $this->validate('', "123\n45")->shouldReturn('12345');
         $this->validate('', '')->shouldReturn('');
     }
 
