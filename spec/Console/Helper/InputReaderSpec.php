@@ -49,6 +49,7 @@ class InputReaderSpec extends ObjectBehavior
         $input->isInteractive()->willReturn(false);
         $question = new Question('', 'default');
         $validator->validate('key', 'default')->willReturn('foobar')->shouldBeCalled();
+        $validator->validate('key', 'foobar')->willReturn('foobar');
         $this->readInput('key', $question, $validator)->shouldReturn('foobar');
     }
 

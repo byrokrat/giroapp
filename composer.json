@@ -45,7 +45,7 @@
         "symfony/finder": "^4",
         "symfony/filesystem": "^4",
         "hashids/hashids": "^2",
-        "fzaninotto/Streamer": "0.*",
+        "fzaninotto/streamer": "0.*",
         "justinrainbow/json-schema": "^5"
     },
     "require-dev": {
