@@ -37,7 +37,6 @@ final class CorePlugin extends Plugin
         Console\ExportCommand $expotCommand,
         Console\ImportCommand $importCommand,
         Console\LsCommand $lsCommand,
-        Console\MigrateCommand $migrateCommand,
         Console\PauseCommand $pauseCommand,
         Console\PurgeCommand $purgeCommand,
         Console\RemoveCommand $removeCommand,

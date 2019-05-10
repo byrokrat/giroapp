@@ -13,7 +13,7 @@
 * Supports importing files from multiple files and directories.
 * Better exception handling with error codes.
 * All paths are now specified using `giroapp.ini` directives. See `giroapp.ini.dist`.
-  You will need to path your local copy with the new settings.
+  You will need to patch your local copy with the new settings.
 * Some default directory names have changed, specificaly the `var` directory
   is no longer used.
 * Replaced `GIROAPP_PATH` environment variable with `GIROAPP_INI` pointing to the
@@ -21,3 +21,4 @@
 * Plugins may now specify api version constraints.
 * Logging con now be configured in `giroapp.ini`.
 * Removed the `validate` command.
+* Removed the `migrate` command.
