@@ -20,3 +20,4 @@
   `giroapp.ini` to use. Update your environment accordingly.
 * Plugins may now specify api version constraints.
 * Logging con now be configured in `giroapp.ini`.
+* Removed the `validate` command.

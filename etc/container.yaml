@@ -74,12 +74,6 @@ services:
         factory: 'byrokrat\banking\BankgiroFactory:createAccount'
         arguments: ["@=service('ini').getConfigValue('org_bg')"]
 
-    byrokrat\giroapp\Console\ValidateCommand:
-        class: ~
-        arguments:
-            - '@fs_db'
-            - "@=service('byrokrat\\\\giroapp\\\\Mapper\\\\Schema\\\\DonorSchema').getJsonSchema()"
-
     byrokrat\giroapp\Db\DriverFactoryInterface:
         factory: 'byrokrat\giroapp\Db\DriverFactoryCollection:getDriverFactory'
         arguments: ["@=service('ini').getConfigValue('db_driver')"]
@@ -142,8 +136,6 @@ services:
     byrokrat\id\OrganizationIdFactory:
         class: ~
         autowire: false
-
-    JsonSchema\Validator: ~
 
     Psr\Log\LoggerInterface:
         class: Apix\Log\Logger\File

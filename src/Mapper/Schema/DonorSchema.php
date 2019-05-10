@@ -117,18 +117,4 @@ class DonorSchema
             $doc['attributes']
         );
     }
-
-    /**
-     * @return object json schema describing the donor schema
-     */
-    public function getJsonSchema()
-    {
-        $schemaFname = __DIR__ . '/../../../donor_schema.json';
-
-        if (file_exists($schemaFname)) {
-            return json_decode((string)file_get_contents($schemaFname));
-        }
-
-        return (object)[];
-    }
 }

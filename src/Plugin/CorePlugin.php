@@ -44,7 +44,6 @@ final class CorePlugin extends Plugin
         Console\RevokeCommand $revokeCommand,
         Console\ShowCommand $showCommand,
         Console\StatusCommand $statusCommand,
-        Console\ValidateCommand $validateCommand,
         Db\Json\JsonDriverFactory $jsonDriverFactory,
         Filter\ActiveFilter $activeFilter,
         Filter\InactiveFilter $incativeFilter,
