@@ -21,28 +21,74 @@
 namespace byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
-use byrokrat\giroapp\Exception\DonorExistsException;
+use byrokrat\giroapp\Exception\DonorAlreadyExistsException;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\NewDonor;
 use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\State\StateInterface;
+use byrokrat\amount\Currency\SEK;
 
 interface DonorRepositoryInterface extends DonorQueryInterface
 {
     /**
-     * @return string The mandate key of created donor
-     * @throws DonorExistsException If a conflicting donor already exists
+     * @throws DonorAlreadyExistsException If mandate key is already in repository
+     * @throws DonorAlreadyExistsException If payer number is already in repository
+     * @throws DonorAlreadyExistsException If personal id is already in repository
      */
-    public function insertDonor(NewDonor $donor): string;
+    public function addNewDonor(Donor $newDonor): void;
 
     /**
-     * @throws DonorDoesNotExistException If donor does not exist
+     * @throws DonorDoesNotExistException If donor does not exist in repository
      */
     public function deleteDonor(Donor $donor): void;
 
     /**
-     * @throws DonorDoesNotExistException If donor does not exist
+     * @throws DonorDoesNotExistException If donor does not exist in repository
+     */
+    public function updateDonorName(Donor $donor, string $newName): void;
+
+    /**
+     * @throws DonorDoesNotExistException If donor does not exist in repository
+     */
+    public function updateDonorState(Donor $donor, StateInterface $newState, string $stateDesc = ''): void;
+
+    /**
+     * @throws DonorDoesNotExistException If donor does not exist in repository
+     * @throws DonorAlreadyExistsException If payer number is already in repository
+     */
+    public function updateDonorPayerNumber(Donor $donor, string $newPayerNumber): void;
+
+    /**
+     * @throws DonorDoesNotExistException If donor does not exist in repository
+     */
+    public function updateDonorAmount(Donor $donor, SEK $newAmount): void;
+
+    /**
+     * @throws DonorDoesNotExistException If donor does not exist in repository
      */
     public function updateDonorAddress(Donor $donor, PostalAddress $newAddress): void;
 
-    // TODO osv med updaters...
+    /**
+     * @throws DonorDoesNotExistException If donor does not exist in repository
+     */
+    public function updateDonorEmail(Donor $donor, string $newEmail): void;
+
+    /**
+     * @throws DonorDoesNotExistException If donor does not exist in repository
+     */
+    public function updateDonorPhone(Donor $donor, string $newPhone): void;
+
+    /**
+     * @throws DonorDoesNotExistException If donor does not exist in repository
+     */
+    public function updateDonorComment(Donor $donor, string $newComment): void;
+
+    /**
+     * @throws DonorDoesNotExistException If donor does not exist in repository
+     */
+    public function setDonorAttribute(Donor $donor, string $key, string $value): void;
+
+    /**
+     * @throws DonorDoesNotExistException If donor does not exist in repository
+     */
+    public function deleteDonorAttribute(Donor $donor, string $key): void;
 }

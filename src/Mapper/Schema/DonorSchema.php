@@ -123,6 +123,12 @@ class DonorSchema
      */
     public function getJsonSchema()
     {
-        return json_decode((string)file_get_contents(__DIR__ . '/donor_schema.json'));
+        $schemaFname = __DIR__ . '/../../../donor_schema.json';
+
+        if (file_exists($schemaFname)) {
+            return json_decode((string)file_get_contents($schemaFname));
+        }
+
+        return (object)[];
     }
 }

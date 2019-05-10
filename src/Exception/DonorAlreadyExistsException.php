@@ -25,7 +25,7 @@ use byrokrat\giroapp\Exception as GiroappException;
 /**
  * Exception thrown when a donor already exist
  */
-final class DonorExistsException extends \RuntimeException implements GiroappException
+final class DonorAlreadyExistsException extends \RuntimeException implements GiroappException
 {
     use ErrorCodeTrait;
 }

@@ -4,24 +4,24 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Db\Json;
 
-use byrokrat\giroapp\Db\Json\JsonImportHistory;
+use byrokrat\giroapp\Db\Json\JsonDonorRepository;
 use byrokrat\giroapp\Db\Json\JsonDriverFactory;
-use spec\byrokrat\giroapp\Db\ImportHistorySpecTrait;
+use spec\byrokrat\giroapp\Db\DonorRepositorySpecTrait;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class JsonImportHistorySpec extends ObjectBehavior
+class JsonDonorRepositorySpec extends ObjectBehavior
 {
-    use ImportHistorySpecTrait;
+    use DonorRepositorySpecTrait;
 
     private $testDirectory;
 
     function let()
     {
-        $this->testDirectory = sys_get_temp_dir() . '/giroapp_JsonImportHistorySpec_' . microtime();
+        $this->testDirectory = sys_get_temp_dir() . '/giroapp_JsonDonorRepositorySpec_' . microtime();
 
         $this->beConstructedThrough(function () {
-            return (new JsonDriverFactory)->createDriver($this->testDirectory)->getImportHistory(
+            return (new JsonDriverFactory)->createDriver($this->testDirectory)->getDonorRepository(
                 $this->getDriverEnvironment()
             );
         });
@@ -36,6 +36,6 @@ class JsonImportHistorySpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(JsonImportHistory::CLASS);
+        $this->shouldHaveType(JsonDonorRepository::CLASS);
     }
 }

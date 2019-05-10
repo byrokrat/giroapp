@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Mapper;
 
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
-use byrokrat\giroapp\Exception\DonorExistsException;
+use byrokrat\giroapp\Exception\DonorAlreadyExistsException;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Mapper\Schema\DonorSchema;
 use byrokrat\giroapp\Model\Donor;
@@ -140,7 +140,7 @@ class DonorMapper
     public function create(Donor $donor): void
     {
         if ($this->hasKey($donor->getMandateKey())) {
-            throw new DonorExistsException(
+            throw new DonorAlreadyExistsException(
                 sprintf(
                     'A donor with ID %s and bank account %s already exists',
                     $donor->getDonorId()->format('S-sk'),
@@ -182,7 +182,7 @@ class DonorMapper
         ]);
 
         if ($this->collection->findOne($expr)) {
-            throw new DonorExistsException(
+            throw new DonorAlreadyExistsException(
                 sprintf(
                     "Unable to save donor %s, a mandate already exists. Try '%s' for more information.",
                     $donor->getMandateKey(),

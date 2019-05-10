@@ -18,15 +18,34 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
+declare(strict_types = 1);
+
 namespace byrokrat\giroapp\Db;
 
-interface DriverInterface
+use byrokrat\giroapp\Model\DonorFactory;
+use byrokrat\giroapp\Utils\SystemClock;
+
+class DriverEnvironment
 {
-    public function getDonorRepository(DriverEnvironment $environment): DonorRepositoryInterface;
+    /** @var SystemClock */
+    private $clock;
 
-    public function getImportHistory(DriverEnvironment $environment): ImportHistoryInterface;
+    /** @var DonorFactory */
+    private $donorFactory;
 
-    public function commit(): void;
+    public function __construct(SystemClock $clock, DonorFactory $donorFactory)
+    {
+        $this->clock = $clock;
+        $this->donorFactory = $donorFactory;
+    }
 
-    public function rollback(): void;
+    public function getClock(): SystemClock
+    {
+        return $this->clock;
+    }
+
+    public function getDonorFactory(): DonorFactory
+    {
+        return $this->donorFactory;
+    }
 }

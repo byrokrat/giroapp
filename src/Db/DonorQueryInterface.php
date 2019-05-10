@@ -39,15 +39,11 @@ interface DonorQueryInterface
     public function requireByMandateKey(string $mandateKey): Donor;
 
     /**
-     * Implies working mandates, purgeable donors will not be found.
-     *
      * @return ?Donor Returns null if payer number does not exist
      */
     public function findByPayerNumber(string $payerNumber): ?Donor;
 
     /**
-    * Implies working mandates, purgeable donors will not be found.
-    *
      * @throws DonorDoesNotExistException If payer number does not exist
      */
     public function requireByPayerNumber(string $payerNumber): Donor;

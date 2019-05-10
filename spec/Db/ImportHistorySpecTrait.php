@@ -12,14 +12,9 @@ use Prophecy\Argument;
 
 trait ImportHistorySpecTrait
 {
-    abstract function createImportHistory(): ImportHistoryInterface;
+    use DriverTestEnvironmentTrait;
 
-    function let()
-    {
-        $this->beConstructedThrough([$this, 'createImportHistory']);
-    }
-
-    function it_is_initializable()
+    function it_is_an_import_history()
     {
         $this->shouldHaveType(ImportHistoryInterface::CLASS);
     }
@@ -62,7 +57,7 @@ trait ImportHistorySpecTrait
         return [
             'returnFileNamed' => function (FileThatWasImported $file, string $expectedName) {
                 return $file->getFilename() == $expectedName;
-            }
+            },
         ];
     }
 }

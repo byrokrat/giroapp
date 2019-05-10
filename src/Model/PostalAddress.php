@@ -53,11 +53,11 @@ class PostalAddress
     private $postalCity;
 
     public function __construct(
-        string $line1,
-        string $line2,
-        string $line3,
-        string $postalCode,
-        string $postalCity
+        string $line1 = '',
+        string $line2 = '',
+        string $line3 = '',
+        string $postalCode = '',
+        string $postalCity = ''
     ) {
         $this->line1 = $line1;
         $this->line2 = $line2;
