@@ -8,7 +8,7 @@ use byrokrat\giroapp\Xml\XmlMandateParser;
 use byrokrat\giroapp\Xml\XmlObject;
 use byrokrat\giroapp\Xml\XmlFormTranslator;
 use byrokrat\giroapp\Model\Builder\DonorBuilder;
-use byrokrat\giroapp\Exception\InvalidXmlException;
+use byrokrat\giroapp\Exception\InvalidDataException;
 use byrokrat\giroapp\MandateSources;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
@@ -71,14 +71,14 @@ class XmlMandateParserSpec extends ObjectBehavior
     {
         $xmlMandate->readElement('/MedgivandeViaHemsida/Organisationsnr', new IdValidator)
             ->willReturn('not-a-valid-org-nr');
-        $this->shouldThrow(InvalidXmlException::CLASS)->duringParse($xmlRoot);
+        $this->shouldThrow(InvalidDataException::CLASS)->duringParse($xmlRoot);
     }
 
     function it_fails_on_invalid_payee_bankgiro($xmlRoot, $xmlMandate)
     {
         $xmlMandate->readElement('/MedgivandeViaHemsida/Bankgironr', new AccountValidator)
             ->willReturn('not-a-valid-bankgiro');
-        $this->shouldThrow(InvalidXmlException::CLASS)->duringParse($xmlRoot);
+        $this->shouldThrow(InvalidDataException::CLASS)->duringParse($xmlRoot);
     }
 
     function it_creates_donors(
@@ -130,7 +130,7 @@ class XmlMandateParserSpec extends ObjectBehavior
         $idFactory->createId('id')->willReturn($id);
         $builder->setId($id)->willReturn($builder)->shouldBeCalled();
 
-        $xmlMandate->readElement('/MedgivandeViaHemsida/Verifieringstid', new NumericValidator)->willReturn('time');
+        $xmlMandate->readElement('/MedgivandeViaHemsida/Verifieringstid', new StringValidator)->willReturn('time');
         $builder->setAttribute('verification_time', 'time')->willReturn($builder)->shouldBeCalled();
 
         $xmlMandate->readElement('/MedgivandeViaHemsida/Verifieringsreferens', new StringValidator)->willReturn('code');

@@ -31,7 +31,7 @@ final class PostalCodeValidator implements ValidatorInterface
     protected function getRule(): Rule
     {
         return (new Rule)->msg('must be a numerical postal code')->pre(function (string $val) {
-            return str_replace(' ', '', $val);
+            return str_replace([' ', "\n", "\r", "\t"], '', $val);
         })->match(function (string $val) {
             return empty($val) || ctype_digit($val);
         });
