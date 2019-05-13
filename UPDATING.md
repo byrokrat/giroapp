@@ -22,3 +22,5 @@
 * Logging con now be configured in `giroapp.ini`.
 * Removed the `validate` command.
 * Removed the `migrate` command.
+* Requires php `>= 7.2`.
+* New database interface and the possibility to add custom databases through plugins..
