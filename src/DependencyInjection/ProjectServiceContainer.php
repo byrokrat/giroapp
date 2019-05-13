@@ -148,9 +148,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Listener\\MandateResponseListener' => true,
             'byrokrat\\giroapp\\Listener\\MonitoringListener' => true,
             'byrokrat\\giroapp\\Listener\\XmlImportingListener' => true,
-            'byrokrat\\giroapp\\Mapper\\DonorMapper' => true,
-            'byrokrat\\giroapp\\Mapper\\Schema\\DonorSchema' => true,
-            'byrokrat\\giroapp\\Mapper\\Schema\\PostalAddressSchema' => true,
             'byrokrat\\giroapp\\Model\\Builder\\DonorBuilder' => true,
             'byrokrat\\giroapp\\Model\\Builder\\MandateKeyFactory' => true,
             'byrokrat\\giroapp\\Model\\Donor' => true,
@@ -212,25 +209,25 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Xml\\XmlObject' => true,
             'byrokrat\\id\\IdFactoryInterface' => true,
             'byrokrat\\id\\OrganizationIdFactory' => true,
-            'db' => true,
-            'db_donor_collection' => true,
-            'db_donor_engine' => true,
             'file_export_cwd_dumper' => true,
             'file_export_dumper' => true,
             'file_import_dumper' => true,
-            'flysystem_db' => true,
-            'flysystem_db_adapter' => true,
             'fs_cwd' => true,
-            'fs_db' => true,
             'fs_exports' => true,
             'fs_imports' => true,
             'fs_plugins' => true,
             'organization_bg' => true,
             'organization_id' => true,
             'plugins' => true,
-            'setup_db' => true,
             'setup_mkdir' => true,
         ];
+    }
+
+    protected function createProxy($class, \Closure $factory)
+    {
+        class_exists($class, false) || class_alias("byrokrat\giroapp\DependencyInjection\\{$class}", $class, false);
+
+        return $factory();
     }
 
     /**
@@ -262,35 +259,35 @@ class ProjectServiceContainer extends Container
         $h->setIdFactory($j);
         $k = new \byrokrat\giroapp\Console\EditCommand($f);
 
-        $l = ($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService());
+        $l = ($this->services['byrokrat\giroapp\Db\DonorQueryInterface'] ?? $this->getDonorQueryInterfaceService());
 
         $k->setAccountFactory($i);
         $k->setEventDispatcher($b);
         $k->setIdFactory($j);
-        $k->setDonorMapper($l);
+        $k->setDonorQuery($l);
         $m = new \byrokrat\giroapp\Console\ExportCommand((new \byrokrat\giroapp\AutogiroWriterFactory(new \byrokrat\autogiro\Writer\WriterFactory()))->createWriter(($this->services['ini'] ?? $this->getIniService())->getConfig("org_bgc_nr"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())), $f);
-        $m->setDonorMapper($l);
         $m->setEventDispatcher($b);
+        $m->setDonorQuery($l);
         $n = new \byrokrat\giroapp\Console\ImportCommand(($this->privates['fs_cwd'] ?? $this->getFsCwdService()));
         $n->setEventDispatcher($b);
         $o = new \byrokrat\giroapp\Console\LsCommand($c, $d, $e);
-        $o->setDonorMapper($l);
+        $o->setDonorQuery($l);
         $p = new \byrokrat\giroapp\Console\PauseCommand($f);
-        $p->setDonorMapper($l);
+        $p->setDonorQuery($l);
         $p->setEventDispatcher($b);
         $q = new \byrokrat\giroapp\Console\PurgeCommand();
         $q->setEventDispatcher($b);
-        $q->setDonorMapper($l);
+        $q->setDonorQuery($l);
         $r = new \byrokrat\giroapp\Console\RemoveCommand();
-        $r->setDonorMapper($l);
+        $r->setDonorQuery($l);
         $r->setEventDispatcher($b);
         $s = new \byrokrat\giroapp\Console\RevokeCommand();
-        $s->setDonorMapper($l);
+        $s->setDonorQuery($l);
         $s->setEventDispatcher($b);
         $t = new \byrokrat\giroapp\Console\ShowCommand($d);
-        $t->setDonorMapper($l);
+        $t->setDonorQuery($l);
         $u = new \byrokrat\giroapp\Console\StatusCommand();
-        $u->setDonorMapper($l);
+        $u->setDonorQuery($l);
         $v = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("plugins_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
         ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'])))->createFiles($v);
 
@@ -306,9 +303,21 @@ class ProjectServiceContainer extends Container
      *
      * @return \byrokrat\giroapp\Db\DonorQueryDecorator
      */
-    protected function getDonorQueryInterfaceService()
+    protected function getDonorQueryInterfaceService($lazyLoad = true)
     {
-        return $this->services['byrokrat\giroapp\Db\DonorQueryInterface'] = new \byrokrat\giroapp\Db\DonorQueryDecorator(($this->privates['byrokrat\giroapp\Db\DriverInterface'] ?? $this->getDriverInterfaceService())->getDonorRepository(($this->privates['byrokrat\giroapp\Db\DriverEnvironment'] ?? $this->getDriverEnvironmentService())));
+        if ($lazyLoad) {
+            return $this->services['byrokrat\\giroapp\\Db\\DonorQueryInterface'] = $this->createProxy('DonorQueryDecorator_48491f1', function () {
+                return \DonorQueryDecorator_48491f1::staticProxyConstructor(function (&$wrappedInstance, \ProxyManager\Proxy\LazyLoadingInterface $proxy) {
+                    $wrappedInstance = $this->getDonorQueryInterfaceService(false);
+
+                    $proxy->setProxyInitializer(null);
+
+                    return true;
+                });
+            });
+        }
+
+        return new \byrokrat\giroapp\Db\DonorQueryDecorator(($this->privates['byrokrat\giroapp\Db\DonorRepositoryInterface'] ?? $this->getDonorRepositoryInterfaceService()));
     }
 
     /**
@@ -465,6 +474,16 @@ class ProjectServiceContainer extends Container
     }
 
     /**
+     * Gets the private 'byrokrat\giroapp\Db\DonorRepositoryInterface' shared autowired service.
+     *
+     * @return \byrokrat\giroapp\Db\DonorRepositoryInterface
+     */
+    protected function getDonorRepositoryInterfaceService()
+    {
+        return $this->privates['byrokrat\giroapp\Db\DonorRepositoryInterface'] = ($this->privates['byrokrat\giroapp\Db\DriverInterface'] ?? $this->getDriverInterfaceService())->getDonorRepository(($this->privates['byrokrat\giroapp\Db\DriverEnvironment'] ?? $this->getDriverEnvironmentService()));
+    }
+
+    /**
      * Gets the private 'byrokrat\giroapp\Db\DriverEnvironment' shared autowired service.
      *
      * @return \byrokrat\giroapp\Db\DriverEnvironment
@@ -524,7 +543,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getCommittingListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(new \hanneskod\yaysondb\Yaysondb(['donors' => ($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService())]), ($this->privates['byrokrat\giroapp\Db\DriverInterface'] ?? $this->getDriverInterfaceService()));
+        return $this->privates['byrokrat\giroapp\Listener\CommittingListener'] = new \byrokrat\giroapp\Listener\CommittingListener(($this->privates['byrokrat\giroapp\Db\DriverInterface'] ?? $this->getDriverInterfaceService()));
     }
 
     /**
@@ -534,7 +553,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getDonorPersistingListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] = new \byrokrat\giroapp\Listener\DonorPersistingListener(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()));
+        return $this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] = new \byrokrat\giroapp\Listener\DonorPersistingListener(($this->privates['byrokrat\giroapp\Db\DonorRepositoryInterface'] ?? $this->getDonorRepositoryInterfaceService()));
     }
 
     /**
@@ -568,7 +587,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getMandateResponseListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\MandateResponseListener'] = new \byrokrat\giroapp\Listener\MandateResponseListener(($this->privates['byrokrat\giroapp\Mapper\DonorMapper'] ?? $this->getDonorMapperService()), ($this->privates['byrokrat\giroapp\State\StateCollection'] ?? ($this->privates['byrokrat\giroapp\State\StateCollection'] = new \byrokrat\giroapp\State\StateCollection())));
+        return $this->privates['byrokrat\giroapp\Listener\MandateResponseListener'] = new \byrokrat\giroapp\Listener\MandateResponseListener(($this->services['byrokrat\giroapp\Db\DonorQueryInterface'] ?? $this->getDonorQueryInterfaceService()), ($this->privates['byrokrat\giroapp\State\StateCollection'] ?? ($this->privates['byrokrat\giroapp\State\StateCollection'] = new \byrokrat\giroapp\State\StateCollection())));
     }
 
     /**
@@ -581,16 +600,6 @@ class ProjectServiceContainer extends Container
         $a = ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService());
 
         return $this->privates['byrokrat\giroapp\Listener\XmlImportingListener'] = new \byrokrat\giroapp\Listener\XmlImportingListener(new \byrokrat\giroapp\Xml\XmlMandateParser($a->createId(($this->services['ini'] ?? $this->getIniService())->getConfigValue("org_id")), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService()), ($this->privates['byrokrat\giroapp\Model\Builder\DonorBuilder'] ?? $this->getDonorBuilderService()), ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] ?? ($this->privates['byrokrat\giroapp\Xml\XmlFormTranslator'] = new \byrokrat\giroapp\Xml\XmlFormTranslator())), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? ($this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())), $a));
-    }
-
-    /**
-     * Gets the private 'byrokrat\giroapp\Mapper\DonorMapper' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Mapper\DonorMapper
-     */
-    protected function getDonorMapperService()
-    {
-        return $this->privates['byrokrat\giroapp\Mapper\DonorMapper'] = new \byrokrat\giroapp\Mapper\DonorMapper(new \hanneskod\yaysondb\Collection(($this->privates['db_donor_engine'] ?? $this->getDbDonorEngineService())), new \byrokrat\giroapp\Mapper\Schema\DonorSchema(new \byrokrat\giroapp\Mapper\Schema\PostalAddressSchema(), ($this->privates['byrokrat\giroapp\State\StateCollection'] ?? ($this->privates['byrokrat\giroapp\State\StateCollection'] = new \byrokrat\giroapp\State\StateCollection())), ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? ($this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())), ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService())), ($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? ($this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())));
     }
 
     /**
@@ -611,16 +620,6 @@ class ProjectServiceContainer extends Container
     protected function getIdFactoryInterfaceService()
     {
         return $this->privates['byrokrat\id\IdFactoryInterface'] = new \byrokrat\id\PersonalIdFactory(new \byrokrat\id\OrganizationIdFactory());
-    }
-
-    /**
-     * Gets the private 'db_donor_engine' shared autowired service.
-     *
-     * @return \hanneskod\yaysondb\Engine\FlysystemEngine
-     */
-    protected function getDbDonorEngineService()
-    {
-        return $this->privates['db_donor_engine'] = new \hanneskod\yaysondb\Engine\FlysystemEngine('donors.json', new \League\Flysystem\Filesystem(new \League\Flysystem\Adapter\Local($this->getFsDbService()->getAbsolutePath("."))));
     }
 
     /**
@@ -667,20 +666,6 @@ class ProjectServiceContainer extends Container
     protected function getFsCwdService()
     {
         return $this->privates['fs_cwd'] = new \byrokrat\giroapp\Filesystem\StdFilesystem('.', ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
-    }
-
-    /**
-     * Gets the private 'fs_db' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Filesystem\StdFilesystem
-     */
-    protected function getFsDbService()
-    {
-        $instance = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("db_dsn"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
-
-        (new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'], [0 => 'donors.json']))->createFiles($instance);
-
-        return $instance;
     }
 
     /**
@@ -757,8 +742,263 @@ class ProjectServiceContainer extends Container
     protected function getDefaultParameters()
     {
         return [
-            'db.donors' => 'donors.json',
             'env(GIROAPP_INI)' => 'giroapp.ini',
         ];
     }
+}
+
+class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorator implements \ProxyManager\Proxy\VirtualProxyInterface
+{
+
+    /**
+     * @var \Closure|null initializer responsible for generating the wrapped object
+     */
+    private $valueHolder90742 = null;
+
+    /**
+     * @var \Closure|null initializer responsible for generating the wrapped object
+     */
+    private $initializerb4b6a = null;
+
+    /**
+     * @var bool[] map of public properties of the parent class
+     */
+    private static $publicProperties8f6b9 = [
+        
+    ];
+
+    public function findAll() : \byrokrat\giroapp\Model\DonorCollection
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, 'findAll', array(), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        return $this->valueHolder90742->findAll();
+    }
+
+    public function findByMandateKey(string $mandateKey) : ?\byrokrat\giroapp\Model\Donor
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, 'findByMandateKey', array('mandateKey' => $mandateKey), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        return $this->valueHolder90742->findByMandateKey($mandateKey);
+    }
+
+    public function requireByMandateKey(string $mandateKey) : \byrokrat\giroapp\Model\Donor
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, 'requireByMandateKey', array('mandateKey' => $mandateKey), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        return $this->valueHolder90742->requireByMandateKey($mandateKey);
+    }
+
+    public function findByPayerNumber(string $payerNumber) : ?\byrokrat\giroapp\Model\Donor
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, 'findByPayerNumber', array('payerNumber' => $payerNumber), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        return $this->valueHolder90742->findByPayerNumber($payerNumber);
+    }
+
+    public function requireByPayerNumber(string $payerNumber) : \byrokrat\giroapp\Model\Donor
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, 'requireByPayerNumber', array('payerNumber' => $payerNumber), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        return $this->valueHolder90742->requireByPayerNumber($payerNumber);
+    }
+
+    /**
+     * Constructor for lazy initialization
+     *
+     * @param \Closure|null $initializer
+     */
+    public static function staticProxyConstructor($initializer)
+    {
+        static $reflection;
+
+        $reflection = $reflection ?? new \ReflectionClass(__CLASS__);
+        $instance = $reflection->newInstanceWithoutConstructor();
+
+        \Closure::bind(function (\byrokrat\giroapp\Db\DonorQueryDecorator $instance) {
+            unset($instance->decorated);
+        }, $instance, 'byrokrat\\giroapp\\Db\\DonorQueryDecorator')->__invoke($instance);
+
+        $instance->initializerb4b6a = $initializer;
+
+        return $instance;
+    }
+
+    public function __construct(\byrokrat\giroapp\Db\DonorQueryInterface $decorated)
+    {
+        static $reflection;
+
+        if (! $this->valueHolder90742) {
+            $reflection = $reflection ?? new \ReflectionClass('byrokrat\\giroapp\\Db\\DonorQueryDecorator');
+            $this->valueHolder90742 = $reflection->newInstanceWithoutConstructor();
+        \Closure::bind(function (\byrokrat\giroapp\Db\DonorQueryDecorator $instance) {
+            unset($instance->decorated);
+        }, $this, 'byrokrat\\giroapp\\Db\\DonorQueryDecorator')->__invoke($this);
+
+        }
+
+        $this->valueHolder90742->__construct($decorated);
+    }
+
+    public function & __get($name)
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, '__get', ['name' => $name], $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        if (isset(self::$publicProperties8f6b9[$name])) {
+            return $this->valueHolder90742->$name;
+        }
+
+        $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
+
+        if (! $realInstanceReflection->hasProperty($name)) {
+            $targetObject = $this->valueHolder90742;
+
+            $backtrace = debug_backtrace(false);
+            trigger_error(
+                sprintf(
+                    'Undefined property: %s::$%s in %s on line %s',
+                    get_parent_class($this),
+                    $name,
+                    $backtrace[0]['file'],
+                    $backtrace[0]['line']
+                ),
+                \E_USER_NOTICE
+            );
+            return $targetObject->$name;
+            return;
+        }
+
+        $targetObject = $this->valueHolder90742;
+        $accessor = function & () use ($targetObject, $name) {
+            return $targetObject->$name;
+        };
+        $backtrace = debug_backtrace(true);
+        $scopeObject = isset($backtrace[1]['object']) ? $backtrace[1]['object'] : new \ProxyManager\Stub\EmptyClassStub();
+        $accessor = $accessor->bindTo($scopeObject, get_class($scopeObject));
+        $returnValue = & $accessor();
+
+        return $returnValue;
+    }
+
+    public function __set($name, $value)
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, '__set', array('name' => $name, 'value' => $value), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
+
+        if (! $realInstanceReflection->hasProperty($name)) {
+            $targetObject = $this->valueHolder90742;
+
+            return $targetObject->$name = $value;
+            return;
+        }
+
+        $targetObject = $this->valueHolder90742;
+        $accessor = function & () use ($targetObject, $name, $value) {
+            return $targetObject->$name = $value;
+        };
+        $backtrace = debug_backtrace(true);
+        $scopeObject = isset($backtrace[1]['object']) ? $backtrace[1]['object'] : new \ProxyManager\Stub\EmptyClassStub();
+        $accessor = $accessor->bindTo($scopeObject, get_class($scopeObject));
+        $returnValue = & $accessor();
+
+        return $returnValue;
+    }
+
+    public function __isset($name)
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, '__isset', array('name' => $name), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
+
+        if (! $realInstanceReflection->hasProperty($name)) {
+            $targetObject = $this->valueHolder90742;
+
+            return isset($targetObject->$name);
+            return;
+        }
+
+        $targetObject = $this->valueHolder90742;
+        $accessor = function () use ($targetObject, $name) {
+            return isset($targetObject->$name);
+        };
+        $backtrace = debug_backtrace(true);
+        $scopeObject = isset($backtrace[1]['object']) ? $backtrace[1]['object'] : new \ProxyManager\Stub\EmptyClassStub();
+        $accessor = $accessor->bindTo($scopeObject, get_class($scopeObject));
+        $returnValue = $accessor();
+
+        return $returnValue;
+    }
+
+    public function __unset($name)
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, '__unset', array('name' => $name), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
+
+        if (! $realInstanceReflection->hasProperty($name)) {
+            $targetObject = $this->valueHolder90742;
+
+            unset($targetObject->$name);
+            return;
+        }
+
+        $targetObject = $this->valueHolder90742;
+        $accessor = function () use ($targetObject, $name) {
+            unset($targetObject->$name);
+        };
+        $backtrace = debug_backtrace(true);
+        $scopeObject = isset($backtrace[1]['object']) ? $backtrace[1]['object'] : new \ProxyManager\Stub\EmptyClassStub();
+        $accessor = $accessor->bindTo($scopeObject, get_class($scopeObject));
+        $returnValue = $accessor();
+
+        return $returnValue;
+    }
+
+    public function __clone()
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, '__clone', array(), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        $this->valueHolder90742 = clone $this->valueHolder90742;
+    }
+
+    public function __sleep()
+    {
+        $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, '__sleep', array(), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+
+        return array('valueHolder90742');
+    }
+
+    public function __wakeup()
+    {
+        \Closure::bind(function (\byrokrat\giroapp\Db\DonorQueryDecorator $instance) {
+            unset($instance->decorated);
+        }, $this, 'byrokrat\\giroapp\\Db\\DonorQueryDecorator')->__invoke($this);
+    }
+
+    public function setProxyInitializer(\Closure $initializer = null)
+    {
+        $this->initializerb4b6a = $initializer;
+    }
+
+    public function getProxyInitializer()
+    {
+        return $this->initializerb4b6a;
+    }
+
+    public function initializeProxy() : bool
+    {
+        return $this->initializerb4b6a && ($this->initializerb4b6a->__invoke($valueHolder90742, $this, 'initializeProxy', array(), $this->initializerb4b6a) || 1) && $this->valueHolder90742 = $valueHolder90742;
+    }
+
+    public function isProxyInitialized() : bool
+    {
+        return null !== $this->valueHolder90742;
+    }
+
+    public function getWrappedValueHolderValue() : ?object
+    {
+        return $this->valueHolder90742;
+    }
+
+
 }

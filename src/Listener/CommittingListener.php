@@ -23,29 +23,19 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Db\DriverInterface;
-use hanneskod\yaysondb\Yaysondb;
 
 class CommittingListener
 {
-    /**
-     * @var Yaysondb
-     */
-    private $db;
-
-    /**
-     * @var DriverInterface
-     */
+    /** @var DriverInterface */
     private $dbDriver;
 
-    public function __construct(Yaysondb $db, DriverInterface $dbDriver)
+    public function __construct(DriverInterface $dbDriver)
     {
-        $this->db = $db;
         $this->dbDriver = $dbDriver;
     }
 
     public function onExecutionStoped(): void
     {
-        $this->db->commit();
         $this->dbDriver->commit();
     }
 }

@@ -74,7 +74,6 @@ services:
 
     byrokrat\giroapp\Listener\CommittingListener:
         class: ~
-        arguments: ['@db']
         tags:
             - { name: event_listener, event: EXECUTION_STOPED }
 

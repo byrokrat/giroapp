@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
+use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -33,7 +33,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class StatusCommand implements CommandInterface
 {
-    use DonorMapperProperty;
+    use DonorQueryProperty;
 
     public function configure(Adapter $wrapper): void
     {
@@ -61,7 +61,7 @@ final class StatusCommand implements CommandInterface
             'paused-count' => 0,
         ];
 
-        foreach ($this->donorMapper->findAll() as $donor) {
+        foreach ($this->donorQuery->findAll() as $donor) {
             if ($donor->getState()->isActive()) {
                 $counts['donor-count']++;
                 $counts['monthly-amount'] = $counts['monthly-amount']->add($donor->getDonationAmount());

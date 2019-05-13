@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
+use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\CombinedFilter;
 use byrokrat\giroapp\Formatter\FormatterCollection;
@@ -34,7 +34,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class LsCommand implements CommandInterface
 {
-    use DonorMapperProperty;
+    use DonorQueryProperty;
 
     /** @var FilterCollection */
     private $filterCollection;
@@ -133,7 +133,7 @@ final class LsCommand implements CommandInterface
         $formatter = $this->formatterCollection->getFormatter($formatId);
         $formatter->initialize($output);
 
-        foreach ($this->donorMapper->findAll()->filter($filter)->sort($sorter) as $donor) {
+        foreach ($this->donorQuery->findAll()->filter($filter)->sort($sorter) as $donor) {
             $formatter->formatDonor($donor);
         }
 

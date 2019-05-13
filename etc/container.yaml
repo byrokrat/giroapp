@@ -3,7 +3,6 @@ parameters:
 
 imports:
     - { resource: fs.yaml }
-    - { resource: db.yaml }
     - { resource: listeners.yaml }
 
 services:
@@ -15,7 +14,7 @@ services:
 
     byrokrat\giroapp\:
         resource: '../src/*'
-        exclude: '../src/{Listener,Mapper}'
+        exclude: '../src/{Listener}'
 
     Symfony\Component\Console\Application:
         class: ~
@@ -89,6 +88,7 @@ services:
         class: byrokrat\giroapp\Db\DonorQueryDecorator
         arguments: ['@byrokrat\giroapp\Db\DonorRepositoryInterface']
         public: true
+        lazy: true
 
     byrokrat\giroapp\Db\ImportHistoryInterface:
         factory: 'byrokrat\giroapp\Db\DriverInterface:getImportHistory'

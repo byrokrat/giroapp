@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
+use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\FileEvent;
@@ -39,7 +39,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class ExportCommand implements CommandInterface
 {
-    use DonorMapperProperty, DispatcherProperty;
+    use DispatcherProperty, DonorQueryProperty;
 
     /**
      * @var WriterInterface
@@ -75,7 +75,7 @@ final class ExportCommand implements CommandInterface
     {
         $exported = false;
 
-        foreach ($this->donorMapper->findAll() as $donor) {
+        foreach ($this->donorQuery->findAll() as $donor) {
             if ($donor->getState()->isExportable()) {
                 $donor->exportToAutogiro($this->autogiroWriter);
                 $donor->setState($this->stateCollection->getState($donor->getState()->getNextStateId()));

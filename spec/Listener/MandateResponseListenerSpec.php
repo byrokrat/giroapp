@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Listener\MandateResponseListener;
-use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
@@ -30,7 +30,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
         Node $accountNode,
         Node $statusNode,
         Donor $donor,
-        DonorMapper $donorMapper,
+        DonorQueryInterface $donorQuery,
         StateCollection $stateCollection,
         StateInterface $errorState,
         StateInterface $inactiveState,
@@ -54,7 +54,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $parentNode->hasChild('DeletedFlag')->willReturn(false);
         $parentNode->hasChild('ErrorFlag')->willReturn(false);
 
-        $donorMapper->findByActivePayerNumber('payer-number')->willReturn($donor);
+        $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
 
         $donor->getPayerNumber()->willReturn('');
         $donor->getMandateKey()->willReturn('');
@@ -63,7 +63,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $stateCollection->getState(States::INACTIVE)->willReturn($inactiveState);
         $stateCollection->getState(States::ERROR)->willReturn($errorState);
 
-        $this->beConstructedWith($donorMapper, $stateCollection);
+        $this->beConstructedWith($donorQuery, $stateCollection);
     }
 
     function it_is_initializable()

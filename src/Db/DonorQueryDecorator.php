@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Db;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\DonorCollection;
 
-final class DonorQueryDecorator implements DonorQueryInterface
+class DonorQueryDecorator implements DonorQueryInterface
 {
     /**
      * @var DonorQueryInterface

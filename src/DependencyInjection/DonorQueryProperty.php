@@ -22,23 +22,23 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\DependencyInjection;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\Db\DonorQueryInterface;
 
 /**
- * Use this trait to automatically inject a donor mapper
+ * Use this trait to automatically inject a donor query object
  */
-trait DonorMapperProperty
+trait DonorQueryProperty
 {
     /**
-     * @var DonorMapper
+     * @var DonorQueryInterface
      */
-    protected $donorMapper;
+    protected $donorQuery;
 
     /**
      * @required
      */
-    public function setDonorMapper(DonorMapper $donorMapper): void
+    public function setDonorQuery(DonorQueryInterface $donorQuery): void
     {
-        $this->donorMapper = $donorMapper;
+        $this->donorQuery = $donorQuery;
     }
 }

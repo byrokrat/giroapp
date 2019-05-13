@@ -73,9 +73,7 @@ final class ShowCommand implements CommandInterface
 
         $formatter->initialize($output);
 
-        foreach ($this->readAllDonors($input) as $donor) {
-            $formatter->formatDonor($donor);
-        }
+        $formatter->formatDonor($this->readDonor($input));
 
         $formatter->finalize();
     }

@@ -44,6 +44,7 @@
         "symfony/event-dispatcher": "^4",
         "symfony/finder": "^4",
         "symfony/filesystem": "^4",
+        "symfony/proxy-manager-bridge": "^4",
         "hashids/hashids": "^2",
         "fzaninotto/streamer": "0.*"
     },

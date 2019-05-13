@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
+use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class PurgeCommand implements CommandInterface
 {
-    use DispatcherProperty, DonorMapperProperty;
+    use DispatcherProperty, DonorQueryProperty;
 
     public function configure(Adapter $wrapper): void
     {
@@ -42,7 +42,7 @@ final class PurgeCommand implements CommandInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        foreach ($this->donorMapper->findAll() as $donor) {
+        foreach ($this->donorQuery->findAll() as $donor) {
             if ($donor->getState()->isPurgeable()) {
                 $this->dispatcher->dispatch(
                     Events::DONOR_REMOVED,

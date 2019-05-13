@@ -6,15 +6,14 @@ namespace spec\byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Listener\CommittingListener;
 use byrokrat\giroapp\Db\DriverInterface;
-use hanneskod\yaysondb\Yaysondb;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class CommittingListenerSpec extends ObjectBehavior
 {
-    function let(Yaysondb $db, DriverInterface $dbDriver)
+    function let(DriverInterface $dbDriver)
     {
-        $this->beConstructedWith($db, $dbDriver);
+        $this->beConstructedWith($dbDriver);
     }
 
     function it_is_initializable()
@@ -22,9 +21,8 @@ class CommittingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(CommittingListener::CLASS);
     }
 
-    function it_commits_database($db, $dbDriver)
+    function it_commits_database($dbDriver)
     {
-        $db->commit()->shouldBeCalled();
         $dbDriver->commit()->shouldBeCalled();
         $this->onExecutionStoped();
     }
