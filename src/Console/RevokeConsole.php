@@ -22,9 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\DonorEvent;
+use byrokrat\giroapp\CommandBus\ChangeDonorState;
+use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\State\RevokeMandateState;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -32,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class RevokeConsole implements ConsoleInterface
 {
-    use Helper\DonorArgument, DispatcherProperty;
+    use CommandBusProperty, Helper\DonorArgument;
 
     public function configure(Command $command): void
     {
@@ -44,19 +43,6 @@ final class RevokeConsole implements ConsoleInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $donor = $this->readDonor($input);
-
-        $donor->setState(new RevokeMandateState);
-
-        $this->dispatcher->dispatch(
-            Events::MANDATE_REVOCATION_REQUESTED,
-            new DonorEvent(
-                sprintf(
-                    'Requested revocation of mandate <info>%s</info>',
-                    $donor->getMandateKey()
-                ),
-                $donor
-            )
-        );
+        $this->commandBus->handle(new ChangeDonorState($this->readDonor($input), new RevokeMandateState));
     }
 }

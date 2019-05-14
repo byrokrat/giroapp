@@ -83,11 +83,6 @@ interface Events
     const MANDATE_REVOKED = 'MANDATE_REVOKED';
 
     /**
-     * Mandate revocation requested, expects a DonorEvent
-     */
-    const MANDATE_REVOCATION_REQUESTED = 'MANDATE_REVOCATION_REQUESTED';
-
-    /**
      * A mandate is invalid and could not be approved, expects a DonorEvent
      */
     const MANDATE_INVALIDATED = 'MANDATE_INVALIDATED';
