@@ -8,8 +8,8 @@ use byrokrat\giroapp\Plugin\ConfiguringEnvironment;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Plugin\ApiVersion;
 use byrokrat\giroapp\Plugin\ApiVersionConstraint;
-use byrokrat\giroapp\Console\Adapter;
-use byrokrat\giroapp\Console\CommandInterface;
+use byrokrat\giroapp\Console\SymfonyCommandAdapter;
+use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Db\DriverFactoryCollection;
@@ -84,11 +84,11 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $this->readConfig('foo')->shouldReturn('bar');
     }
 
-    function it_can_register_commands($dispatcher, CommandInterface $command, Application $application)
+    function it_can_register_console_commands($dispatcher, ConsoleInterface $console, Application $application)
     {
-        $this->registerCommand($command);
+        $this->registerConsoleCommand($console);
         $this->configureApplication($application);
-        $adapter = new Adapter($command->getWrappedObject(), $dispatcher->getWrappedObject());
+        $adapter = new SymfonyCommandAdapter($console->getWrappedObject(), $dispatcher->getWrappedObject());
         $application->add($adapter)->shouldHaveBeenCalled();
     }
 

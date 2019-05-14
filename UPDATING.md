@@ -24,3 +24,5 @@
 * Removed the `migrate` command.
 * Requires php `>= 7.2`.
 * New database interface and the possibility to add custom databases through plugins..
+* Renamed `Console/CommandInterface` => `Console/ConsoleInterface` and
+  `Plugin/EnvironmentInterface::registerCommand()` => `Plugin/EnvironmentInterface::registerConsoleCommand()`.

@@ -24,6 +24,7 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
 use byrokrat\amount\Currency\SEK;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -31,22 +32,22 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Command to display database status
  */
-final class StatusCommand implements CommandInterface
+final class StatusConsole implements ConsoleInterface
 {
     use DonorQueryProperty;
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Command $command): void
     {
-        $wrapper->setName('status');
-        $wrapper->setDescription('Show current status');
-        $wrapper->setHelp('Examine the status of the giroapp database');
-        $wrapper->addOption('donor-count', null, InputOption::VALUE_NONE, 'Show only active donor count');
-        $wrapper->addOption('monthly-amount', null, InputOption::VALUE_NONE, 'Show only monthly amount');
-        $wrapper->addOption('exportable-count', null, InputOption::VALUE_NONE, 'Show only exportable count');
-        $wrapper->addOption('waiting-count', null, InputOption::VALUE_NONE, 'Show only awaiting response count');
-        $wrapper->addOption('error-count', null, InputOption::VALUE_NONE, 'Show only error count');
-        $wrapper->addOption('purgeable-count', null, InputOption::VALUE_NONE, 'Show only purgeable count');
-        $wrapper->addOption('paused-count', null, InputOption::VALUE_NONE, 'Show only paused count');
+        $command->setName('status');
+        $command->setDescription('Show current status');
+        $command->setHelp('Examine the status of the giroapp database');
+        $command->addOption('donor-count', null, InputOption::VALUE_NONE, 'Show only active donor count');
+        $command->addOption('monthly-amount', null, InputOption::VALUE_NONE, 'Show only monthly amount');
+        $command->addOption('exportable-count', null, InputOption::VALUE_NONE, 'Show only exportable count');
+        $command->addOption('waiting-count', null, InputOption::VALUE_NONE, 'Show only awaiting response count');
+        $command->addOption('error-count', null, InputOption::VALUE_NONE, 'Show only error count');
+        $command->addOption('purgeable-count', null, InputOption::VALUE_NONE, 'Show only purgeable count');
+        $command->addOption('paused-count', null, InputOption::VALUE_NONE, 'Show only paused count');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void

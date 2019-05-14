@@ -23,10 +23,10 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
-use byrokrat\giroapp\Console\Adapter;
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Validator\DonorKeyValidator;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -38,15 +38,15 @@ trait DonorArgument
 {
     use DonorQueryProperty;
 
-    protected function configureDonorArgument(Adapter $wrapper): void
+    protected function configureDonorArgument(Command $command): void
     {
-        $wrapper->addArgument(
+        $command->addArgument(
             'donor',
             InputArgument::REQUIRED,
             'Donor identified by mandate key or payer number'
         );
 
-        $wrapper->addOption(
+        $command->addOption(
             'force-payer-number',
             null,
             InputOption::VALUE_NONE,

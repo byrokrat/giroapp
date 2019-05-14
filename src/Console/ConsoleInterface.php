@@ -18,25 +18,18 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
 namespace byrokrat\giroapp\Console;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Interface for giroapp console commands
  */
-interface CommandInterface
+interface ConsoleInterface
 {
-    /**
-     * Configure command
-     */
-    public function configure(Adapter $wrapper): void;
+    public function configure(Command $command): void;
 
-    /**
-     * Execute command
-     */
     public function execute(InputInterface $input, OutputInterface $output): void;
 }

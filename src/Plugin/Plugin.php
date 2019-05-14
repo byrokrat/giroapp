@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Plugin;
 
-use byrokrat\giroapp\Console\CommandInterface;
+use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
@@ -52,8 +52,8 @@ class Plugin implements PluginInterface
             if ($item instanceof DriverFactoryInterface) {
                 $environment->registerDatabaseDriver($item);
             }
-            if ($item instanceof CommandInterface) {
-                $environment->registerCommand($item);
+            if ($item instanceof ConsoleInterface) {
+                $environment->registerConsoleCommand($item);
             }
             if ($item instanceof EventSubscriberInterface) {
                 $environment->registerSubscriber($item);

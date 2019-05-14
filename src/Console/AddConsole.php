@@ -31,12 +31,13 @@ use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Validator;
 use byrokrat\amount\Currency\SEK;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 
-final class AddCommand implements CommandInterface
+final class AddConsole implements ConsoleInterface
 {
     use DependencyInjection\AccountFactoryProperty,
         DependencyInjection\DispatcherProperty,
@@ -72,24 +73,24 @@ final class AddCommand implements CommandInterface
         $this->donorBuilder = $donorBuilder;
     }
 
-    public function configure(Adapter $adapter): void
+    public function configure(Command $command): void
     {
-        $adapter->setName('add');
-        $adapter->setDescription('Add a new donor');
-        $adapter->setHelp('Register a new mandate in database');
+        $command->setName('add');
+        $command->setDescription('Add a new donor');
+        $command->setHelp('Register a new mandate in database');
 
         foreach (self::DESCRIPTIONS as $option => $desc) {
-            $adapter->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
+            $command->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
 
-        $adapter->addOption(
+        $command->addOption(
             'attr-key',
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             'Attribute key'
         );
 
-        $adapter->addOption(
+        $command->addOption(
             'attr-value',
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,

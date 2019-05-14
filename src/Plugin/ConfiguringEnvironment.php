@@ -22,9 +22,9 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Plugin;
 
-use byrokrat\giroapp\Console\Adapter;
-use byrokrat\giroapp\Console\CommandInterface;
 use byrokrat\giroapp\Config\ConfigManager;
+use byrokrat\giroapp\Console\ConsoleInterface;
+use byrokrat\giroapp\Console\SymfonyCommandAdapter;
 use byrokrat\giroapp\Db\DriverFactoryCollection;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
@@ -91,9 +91,9 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     private $xmlFormTranslator;
 
     /**
-     * @var CommandInterface[]
+     * @var ConsoleInterface[]
      */
-    private $commands = [];
+    private $consoleCommands = [];
 
     public function __construct(
         ApiVersion $apiVersion,
@@ -134,9 +134,9 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         return $this->configManager->getConfig($key)->getValue();
     }
 
-    public function registerCommand(CommandInterface $command): void
+    public function registerConsoleCommand(ConsoleInterface $consoleCommand): void
     {
-        $this->commands[] = $command;
+        $this->consoleCommands[] = $consoleCommand;
     }
 
     public function registerDatabaseDriver(DriverFactoryInterface $driverFactory): void
@@ -176,8 +176,8 @@ final class ConfiguringEnvironment implements EnvironmentInterface
 
     public function configureApplication(Application $application): void
     {
-        foreach ($this->commands as $command) {
-            $application->add(new Adapter($command, $this->dispatcher));
+        foreach ($this->consoleCommands as $consoleCommand) {
+            $application->add(new SymfonyCommandAdapter($consoleCommand, $this->dispatcher));
         }
     }
 }

@@ -26,34 +26,34 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Exception as GiroappException;
 use byrokrat\giroapp\Listener\OutputtingSubscriber;
-use Symfony\Component\Console\Command\Command as SymfonyCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-final class Adapter extends SymfonyCommand
+final class SymfonyCommandAdapter extends Command
 {
     /**
-     * @var CommandInterface
+     * @var ConsoleInterface
      */
-    private $command;
+    private $console;
 
     /**
      * @var EventDispatcherInterface
      */
     private $dispatcher;
 
-    public function __construct(CommandInterface $command, EventDispatcherInterface $dispatcher)
+    public function __construct(ConsoleInterface $console, EventDispatcherInterface $dispatcher)
     {
-        $this->command = $command;
+        $this->console = $console;
         $this->dispatcher = $dispatcher;
         parent::__construct();
     }
 
     protected function configure(): void
     {
-        $this->command->configure($this);
+        $this->console->configure($this);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -66,7 +66,7 @@ final class Adapter extends SymfonyCommand
 
         try {
             $this->dispatcher->dispatch(Events::EXECUTION_STARTED, new LogEvent('Execution started'));
-            $this->command->execute($input, $output);
+            $this->console->execute($input, $output);
             $this->dispatcher->dispatch(Events::EXECUTION_STOPED, new LogEvent('Execution successful'));
         } catch (GiroappException $e) {
             $this->dispatcher->dispatch(

@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\Formatter\FormatterCollection;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -30,7 +31,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Display information on individual donors
  */
-final class ShowCommand implements CommandInterface
+final class ShowConsole implements ConsoleInterface
 {
     use Helper\DonorArgument;
 
@@ -44,15 +45,15 @@ final class ShowCommand implements CommandInterface
         $this->formatterCollection = $formatterCollection;
     }
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Command $command): void
     {
-        $wrapper->setName('show');
-        $wrapper->setDescription('Display donor information');
-        $wrapper->setHelp('Display information on individual donors');
+        $command->setName('show');
+        $command->setDescription('Display donor information');
+        $command->setHelp('Display information on individual donors');
 
-        $this->configureDonorArgument($wrapper);
+        $this->configureDonorArgument($command);
 
-        $wrapper->addOption(
+        $command->addOption(
             'format',
             null,
             InputOption::VALUE_REQUIRED,

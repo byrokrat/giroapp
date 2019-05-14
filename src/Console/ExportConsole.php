@@ -30,6 +30,7 @@ use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\autogiro\Writer\WriterInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,7 +38,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Command to create autogiro files
  */
-final class ExportCommand implements CommandInterface
+final class ExportConsole implements ConsoleInterface
 {
     use DispatcherProperty, DonorQueryProperty;
 
@@ -57,12 +58,12 @@ final class ExportCommand implements CommandInterface
         $this->stateCollection = $stateCollection;
     }
 
-    public function configure(Adapter $adapter): void
+    public function configure(Command $command): void
     {
-        $adapter->setName('export');
-        $adapter->setDescription('Export a file to autogirot');
-        $adapter->setHelp('Create a file with new set of autogiro instructions');
-        $adapter->addOption(
+        $command->setName('export');
+        $command->setDescription('Export a file to autogirot');
+        $command->setHelp('Create a file with new set of autogiro instructions');
+        $command->addOption(
             'filename',
             null,
             InputOption::VALUE_REQUIRED,

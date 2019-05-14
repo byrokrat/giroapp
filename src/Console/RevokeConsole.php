@@ -26,19 +26,20 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\State\RevokeMandateState;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class RevokeCommand implements CommandInterface
+final class RevokeConsole implements ConsoleInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Command $command): void
     {
-        $wrapper->setName('revoke');
-        $wrapper->setDescription('Revoke a donor mandate');
-        $wrapper->setHelp('Revoke a mandate and stop receiving donations from donor');
-        $this->configureDonorArgument($wrapper);
+        $command->setName('revoke');
+        $command->setDescription('Revoke a donor mandate');
+        $command->setHelp('Revoke a mandate and stop receiving donations from donor');
+        $this->configureDonorArgument($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void

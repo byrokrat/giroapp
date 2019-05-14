@@ -26,6 +26,7 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -33,17 +34,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Command to completely remove a donor
  */
-final class RemoveCommand implements CommandInterface
+final class RemoveConsole implements ConsoleInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Command $command): void
     {
-        $wrapper->setName('remove');
-        $wrapper->setDescription('Remove a donor');
-        $wrapper->setHelp('Remove a donor completely from the database');
-        $wrapper->addOption('force', 'f', InputOption::VALUE_NONE, 'Force remove');
-        $this->configureDonorArgument($wrapper);
+        $command->setName('remove');
+        $command->setDescription('Remove a donor');
+        $command->setHelp('Remove a donor completely from the database');
+        $command->addOption('force', 'f', InputOption::VALUE_NONE, 'Force remove');
+        $this->configureDonorArgument($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void

@@ -28,11 +28,12 @@ use byrokrat\giroapp\States;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use byrokrat\giroapp\State\StateCollection;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class PauseCommand implements CommandInterface
+final class PauseConsole implements ConsoleInterface
 {
     use Helper\DonorArgument, DispatcherProperty;
 
@@ -46,13 +47,13 @@ final class PauseCommand implements CommandInterface
         $this->stateCollection = $stateCollection;
     }
 
-    public function configure(Adapter $adapter): void
+    public function configure(Command $command): void
     {
-        $adapter->setName('pause');
-        $adapter->setDescription('Pause a donor mandate');
-        $adapter->setHelp('Pause a mandate and temporarily stop receiving donations from donor');
-        $this->configureDonorArgument($adapter);
-        $adapter->addOption('restart', null, InputOption::VALUE_NONE, 'Restart a previously paused donor');
+        $command->setName('pause');
+        $command->setDescription('Pause a donor mandate');
+        $command->setHelp('Pause a mandate and temporarily stop receiving donations from donor');
+        $this->configureDonorArgument($command);
+        $command->addOption('restart', null, InputOption::VALUE_NONE, 'Restart a previously paused donor');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void

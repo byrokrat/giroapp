@@ -28,11 +28,12 @@ use byrokrat\giroapp\Filter\CombinedFilter;
 use byrokrat\giroapp\Formatter\FormatterCollection;
 use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\DescendingSorter;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class LsCommand implements CommandInterface
+final class LsConsole implements ConsoleInterface
 {
     use DonorQueryProperty;
 
@@ -55,13 +56,13 @@ final class LsCommand implements CommandInterface
         $this->sorterCollection = $sorterCollection;
     }
 
-    public function configure(Adapter $adapter): void
+    public function configure(Command $command): void
     {
-        $adapter->setName('ls');
-        $adapter->setDescription('List donors');
-        $adapter->setHelp('List donors in database');
+        $command->setName('ls');
+        $command->setDescription('List donors');
+        $command->setHelp('List donors in database');
 
-        $adapter->addOption(
+        $command->addOption(
             'filter',
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -71,7 +72,7 @@ final class LsCommand implements CommandInterface
             )
         );
 
-        $adapter->addOption(
+        $command->addOption(
             'filter-not',
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
@@ -81,7 +82,7 @@ final class LsCommand implements CommandInterface
             )
         );
 
-        $adapter->addOption(
+        $command->addOption(
             'sorter',
             null,
             InputOption::VALUE_REQUIRED,
@@ -92,14 +93,14 @@ final class LsCommand implements CommandInterface
             ''
         );
 
-        $adapter->addOption(
+        $command->addOption(
             'desc',
             null,
             InputOption::VALUE_NONE,
             'Sort donors in descending order'
         );
 
-        $adapter->addOption(
+        $command->addOption(
             'format',
             null,
             InputOption::VALUE_REQUIRED,

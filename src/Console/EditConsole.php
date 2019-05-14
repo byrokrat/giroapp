@@ -30,12 +30,13 @@ use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\Validator;
 use byrokrat\amount\Currency\SEK;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 
-final class EditCommand implements CommandInterface
+final class EditConsole implements ConsoleInterface
 {
     use DependencyInjection\AccountFactoryProperty,
         DependencyInjection\DispatcherProperty,
@@ -69,25 +70,25 @@ final class EditCommand implements CommandInterface
         'comment' => 'Comment'
     ];
 
-    public function configure(Adapter $adapter): void
+    public function configure(Command $command): void
     {
-        $this->configureDonorArgument($adapter);
-        $adapter->setName('edit');
-        $adapter->setDescription('Edit an existing donor');
-        $adapter->setHelp('Edit a donor in the database.');
+        $this->configureDonorArgument($command);
+        $command->setName('edit');
+        $command->setDescription('Edit an existing donor');
+        $command->setHelp('Edit a donor in the database.');
 
         foreach (self::DESCRIPTIONS as $option => $desc) {
-            $adapter->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
+            $command->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
 
-        $adapter->addOption(
+        $command->addOption(
             'attr-key',
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             'Attribute key'
         );
 
-        $adapter->addOption(
+        $command->addOption(
             'attr-value',
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,

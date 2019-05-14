@@ -26,18 +26,19 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class PurgeCommand implements CommandInterface
+final class PurgeConsole implements ConsoleInterface
 {
     use DispatcherProperty, DonorQueryProperty;
 
-    public function configure(Adapter $wrapper): void
+    public function configure(Command $command): void
     {
-        $wrapper->setName('purge');
-        $wrapper->setDescription('Remove all inactive donors');
-        $wrapper->setHelp('Completely remove all incative donors from the database');
+        $command->setName('purge');
+        $command->setDescription('Remove all inactive donors');
+        $command->setHelp('Completely remove all incative donors from the database');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void

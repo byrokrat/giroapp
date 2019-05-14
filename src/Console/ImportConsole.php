@@ -28,13 +28,14 @@ use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Streamer\Stream;
 
-final class ImportCommand implements CommandInterface
+final class ImportConsole implements ConsoleInterface
 {
     use DispatcherProperty;
 
@@ -50,9 +51,9 @@ final class ImportCommand implements CommandInterface
         $this->stdin = $stdin ?: new Stream(STDIN);
     }
 
-    public function configure(Adapter $adapter): void
+    public function configure(Command $command): void
     {
-        $adapter
+        $command
             ->setName('import')
             ->setDescription('Import a file from autogirot')
             ->setHelp('Import a file with data from autogirot')
