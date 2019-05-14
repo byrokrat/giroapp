@@ -20,28 +20,8 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Db\DriverInterface;
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\Event\ChangesDiscarded;
-
-final class RollbackHandler
+abstract class DatabaseEvent extends LogEvent
 {
-    use DispatcherProperty;
-
-    /** @var DriverInterface */
-    private $dbDriver;
-
-    public function __construct(DriverInterface $dbDriver)
-    {
-        $this->dbDriver = $dbDriver;
-    }
-
-    public function handle(Rollback $rollback): void
-    {
-        if ($this->dbDriver->rollback()) {
-            $this->dispatcher->dispatch(ChangesDiscarded::CLASS, new ChangesDiscarded);
-        }
-    }
 }

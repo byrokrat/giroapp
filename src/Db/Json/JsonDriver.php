@@ -55,13 +55,23 @@ final class JsonDriver implements DriverInterface
         );
     }
 
-    public function commit(): void
+    public function commit(): bool
     {
-        $this->db->commit();
+        if ($this->db->inTransaction()) {
+            $this->db->commit();
+            return true;
+        }
+
+        return false;
     }
 
-    public function rollback(): void
+    public function rollback(): bool
     {
-        $this->db->reset();
+        if ($this->db->inTransaction()) {
+            $this->db->reset();
+            return true;
+        }
+
+        return false;
     }
 }

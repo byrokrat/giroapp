@@ -20,17 +20,12 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\CommandBus\Commit;
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-
-class CommittingListener
+final class ChangesCommitted extends DatabaseEvent
 {
-    use CommandBusProperty;
-
-    public function onExecutionStoped(): void
+    public function __construct()
     {
-        $this->commandBus->handle(new Commit);
+        parent::__construct('Changes committed to persistent storage');
     }
 }

@@ -80,6 +80,7 @@ services:
     byrokrat\giroapp\Db\DriverInterface:
         factory: 'byrokrat\giroapp\Db\DriverFactoryInterface:createDriver'
         arguments: ["@=service('ini').getConfigValue('db_dsn')"]
+        lazy: true
 
     byrokrat\giroapp\Db\DonorRepositoryInterface:
         factory: 'byrokrat\giroapp\Db\DriverInterface:getDonorRepository'

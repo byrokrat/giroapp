@@ -21,6 +21,8 @@ services:
             - { name: event_listener, event: MANDATE_PAUSE_REQUESTED,  method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: MANDATE_PAUSED,           method: dispatchInfo,    priority: 10 }
             - { name: event_listener, event: MANDATE_RESTARTED,        method: dispatchInfo,    priority: 10 }
+            - { name: event_listener, event: byrokrat\giroapp\Event\ChangesCommitted, method: dispatchDebug, priority: 10 }
+            - { name: event_listener, event: byrokrat\giroapp\Event\ChangesDiscarded, method: dispatchInfo, priority: 10 }
 
     byrokrat\giroapp\Listener\LoggingListener:
         class: ~
@@ -71,11 +73,6 @@ services:
         class: ~
         tags:
             - { name: event_listener, event: XML_FILE_IMPORTED }
-
-    byrokrat\giroapp\Listener\CommittingListener:
-        class: ~
-        tags:
-            - { name: event_listener, event: EXECUTION_STOPED }
 
     byrokrat\giroapp\Listener\MandateResponseListener:
         class: ~

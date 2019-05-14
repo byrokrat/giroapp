@@ -23,9 +23,13 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Db\DriverInterface;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\Event\ChangesCommitted;
 
 final class CommitHandler
 {
+    use DispatcherProperty;
+
     /** @var DriverInterface */
     private $dbDriver;
 
@@ -36,6 +40,8 @@ final class CommitHandler
 
     public function handle(Commit $commit): void
     {
-        $this->dbDriver->commit();
+        if ($this->dbDriver->commit()) {
+            $this->dispatcher->dispatch(ChangesCommitted::CLASS, new ChangesCommitted);
+        }
     }
 }

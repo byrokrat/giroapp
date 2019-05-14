@@ -25,6 +25,7 @@ use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\Xml\XmlFormInterface;
 use byrokrat\giroapp\Xml\XmlFormTranslator;
+use League\Tactician\CommandBus;
 use Symfony\Component\Console\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -35,18 +36,18 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
 {
     function let(
         DriverFactoryCollection $dbDriverFactoryCollection,
-        EventDispatcherInterface $dispatcher,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
         SorterCollection $sorterCollection,
         StateCollection $stateCollection,
         ConfigManager $configManager,
-        XmlFormTranslator $xmlFormTranslator
+        XmlFormTranslator $xmlFormTranslator,
+        EventDispatcherInterface $dispatcher,
+        CommandBus $commandBus
     ) {
         $this->beConstructedWith(
             new ApiVersion('1.0'),
             $dbDriverFactoryCollection,
-            $dispatcher,
             $filterCollection,
             $formatterCollection,
             $sorterCollection,
@@ -54,6 +55,9 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
             $configManager,
             $xmlFormTranslator
         );
+
+        $this->setEventDispatcher($dispatcher);
+        $this->setCommandBus($commandBus);
     }
 
     function it_is_initializable()
@@ -84,11 +88,17 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $this->readConfig('foo')->shouldReturn('bar');
     }
 
-    function it_can_register_console_commands($dispatcher, ConsoleInterface $console, Application $application)
+    function it_can_register_console_commands($dispatcher, $commandBus, ConsoleInterface $console, Application $application)
     {
         $this->registerConsoleCommand($console);
         $this->configureApplication($application);
-        $adapter = new SymfonyCommandAdapter($console->getWrappedObject(), $dispatcher->getWrappedObject());
+
+        $adapter = new SymfonyCommandAdapter(
+            $console->getWrappedObject(),
+            $commandBus->getWrappedObject(),
+            $dispatcher->getWrappedObject()
+        );
+
         $application->add($adapter)->shouldHaveBeenCalled();
     }
 

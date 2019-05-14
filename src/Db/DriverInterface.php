@@ -27,11 +27,23 @@ namespace byrokrat\giroapp\Db;
  */
 interface DriverInterface
 {
+    /**
+     * Get the donor repository for this driver
+     */
     public function getDonorRepository(DriverEnvironment $environment): DonorRepositoryInterface;
 
+    /**
+     * Get the import history repository for this driver
+     */
     public function getImportHistory(DriverEnvironment $environment): ImportHistoryInterface;
 
-    public function commit(): void;
+    /**
+     * @return bool True if changes were actually committed, false otherwise
+     */
+    public function commit(): bool;
 
-    public function rollback(): void;
+    /**
+     * @return bool True if changes were actually discarded, false otherwise
+     */
+    public function rollback(): bool;
 }

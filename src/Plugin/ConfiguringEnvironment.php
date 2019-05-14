@@ -27,6 +27,8 @@ use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Console\SymfonyCommandAdapter;
 use byrokrat\giroapp\Db\DriverFactoryCollection;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
+use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
@@ -45,6 +47,8 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 final class ConfiguringEnvironment implements EnvironmentInterface
 {
+    use CommandBusProperty, DispatcherProperty;
+
     /**
      * @var ApiVersion
      */
@@ -54,11 +58,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
      * @var DriverFactoryCollection
      */
     private $dbDriverFactoryCollection;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    private $dispatcher;
 
     /**
      * @var FilterCollection
@@ -98,7 +97,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function __construct(
         ApiVersion $apiVersion,
         DriverFactoryCollection $dbDriverFactoryCollection,
-        EventDispatcherInterface $dispatcher,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
         SorterCollection $sorterCollection,
@@ -108,7 +106,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     ) {
         $this->apiVersion = $apiVersion;
         $this->dbDriverFactoryCollection = $dbDriverFactoryCollection;
-        $this->dispatcher = $dispatcher;
         $this->filterCollection = $filterCollection;
         $this->formatterCollection = $formatterCollection;
         $this->sorterCollection = $sorterCollection;
@@ -177,7 +174,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function configureApplication(Application $application): void
     {
         foreach ($this->consoleCommands as $consoleCommand) {
-            $application->add(new SymfonyCommandAdapter($consoleCommand, $this->dispatcher));
+            $application->add(new SymfonyCommandAdapter($consoleCommand, $this->commandBus, $this->dispatcher));
         }
     }
 }
