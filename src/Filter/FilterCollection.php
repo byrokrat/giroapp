@@ -28,6 +28,11 @@ class FilterCollection
 {
     use CollectionTrait;
 
+    protected function describeItem(): string
+    {
+        return 'Filter';
+    }
+
     public function addFilter(FilterInterface $filter): void
     {
         $this->addItem($filter->getName(), $filter);

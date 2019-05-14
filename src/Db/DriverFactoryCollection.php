@@ -28,6 +28,11 @@ class DriverFactoryCollection
 {
     use CollectionTrait;
 
+    protected function describeItem(): string
+    {
+        return 'Database driver';
+    }
+
     public function addDriverFactory(DriverFactoryInterface $driverFactory): void
     {
         $this->addItem($driverFactory->getDriverName(), $driverFactory);

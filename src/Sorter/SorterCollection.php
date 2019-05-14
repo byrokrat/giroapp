@@ -28,6 +28,11 @@ class SorterCollection
 {
     use CollectionTrait;
 
+    protected function describeItem(): string
+    {
+        return 'Sorter';
+    }
+
     public function addSorter(SorterInterface $sorter): void
     {
         $this->addItem($sorter->getName(), $sorter);
