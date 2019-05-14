@@ -24,8 +24,14 @@ use byrokrat\giroapp\Exception\DonorDoesNotExistException;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\DonorCollection;
 
+/**
+ * Defines the interface for querying the donor repository
+ */
 interface DonorQueryInterface
 {
+    /**
+     * Find all donors is repository
+     */
     public function findAll(): DonorCollection;
 
     /**

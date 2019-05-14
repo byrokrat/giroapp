@@ -27,6 +27,11 @@ use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\amount\Currency\SEK;
 
+/**
+ * Defines the interface for manipulating the donor repository
+ *
+ * All concrete database layers must contain an implementation of this interface
+ */
 interface DonorRepositoryInterface extends DonorQueryInterface
 {
     /**

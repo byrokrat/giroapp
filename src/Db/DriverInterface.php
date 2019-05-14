@@ -20,6 +20,11 @@
 
 namespace byrokrat\giroapp\Db;
 
+/**
+ * Defines the basic driver interface
+ *
+ * All concrete database layers must contain an implementation of this interface
+ */
 interface DriverInterface
 {
     public function getDonorRepository(DriverEnvironment $environment): DonorRepositoryInterface;

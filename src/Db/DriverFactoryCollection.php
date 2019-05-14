@@ -24,6 +24,9 @@ namespace byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Utils\CollectionTrait;
 
+/**
+ * The runtime collection of available database drivers
+ */
 class DriverFactoryCollection
 {
     use CollectionTrait;

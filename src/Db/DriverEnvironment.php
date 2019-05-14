@@ -25,6 +25,9 @@ namespace byrokrat\giroapp\Db;
 use byrokrat\giroapp\Model\DonorFactory;
 use byrokrat\giroapp\Utils\SystemClock;
 
+/**
+ * The environment in which a database driver is invoked
+ */
 class DriverEnvironment
 {
     /** @var SystemClock */

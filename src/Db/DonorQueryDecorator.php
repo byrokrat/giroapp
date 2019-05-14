@@ -25,6 +25,9 @@ namespace byrokrat\giroapp\Db;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\DonorCollection;
 
+/**
+ * Used to extract a donor query from a donor repository implementation
+ */
 class DonorQueryDecorator implements DonorQueryInterface
 {
     /**

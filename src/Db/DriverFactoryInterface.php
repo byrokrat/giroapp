@@ -20,6 +20,11 @@
 
 namespace byrokrat\giroapp\Db;
 
+/**
+ * Defines the interface for creating database drivers
+ *
+ * All concrete database layers must contain an implementation of this interface
+ */
 interface DriverFactoryInterface
 {
     public function getDriverName(): string;
