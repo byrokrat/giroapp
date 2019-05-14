@@ -137,6 +137,17 @@ services:
         class: ~
         autowire: false
 
+    League\Tactician\CommandBus:
+        class: ~
+        factory: 'League\Tactician\Setup\QuickStart:create'
+        arguments:
+            -
+                byrokrat\giroapp\CommandBus\Commit: '@byrokrat\giroapp\CommandBus\CommitHandler'
+                byrokrat\giroapp\CommandBus\Rollback: '@byrokrat\giroapp\CommandBus\RollbackHandler'
+
+    League\Tactician\Setup\QuickStart:
+        class: ~
+
     Psr\Log\LoggerInterface:
         class: Apix\Log\Logger\File
         arguments: ["@=service('ini').getConfigValue('log_file')"]

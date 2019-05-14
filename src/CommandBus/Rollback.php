@@ -20,17 +20,11 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\CommandBus\Commit;
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-
-class CommittingListener
+/**
+ * Rollback changes to persistent storage
+ */
+final class Rollback
 {
-    use CommandBusProperty;
-
-    public function onExecutionStoped(): void
-    {
-        $this->commandBus->handle(new Commit);
-    }
 }

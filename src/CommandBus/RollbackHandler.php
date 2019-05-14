@@ -20,17 +20,22 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\CommandBus\Commit;
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use byrokrat\giroapp\Db\DriverInterface;
 
-class CommittingListener
+final class RollbackHandler
 {
-    use CommandBusProperty;
+    /** @var DriverInterface */
+    private $dbDriver;
 
-    public function onExecutionStoped(): void
+    public function __construct(DriverInterface $dbDriver)
     {
-        $this->commandBus->handle(new Commit);
+        $this->dbDriver = $dbDriver;
+    }
+
+    public function handle(Rollback $rollback): void
+    {
+        $this->dbDriver->rollback();
     }
 }

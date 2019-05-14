@@ -46,7 +46,8 @@
         "symfony/filesystem": "^4",
         "symfony/proxy-manager-bridge": "^4",
         "hashids/hashids": "^2",
-        "fzaninotto/streamer": "0.*"
+        "fzaninotto/streamer": "0.*",
+        "league/tactician": "^1"
     },
     "require-dev": {
         "symfony/config": "^4",

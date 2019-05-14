@@ -5,15 +5,16 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Listener\CommittingListener;
-use byrokrat\giroapp\Db\DriverInterface;
+use byrokrat\giroapp\CommandBus\Commit;
+use League\Tactician\CommandBus;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class CommittingListenerSpec extends ObjectBehavior
 {
-    function let(DriverInterface $dbDriver)
+    function let(CommandBus $commandBus)
     {
-        $this->beConstructedWith($dbDriver);
+        $this->setCommandBus($commandBus);
     }
 
     function it_is_initializable()
@@ -21,9 +22,9 @@ class CommittingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(CommittingListener::CLASS);
     }
 
-    function it_commits_database($dbDriver)
+    function it_commits_database($commandBus)
     {
-        $dbDriver->commit()->shouldBeCalled();
+        $commandBus->handle(new Commit)->shouldBeCalled();
         $this->onExecutionStoped();
     }
 }

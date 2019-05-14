@@ -20,17 +20,23 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\DependencyInjection;
 
-use byrokrat\giroapp\CommandBus\Commit;
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use League\Tactician\CommandBus;
 
-class CommittingListener
+/**
+ * Use this trait to automatically inject the command bus
+ */
+trait CommandBusProperty
 {
-    use CommandBusProperty;
+    /** @var CommandBus */
+    protected $commandBus;
 
-    public function onExecutionStoped(): void
+    /**
+     * @required
+     */
+    public function setCommandBus(CommandBus $commandBus): void
     {
-        $this->commandBus->handle(new Commit);
+        $this->commandBus = $commandBus;
     }
 }
