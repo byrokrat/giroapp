@@ -68,11 +68,6 @@ interface Events
     const DONOR_UPDATED = 'DONOR_UPDATED';
 
     /**
-     * A donor removed, expects a DonorEvent
-     */
-    const DONOR_REMOVED = 'DONOR_REMOVED';
-
-    /**
      * A mandate response received from bank, expects a NodeEvent
      */
     const MANDATE_RESPONSE_RECEIVED = 'MANDATE_RESPONSE_RECEIVED';

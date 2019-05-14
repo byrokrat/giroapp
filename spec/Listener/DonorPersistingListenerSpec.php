@@ -65,11 +65,4 @@ class DonorPersistingListenerSpec extends ObjectBehavior
 
         $this->onDonorUpdated($event);
     }
-
-    function it_can_delete_mandates($donorRepository, DonorEvent $event, Donor $donor)
-    {
-        $event->getDonor()->willReturn($donor);
-        $donorRepository->deleteDonor($donor)->shouldBeCalled();
-        $this->onDonorRemoved($event);
-    }
 }

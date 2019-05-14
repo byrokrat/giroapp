@@ -22,22 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\CommandBus\RemoveDonor;
+use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\DonorEvent;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 final class PurgeConsole implements ConsoleInterface
 {
-    use DispatcherProperty, DonorQueryProperty;
+    use CommandBusProperty, DonorQueryProperty;
 
     public function configure(Command $command): void
     {
         $command->setName('purge');
-        $command->setDescription('Remove all inactive donors');
+        $command->setDescription('Completely remove all inactive donors');
         $command->setHelp('Completely remove all incative donors from the database');
     }
 
@@ -45,16 +44,7 @@ final class PurgeConsole implements ConsoleInterface
     {
         foreach ($this->donorQuery->findAll() as $donor) {
             if ($donor->getState()->isPurgeable()) {
-                $this->dispatcher->dispatch(
-                    Events::DONOR_REMOVED,
-                    new DonorEvent(
-                        sprintf(
-                            'Removed mandate <info>%s</info>',
-                            $donor->getMandateKey()
-                        ),
-                        $donor
-                    )
-                );
+                $this->commandBus->handle(new RemoveDonor($donor));
             }
         }
     }

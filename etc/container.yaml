@@ -84,6 +84,7 @@ services:
 
     byrokrat\giroapp\Db\DonorRepositoryInterface:
         factory: 'byrokrat\giroapp\Db\DriverInterface:getDonorRepository'
+        lazy: true
 
     byrokrat\giroapp\Db\DonorQueryInterface:
         class: byrokrat\giroapp\Db\DonorQueryDecorator
@@ -93,6 +94,7 @@ services:
 
     byrokrat\giroapp\Db\ImportHistoryInterface:
         factory: 'byrokrat\giroapp\Db\DriverInterface:getImportHistory'
+        lazy: true
 
     byrokrat\giroapp\State\TransactionDateFactory:
         class: ~
@@ -144,6 +146,7 @@ services:
         arguments:
             -
                 byrokrat\giroapp\CommandBus\Commit: '@byrokrat\giroapp\CommandBus\CommitHandler'
+                byrokrat\giroapp\CommandBus\RemoveDonor: '@byrokrat\giroapp\CommandBus\RemoveDonorHandler'
                 byrokrat\giroapp\CommandBus\Rollback: '@byrokrat\giroapp\CommandBus\RollbackHandler'
 
     League\Tactician\Setup\QuickStart:

@@ -26,3 +26,4 @@
 * New database interface and the possibility to add custom databases through plugins..
 * Renamed `Console/CommandInterface` => `Console/ConsoleInterface` and
   `Plugin/EnvironmentInterface::registerCommand()` => `Plugin/EnvironmentInterface::registerConsoleCommand()`.
+* Removed the possibility to force deletion of active donors. Set a purgable state before removing.

@@ -62,9 +62,4 @@ class DonorPersistingListener
             $this->donorRepository->setDonorAttribute($donor, $key, $value);
         }
     }
-
-    public function onDonorRemoved(DonorEvent $event): void
-    {
-        $this->donorRepository->deleteDonor($event->getDonor());
-    }
 }

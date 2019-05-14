@@ -88,7 +88,7 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $this->readConfig('foo')->shouldReturn('bar');
     }
 
-    function it_can_register_console_commands($dispatcher, $commandBus, ConsoleInterface $console, Application $application)
+    function it_can_register_consoles($dispatcher, $commandBus, ConsoleInterface $console, Application $application)
     {
         $this->registerConsoleCommand($console);
         $this->configureApplication($application);
