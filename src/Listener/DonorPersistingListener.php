@@ -47,8 +47,20 @@ class DonorPersistingListener
 
     public function onDonorUpdated(DonorEvent $event): void
     {
-        // TODO This is a hack that only works as long as Donor is mutable...
-        $this->donorRepository->updateDonorName($event->getDonor(), $event->getDonor()->getName());
+        $donor = $event->getDonor();
+
+        $this->donorRepository->updateDonorName($donor, $donor->getName());
+        $this->donorRepository->updateDonorState($donor, $donor->getState());
+        $this->donorRepository->updateDonorPayerNumber($donor, $donor->getPayerNumber());
+        $this->donorRepository->updateDonorAmount($donor, $donor->getDonationAmount());
+        $this->donorRepository->updateDonorAddress($donor, $donor->getPostalAddress());
+        $this->donorRepository->updateDonorEmail($donor, $donor->getEmail());
+        $this->donorRepository->updateDonorPhone($donor, $donor->getPhone());
+        $this->donorRepository->updateDonorComment($donor, $donor->getComment());
+
+        foreach ($donor->getAttributes() as $key => $value) {
+            $this->donorRepository->setDonorAttribute($donor, $key, $value);
+        }
     }
 
     public function onDonorRemoved(DonorEvent $event): void

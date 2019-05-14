@@ -219,9 +219,9 @@ final class JsonDonorRepository implements DonorRepositoryInterface
 
     private function updateDonor(Donor $donor, array $updatedValues): void
     {
-        $this->requireByMandateKey($donor->getMandateKey());
+        $currentValues = $this->createDoc($this->requireByMandateKey($donor->getMandateKey()));
 
-        $doc = array_merge($this->createDoc($donor), $updatedValues);
+        $doc = array_merge($currentValues, $updatedValues);
 
         $doc['updated'] = $this->systemClock->getNow()->format(\DateTime::W3C);
 

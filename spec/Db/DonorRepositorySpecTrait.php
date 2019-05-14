@@ -289,14 +289,16 @@ trait DonorRepositorySpecTrait
         $donor = $this->requireByMandateKey('m-key')->getWrappedObject();
         $this->deleteDonorAttribute($donor, 'foo');
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getAttributes', []);
+    }
 
-        return;
-
+    function it_only_updates_requested_field()
+    {
         $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
-        $newAddress = new PostalAddress('foo', 'bar');
-        $this->updateDonorAddress($donor, $newAddress);
-        $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getPostalAddress', $newAddress);
+        $this->updateDonorEmail($donor, 'mail');
+        $this->updateDonorPhone($donor, 'phone');
+        // email should be mail even though a donor object with other values is used in updateDonorPhone
+        $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getEmail', 'mail');
     }
 
     function getMatchers(): array
