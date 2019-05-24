@@ -19,7 +19,7 @@ class RemoveDonorHandlerSpec extends ObjectBehavior
 {
     function let(DonorRepositoryInterface $donorRepository, EventDispatcherInterface $dispatcher)
     {
-        $this->beConstructedWith($donorRepository);
+        $this->setDonorRepository($donorRepository);
         $this->setEventDispatcher($dispatcher);
     }
 

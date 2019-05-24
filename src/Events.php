@@ -88,21 +88,6 @@ interface Events
     const MANDATE_INVALIDATED = 'MANDATE_INVALIDATED';
 
     /**
-     * A mandate pause has been requested, expects a DonorEvent
-     */
-    const MANDATE_PAUSE_REQUESTED = 'MANDATE_PAUSE_REQUESTED';
-
-    /**
-     * A mandate has been paused, expects a DonorEvent
-     */
-    const MANDATE_PAUSED = 'MANDATE_PAUSED';
-
-    /**
-     * A mandate has been restarted, expects a DonorEvent
-     */
-    const MANDATE_RESTARTED = 'MANDATE_RESTARTED';
-
-    /**
      * An unexpected and unrecoverable error, expects a LogEvent
      */
     const ERROR = 'ERROR';

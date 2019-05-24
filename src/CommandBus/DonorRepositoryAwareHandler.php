@@ -32,7 +32,10 @@ abstract class DonorRepositoryAwareHandler
     /** @var DonorRepositoryInterface */
     protected $donorRepository;
 
-    public function __construct(DonorRepositoryInterface $donorRepository)
+    /**
+     * @required
+     */
+    public function setDonorRepository(DonorRepositoryInterface $donorRepository): void
     {
         $this->donorRepository = $donorRepository;
     }

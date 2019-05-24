@@ -22,22 +22,25 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Event\DonorStateChanged;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 
-final class ChangeDonorStateHandler extends DonorRepositoryAwareHandler
+final class ChangeDonorStateHandler
 {
+    /** @var ForceDonorStateHandler */
+    private $forceHandler;
+
+    public function __construct(ForceDonorStateHandler $forceHandler)
+    {
+        $this->forceHandler = $forceHandler;
+    }
     public function handle(ChangeDonorState $command): void
     {
         // TODO this is where a state machine should validate transitions
         // see all places where InvalidStateTransitionException is used
         // no specs exist at this point. Write when I add the state machine...
 
-        $this->donorRepository->updateDonorState($command->getDonor(), $command->getNewState());
-
-        $this->dispatcher->dispatch(
-            DonorStateChanged::CLASS,
-            new DonorStateChanged($command->getDonor(), $command->getNewState())
+        $this->forceHandler->handle(
+            new ForceDonorState($command->getDonor(), $command->getNewStateId())
         );
     }
 }

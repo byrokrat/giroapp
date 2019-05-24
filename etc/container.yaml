@@ -147,6 +147,7 @@ services:
             -
                 byrokrat\giroapp\CommandBus\ChangeDonorState: '@byrokrat\giroapp\CommandBus\ChangeDonorStateHandler'
                 byrokrat\giroapp\CommandBus\Commit: '@byrokrat\giroapp\CommandBus\CommitHandler'
+                byrokrat\giroapp\CommandBus\ForceDonorState: '@byrokrat\giroapp\CommandBus\ForceDonorStateHandler'
                 byrokrat\giroapp\CommandBus\RemoveDonor: '@byrokrat\giroapp\CommandBus\RemoveDonorHandler'
                 byrokrat\giroapp\CommandBus\Rollback: '@byrokrat\giroapp\CommandBus\RollbackHandler'
 

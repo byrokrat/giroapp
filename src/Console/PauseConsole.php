@@ -22,12 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\Events;
+use byrokrat\giroapp\CommandBus\ChangeDonorState;
+use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\States;
-use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
-use byrokrat\giroapp\State\StateCollection;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -35,17 +33,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class PauseConsole implements ConsoleInterface
 {
-    use Helper\DonorArgument, DispatcherProperty;
-
-    /**
-     * @var StateCollection
-     */
-    private $stateCollection;
-
-    public function __construct(StateCollection $stateCollection)
-    {
-        $this->stateCollection = $stateCollection;
-    }
+    use CommandBusProperty, Helper\DonorArgument;
 
     public function configure(Command $command): void
     {
@@ -65,12 +53,7 @@ final class PauseConsole implements ConsoleInterface
                 throw new InvalidStateTransitionException('Unable to restart donor that is not paused.');
             }
 
-            $donor->setState($this->stateCollection->getState(States::MANDATE_APPROVED));
-
-            $this->dispatcher->dispatch(
-                Events::MANDATE_RESTARTED,
-                new DonorEvent("Restart requested for mandate <info>{$donor->getMandateKey()}</info>", $donor)
-            );
+            $this->commandBus->handle(new ChangeDonorState($donor, States::MANDATE_APPROVED));
 
             return;
         }
@@ -79,11 +62,6 @@ final class PauseConsole implements ConsoleInterface
             throw new InvalidStateTransitionException('Unable to pause non active donor.');
         }
 
-        $donor->setState($this->stateCollection->getState(States::PAUSE_MANDATE));
-
-        $this->dispatcher->dispatch(
-            Events::MANDATE_PAUSE_REQUESTED,
-            new DonorEvent("Pause requested for mandate <info>{$donor->getMandateKey()}</info>", $donor)
-        );
+        $this->commandBus->handle(new ChangeDonorState($donor, States::PAUSE_MANDATE));
     }
 }

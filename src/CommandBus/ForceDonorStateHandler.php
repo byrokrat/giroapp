@@ -22,22 +22,28 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\Event\DonorStateChanged;
+use byrokrat\giroapp\State\StateCollection;
 
-final class ChangeDonorState extends DonorAwareCommand
+final class ForceDonorStateHandler extends DonorRepositoryAwareHandler
 {
-    /** @var string */
-    private $newStateId;
+    /** @var StateCollection */
+    private $stateCollection;
 
-    public function __construct(Donor $donor, string $newStateId)
+    public function __construct(StateCollection $stateCollection)
     {
-        parent::__construct($donor);
-        $this->newStateId = $newStateId;
+        $this->stateCollection = $stateCollection;
     }
 
-    public function getNewStateId(): string
+    public function handle(ForceDonorState $command): void
     {
-        return $this->newStateId;
+        $newState = $this->stateCollection->getState($command->getNewStateId());
+
+        $this->donorRepository->updateDonorState($command->getDonor(), $newState);
+
+        $this->dispatcher->dispatch(
+            DonorStateChanged::CLASS,
+            new DonorStateChanged($command->getDonor(), $newState)
+        );
     }
 }

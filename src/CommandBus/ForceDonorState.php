@@ -23,9 +23,11 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\StateInterface;
 
-final class ChangeDonorState extends DonorAwareCommand
+/**
+ * Force donor to enter state, ignoring validating checks
+ */
+class ForceDonorState extends DonorAwareCommand
 {
     /** @var string */
     private $newStateId;
