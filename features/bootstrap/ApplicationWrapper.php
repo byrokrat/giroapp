@@ -5,7 +5,6 @@ declare(strict_types = 1);
 use byrokrat\giroapp\Config\ArrayRepository;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Config\IniRepository;
-use Symfony\Component\Finder\Finder;
 
 class ApplicationWrapper
 {
@@ -123,15 +122,8 @@ class ApplicationWrapper
         );
     }
 
-    public function getLastExportedFile(): string
+    public function fileExists(string $filename): bool
     {
-        $splFileInfo = null;
-
-        $exports = (new Finder)->files()->in($this->configs->getConfigValue('exports_dir'))->sortByName();
-
-        foreach ($exports as $splFileInfo) {
-        }
-
-        return $splFileInfo ? $splFileInfo->getContents() : '';
+        return file_exists("{$this->cwd}/$filename");
     }
 }

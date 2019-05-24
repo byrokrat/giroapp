@@ -20,33 +20,11 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Filesystem;
+namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Utils\SystemClock;
-
-final class RenamingProcessor implements FileProcessorInterface
+/**
+ * Export data to BGC
+ */
+final class Export
 {
-    /**
-     * @var SystemClock
-     */
-    private $systemClock;
-
-    public function __construct(SystemClock $systemClock)
-    {
-        $this->systemClock = $systemClock;
-    }
-
-    public function processFile(FileInterface $file): FileInterface
-    {
-        return new HashedFile(
-            sprintf(
-                '%s_%s_%s.txt',
-                $file->getFilename(),
-                $this->systemClock->getNow()->format('Ymd\THis'),
-                substr($file->getChecksum(), 0, 10)
-            ),
-            $file->getContent(),
-            $file->getChecksum()
-        );
-    }
 }

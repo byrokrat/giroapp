@@ -26,7 +26,7 @@ use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
 
-class MandateApprovedState extends AbstractState
+class MandateApprovedState extends AbstractState implements ExportableStateInterface
 {
     /**
      * @var TransactionDateFactory
@@ -48,12 +48,7 @@ class MandateApprovedState extends AbstractState
         return States::MANDATE_APPROVED;
     }
 
-    public function getNextStateId(): string
-    {
-        return States::ACTIVE;
-    }
-
-    public function export(Donor $donor, WriterInterface $writer): void
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
         if ($donor->getDonationAmount()->isPositive()) {
             $writer->addMonthlyPayment(
@@ -63,5 +58,7 @@ class MandateApprovedState extends AbstractState
                 $donor->getMandateKey()
             );
         }
+
+        return States::ACTIVE;
     }
 }

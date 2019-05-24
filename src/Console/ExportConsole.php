@@ -22,41 +22,16 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\State\StateCollection;
-use byrokrat\giroapp\Filesystem\Sha256File;
-use byrokrat\autogiro\Writer\WriterInterface;
+use byrokrat\giroapp\CommandBus\Export;
+use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-/**
- * Command to create autogiro files
- */
 final class ExportConsole implements ConsoleInterface
 {
-    use DispatcherProperty, DonorQueryProperty;
-
-    /**
-     * @var WriterInterface
-     */
-    private $autogiroWriter;
-
-    /**
-     * @var StateCollection
-     */
-    private $stateCollection;
-
-    public function __construct(WriterInterface $autogiroWriter, StateCollection $stateCollection)
-    {
-        $this->autogiroWriter = $autogiroWriter;
-        $this->stateCollection = $stateCollection;
-    }
+    use CommandBusProperty;
 
     public function configure(Command $command): void
     {
@@ -67,38 +42,20 @@ final class ExportConsole implements ConsoleInterface
             'filename',
             null,
             InputOption::VALUE_REQUIRED,
-            'Name of exported file',
-            'giroapp-export.txt'
+            'Name of exported file'
         );
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $exported = false;
-
-        foreach ($this->donorQuery->findAll() as $donor) {
-            if ($donor->getState()->isExportable()) {
-                $donor->exportToAutogiro($this->autogiroWriter);
-                $donor->setState($this->stateCollection->getState($donor->getState()->getNextStateId()));
-                $this->dispatcher->dispatch(
-                    Events::DONOR_UPDATED,
-                    new DonorEvent("Exported mandate <info>{$donor->getMandateKey()}</info>", $donor)
-                );
-                $exported = true;
-            }
-        }
+        /** @var string */
+        $content = $this->commandBus->handle(new Export);
 
         /** @var string */
         $filename = $input->getOption('filename');
 
-        if ($exported) {
-            $this->dispatcher->dispatch(
-                Events::FILE_EXPORTED,
-                new FileEvent(
-                    'Generating file to export',
-                    new Sha256File($filename, $this->autogiroWriter->getContent())
-                )
-            );
-        }
+        $filename
+            ? file_put_contents($filename, $content)
+            : $output->write($content);
     }
 }

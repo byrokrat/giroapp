@@ -35,11 +35,6 @@ final class OutputtingSubscriber implements EventSubscriberInterface
     /**
      * @var OutputInterface
      */
-    private $stdout;
-
-    /**
-     * @var OutputInterface
-     */
     private $errout;
 
     public static function getSubscribedEvents()
@@ -52,9 +47,8 @@ final class OutputtingSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function __construct(OutputInterface $stdout, OutputInterface $errout)
+    public function __construct(OutputInterface $errout)
     {
-        $this->stdout = $stdout;
         $this->errout = $errout;
     }
 
@@ -70,13 +64,13 @@ final class OutputtingSubscriber implements EventSubscriberInterface
 
     public function onInfo(LogEvent $event): void
     {
-        $this->stdout->writeln($event->getMessage());
+        $this->errout->writeln($event->getMessage());
     }
 
     public function onDebug(LogEvent $event): void
     {
-        if ($this->stdout->isVerbose()) {
-            $this->stdout->writeln($event->getMessage());
+        if ($this->errout->isVerbose()) {
+            $this->errout->writeln('DEBUG: ' . $event->getMessage());
         }
     }
 }

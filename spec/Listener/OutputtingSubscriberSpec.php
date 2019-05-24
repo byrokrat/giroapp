@@ -13,9 +13,9 @@ use Prophecy\Argument;
 
 class OutputtingSubscriberSpec extends ObjectBehavior
 {
-    function let(OutputInterface $stdout, OutputInterface $errout)
+    function let(OutputInterface $errout)
     {
-        $this->beConstructedWith($stdout, $errout);
+        $this->beConstructedWith($errout);
     }
 
     function it_is_initializable()
@@ -42,29 +42,29 @@ class OutputtingSubscriberSpec extends ObjectBehavior
         $errout->writeln('<question>WARNING: foobar</question>')->shouldHaveBeenCalled();
     }
 
-    function it_writes_info_messages(LogEvent $event, $stdout)
+    function it_writes_info_messages(LogEvent $event, $errout)
     {
         $event->getMessage()->willReturn('foobar');
         $this->onInfo($event);
-        $stdout->writeln('foobar')->shouldHaveBeenCalled();
+        $errout->writeln('foobar')->shouldHaveBeenCalled();
     }
 
-    function it_writes_debug_message_if_output_is_verbose(LogEvent $event, $stdout)
+    function it_writes_debug_message_if_output_is_verbose(LogEvent $event, $errout)
     {
         $event->getMessage()->willReturn('foobar');
 
-        $stdout->isVerbose()->willReturn(true);
-        $stdout->writeln('foobar')->shouldBeCalled();
+        $errout->isVerbose()->willReturn(true);
+        $errout->writeln('DEBUG: foobar')->shouldBeCalled();
 
         $this->onDebug($event);
     }
 
-    function it_discards_debug_message_if_output_is_not_verbose(LogEvent $event, $stdout)
+    function it_discards_debug_message_if_output_is_not_verbose(LogEvent $event, $errout)
     {
         $event->getMessage()->willReturn('foobar');
 
-        $stdout->isVerbose()->willReturn(false);
-        $stdout->writeln('foobar')->shouldNotBeCalled();
+        $errout->isVerbose()->willReturn(false);
+        $errout->writeln(Argument::any())->shouldNotBeCalled();
 
         $this->onDebug($event);
     }

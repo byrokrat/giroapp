@@ -11,5 +11,6 @@
     "replacement-sigil": "$",
     "git-tag": "app_version",
     "algorithm": "SHA512",
-    "chmod": "0550"
+    "chmod": "0550",
+    "check-requirements": false
 }

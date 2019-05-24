@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Formatter;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\State\ExportableStateInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\Table;
 
@@ -61,7 +62,7 @@ final class ListFormatter implements FormatterInterface
             $donor->getPayerNumber(),
             $donor->getName(),
             $donor->getState()->getStateId(),
-            $donor->getState()->isExportable() ? 'yes' : 'no'
+            $donor->getState() instanceof ExportableStateInterface ? 'yes' : 'no'
         ]);
     }
 

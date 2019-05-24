@@ -68,7 +68,7 @@ final class SymfonyCommandAdapter extends Command
             throw new \InvalidArgumentException('Output must implement ConsoleOutputInterface');
         }
 
-        $this->dispatcher->addSubscriber(new OutputtingSubscriber($output, $output->getErrorOutput()));
+        $this->dispatcher->addSubscriber(new OutputtingSubscriber($output->getErrorOutput()));
 
         try {
             $this->dispatcher->dispatch(Events::EXECUTION_STARTED, new LogEvent('Execution started'));

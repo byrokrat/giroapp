@@ -26,7 +26,7 @@ use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
 
-class NewDigitalMandateState extends AbstractState
+class NewDigitalMandateState extends AbstractState implements ExportableStateInterface
 {
     public function getDescription(): string
     {
@@ -38,13 +38,9 @@ class NewDigitalMandateState extends AbstractState
         return States::NEW_DIGITAL_MANDATE;
     }
 
-    public function getNextStateId(): string
-    {
-        return States::MANDATE_SENT;
-    }
-
-    public function export(Donor $donor, WriterInterface $writer): void
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
         $writer->acceptDigitalMandate($donor->getPayerNumber());
+        return States::MANDATE_SENT;
     }
 }

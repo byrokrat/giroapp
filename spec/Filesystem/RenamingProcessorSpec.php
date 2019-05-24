@@ -26,9 +26,9 @@ class RenamingProcessorSpec extends ObjectBehavior
     {
         $systemClock->getNow()->willReturn(new \DateTimeImmutable('2010-01-01 01:01:01'));
         $file->getFilename()->willReturn('name');
-        $file->getChecksum()->willReturn('1234567890');
+        $file->getChecksum()->willReturn('1234567890FOO');
         $file->getContent()->willReturn('');
-        $this->processFile($file)->shouldReturnFileNamed('AG_20100101T010101_name_12345.txt');
+        $this->processFile($file)->shouldReturnFileNamed('name_20100101T010101_1234567890.txt');
     }
 
     public function getMatchers(): array

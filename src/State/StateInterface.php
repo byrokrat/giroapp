@@ -20,9 +20,6 @@
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\WriterInterface;
-
 /**
  * Defines a donor state in relation to bgc
  */
@@ -34,19 +31,9 @@ interface StateInterface
     public function getStateId(): string;
 
     /**
-     * Get identifier of next state in a state chain (eg. after export)
-     */
-    public function getNextStateId(): string;
-
-    /**
      * Get free text state description
      */
     public function getDescription(): string;
-
-    /**
-     * Export to autogiro and possibly perform state transition
-     */
-    public function export(Donor $donor, WriterInterface $writer): void;
 
     /**
      * Check if a donor with this state is an active donor
@@ -62,11 +49,6 @@ interface StateInterface
      * Check if a donor with this state is broken
      */
     public function isError(): bool;
-
-    /**
-     * Check if a donor with this state is exportable to autogirot
-     */
-    public function isExportable(): bool;
 
     /**
      * Check if a donor with this state can be safely removed

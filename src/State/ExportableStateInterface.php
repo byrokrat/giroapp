@@ -18,35 +18,15 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\State;
 
-namespace byrokrat\giroapp\Filesystem;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\autogiro\Writer\WriterInterface;
 
-use byrokrat\giroapp\Utils\SystemClock;
-
-final class RenamingProcessor implements FileProcessorInterface
+interface ExportableStateInterface
 {
     /**
-     * @var SystemClock
+     * @return string Suggested next state id
      */
-    private $systemClock;
-
-    public function __construct(SystemClock $systemClock)
-    {
-        $this->systemClock = $systemClock;
-    }
-
-    public function processFile(FileInterface $file): FileInterface
-    {
-        return new HashedFile(
-            sprintf(
-                '%s_%s_%s.txt',
-                $file->getFilename(),
-                $this->systemClock->getNow()->format('Ymd\THis'),
-                substr($file->getChecksum(), 0, 10)
-            ),
-            $file->getContent(),
-            $file->getChecksum()
-        );
-    }
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string;
 }

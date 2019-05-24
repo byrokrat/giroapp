@@ -20,33 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Filesystem;
+namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Utils\SystemClock;
+use byrokrat\giroapp\Filesystem\FileInterface;
 
-final class RenamingProcessor implements FileProcessorInterface
+final class ExportGenerated extends FileEvent
 {
-    /**
-     * @var SystemClock
-     */
-    private $systemClock;
-
-    public function __construct(SystemClock $systemClock)
+    public function __construct(FileInterface $file)
     {
-        $this->systemClock = $systemClock;
-    }
-
-    public function processFile(FileInterface $file): FileInterface
-    {
-        return new HashedFile(
-            sprintf(
-                '%s_%s_%s.txt',
-                $file->getFilename(),
-                $this->systemClock->getNow()->format('Ymd\THis'),
-                substr($file->getChecksum(), 0, 10)
-            ),
-            $file->getContent(),
-            $file->getChecksum()
-        );
+        parent::__construct('Generating file to export', $file);
     }
 }

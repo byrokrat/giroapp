@@ -9,6 +9,7 @@ use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\FileProcessorInterface;
 use byrokrat\giroapp\Filesystem\FileInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -29,7 +30,8 @@ class FileDumpingListenerSpec extends ObjectBehavior
         $fileProcessor,
         FileEvent $event,
         FileInterface $file,
-        FileInterface $processedFile
+        FileInterface $processedFile,
+        Dispatcher $dispatcher
     ) {
         $event->getFile()->willReturn($file);
 
@@ -39,6 +41,6 @@ class FileDumpingListenerSpec extends ObjectBehavior
         $fs->writeFile($processedFile)->shouldBeCalled();
 
         $this->onFileEvent($event);
-        $this->onExecutionStoped();
+        $this->onExecutionStoped(null, '', $dispatcher);
     }
 }

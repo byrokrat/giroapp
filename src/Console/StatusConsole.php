@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
+use byrokrat\giroapp\State\ExportableStateInterface;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -68,7 +69,7 @@ final class StatusConsole implements ConsoleInterface
                 $counts['monthly-amount'] = $counts['monthly-amount']->add($donor->getDonationAmount());
             }
 
-            if ($donor->getState()->isExportable()) {
+            if ($donor->getState() instanceof ExportableStateInterface) {
                 $counts['exportable-count']++;
             }
 

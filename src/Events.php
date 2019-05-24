@@ -38,11 +38,6 @@ interface Events
     const FILE_IMPORTED = 'FILE_IMPORTED';
 
     /**
-     * A file exported, expects an FileEvent
-     */
-    const FILE_EXPORTED = 'FILE_EXPORTED';
-
-    /**
      * A file forcefully imported, expects an FileEvent
      */
     const FILE_FORCEFULLY_IMPORTED = 'FILE_FORCEFULLY_IMPORTED';

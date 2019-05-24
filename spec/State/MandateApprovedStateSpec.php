@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\State;
 
 use byrokrat\giroapp\State\MandateApprovedState;
+use byrokrat\giroapp\State\ExportableStateInterface;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\TransactionDateFactory;
 use byrokrat\giroapp\States;
@@ -36,11 +37,6 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $this->getStateId()->shouldEqual(States::MANDATE_APPROVED);
     }
 
-    function it_contains_next_id()
-    {
-        $this->getNextStateId()->shouldEqual(States::ACTIVE);
-    }
-
     function it_contains_a_description()
     {
         $this->getDescription()->shouldBeString();
@@ -48,7 +44,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
 
     function it_is_exportable()
     {
-        $this->shouldBeExportable();
+        $this->shouldHaveType(ExportableStateInterface::CLASS);
     }
 
     function it_does_not_export_without_an_amount(Donor $donor, WriterInterface $writer, SEK $amount)
@@ -56,7 +52,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $amount->isPositive()->willReturn(false);
         $donor->getDonationAmount()->willReturn($amount);
         $writer->addMonthlyPayment(Argument::cetera())->shouldNotBeCalled();
-        $this->export($donor, $writer);
+        $this->exportToAutogiro($donor, $writer);
     }
 
     function it_can_be_exported($dateFactory, Donor $donor, WriterInterface $writer, SEK $amount)
@@ -70,7 +66,7 @@ class MandateApprovedStateSpec extends ObjectBehavior
         $date = new \DateTimeImmutable;
         $dateFactory->createNextTransactionDate()->willReturn($date);
 
-        $this->export($donor, $writer);
+        $this->exportToAutogiro($donor, $writer)->shouldReturn(States::ACTIVE);
 
         $writer->addMonthlyPayment('payer_number', $amount, $date, 'mandate_key')->shouldHaveBeenCalled();
     }

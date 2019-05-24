@@ -8,7 +8,6 @@ use byrokrat\giroapp\State\InactiveState;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\WriterInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -29,24 +28,9 @@ class InactiveStateSpec extends ObjectBehavior
         $this->getStateId()->shouldEqual(States::INACTIVE);
     }
 
-    function it_contains_next_id()
-    {
-        $this->getNextStateId()->shouldEqual(States::INACTIVE);
-    }
-
     function it_contains_a_description()
     {
         $this->getDescription()->shouldBeString();
-    }
-
-    function it_is_not_exportable()
-    {
-        $this->shouldNotBeExportable();
-    }
-
-    function it_can_be_exported(Donor $donor, WriterInterface $writer)
-    {
-        $this->export($donor, $writer);
     }
 
     function it_is_not_active()
