@@ -145,9 +145,16 @@ class XmlMandateParser
             );
 
             if ($mandate->hasElement('/MedgivandeViaHemsida/Betalarnummer')) {
-                $this->donorBuilder->setPayerNumber(
-                    $mandate->readElement('/MedgivandeViaHemsida/Betalarnummer', new PayerNumberValidator)
-                );
+                try {
+                    $this->donorBuilder->setPayerNumber(
+                        $mandate->readElement('/MedgivandeViaHemsida/Betalarnummer', new PayerNumberValidator)
+                    );
+                }
+                catch(ValidatorException $e) {
+                    $this->donorBuilder->setPayerNumber(
+                        $mandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr', new IdValidator)
+                    );
+                }
             }
 
             $this->donorBuilder->setAccount(
