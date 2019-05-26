@@ -3,5 +3,4 @@ suites:
         namespace: byrokrat\giroapp
         psr4_prefix: byrokrat\giroapp
 
-bootstrap: spec/Mapper/ExpressionToken.php
 formatter.name: dot

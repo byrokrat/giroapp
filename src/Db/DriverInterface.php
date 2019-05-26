@@ -20,13 +20,30 @@
 
 namespace byrokrat\giroapp\Db;
 
+/**
+ * Defines the basic driver interface
+ *
+ * All concrete database layers must contain an implementation of this interface
+ */
 interface DriverInterface
 {
-    public function getDonorRepository(): DonorRepositoryInterface;
+    /**
+     * Get the donor repository for this driver
+     */
+    public function getDonorRepository(DriverEnvironment $environment): DonorRepositoryInterface;
 
-    public function getImportHistory(): ImportHistoryInterface;
+    /**
+     * Get the import history repository for this driver
+     */
+    public function getImportHistory(DriverEnvironment $environment): ImportHistoryInterface;
 
-    public function commit(): void;
+    /**
+     * @return bool True if changes were actually committed, false otherwise
+     */
+    public function commit(): bool;
 
-    public function rollback(): void;
+    /**
+     * @return bool True if changes were actually discarded, false otherwise
+     */
+    public function rollback(): bool;
 }

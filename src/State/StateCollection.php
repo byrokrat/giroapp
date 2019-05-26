@@ -28,6 +28,11 @@ class StateCollection
 {
     use CollectionTrait;
 
+    protected function describeItem(): string
+    {
+        return 'State';
+    }
+
     public function addState(StateInterface $state): void
     {
         $this->addItem($state->getStateId(), $state);

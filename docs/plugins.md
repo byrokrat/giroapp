@@ -8,11 +8,12 @@ Plugins may register
 
 * Event subscribers
 * XML form difinitions
-* Commands
+* Console commands
 * Donor filters
 * Donor formatters
 * Donor sorters
 * Donor states
+* Database drivers
 
 Here is an example plugin that sends notifications on application error:
 

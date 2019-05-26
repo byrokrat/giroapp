@@ -28,6 +28,11 @@ class FormatterCollection
 {
     use CollectionTrait;
 
+    protected function describeItem(): string
+    {
+        return 'Formatter';
+    }
+
     public function addFormatter(FormatterInterface $formatter): void
     {
         $this->addItem($formatter->getName(), $formatter);

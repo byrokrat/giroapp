@@ -28,4 +28,4 @@ Feature: Adding new donors
       | payer-number | name | account     | id         | state  | amount |
       | 1            | foo  | 50001111116 | 8203232775 | ACTIVE | 100    |
     When I run "add --payer-number 1 --account 50001111116 --id 8203232775 --name foo --amount 100"
-    Then I get a "DONOR_EXISTS_EXCEPTION" error
+    Then I get a "DONOR_ALREADY_EXISTS_EXCEPTION" error

@@ -2,6 +2,7 @@
 
 namespace Bob\BuildConfig;
 
+use Symfony\Bridge\ProxyManager\LazyProxy\PhpDumper\ProxyDumper;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Dumper\PhpDumper;
@@ -94,10 +95,15 @@ function build_container()
     (new YamlFileLoader($dic, new FileLocator(__DIR__ . '/etc')))->load(basename('container.yaml'));
     $dic->addCompilerPass(new RegisterListenersPass(Dispatcher::CLASS, 'event_listener', 'event_subscriber'));
     $dic->compile();
-    file_put_contents(CONTAINER_PATH, (new PhpDumper($dic))->dump([
+
+    $dumper = new PhpDumper($dic);
+    $dumper->setProxyDumper(new ProxyDumper);
+
+    file_put_contents(CONTAINER_PATH, $dumper->dump([
         'namespace' => 'byrokrat\giroapp\DependencyInjection',
         'class' => 'ProjectServiceContainer'
     ]));
+
     println('Generated dependency injection container');
 }
 

@@ -24,6 +24,11 @@ use byrokrat\giroapp\Exception\FileAlreadyImportedException;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\giroapp\Model\FileThatWasImported;
 
+/**
+ * Defines the interface for interacting with the import history repository
+ *
+ * All concrete database layers must contain an implementation of this interface
+ */
 interface ImportHistoryInterface
 {
     /**

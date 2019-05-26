@@ -38,11 +38,6 @@ interface Events
     const FILE_IMPORTED = 'FILE_IMPORTED';
 
     /**
-     * A file exported, expects an FileEvent
-     */
-    const FILE_EXPORTED = 'FILE_EXPORTED';
-
-    /**
      * A file forcefully imported, expects an FileEvent
      */
     const FILE_FORCEFULLY_IMPORTED = 'FILE_FORCEFULLY_IMPORTED';
@@ -68,11 +63,6 @@ interface Events
     const DONOR_UPDATED = 'DONOR_UPDATED';
 
     /**
-     * A donor removed, expects a DonorEvent
-     */
-    const DONOR_REMOVED = 'DONOR_REMOVED';
-
-    /**
      * A mandate response received from bank, expects a NodeEvent
      */
     const MANDATE_RESPONSE_RECEIVED = 'MANDATE_RESPONSE_RECEIVED';
@@ -88,29 +78,9 @@ interface Events
     const MANDATE_REVOKED = 'MANDATE_REVOKED';
 
     /**
-     * Mandate revocation requested, expects a DonorEvent
-     */
-    const MANDATE_REVOCATION_REQUESTED = 'MANDATE_REVOCATION_REQUESTED';
-
-    /**
      * A mandate is invalid and could not be approved, expects a DonorEvent
      */
     const MANDATE_INVALIDATED = 'MANDATE_INVALIDATED';
-
-    /**
-     * A mandate pause has been requested, expects a DonorEvent
-     */
-    const MANDATE_PAUSE_REQUESTED = 'MANDATE_PAUSE_REQUESTED';
-
-    /**
-     * A mandate has been paused, expects a DonorEvent
-     */
-    const MANDATE_PAUSED = 'MANDATE_PAUSED';
-
-    /**
-     * A mandate has been restarted, expects a DonorEvent
-     */
-    const MANDATE_RESTARTED = 'MANDATE_RESTARTED';
 
     /**
      * An unexpected and unrecoverable error, expects a LogEvent

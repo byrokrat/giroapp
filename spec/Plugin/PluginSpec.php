@@ -7,7 +7,7 @@ namespace spec\byrokrat\giroapp\Plugin;
 use byrokrat\giroapp\Plugin\Plugin;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Plugin\ApiVersionConstraint;
-use byrokrat\giroapp\Console\CommandInterface;
+use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
@@ -25,11 +25,11 @@ class PluginSpec extends ObjectBehavior
         $this->shouldHaveType(Plugin::CLASS);
     }
 
-    function it_registers_commands(CommandInterface $command, EnvironmentInterface $env)
+    function it_registers_console_commands(ConsoleInterface $console, EnvironmentInterface $env)
     {
-        $this->beConstructedWith($command);
+        $this->beConstructedWith($console);
         $this->loadPlugin($env);
-        $env->registerCommand($command)->shouldHaveBeenCalled();
+        $env->registerConsoleCommand($console)->shouldHaveBeenCalled();
     }
 
     function it_registers_database_drivers(DriverFactoryInterface $driverFactory, EnvironmentInterface $env)

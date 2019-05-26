@@ -24,7 +24,6 @@ namespace byrokrat\giroapp\Db\Json;
 
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Db\DriverInterface;
-use byrokrat\giroapp\Utils\SystemClock;
 use hanneskod\yaysondb\Yaysondb;
 use hanneskod\yaysondb\Engine\FlysystemEngine;
 use League\Flysystem\Filesystem;
@@ -34,14 +33,6 @@ final class JsonDriverFactory implements DriverFactoryInterface
 {
     private const DONORS_FILE = 'donors.json';
     private const IMPORTS_FILE = 'imports.json';
-
-    /** @var SystemClock */
-    private $systemClock;
-
-    public function __construct(SystemClock $systemClock)
-    {
-        $this->systemClock = $systemClock;
-    }
 
     public function getDriverName(): string
     {
@@ -62,8 +53,7 @@ final class JsonDriverFactory implements DriverFactoryInterface
             new Yaysondb([
                 'donors' => new FlysystemEngine(self::DONORS_FILE, $filesystem),
                 'imports' => new FlysystemEngine(self::IMPORTS_FILE, $filesystem),
-            ]),
-            $this->systemClock
+            ])
         );
     }
 }

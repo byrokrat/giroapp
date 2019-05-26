@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
@@ -37,18 +37,18 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 class MandateResponseListener
 {
     /**
-     * @var DonorMapper
+     * @var DonorQueryInterface
      */
-    private $donorMapper;
+    private $donorQuery;
 
     /**
      * @var StateCollection
      */
     private $stateCollection;
 
-    public function __construct(DonorMapper $donorMapper, StateCollection $stateCollection)
+    public function __construct(DonorQueryInterface $donorQuery, StateCollection $stateCollection)
     {
-        $this->donorMapper = $donorMapper;
+        $this->donorQuery = $donorQuery;
         $this->stateCollection = $stateCollection;
     }
 
@@ -56,7 +56,7 @@ class MandateResponseListener
     {
         $node = $nodeEvent->getNode();
 
-        $donor = $this->donorMapper->findByActivePayerNumber(
+        $donor = $this->donorQuery->requireByPayerNumber(
             $node->getValueFrom('PayerNumber')
         );
 

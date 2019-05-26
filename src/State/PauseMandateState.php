@@ -26,7 +26,7 @@ use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
 
-class PauseMandateState extends AbstractState
+class PauseMandateState extends AbstractState implements ExportableStateInterface
 {
     public function getDescription(): string
     {
@@ -38,13 +38,9 @@ class PauseMandateState extends AbstractState
         return States::PAUSE_MANDATE;
     }
 
-    public function getNextStateId(): string
-    {
-        return States::PAUSE_SENT;
-    }
-
-    public function export(Donor $donor, WriterInterface $writer): void
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
         $writer->deletePayments($donor->getPayerNumber());
+        return States::PAUSE_SENT;
     }
 }

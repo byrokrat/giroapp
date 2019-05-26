@@ -13,10 +13,17 @@
 * Supports importing files from multiple files and directories.
 * Better exception handling with error codes.
 * All paths are now specified using `giroapp.ini` directives. See `giroapp.ini.dist`.
-  You will need to path your local copy with the new settings.
+  You will need to patch your local copy with the new settings.
 * Some default directory names have changed, specificaly the `var` directory
   is no longer used.
 * Replaced `GIROAPP_PATH` environment variable with `GIROAPP_INI` pointing to the
   `giroapp.ini` to use. Update your environment accordingly.
 * Plugins may now specify api version constraints.
 * Logging con now be configured in `giroapp.ini`.
+* Removed the `validate` command.
+* Removed the `migrate` command.
+* Requires php `>= 7.2`.
+* New database interface and the possibility to add custom databases through plugins..
+* Renamed `Console/CommandInterface` => `Console/ConsoleInterface` and
+  `Plugin/EnvironmentInterface::registerCommand()` => `Plugin/EnvironmentInterface::registerConsoleCommand()`.
+* Removed the possibility to force deletion of active donors. Set a purgable state before removing.

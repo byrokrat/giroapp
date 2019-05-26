@@ -22,11 +22,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console\Helper;
 
-use byrokrat\giroapp\DependencyInjection\DonorMapperProperty;
-use byrokrat\giroapp\Console\Adapter;
+use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Validator\DonorKeyValidator;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -36,17 +36,17 @@ use Symfony\Component\Console\Input\InputOption;
  */
 trait DonorArgument
 {
-    use DonorMapperProperty;
+    use DonorQueryProperty;
 
-    protected function configureDonorArgument(Adapter $wrapper): void
+    protected function configureDonorArgument(Command $command): void
     {
-        $wrapper->addArgument(
+        $command->addArgument(
             'donor',
             InputArgument::REQUIRED,
             'Donor identified by mandate key or payer number'
         );
 
-        $wrapper->addOption(
+        $command->addOption(
             'force-payer-number',
             null,
             InputOption::VALUE_NONE,
@@ -56,55 +56,18 @@ trait DonorArgument
 
     public function readDonor(InputInterface $input): Donor
     {
-        $key = $this->getDonorKey($input);
-
-        if (!$input->getOption('force-payer-number') && $this->donorMapper->hasKey($key)) {
-            return $this->donorMapper->findByKey($key);
-        }
-
-        try {
-            return $this->donorMapper->findByActivePayerNumber($key);
-        } catch (\RuntimeException $e) {
-            foreach ($this->donorMapper->findByPayerNumber($key) as $donor) {
-                return $donor;
-            }
-        }
-
-        throw new DonorDoesNotExistException("Unable to find donor $key");
-    }
-
-    /**
-     * @return iterable & Donor[]
-     */
-    public function readAllDonors(InputInterface $input): iterable
-    {
-        $key = $this->getDonorKey($input);
-
-        if (!$input->getOption('force-payer-number') && $this->donorMapper->hasKey($key)) {
-            yield $this->donorMapper->findByKey($key);
-            return;
-        }
-
-        $count = 0;
-
-        foreach ($this->donorMapper->findByPayerNumber($key) as $donor) {
-            $count++;
-            yield $donor;
-        }
-
-        if (!$count) {
-            throw new DonorDoesNotExistException("Unable to find donor $key");
-        }
-    }
-
-    private function getDonorKey(InputInterface $input): string
-    {
         $taintedKey = $input->getArgument('donor');
 
         if (!is_string($taintedKey)) {
             throw new \LogicException('Donor key must be string');
         }
 
-        return (new DonorKeyValidator)->validate('donor', $taintedKey);
+        $key = (new DonorKeyValidator)->validate('donor', $taintedKey);
+
+        if (!$input->getOption('force-payer-number') && ($donor = $this->donorQuery->findByMandateKey($key))) {
+            return $donor;
+        }
+
+        return $this->donorQuery->requireByPayerNumber($key);
     }
 }

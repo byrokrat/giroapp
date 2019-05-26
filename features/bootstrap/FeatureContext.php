@@ -175,13 +175,13 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then the exported file matches:
+     * @Then the output matches:
      */
-    public function theExportedFileMatches(PyStringNode $string): void
+    public function theOutputMatches(PyStringNode $string): void
     {
         $this->multilinePregMatch(
             explode("\n", (string)$string),
-            explode("\n", $this->app->getLastExportedFile())
+            explode("\n", $this->result->getOutput())
         );
     }
 
@@ -218,6 +218,16 @@ class FeatureContext implements Context
     {
         if (preg_match("/$string/i", $this->result->getOutput())) {
             throw new \Exception("$string should not be in output");
+        }
+    }
+
+    /**
+     * @Then there is a file named :filename
+     */
+    public function thereIsAFileNamed(string $filename)
+    {
+        if (!$this->app->fileExists($filename)) {
+            throw new \Exception("File '$filename' should exist but does not");
         }
     }
 

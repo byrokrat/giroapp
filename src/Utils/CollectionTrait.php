@@ -29,6 +29,8 @@ trait CollectionTrait
     /** @var array */
     private $items = [];
 
+    abstract protected function describeItem(): string;
+
     protected function addItem(string $key, $item): void
     {
         $this->items[$key] = $item;
@@ -37,7 +39,11 @@ trait CollectionTrait
     protected function getItem(string $key)
     {
         if (!isset($this->items[$key])) {
-            throw new UnknownIdentifierException("'$key' does not exist");
+            throw new UnknownIdentifierException(sprintf(
+                "%s '%s' does not exist",
+                $this->describeItem(),
+                $key
+            ));
         }
 
         return $this->items[$key];

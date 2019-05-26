@@ -7,6 +7,7 @@ namespace spec\byrokrat\giroapp\Filter;
 use byrokrat\giroapp\Filter\ExportableFilter;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\State\ExportableStateInterface;
 use byrokrat\giroapp\State\StateInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -31,7 +32,7 @@ class ExportableFilterSpec extends ObjectBehavior
     function it_filters_donors(Donor $donor, StateInterface $state)
     {
         $donor->getState()->willReturn($state);
-        $state->isExportable()->willReturn(true)->shouldBeCalled();
+        $state->implement(ExportableStateInterface::CLASS);
         $this->filterDonor($donor)->shouldReturn(true);
     }
 }

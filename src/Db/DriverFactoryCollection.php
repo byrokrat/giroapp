@@ -24,9 +24,17 @@ namespace byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Utils\CollectionTrait;
 
+/**
+ * The runtime collection of available database drivers
+ */
 class DriverFactoryCollection
 {
     use CollectionTrait;
+
+    protected function describeItem(): string
+    {
+        return 'Database driver';
+    }
 
     public function addDriverFactory(DriverFactoryInterface $driverFactory): void
     {

@@ -20,7 +20,7 @@
 
 namespace byrokrat\giroapp\Plugin;
 
-use byrokrat\giroapp\Console\CommandInterface;
+use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterInterface;
@@ -45,7 +45,7 @@ interface EnvironmentInterface
     /**
      * Register a console command
      */
-    public function registerCommand(CommandInterface $command): void;
+    public function registerConsoleCommand(ConsoleInterface $consoleCommand): void;
 
     /**
      * Register a database driver factory

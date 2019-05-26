@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Mapper\DonorMapper;
+use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Event\DonorEvent;
 
 /**
@@ -31,27 +31,35 @@ use byrokrat\giroapp\Event\DonorEvent;
 class DonorPersistingListener
 {
     /**
-     * @var DonorMapper
+     * @var DonorRepositoryInterface
      */
-    private $donorMapper;
+    private $donorRepository;
 
-    public function __construct(DonorMapper $donorMapper)
+    public function __construct(DonorRepositoryInterface $donorRepository)
     {
-        $this->donorMapper = $donorMapper;
+        $this->donorRepository = $donorRepository;
     }
 
     public function onDonorAdded(DonorEvent $event): void
     {
-        $this->donorMapper->create($event->getDonor());
+        $this->donorRepository->addNewDonor($event->getDonor());
     }
 
     public function onDonorUpdated(DonorEvent $event): void
     {
-        $this->donorMapper->update($event->getDonor());
-    }
+        $donor = $event->getDonor();
 
-    public function onDonorRemoved(DonorEvent $event): void
-    {
-        $this->donorMapper->delete($event->getDonor());
+        $this->donorRepository->updateDonorName($donor, $donor->getName());
+        $this->donorRepository->updateDonorState($donor, $donor->getState());
+        $this->donorRepository->updateDonorPayerNumber($donor, $donor->getPayerNumber());
+        $this->donorRepository->updateDonorAmount($donor, $donor->getDonationAmount());
+        $this->donorRepository->updateDonorAddress($donor, $donor->getPostalAddress());
+        $this->donorRepository->updateDonorEmail($donor, $donor->getEmail());
+        $this->donorRepository->updateDonorPhone($donor, $donor->getPhone());
+        $this->donorRepository->updateDonorComment($donor, $donor->getComment());
+
+        foreach ($donor->getAttributes() as $key => $value) {
+            $this->donorRepository->setDonorAttribute($donor, $key, $value);
+        }
     }
 }

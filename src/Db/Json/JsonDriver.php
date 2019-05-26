@@ -23,9 +23,9 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Db\Json;
 
 use byrokrat\giroapp\Db\DriverInterface;
+use byrokrat\giroapp\Db\DriverEnvironment;
 use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Db\ImportHistoryInterface;
-use byrokrat\giroapp\Utils\SystemClock;
 use hanneskod\yaysondb\Yaysondb;
 
 final class JsonDriver implements DriverInterface
@@ -33,32 +33,45 @@ final class JsonDriver implements DriverInterface
     /** @var Yaysondb */
     private $db;
 
-    /** @var SystemClock */
-    private $systemClock;
-
-    public function __construct(Yaysondb $db, SystemClock $systemClock)
+    public function __construct(Yaysondb $db)
     {
         $this->db = $db;
-        $this->systemClock = $systemClock;
     }
 
-    public function getDonorRepository(): DonorRepositoryInterface
+    public function getDonorRepository(DriverEnvironment $environment): DonorRepositoryInterface
     {
-        return new JsonDonorRepository($this->db->collection('donors'), $this->systemClock);
+        return new JsonDonorRepository(
+            $this->db->collection('donors'),
+            $environment->getDonorFactory(),
+            $environment->getClock()
+        );
     }
 
-    public function getImportHistory(): ImportHistoryInterface
+    public function getImportHistory(DriverEnvironment $environment): ImportHistoryInterface
     {
-        return new JsonImportHistory($this->db->collection('imports'), $this->systemClock);
+        return new JsonImportHistory(
+            $this->db->collection('imports'),
+            $environment->getClock()
+        );
     }
 
-    public function commit(): void
+    public function commit(): bool
     {
-        $this->db->commit();
+        if ($this->db->inTransaction()) {
+            $this->db->commit();
+            return true;
+        }
+
+        return false;
     }
 
-    public function rollback(): void
+    public function rollback(): bool
     {
-        $this->db->reset();
+        if ($this->db->inTransaction()) {
+            $this->db->reset();
+            return true;
+        }
+
+        return false;
     }
 }

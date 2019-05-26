@@ -25,7 +25,7 @@
         }
     },
     "require": {
-        "php": ">=7.1",
+        "php": ">=7.2",
         "ext-mbstring": "*",
         "ext-bcmath": "*",
         "ext-simplexml": "*",
@@ -44,9 +44,10 @@
         "symfony/event-dispatcher": "^4",
         "symfony/finder": "^4",
         "symfony/filesystem": "^4",
+        "symfony/proxy-manager-bridge": "^4",
         "hashids/hashids": "^2",
-        "fzaninotto/Streamer": "0.*",
-        "justinrainbow/json-schema": "^5"
+        "fzaninotto/streamer": "0.*",
+        "league/tactician": "^1"
     },
     "require-dev": {
         "symfony/config": "^4",

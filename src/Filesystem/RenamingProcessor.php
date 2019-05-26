@@ -26,8 +26,6 @@ use byrokrat\giroapp\Utils\SystemClock;
 
 final class RenamingProcessor implements FileProcessorInterface
 {
-    const PREFIX = 'AG';
-
     /**
      * @var SystemClock
      */
@@ -42,11 +40,10 @@ final class RenamingProcessor implements FileProcessorInterface
     {
         return new HashedFile(
             sprintf(
-                '%s_%s_%s_%s.txt',
-                self::PREFIX,
-                $this->systemClock->getNow()->format('Ymd\THis'),
+                '%s_%s_%s.txt',
                 $file->getFilename(),
-                substr($file->getChecksum(), 0, 5)
+                $this->systemClock->getNow()->format('Ymd\THis'),
+                substr($file->getChecksum(), 0, 10)
             ),
             $file->getContent(),
             $file->getChecksum()
