@@ -149,8 +149,7 @@ class XmlMandateParser
                     $this->donorBuilder->setPayerNumber(
                         $mandate->readElement('/MedgivandeViaHemsida/Betalarnummer', new PayerNumberValidator)
                     );
-                }
-                catch(ValidatorException $e) {
+                } catch (ValidatorException $e) {
                     $this->donorBuilder->setPayerNumber(
                         $mandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr', new IdValidator)
                     );
