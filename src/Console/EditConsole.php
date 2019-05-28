@@ -27,7 +27,6 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\Validator;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Command\Command;
@@ -44,21 +43,10 @@ final class EditConsole implements ConsoleInterface
         Helper\DonorArgument;
 
     /**
-     * @var StateCollection
-     */
-    private $stateCollection;
-
-    public function __construct(StateCollection $stateCollection)
-    {
-        $this->stateCollection = $stateCollection;
-    }
-
-    /**
      * Maps option names to free text descriptions
      */
     private const DESCRIPTIONS = [
         'name' => 'Donor name',
-        'state' => 'Donor state identifier',
         'amount' => 'Monthly donation amount',
         'address1' => 'Donor address line 1',
         'address2' => 'Donor address line 2',
@@ -104,11 +92,6 @@ final class EditConsole implements ConsoleInterface
 
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 
-        $this->dispatcher->dispatch(
-            Events::INFO,
-            new LogEvent("Editing mandate <info>{$donor->getMandateKey()}</info>")
-        );
-
         $donor->setName(
             $inputReader->readInput(
                 'name',
@@ -118,26 +101,6 @@ final class EditConsole implements ConsoleInterface
                     new Validator\NotEmptyValidator
                 )
             )
-        );
-
-        $states = array_change_key_case(
-            (array)array_combine($this->stateCollection->getItemKeys(), $this->stateCollection->getItemKeys()),
-            CASE_LOWER
-        );
-
-        $donor->setState(
-            $this->stateCollection->getState(
-                $inputReader->readInput(
-                    'state',
-                    Helper\QuestionFactory::createChoiceQuestion(
-                        $descs['state'],
-                        $states,
-                        $donor->getState()->getStateId()
-                    ),
-                    new Validator\ChoiceValidator($states)
-                )
-            ),
-            'Donor edited by user'
         );
 
         $donor->setDonationAmount(

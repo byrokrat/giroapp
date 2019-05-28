@@ -37,13 +37,19 @@ final class ForceDonorStateHandler extends DonorRepositoryAwareHandler
 
     public function handle(ForceDonorState $command): void
     {
+        $donor = $command->getDonor();
+
+        if ($command->getNewStateId() == $donor->getState()->getStateId()) {
+            return;
+        }
+
         $newState = $this->stateCollection->getState($command->getNewStateId());
 
-        $this->donorRepository->updateDonorState($command->getDonor(), $newState);
+        $this->donorRepository->updateDonorState($donor, $newState);
 
         $this->dispatcher->dispatch(
             DonorStateChanged::CLASS,
-            new DonorStateChanged($command->getDonor(), $newState)
+            new DonorStateChanged($donor, $newState)
         );
     }
 }

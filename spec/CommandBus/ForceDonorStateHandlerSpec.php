@@ -40,13 +40,30 @@ class ForceDonorStateHandlerSpec extends ObjectBehavior
         StateInterface $state
     ) {
         $donor->getMandateKey()->willReturn('');
-        $state->getStateId()->willReturn('');
+        $donor->getState()->willReturn($state);
+        $state->getStateId()->willReturn('old-state');
 
-        $stateCollection->getState('state-id')->willReturn($state);
+        $stateCollection->getState('new-state')->willReturn($state);
 
         $donorRepository->updateDonorState($donor, $state)->shouldBeCalled();
         $dispatcher->dispatch(DonorStateChanged::CLASS, Argument::type(DonorStateChanged::CLASS))->shouldBeCalled();
 
-        $this->handle(new ForceDonorState($donor->getWrappedObject(), 'state-id'));
+        $this->handle(new ForceDonorState($donor->getWrappedObject(), 'new-state'));
+    }
+
+    function it_ignores_unchanged_states(
+        $stateCollection,
+        $donorRepository,
+        $dispatcher,
+        Donor $donor,
+        StateInterface $state
+    ) {
+        $donor->getMandateKey()->willReturn('');
+        $donor->getState()->willReturn($state);
+        $state->getStateId()->willReturn('old-state');
+
+        $donorRepository->updateDonorState($donor, $state)->shouldNotBeCalled();
+
+        $this->handle(new ForceDonorState($donor->getWrappedObject(), 'old-state'));
     }
 }

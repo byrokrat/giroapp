@@ -41,6 +41,6 @@ Feature: Editing donors
     And there are donors:
       | payer-number | state        |
       | 1            | MANDATE_SENT |
-    When I run "edit 1 --state ACTIVE"
+    When I run "edit-state 1 --new-state ACTIVE"
     Then there is no error
     And the database contains donor "1" with "state" matching "ACTIVE"

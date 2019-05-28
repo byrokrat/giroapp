@@ -34,6 +34,7 @@ final class CorePlugin extends Plugin
     public function __construct(
         Console\AddConsole $addConsole,
         Console\EditConsole $editConsole,
+        Console\EditStateConsole $editStateConsole,
         Console\ExportConsole $expotConsole,
         Console\ImportConsole $importConsole,
         Console\LsConsole $lsConsole,
