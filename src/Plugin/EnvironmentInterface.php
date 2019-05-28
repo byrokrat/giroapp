@@ -21,13 +21,14 @@
 namespace byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Console\ConsoleInterface;
+use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\Xml\XmlFormInterface;
+use League\Tactician\CommandBus;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 interface EnvironmentInterface
@@ -41,6 +42,16 @@ interface EnvironmentInterface
      * Read a giroapp config value
      */
     public function readConfig(string $key): string;
+
+    /**
+     * Service layer hook
+     */
+    public function getCommandBus(): CommandBus;
+
+    /**
+     * Repository read hook
+     */
+    public function getDonorQuery(): DonorQueryInterface;
 
     /**
      * Register a console command
@@ -76,9 +87,4 @@ interface EnvironmentInterface
      * Register a custom donor state
      */
     public function registerDonorState(StateInterface $donorState): void;
-
-    /**
-     * Register an xml form definition
-     */
-    public function registerXmlForm(XmlFormInterface $xmlForm): void;
 }

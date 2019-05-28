@@ -53,11 +53,6 @@ interface Events
     const XML_FILE_IMPORTED = 'XML_FILE_IMPORTED';
 
     /**
-     * A donor added, expects a DonorEvent
-     */
-    const DONOR_ADDED = 'DONOR_ADDED';
-
-    /**
      * A donor updated, expects a DonorEvent
      */
     const DONOR_UPDATED = 'DONOR_UPDATED';

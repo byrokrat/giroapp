@@ -24,15 +24,14 @@ namespace byrokrat\giroapp\Xml;
 
 use byrokrat\giroapp\Validator\AccountValidator;
 use byrokrat\giroapp\Validator\IdValidator;
-use byrokrat\giroapp\Validator\NumericValidator;
 use byrokrat\giroapp\Validator\PayerNumberValidator;
 use byrokrat\giroapp\Validator\PostalCodeValidator;
 use byrokrat\giroapp\Validator\StringValidator;
 use byrokrat\giroapp\MandateSources;
-use byrokrat\giroapp\Model\Builder\DonorBuilder;
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\NewDonor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Exception\InvalidDataException;
+use byrokrat\giroapp\Exception\ValidatorException;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
@@ -55,16 +54,6 @@ class XmlMandateParser
     private $payeeBankgiro;
 
     /**
-     * @var DonorBuilder
-     */
-    private $donorBuilder;
-
-    /**
-     * @var XmlFormTranslator
-     */
-    private $translator;
-
-    /**
      * @var AccountFactoryInterface
      */
     private $accountFactory;
@@ -77,15 +66,11 @@ class XmlMandateParser
     public function __construct(
         OrganizationId $payeeOrgNr,
         AccountNumber $payeeBankgiro,
-        DonorBuilder $donorBuilder,
-        XmlFormTranslator $translator,
         AccountFactoryInterface $accountFactory,
         IdFactoryInterface $idFactory
     ) {
         $this->payeeOrgNr = $payeeOrgNr;
         $this->payeeBankgiro = $payeeBankgiro;
-        $this->donorBuilder = $donorBuilder;
-        $this->translator = $translator;
         $this->accountFactory = $accountFactory;
         $this->idFactory = $idFactory;
     }
@@ -126,64 +111,60 @@ class XmlMandateParser
                 $stringValidator
             );
 
-            $this->donorBuilder->reset();
-
-            $this->donorBuilder->setMandateSource(MandateSources::MANDATE_SOURCE_ONLINE_FORM);
-
-            $this->donorBuilder->setName(
-                $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_namn', $stringValidator)
+            $donorId = $this->idFactory->createId(
+                $mandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr', new IdValidator)
             );
 
-            $this->donorBuilder->setPostalAddress(
+            $payerNumber = $donorId->format('Ssk');
+
+            if ($mandate->hasElement('/MedgivandeViaHemsida/Betalarnummer')) {
+                try {
+                    $payerNumber = $mandate->readElement(
+                        '/MedgivandeViaHemsida/Betalarnummer',
+                        new PayerNumberValidator
+                    );
+                } catch (ValidatorException $e) {
+                    // intentionally empty
+                }
+            }
+
+            $attributes = [];
+
+            foreach ($mandate->getElements('/MedgivandeViaHemsida/Övrig_x0020_info/customdata') as $custom) {
+                $attributes[$custom->readElement('/customdata/name', $stringValidator)]
+                    = $custom->readElement('/customdata/value', $stringValidator);
+            }
+
+            $attributes['online_form_id']
+                = $mandate->readElement('/MedgivandeViaHemsida/Formulärnamn', $stringValidator);
+
+            $attributes['online_verification_time']
+                = $mandate->readElement('/MedgivandeViaHemsida/Verifieringstid', $stringValidator);
+
+            $attributes['online_verification_code']
+                = $mandate->readElement('/MedgivandeViaHemsida/Verifieringsreferens', $stringValidator);
+
+            $donors[] = new NewDonor(
+                MandateSources::MANDATE_SOURCE_ONLINE_FORM,
+                $payerNumber,
+                $this->accountFactory->createAccount(
+                    $mandate->readElement('/MedgivandeViaHemsida/Kontonr', new AccountValidator)
+                ),
+                $donorId,
+                $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_namn', $stringValidator),
                 new PostalAddress(
                     $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_1', $stringValidator),
                     $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_2', $stringValidator),
                     $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_adress_3', $stringValidator),
                     $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postnr', new PostalCodeValidator),
                     $mandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_postort', $stringValidator)
-                )
+                ),
+                '',
+                '',
+                new SEK('0'),
+                '',
+                $attributes
             );
-
-            if ($mandate->hasElement('/MedgivandeViaHemsida/Betalarnummer')) {
-                $this->donorBuilder->setPayerNumber(
-                    $mandate->readElement('/MedgivandeViaHemsida/Betalarnummer', new PayerNumberValidator)
-                );
-            }
-
-            $this->donorBuilder->setAccount(
-                $this->accountFactory->createAccount(
-                    $mandate->readElement('/MedgivandeViaHemsida/Kontonr', new AccountValidator)
-                )
-            );
-
-            $this->donorBuilder->setId(
-                $this->idFactory->createId(
-                    $mandate->readElement('/MedgivandeViaHemsida/Kontoinnehavarens_x0020_personnr', new IdValidator)
-                )
-            );
-
-            $this->donorBuilder->setAttribute(
-                'verification_time',
-                $mandate->readElement('/MedgivandeViaHemsida/Verifieringstid', $stringValidator)
-            );
-
-            $this->donorBuilder->setAttribute(
-                'verification_code',
-                $mandate->readElement('/MedgivandeViaHemsida/Verifieringsreferens', $stringValidator)
-            );
-
-            $formId = $mandate->readElement('/MedgivandeViaHemsida/Formulärnamn', $stringValidator);
-
-            foreach ($mandate->getElements('/MedgivandeViaHemsida/Övrig_x0020_info/customdata') as $custom) {
-                $this->translator->writeValue(
-                    $this->donorBuilder,
-                    $formId,
-                    $custom->readElement('/customdata/name', $stringValidator),
-                    $custom->readElement('/customdata/value', $stringValidator)
-                );
-            }
-
-            $donors[] = $this->donorBuilder->buildDonor();
         }
 
         return $donors;

@@ -1,68 +1,51 @@
 # Importing online mandates in the XML format
 
 Giroapp supports importing xml formatted mandates through the `import` command.
-When you create an online mandate form you may specify custom data fields. This
-data is saved as donor attributes on import. You can tell giroapp how these
-values should be handled by creating an implementation of
-`XmlFormInterface` in the user directory.
+When you create an online mandate form you may specify custom data fields, this
+data is saved as donor attributes on import. Teach giroapp the semantics of
+these attributes by using plygins.
 
 The following example tells giroapp that the content of the custom data field
 `phone` should be handled as a phone number.
 
-<!-- @example CustomForm1 -->
+<!-- @example xml-customdata-plugin -->
 ```php
-use byrokrat\giroapp\Xml\XmlFormInterface;
+use byrokrat\giroapp\Plugin\PluginInterface;
+use byrokrat\giroapp\Plugin\EnvironmentInterface;
+use byrokrat\giroapp\Event\DonorAdded;
+use League\Tactician\CommandBus;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class CustomForm implements XmlFormInterface
-{
-    public function getName(): string
+return new class implements PluginInterface {
+    public function loadPlugin(EnvironmentInterface $env): void
     {
-        return 'name';
-    }
+        $env->registerSubscriber(
+            new class($env->getCommandBus()) implements EventSubscriberInterface
+            {
+                public function __construct(CommandBus $commandBus)
+                {
+                    $this->commandBus = $commandBus;
+                }
 
-    public function getTranslations(): array
-    {
-        return [
-            'phone' => self::PHONE
-        ];
-    }
-}
-```
+                public static function getSubscribedEvents()
+                {
+                    return [
+                        DonorAdded::CLASS => 'onDonorAdded'
+                    ];
+                }
 
-Custom callbacks may also be used. The above example is equivalent to
+                public function onDonorAdded(DonorAdded $event)
+                {
+                    $donor = $event->getDonor();
 
-<!-- @example CustomForm2 -->
-```php
-use byrokrat\giroapp\Xml\XmlFormInterface;
-use byrokrat\giroapp\Model\Builder\DonorBuilder;
-
-class CustomForm implements XmlFormInterface
-{
-    public function getName(): string
-    {
-        return 'name';
-    }
-
-    public function getTranslations(): array
-    {
-        return [
-            'phone' => function (DonorBuilder $donorBuilder, string $value) {
-                $donorBuilder->setPhone($value);
+                    if ($donor->hasAttribute('phone')) {
+                        $this->commandBus->handle(
+                            new ChangeDonorPhone($donor, $donor->getAttribute('phone'))
+                        );
+                    }
+                }
             }
-        ];
+        );
     }
-}
-```
-
-Load the difinition as a plugin. Save a file like the following in the `plugins`
-directory. For more information see the plugins section.
-
-<!--
-    @example FormPlugin
-    @include CustomForm1
--->
-```php
-use byrokrat\giroapp\Plugin\Plugin;
-
-return new Plugin(new CustomForm);
+};
 ```

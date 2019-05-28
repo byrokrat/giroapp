@@ -162,12 +162,20 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then the database contains donor :donor
+     */
+    public function theDatabaseContainsDonor($donor)
+    {
+        $this->result = $this->app->execute("show $donor --format=json");
+        $this->thereIsNoError();
+    }
+
+    /**
      * @Then the database contains donor :donor with :field matching :expected
      */
     public function theDatabaseContainsDonorWithMatching($donor, $field, $expected): void
     {
-        $this->result = $this->app->execute("show $donor --format=json");
-        $this->thereIsNoError();
+        $this->theDatabaseContainsDonor($donor);
         $data = json_decode($this->result->getOutput(), true);
         if (!isset($data[$field]) || $data[$field] != $expected) {
             throw new \Exception("Unable to find $field: $expected in database");

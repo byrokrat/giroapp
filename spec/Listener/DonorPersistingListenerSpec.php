@@ -26,13 +26,6 @@ class DonorPersistingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(DonorPersistingListener::CLASS);
     }
 
-    function it_creates_new_mandates($donorRepository, DonorEvent $event, Donor $donor)
-    {
-        $event->getDonor()->willReturn($donor);
-        $donorRepository->addNewDonor($donor)->shouldBeCalled();
-        $this->onDonorAdded($event);
-    }
-
     function it_can_update_mandates(
         $donorRepository,
         DonorEvent $event,

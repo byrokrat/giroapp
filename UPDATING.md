@@ -27,3 +27,4 @@
 * Renamed `Console/CommandInterface` => `Console/ConsoleInterface` and
   `Plugin/EnvironmentInterface::registerCommand()` => `Plugin/EnvironmentInterface::registerConsoleCommand()`.
 * Removed the possibility to force deletion of active donors. Set a purgable state before removing.
+* Removed `XmlFormInterface`. Use a plugin and react to `DonorAdded` events instead.

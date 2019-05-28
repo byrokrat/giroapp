@@ -5,21 +5,21 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Listener\XmlImportingListener;
-use byrokrat\giroapp\Events;
+use byrokrat\giroapp\CommandBus\AddDonor;
 use byrokrat\giroapp\Event\XmlEvent;
-use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\NewDonor;
 use byrokrat\giroapp\Xml\XmlMandateParser;
 use byrokrat\giroapp\Xml\XmlObject;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use League\Tactician\CommandBus;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class XmlImportingListenerSpec extends ObjectBehavior
 {
-    function let(XmlMandateParser $parser)
+    function let(XmlMandateParser $parser, CommandBus $commandBus)
     {
         $this->beConstructedWith($parser);
+        $this->setCommandBus($commandBus);
     }
 
     function it_is_initializable()
@@ -29,18 +29,16 @@ class XmlImportingListenerSpec extends ObjectBehavior
 
     function it_dispatches_added_mandates(
         $parser,
+        $commandBus,
         XmlEvent $event,
         XmlObject $xml,
-        Donor $donor,
-        EventDispatcherInterface $dispatcher
+        NewDonor $newDonor
     ) {
         $event->getXmlObject()->willReturn($xml);
-        $parser->parse($xml)->willReturn([$donor]);
-        $donor->getName()->willReturn('');
-        $donor->getMandateKey()->willReturn('');
+        $parser->parse($xml)->willReturn([$newDonor]);
 
-        $dispatcher->dispatch(Events::DONOR_ADDED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
+        $commandBus->handle(new AddDonor($newDonor->getWrappedObject()))->shouldBeCalled();
 
-        $this->onXmlFileImported($event, '', $dispatcher);
+        $this->onXmlFileImported($event);
     }
 }

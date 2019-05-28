@@ -31,7 +31,7 @@ final class PayerNumberValidator implements ValidatorInterface
     protected function getRule(): Rule
     {
         return (new Rule)
-            ->msg('must a numeric and max 16 digit payer number')
+            ->msg('must be numeric and contain max 16 digits')
             ->match('ctype_digit')
             ->match(function (string $val) {
                 return strlen($val) <= 16;

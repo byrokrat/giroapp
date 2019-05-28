@@ -20,31 +20,22 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\CommandBus\AddDonor;
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-use byrokrat\giroapp\Event\XmlEvent;
-use byrokrat\giroapp\Xml\XmlMandateParser;
+use byrokrat\giroapp\Model\NewDonor;
 
-class XmlImportingListener
+final class AddDonor
 {
-    use CommandBusProperty;
+    /** @var NewDonor */
+    private $newDonor;
 
-    /**
-     * @var XmlMandateParser
-     */
-    private $parser;
-
-    public function __construct(XmlMandateParser $parser)
+    public function __construct(NewDonor $newDonor)
     {
-        $this->parser = $parser;
+        $this->newDonor = $newDonor;
     }
 
-    public function onXmlFileImported(XmlEvent $event): void
+    public function getNewDonor(): NewDonor
     {
-        foreach ($this->parser->parse($event->getXmlObject()) as $newDonor) {
-            $this->commandBus->handle(new AddDonor($newDonor));
-        }
+        return $this->newDonor;
     }
 }

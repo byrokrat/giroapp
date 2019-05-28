@@ -18,11 +18,29 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\Exception;
+declare(strict_types = 1);
 
-use byrokrat\giroapp\Exception as GiroappException;
+namespace byrokrat\giroapp\CommandBus;
 
-final class UnableToBuildDonorException extends \RuntimeException implements GiroappException
+use byrokrat\giroapp\Event\DonorAdded;
+use byrokrat\giroapp\Model\NewDonorProcessor;
+
+final class AddDonorHandler extends DonorRepositoryAwareHandler
 {
-    use ErrorCodeTrait;
+    /** @var NewDonorProcessor */
+    private $donorProcessor;
+
+    public function __construct(NewDonorProcessor $donorProcessor)
+    {
+        $this->donorProcessor = $donorProcessor;
+    }
+
+    public function handle(AddDonor $command): void
+    {
+        $donor = $this->donorProcessor->processNewDonor($command->getNewDonor());
+
+        $this->donorRepository->addNewDonor($donor);
+
+        $this->dispatcher->dispatch(DonorAdded::CLASS, new DonorAdded($donor));
+    }
 }

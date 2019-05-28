@@ -7,7 +7,6 @@ The plugin must return a `PluginInterface` instance.
 Plugins may register
 
 * Event subscribers
-* XML form difinitions
 * Console commands
 * Donor filters
 * Donor formatters

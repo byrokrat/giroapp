@@ -12,6 +12,7 @@ use byrokrat\giroapp\Console\SymfonyCommandAdapter;
 use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Config\ConfigInterface;
+use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Db\DriverFactoryCollection;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
@@ -23,8 +24,6 @@ use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\Xml\XmlFormInterface;
-use byrokrat\giroapp\Xml\XmlFormTranslator;
 use League\Tactician\CommandBus;
 use Symfony\Component\Console\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -35,25 +34,25 @@ use Prophecy\Argument;
 class ConfiguringEnvironmentSpec extends ObjectBehavior
 {
     function let(
+        DonorQueryInterface $donorQuery,
         DriverFactoryCollection $dbDriverFactoryCollection,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
         SorterCollection $sorterCollection,
         StateCollection $stateCollection,
         ConfigManager $configManager,
-        XmlFormTranslator $xmlFormTranslator,
         EventDispatcherInterface $dispatcher,
         CommandBus $commandBus
     ) {
         $this->beConstructedWith(
             new ApiVersion('1.0'),
+            $donorQuery,
             $dbDriverFactoryCollection,
             $filterCollection,
             $formatterCollection,
             $sorterCollection,
             $stateCollection,
-            $configManager,
-            $xmlFormTranslator
+            $configManager
         );
 
         $this->setEventDispatcher($dispatcher);
@@ -86,6 +85,16 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $configManager->getConfig('foo')->willReturn($config);
         $config->getValue()->willReturn('bar');
         $this->readConfig('foo')->shouldReturn('bar');
+    }
+
+    function it_contains_a_command_bus($commandBus)
+    {
+        $this->getCommandBus()->shouldReturn($commandBus);
+    }
+
+    function it_contains_a_donor_query($donorQuery)
+    {
+        $this->getDonorQuery()->shouldReturn($donorQuery);
     }
 
     function it_can_register_consoles($dispatcher, $commandBus, ConsoleInterface $console, Application $application)
@@ -136,11 +145,5 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
     {
         $this->registerDonorState($state);
         $stateCollection->addState($state)->shouldHaveBeenCalled();
-    }
-
-    function it_can_register_xml_forms($xmlFormTranslator, XmlFormInterface $xmlForm)
-    {
-        $this->registerXmlForm($xmlForm);
-        $xmlFormTranslator->addXmlForm($xmlForm)->shouldHaveBeenCalled();
     }
 }

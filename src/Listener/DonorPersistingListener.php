@@ -40,11 +40,6 @@ class DonorPersistingListener
         $this->donorRepository = $donorRepository;
     }
 
-    public function onDonorAdded(DonorEvent $event): void
-    {
-        $this->donorRepository->addNewDonor($event->getDonor());
-    }
-
     public function onDonorUpdated(DonorEvent $event): void
     {
         $donor = $event->getDonor();

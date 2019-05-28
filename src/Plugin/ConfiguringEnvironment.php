@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Plugin;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Console\SymfonyCommandAdapter;
+use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Db\DriverFactoryCollection;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
@@ -38,9 +39,8 @@ use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\Xml\XmlFormInterface;
-use byrokrat\giroapp\Xml\XmlFormTranslator;
 use Composer\Semver\Semver;
+use League\Tactician\CommandBus;
 use Symfony\Component\Console\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -53,6 +53,11 @@ final class ConfiguringEnvironment implements EnvironmentInterface
      * @var ApiVersion
      */
     private $apiVersion;
+
+    /**
+     * @var DonorQueryInterface
+     */
+    private $donorQuery;
 
     /**
      * @var DriverFactoryCollection
@@ -85,33 +90,28 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     private $configManager;
 
     /**
-     * @var XmlFormTranslator
-     */
-    private $xmlFormTranslator;
-
-    /**
      * @var ConsoleInterface[]
      */
     private $consoleCommands = [];
 
     public function __construct(
         ApiVersion $apiVersion,
+        DonorQueryInterface $donorQuery,
         DriverFactoryCollection $dbDriverFactoryCollection,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
         SorterCollection $sorterCollection,
         StateCollection $stateCollection,
-        ConfigManager $configManager,
-        XmlFormTranslator $xmlFormTranslator
+        ConfigManager $configManager
     ) {
         $this->apiVersion = $apiVersion;
+        $this->donorQuery = $donorQuery;
         $this->dbDriverFactoryCollection = $dbDriverFactoryCollection;
         $this->filterCollection = $filterCollection;
         $this->formatterCollection = $formatterCollection;
         $this->sorterCollection = $sorterCollection;
         $this->stateCollection = $stateCollection;
         $this->configManager = $configManager;
-        $this->xmlFormTranslator = $xmlFormTranslator;
     }
 
     public function assertApiVersion(ApiVersionConstraint $constraint): void
@@ -129,6 +129,16 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function readConfig(string $key): string
     {
         return $this->configManager->getConfig($key)->getValue();
+    }
+
+    public function getCommandBus(): CommandBus
+    {
+        return $this->commandBus;
+    }
+
+    public function getDonorQuery(): DonorQueryInterface
+    {
+        return $this->donorQuery;
     }
 
     public function registerConsoleCommand(ConsoleInterface $consoleCommand): void
@@ -164,11 +174,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function registerDonorState(StateInterface $donorState): void
     {
         $this->stateCollection->addState($donorState);
-    }
-
-    public function registerXmlForm(XmlFormInterface $xmlForm): void
-    {
-        $this->xmlFormTranslator->addXmlForm($xmlForm);
     }
 
     public function configureApplication(Application $application): void

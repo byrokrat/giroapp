@@ -22,13 +22,11 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\CommandBus\AddDonor;
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\MandateSources;
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\NewDonor;
 use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\giroapp\Model\Builder\DonorBuilder;
 use byrokrat\giroapp\Validator;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Command\Command;
@@ -40,7 +38,7 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 final class AddConsole implements ConsoleInterface
 {
     use DependencyInjection\AccountFactoryProperty,
-        DependencyInjection\DispatcherProperty,
+        DependencyInjection\CommandBusProperty,
         DependencyInjection\IdFactoryProperty;
 
     /**
@@ -62,16 +60,6 @@ final class AddConsole implements ConsoleInterface
         'phone' => 'Donor contact phone number',
         'comment' => 'Comment'
     ];
-
-    /**
-     * @var DonorBuilder
-     */
-    private $donorBuilder;
-
-    public function __construct(DonorBuilder $donorBuilder)
-    {
-        $this->donorBuilder = $donorBuilder;
-    }
 
     public function configure(Command $command): void
     {
@@ -104,44 +92,36 @@ final class AddConsole implements ConsoleInterface
 
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 
-        $this->donorBuilder->reset();
-
         $sources = ['p' => MandateSources::MANDATE_SOURCE_PAPER, 'o' => MandateSources::MANDATE_SOURCE_ONLINE_FORM];
 
-        $this->donorBuilder->setMandateSource(
-            $inputReader->readInput(
-                'source',
-                Helper\QuestionFactory::createChoiceQuestion(
-                    $descs['source'],
-                    $sources,
-                    MandateSources::MANDATE_SOURCE_PAPER
-                ),
-                new Validator\ChoiceValidator($sources)
-            )
+        $mandateSource = $inputReader->readInput(
+            'source',
+            Helper\QuestionFactory::createChoiceQuestion(
+                $descs['source'],
+                $sources,
+                MandateSources::MANDATE_SOURCE_PAPER
+            ),
+            new Validator\ChoiceValidator($sources)
         );
 
         /** @var \byrokrat\id\IdInterface */
-        $id = null;
+        $donorId = null;
 
         $inputReader->readInput(
             'id',
             Helper\QuestionFactory::createQuestion($descs['id']),
             new Validator\ValidatorCollection(
                 new Validator\IdValidator,
-                new Validator\CallbackValidator(function (string $value) use (&$id) {
-                    $id = $this->idFactory->createId($value);
+                new Validator\CallbackValidator(function (string $value) use (&$donorId) {
+                    $donorId = $this->idFactory->createId($value);
                 })
             )
         );
 
-        $this->donorBuilder->setId($id);
-
-        $this->donorBuilder->setPayerNumber(
-            $inputReader->readInput(
-                'payer-number',
-                Helper\QuestionFactory::createQuestion($descs['payer-number'], $id->format('Ssk')),
-                new Validator\PayerNumberValidator
-            )
+        $payerNumber = $inputReader->readInput(
+            'payer-number',
+            Helper\QuestionFactory::createQuestion($descs['payer-number'], $donorId->format('Ssk')),
+            new Validator\PayerNumberValidator
         );
 
         /** @var \byrokrat\banking\AccountNumber */
@@ -150,7 +130,7 @@ final class AddConsole implements ConsoleInterface
         $inputReader->readInput(
             'account',
             Helper\QuestionFactory::createQuestion($descs['account'])->setAutocompleterValues(
-                ["3300,{$id->format('Ssk')}"]
+                ["3300,{$donorId->format('Ssk')}"]
             ),
             new Validator\ValidatorCollection(
                 new Validator\AccountValidator,
@@ -160,85 +140,73 @@ final class AddConsole implements ConsoleInterface
             )
         );
 
-        $this->donorBuilder->setAccount($account);
+        $name = $inputReader->readInput(
+            'name',
+            Helper\QuestionFactory::createQuestion($descs['name']),
+            new Validator\ValidatorCollection(
+                new Validator\StringValidator,
+                new Validator\NotEmptyValidator
+            )
+        );
 
-        $this->donorBuilder->setName(
+        $donationAmount = new SEK(
             $inputReader->readInput(
-                'name',
-                Helper\QuestionFactory::createQuestion($descs['name']),
+                'amount',
+                Helper\QuestionFactory::createQuestion($descs['amount']),
                 new Validator\ValidatorCollection(
-                    new Validator\StringValidator,
-                    new Validator\NotEmptyValidator
+                    new Validator\NotEmptyValidator,
+                    new Validator\NumericValidator
                 )
             )
         );
 
-        $this->donorBuilder->setDonationAmount(
-            new SEK(
-                $inputReader->readInput(
-                    'amount',
-                    Helper\QuestionFactory::createQuestion($descs['amount']),
-                    new Validator\ValidatorCollection(
-                        new Validator\NotEmptyValidator,
-                        new Validator\NumericValidator
-                    )
-                )
-            )
-        );
-
-        $this->donorBuilder->setPostalAddress(
-            new PostalAddress(
-                $inputReader->readInput(
-                    'address1',
-                    Helper\QuestionFactory::createQuestion($descs['address1'], ''),
-                    new Validator\StringValidator
-                ),
-                $inputReader->readInput(
-                    'address2',
-                    Helper\QuestionFactory::createQuestion($descs['address2'], ''),
-                    new Validator\StringValidator
-                ),
-                $inputReader->readInput(
-                    'address3',
-                    Helper\QuestionFactory::createQuestion($descs['address3'], ''),
-                    new Validator\StringValidator
-                ),
-                $inputReader->readInput(
-                    'postal-code',
-                    Helper\QuestionFactory::createQuestion($descs['postal-code'], ''),
-                    new Validator\PostalCodeValidator
-                ),
-                $inputReader->readInput(
-                    'postal-city',
-                    Helper\QuestionFactory::createQuestion($descs['postal-city'], ''),
-                    new Validator\StringValidator
-                )
-            )
-        );
-
-        $this->donorBuilder->setEmail(
+        $address = new PostalAddress(
             $inputReader->readInput(
-                'email',
-                Helper\QuestionFactory::createQuestion($descs['email'], ''),
-                new Validator\EmailValidator
-            )
-        );
-
-        $this->donorBuilder->setPhone(
+                'address1',
+                Helper\QuestionFactory::createQuestion($descs['address1'], ''),
+                new Validator\StringValidator
+            ),
             $inputReader->readInput(
-                'phone',
-                Helper\QuestionFactory::createQuestion($descs['phone'], ''),
-                new Validator\PhoneValidator
-            )
-        );
-
-        $this->donorBuilder->setComment(
+                'address2',
+                Helper\QuestionFactory::createQuestion($descs['address2'], ''),
+                new Validator\StringValidator
+            ),
             $inputReader->readInput(
-                'comment',
-                Helper\QuestionFactory::createQuestion($descs['comment'], ''),
+                'address3',
+                Helper\QuestionFactory::createQuestion($descs['address3'], ''),
+                new Validator\StringValidator
+            ),
+            $inputReader->readInput(
+                'postal-code',
+                Helper\QuestionFactory::createQuestion($descs['postal-code'], ''),
+                new Validator\PostalCodeValidator
+            ),
+            $inputReader->readInput(
+                'postal-city',
+                Helper\QuestionFactory::createQuestion($descs['postal-city'], ''),
                 new Validator\StringValidator
             )
         );
+
+        $email = $inputReader->readInput(
+            'email',
+            Helper\QuestionFactory::createQuestion($descs['email'], ''),
+            new Validator\EmailValidator
+        );
+
+        $phone = $inputReader->readInput(
+            'phone',
+            Helper\QuestionFactory::createQuestion($descs['phone'], ''),
+            new Validator\PhoneValidator
+        );
+
+        $comment = $inputReader->readInput(
+            'comment',
+            Helper\QuestionFactory::createQuestion($descs['comment'], ''),
+            new Validator\StringValidator
+        );
+
+        $attributes = [];
 
         /** @var array */
         $attrKeys = $input->getOption('attr-key');
@@ -263,20 +231,24 @@ final class AddConsole implements ConsoleInterface
                 new Validator\StringValidator
             );
 
-            $this->donorBuilder->setAttribute($attrKey, $attrValue);
+            $attributes[$attrKey] = $attrValue;
         }
 
-        $donor = $this->donorBuilder->buildDonor();
-
-        $this->dispatcher->dispatch(
-            Events::DONOR_ADDED,
-            new DonorEvent(
-                sprintf(
-                    'Added donor <info>%s</info> with mandate key <info>%s</info>',
-                    $donor->getName(),
-                    $donor->getMandateKey()
-                ),
-                $donor
+        $this->commandBus->handle(
+            new AddDonor(
+                new NewDonor(
+                    $mandateSource,
+                    $payerNumber,
+                    $account,
+                    $donorId,
+                    $name,
+                    $address,
+                    $email,
+                    $phone,
+                    $donationAmount,
+                    $comment,
+                    $attributes
+                )
             )
         );
     }
