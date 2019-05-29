@@ -25,13 +25,13 @@ namespace byrokrat\giroapp\Listener;
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Db\DonorQueryInterface;
-use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\State\Error;
 use byrokrat\giroapp\State\Inactive;
 use byrokrat\giroapp\State\MandateApproved;
+use Psr\Log\LogLevel;
 
 /**
  * Add or reject mandates based on autogiro response
@@ -54,14 +54,16 @@ class MandateResponseListener
         if ($nodeId = $node->getChild('StateId')->getValueFrom('Object')) {
             if ($donor->getDonorId()->format('S-sk') != $nodeId->format('S-sk')) {
                 $this->dispatcher->dispatch(
-                    Events::WARNING,
+                    LogEvent::CLASS,
                     new LogEvent(
                         sprintf(
                             "Invalid mandate response for payer number '%s', found donor id '%s', expecting '%s'",
                             $donor->getPayerNumber(),
                             $nodeId->format('S-sk'),
                             $donor->getDonorId()->format('S-sk')
-                        )
+                        ),
+                        [],
+                        LogLevel::WARNING
                     )
                 );
 
@@ -75,14 +77,16 @@ class MandateResponseListener
         if ($nodeAccount = $node->getChild('Account')->getValueFrom('Object')) {
             if (!$donor->getAccount()->equals($nodeAccount)) {
                 $this->dispatcher->dispatch(
-                    Events::WARNING,
+                    LogEvent::CLASS,
                     new LogEvent(
                         sprintf(
                             "Invalid mandate response for payer number '%s', found account '%s', expecting '%s'",
                             $donor->getPayerNumber(),
                             $nodeAccount->getNumber(),
                             $donor->getAccount()->getNumber()
-                        )
+                        ),
+                        [],
+                        LogLevel::WARNING
                     )
                 );
 
@@ -108,13 +112,15 @@ class MandateResponseListener
         }
 
         $this->dispatcher->dispatch(
-            Events::WARNING,
+            LogEvent::CLASS,
             new LogEvent(
                 sprintf(
                     '%s: invalid mandate status code: %s',
                     $donor->getMandateKey(),
                     (string)$node->getChild('Status')->getValueFrom('Number')
-                )
+                ),
+                [],
+                LogLevel::WARNING
             )
         );
 

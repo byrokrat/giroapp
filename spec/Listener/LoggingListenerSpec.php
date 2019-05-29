@@ -22,43 +22,14 @@ class LoggingListenerSpec extends ObjectBehavior
         $this->shouldHaveType(LoggingListener::CLASS);
     }
 
-    function it_logs_errors($logger, LogEvent $event)
+    function it_logs($logger, LogEvent $event)
     {
         $event->getMessage()->willReturn('msg');
         $event->getContext()->willReturn(['context']);
+        $event->getSeverity()->willReturn('severity');
 
-        $logger->error('msg', ['context'])->shouldBeCalled();
+        $logger->log('severity', 'msg', ['context'])->shouldBeCalled();
 
-        $this->onError($event);
-    }
-
-    function it_logs_warnings($logger, LogEvent $event)
-    {
-        $event->getMessage()->willReturn('msg');
-        $event->getContext()->willReturn(['context']);
-
-        $logger->warning('msg', ['context'])->shouldBeCalled();
-
-        $this->onWarning($event);
-    }
-
-    function it_logs_infos($logger, LogEvent $event)
-    {
-        $event->getMessage()->willReturn('msg');
-        $event->getContext()->willReturn(['context']);
-
-        $logger->info('msg', ['context'])->shouldBeCalled();
-
-        $this->onInfo($event);
-    }
-
-    function it_logs_debugs($logger, LogEvent $event)
-    {
-        $event->getMessage()->willReturn('msg');
-        $event->getContext()->willReturn(['context']);
-
-        $logger->debug('msg', ['context'])->shouldBeCalled();
-
-        $this->onDebug($event);
+        $this->onLogEvent($event);
     }
 }

@@ -23,16 +23,6 @@ namespace byrokrat\giroapp;
 interface Events
 {
     /**
-     * Execution about to start, expects a LogEvent
-     */
-    const EXECUTION_STARTED = 'EXECUTION_STARTED';
-
-    /**
-     * Execution about to end, expects a LogEvent
-     */
-    const EXECUTION_STOPED = 'EXECUTION_STOPED';
-
-    /**
      * A file imported, expects an FileEvent
      */
     const FILE_IMPORTED = 'FILE_IMPORTED';
@@ -56,24 +46,4 @@ interface Events
      * A mandate response received from bank, expects a NodeEvent
      */
     const MANDATE_RESPONSE_RECEIVED = 'MANDATE_RESPONSE_RECEIVED';
-
-    /**
-     * An unexpected and unrecoverable error, expects a LogEvent
-     */
-    const ERROR = 'ERROR';
-
-    /**
-     * An unexpected but recoverable situation, expects a LogEvent
-     */
-    const WARNING = 'WARNING';
-
-    /**
-     * Present information to user, expects a LogEvent
-     */
-    const INFO = 'INFO';
-
-    /**
-     * Present debug information to user, expects a LogEvent
-     */
-    const DEBUG = 'DEBUG';
 }

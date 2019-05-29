@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Events;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -40,10 +40,7 @@ final class OutputtingSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::ERROR => ['onError', -10],
-            Events::WARNING => ['onWarning', -10],
-            Events::INFO => ['onInfo', -10],
-            Events::DEBUG => ['onDebug', -10],
+            LogEvent::CLASS => ['onLogEvent', -10],
         ];
     }
 
@@ -52,25 +49,27 @@ final class OutputtingSubscriber implements EventSubscriberInterface
         $this->errout = $errout;
     }
 
-    public function onError(LogEvent $event): void
+    public function onLogEvent(LogEvent $event): void
     {
-        $this->errout->writeln("<error>ERROR: {$event->getMessage()}</error>");
-    }
-
-    public function onWarning(LogEvent $event): void
-    {
-        $this->errout->writeln("<question>WARNING: {$event->getMessage()}</question>");
-    }
-
-    public function onInfo(LogEvent $event): void
-    {
-        $this->errout->writeln($event->getMessage());
-    }
-
-    public function onDebug(LogEvent $event): void
-    {
-        if ($this->errout->isVerbose()) {
-            $this->errout->writeln($event->getMessage());
+        switch ($event->getSeverity()) {
+            case LogLevel::EMERGENCY:
+            case LogLevel::ALERT:
+            case LogLevel::CRITICAL:
+            case LogLevel::ERROR:
+                $this->errout->writeln("<error>ERROR: {$event->getMessage()}</error>");
+                break;
+            case LogLevel::WARNING:
+                $this->errout->writeln("<question>WARNING: {$event->getMessage()}</question>");
+                break;
+            case LogLevel::NOTICE:
+            case LogLevel::INFO:
+                $this->errout->writeln($event->getMessage());
+                break;
+            case LogLevel::DEBUG:
+                if ($this->errout->isVerbose()) {
+                    $this->errout->writeln($event->getMessage());
+                }
+                break;
         }
     }
 }

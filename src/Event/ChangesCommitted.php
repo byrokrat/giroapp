@@ -22,10 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event;
 
-final class ChangesCommitted extends DatabaseEvent
+use Psr\Log\LogLevel;
+
+final class ChangesCommitted extends LogEvent implements DatabaseEvent
 {
     public function __construct()
     {
-        parent::__construct('Changes committed to persistent storage');
+        parent::__construct('Changes committed to persistent storage', [], LogLevel::DEBUG);
     }
 }

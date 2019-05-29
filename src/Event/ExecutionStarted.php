@@ -22,22 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Filesystem\FileInterface;
 use Psr\Log\LogLevel;
 
-class FileEvent extends LogEvent
+final class ExecutionStarted extends LogEvent implements TimingEvent
 {
-    /** @var FileInterface */
-    private $file;
-
-    public function __construct(string $message, FileInterface $file, string $severity = LogLevel::INFO)
+    public function __construct()
     {
-        parent::__construct($message, [], $severity);
-        $this->file = $file;
-    }
-
-    public function getFile(): FileInterface
-    {
-        return $this->file;
+        parent::__construct('Execution started', [], LogLevel::DEBUG);
     }
 }

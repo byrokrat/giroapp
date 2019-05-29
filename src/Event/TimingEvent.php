@@ -18,26 +18,11 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
 namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Filesystem\FileInterface;
-use Psr\Log\LogLevel;
-
-class FileEvent extends LogEvent
+/**
+ * Marker interface for execution related events
+ */
+interface TimingEvent
 {
-    /** @var FileInterface */
-    private $file;
-
-    public function __construct(string $message, FileInterface $file, string $severity = LogLevel::INFO)
-    {
-        parent::__construct($message, [], $severity);
-        $this->file = $file;
-    }
-
-    public function getFile(): FileInterface
-    {
-        return $this->file;
-    }
 }

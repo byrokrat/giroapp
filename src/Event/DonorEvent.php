@@ -23,17 +23,16 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Model\Donor;
+use Psr\Log\LogLevel;
 
 class DonorEvent extends LogEvent
 {
-    /**
-     * @var Donor
-     */
+    /** @var Donor */
     private $donor;
 
-    public function __construct(string $message, Donor $donor)
+    public function __construct(string $message, Donor $donor, string $severity = LogLevel::INFO)
     {
-        parent::__construct($message);
+        parent::__construct($message, [], $severity);
         $this->donor = $donor;
     }
 

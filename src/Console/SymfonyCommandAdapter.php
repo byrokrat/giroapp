@@ -24,11 +24,13 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus\Commit;
 use byrokrat\giroapp\CommandBus\Rollback;
-use byrokrat\giroapp\Events;
+use byrokrat\giroapp\Event\ExecutionStarted;
+use byrokrat\giroapp\Event\ExecutionStopped;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Exception as GiroappException;
 use byrokrat\giroapp\Listener\OutputtingSubscriber;
 use League\Tactician\CommandBus;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -71,18 +73,19 @@ final class SymfonyCommandAdapter extends Command
         $this->dispatcher->addSubscriber(new OutputtingSubscriber($output->getErrorOutput()));
 
         try {
-            $this->dispatcher->dispatch(Events::EXECUTION_STARTED, new LogEvent('Execution started'));
+            $this->dispatcher->dispatch(ExecutionStarted::CLASS, new ExecutionStarted);
             $this->console->execute($input, $output);
             $this->commandBus->handle(new Commit);
-            $this->dispatcher->dispatch(Events::EXECUTION_STOPED, new LogEvent('Execution successful'));
+            $this->dispatcher->dispatch(ExecutionStopped::CLASS, new ExecutionStopped);
         } catch (GiroappException $e) {
             $this->dispatcher->dispatch(
-                Events::ERROR,
+                LogEvent::CLASS,
                 new LogEvent(
                     $e->getMessage(),
                     [
                         'code' => $e->getCode(),
-                    ]
+                    ],
+                    LogLevel::ERROR
                 )
             );
 
@@ -91,7 +94,7 @@ final class SymfonyCommandAdapter extends Command
             return $e->getCode();
         } catch (\Exception $e) {
             $this->dispatcher->dispatch(
-                Events::ERROR,
+                LogEvent::CLASS,
                 new LogEvent(
                     $e->getMessage(),
                     [
@@ -99,7 +102,8 @@ final class SymfonyCommandAdapter extends Command
                         'file' => $e->getFile(),
                         'line' => $e->getLine(),
                         'trace' => $e->getTraceAsString(),
-                    ]
+                    ],
+                    LogLevel::ERROR
                 )
             );
 

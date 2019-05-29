@@ -22,10 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event;
 
-final class ChangesDiscarded extends DatabaseEvent
+use Psr\Log\LogLevel;
+
+final class ChangesDiscarded extends LogEvent implements DatabaseEvent
 {
     public function __construct()
     {
-        parent::__construct('Changes discarded');
+        parent::__construct('Changes discarded', [], LogLevel::NOTICE);
     }
 }

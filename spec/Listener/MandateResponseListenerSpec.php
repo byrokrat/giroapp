@@ -8,7 +8,6 @@ use byrokrat\giroapp\Listener\MandateResponseListener;
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\State\Error;
@@ -82,7 +81,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $nodeId->format('S-sk')->willReturn('foo');
         $donorId->format('S-sk')->willReturn('NOT-foo');
 
-        $dispatcher->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(LogEvent::CLASS, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
 
         $this->onMandateResponseReceived($event);
@@ -104,7 +103,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $nodeAccount->getNumber()->willReturn('');
         $donorAccount->getNumber()->willReturn('');
 
-        $dispatcher->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(LogEvent::CLASS, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
 
         $this->onMandateResponseReceived($event);
@@ -112,7 +111,7 @@ class MandateResponseListenerSpec extends ObjectBehavior
 
     function it_fails_on_unknown_response_code($event, $dispatcher)
     {
-        $dispatcher->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(LogEvent::CLASS, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
         $this->onMandateResponseReceived($event);
     }

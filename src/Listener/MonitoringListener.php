@@ -22,27 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
-use byrokrat\giroapp\Events;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Event\LogEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
-/**
- * Methods for dispatching log events
- */
 class MonitoringListener
 {
-    public function dispatchDebug(LogEvent $event, $eventName, Dispatcher $dispatcher): void
-    {
-        $dispatcher->dispatch(Events::DEBUG, $event);
-    }
+    use DispatcherProperty;
 
-    public function dispatchInfo(LogEvent $event, $eventName, Dispatcher $dispatcher): void
+    public function onLogEvent(LogEvent $event): void
     {
-        $dispatcher->dispatch(Events::INFO, $event);
-    }
-
-    public function dispatchWarning(LogEvent $event, $eventName, Dispatcher $dispatcher): void
-    {
-        $dispatcher->dispatch(Events::WARNING, $event);
+        $this->dispatcher->dispatch(LogEvent::CLASS, $event);
     }
 }

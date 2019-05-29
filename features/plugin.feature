@@ -9,7 +9,7 @@ Feature: Plugins
         """
         use byrokrat\giroapp\Plugin\PluginInterface;
         use byrokrat\giroapp\Plugin\EnvironmentInterface;
-        use byrokrat\giroapp\Events;
+        use byrokrat\giroapp\Event\ExecutionStarted;
         use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
         class TestPlugin implements PluginInterface
@@ -19,7 +19,7 @@ Feature: Plugins
                 $environment->registerSubscriber(new class implements EventSubscriberInterface {
                     public static function getSubscribedEvents()
                     {
-                        return [Events::EXECUTION_STARTED => 'onExecutionStart'];
+                        return [ExecutionStarted::CLASS => 'onExecutionStart'];
                     }
 
                     public function onExecutionStart()

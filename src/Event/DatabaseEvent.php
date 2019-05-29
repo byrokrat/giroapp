@@ -18,10 +18,11 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
 namespace byrokrat\giroapp\Event;
 
-abstract class DatabaseEvent extends LogEvent
+/**
+ * Marker interface for database related events
+ */
+interface DatabaseEvent
 {
 }

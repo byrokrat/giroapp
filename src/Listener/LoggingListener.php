@@ -37,23 +37,8 @@ final class LoggingListener
         $this->logger = $logger;
     }
 
-    public function onError(LogEvent $event): void
+    public function onLogEvent(LogEvent $event): void
     {
-        $this->logger->error($event->getMessage(), $event->getContext());
-    }
-
-    public function onWarning(LogEvent $event): void
-    {
-        $this->logger->warning($event->getMessage(), $event->getContext());
-    }
-
-    public function onInfo(LogEvent $event): void
-    {
-        $this->logger->info($event->getMessage(), $event->getContext());
-    }
-
-    public function onDebug(LogEvent $event): void
-    {
-        $this->logger->debug($event->getMessage(), $event->getContext());
+        $this->logger->log($event->getSeverity(), $event->getMessage(), $event->getContext());
     }
 }

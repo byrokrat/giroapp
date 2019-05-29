@@ -20,8 +20,8 @@ Here is an example plugin that sends notifications on application error:
 ```php
 use byrokrat\giroapp\Plugin\PluginInterface;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
-use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\LogEvent;
+use Psr\Log\LogLevel;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 return new class implements PluginInterface {
@@ -36,16 +36,15 @@ class ErrorNotifyingSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            Events::ERROR => ['onError', 100]
+            LogEvent::CLASS => ['onLogEvent', 100]
         ];
     }
 
-    public function onError(LogEvent $logEvent)
+    public function onLogEvent(LogEvent $event)
     {
-        send_sms_to_admin(
-            $logEvent->getMessage(),
-            $logEvent->getContext()
-        );
+        if ($event->getSeverity() == LogLevel::ERROR) {
+            send_sms_to_admin($event->getMessage());
+        }
     }
 }
 ```
@@ -82,8 +81,6 @@ return new Plugin(
     }
 );
 ```
-
-> For a list of possible event names see [Events](../src/Events.php).
 
 ## Listener priorities
 
