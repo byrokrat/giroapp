@@ -8,8 +8,8 @@ use byrokrat\giroapp\Db\DriverEnvironment;
 use byrokrat\giroapp\Model\DonorFactory;
 use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\giroapp\State\StateCollection;
-use byrokrat\giroapp\State\ActiveState;
-use byrokrat\giroapp\State\ErrorState;
+use byrokrat\giroapp\State\Active;
+use byrokrat\giroapp\State\Error;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\PersonalIdFactory;
 
@@ -21,8 +21,8 @@ trait DriverTestEnvironmentTrait
     protected function getDriverEnvironment(): DriverEnvironment
     {
         $stateCollection = new StateCollection;
-        $stateCollection->addState(new ActiveState);
-        $stateCollection->addState(new ErrorState);
+        $stateCollection->addState(new Active);
+        $stateCollection->addState(new Error);
 
         if (!isset($this->driverEnvironment)) {
             $this->driverEnvironment = new DriverEnvironment(

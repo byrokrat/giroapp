@@ -11,6 +11,7 @@ use byrokrat\giroapp\Event\DonorRemoved;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\Inactive;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -31,17 +32,15 @@ class RemoveDonorHandlerSpec extends ObjectBehavior
     function it_throws_on_non_prugeable_donors(Donor $donor, StateInterface $state)
     {
         $donor->getState()->willReturn($state);
-        $state->isPurgeable()->willReturn(false);
         $this->shouldThrow(InvalidStateTransitionException::CLASS)->duringHandle(
             new RemoveDonor($donor->getWrappedObject())
         );
     }
 
-    function it_removes_donors($donorRepository, $dispatcher, Donor $donor, StateInterface $state)
+    function it_removes_donors($donorRepository, $dispatcher, Donor $donor)
     {
-        $donor->getState()->willReturn($state);
+        $donor->getState()->willReturn(new Inactive);
         $donor->getMandateKey()->willReturn('foo');
-        $state->isPurgeable()->willReturn(true);
 
         $donorRepository->deleteDonor($donor)->shouldBeCalled();
         $dispatcher->dispatch(DonorRemoved::CLASS, Argument::type(DonorRemoved::CLASS))->shouldBeCalled();

@@ -22,22 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\Utils\ClassIdExtractor;
 
-class PauseSentState extends AbstractState
+trait StateIdTrait
 {
     public function getStateId(): string
     {
-        return States::PAUSE_SENT;
-    }
-
-    public function getDescription(): string
-    {
-        return 'Pause request has been sent to the bank';
-    }
-
-    public function isAwaitingResponse(): bool
-    {
-        return true;
+        return (string)(new ClassIdExtractor($this));
     }
 }

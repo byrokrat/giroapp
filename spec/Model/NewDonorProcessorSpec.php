@@ -9,7 +9,8 @@ use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\NewDonor;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\MandateSources;
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\State\NewMandate;
+use byrokrat\giroapp\State\NewDigitalMandate;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\Utils\SystemClock;
@@ -65,8 +66,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
         $now = new \DateTimeImmutable;
         $systemClock->getNow()->willReturn($now);
 
-        $stateCollection->getState(States::NEW_MANDATE)->willReturn($state);
-        $state->getDescription()->willReturn('desc');
+        $stateCollection->getState(NewMandate::CLASS)->willReturn($state);
 
         $amount = new SEK('1');
 
@@ -88,7 +88,6 @@ class NewDonorProcessorSpec extends ObjectBehavior
         ))->shouldBeLike(new Donor(
             'pPy7LDdwRb1YKXAx',
             $state->getWrappedObject(),
-            'desc',
             MandateSources::MANDATE_SOURCE_PAPER,
             'payer-number',
             $account->getWrappedObject(),
@@ -108,21 +107,21 @@ class NewDonorProcessorSpec extends ObjectBehavior
     function it_sets_new_state_on_source_paper($stateCollection, $state, $newDonor)
     {
         $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_PAPER);
-        $stateCollection->getState(States::NEW_MANDATE)->shouldBeCalled()->willReturn($state);
+        $stateCollection->getState(NewMandate::CLASS)->shouldBeCalled()->willReturn($state);
         $this->processNewDonor($newDonor);
     }
 
     function it_sets_new_state_on_source_online($stateCollection, $state, $newDonor)
     {
         $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_ONLINE_FORM);
-        $stateCollection->getState(States::NEW_MANDATE)->shouldBeCalled()->willReturn($state);
+        $stateCollection->getState(NewMandate::CLASS)->shouldBeCalled()->willReturn($state);
         $this->processNewDonor($newDonor);
     }
 
     function it_sets_new_digital_on_source_digital($stateCollection, $state, $newDonor)
     {
         $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_DIGITAL);
-        $stateCollection->getState(States::NEW_DIGITAL_MANDATE)->shouldBeCalled()->willReturn($state);
+        $stateCollection->getState(NewDigitalMandate::CLASS)->shouldBeCalled()->willReturn($state);
         $this->processNewDonor($newDonor);
     }
 

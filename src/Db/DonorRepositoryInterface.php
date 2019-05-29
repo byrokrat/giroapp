@@ -54,7 +54,7 @@ interface DonorRepositoryInterface extends DonorQueryInterface
     /**
      * @throws DonorDoesNotExistException If donor does not exist in repository
      */
-    public function updateDonorState(Donor $donor, StateInterface $newState, string $stateDesc = ''): void;
+    public function updateDonorState(Donor $donor, StateInterface $newState): void;
 
     /**
      * @throws DonorDoesNotExistException If donor does not exist in repository

@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorRemoved;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
+use byrokrat\giroapp\State\Inactive;
 
 final class RemoveDonorHandler
 {
@@ -35,7 +36,7 @@ final class RemoveDonorHandler
     {
         $donor = $command->getDonor();
 
-        if (!$donor->getState()->isPurgeable()) {
+        if (!$donor->getState() instanceof Inactive) {
             throw new InvalidStateTransitionException('Unable to remove active donor');
         }
 

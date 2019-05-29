@@ -22,22 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\autogiro\Writer\WriterInterface;
 
-class ErrorState extends AbstractState
+final class PauseMandate implements StateInterface, ExportableStateInterface
 {
-    public function getStateId(): string
-    {
-        return States::ERROR;
-    }
+    use StateIdTrait;
 
     public function getDescription(): string
     {
-        return 'Donor is inactive due to an error';
+        return 'Mandate is awaiting to be paused';
     }
 
-    public function isError(): bool
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
-        return true;
+        $writer->deletePayments($donor->getPayerNumber());
+        return PauseSent::CLASS;
     }
 }

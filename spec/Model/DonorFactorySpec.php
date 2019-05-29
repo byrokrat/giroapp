@@ -41,7 +41,6 @@ class DonorFactorySpec extends ObjectBehavior
         IdInterface $id
     ) {
         $stateCollection->getState('')->willReturn($state);
-        $state->getDescription()->willReturn('');
         $accountFactory->createAccount('')->willReturn($account);
         $idFactory->createId('')->willReturn($id);
         $this->createDonor()->shouldHaveType(Donor::CLASS);
@@ -62,7 +61,6 @@ class DonorFactorySpec extends ObjectBehavior
         $this->createDonor(
             'key',
             'state',
-            'state_desc',
             'source',
             'payer_number',
             'account',
@@ -79,7 +77,6 @@ class DonorFactorySpec extends ObjectBehavior
         )->shouldBeLike(new Donor(
             'key',
             $state->getWrappedObject(),
-            'state_desc',
             'source',
             'payer_number',
             $account->getWrappedObject(),

@@ -18,26 +18,36 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Utils;
 
-namespace byrokrat\giroapp\State;
-
-use byrokrat\giroapp\States;
-
-class RevocationSentState extends AbstractState
+final class ClassIdExtractor
 {
-    public function getStateId(): string
+    /**
+     * @var string
+     */
+    private $id;
+
+    /**
+     * Extract an upper snake cased id from a fully qualified class name or object
+     *
+     * @var string|object $obj
+     */
+    public function __construct($obj)
     {
-        return States::REVOCATION_SENT;
+        $this->id = rtrim(
+            (string)preg_replace_callback(
+                '/[A-Z][a-z]+/',
+                function (array $matches) {
+                    return strtoupper($matches[0]) . '_';
+                },
+                (new \ReflectionClass($obj))->getShortName()
+            ),
+            '_'
+        );
     }
 
-    public function getDescription(): string
+    public function __toString(): string
     {
-        return 'Revocation request has been sent to the bank';
-    }
-
-    public function isAwaitingResponse(): bool
-    {
-        return true;
+        return $this->id;
     }
 }

@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\State\RevokeMandate;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -43,6 +43,6 @@ final class RevokeConsole implements ConsoleInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $this->commandBus->handle(new UpdateState($this->readDonor($input), States::REVOKE_MANDATE));
+        $this->commandBus->handle(new UpdateState($this->readDonor($input), RevokeMandate::CLASS));
     }
 }

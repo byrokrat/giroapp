@@ -11,8 +11,8 @@ use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\DonorCollection;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\ErrorState;
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\State\Error;
+use byrokrat\giroapp\State\Active;
 use byrokrat\amount\Currency\SEK;
 use Prophecy\Argument;
 
@@ -55,51 +55,51 @@ trait DonorRepositorySpecTrait
 
     function it_can_add_a_donor()
     {
-        $this->addNewDonor($this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'));
+        $this->addNewDonor($this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'));
         $this->requireByMandateKey('m-key')->shouldReturnDonorWithMandateKey('m-key');
     }
 
     function it_throws_on_adding_a_mandate_key_duplicate()
     {
-        $this->addNewDonor($this->createDonor('m-key', States::ACTIVE, '', '', 'A', '50001111116', '820323-2775'));
+        $this->addNewDonor($this->createDonor('m-key', Active::CLASS, '', 'A', '50001111116', '820323-2775'));
         $this->shouldThrow(DonorAlreadyExistsException::CLASS)->duringAddNewDonor(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'B', '50001111116', '820323-2783')
+            $this->createDonor('m-key', Active::CLASS, '', 'B', '50001111116', '820323-2783')
         );
     }
 
     function it_throws_on_adding_a_personal_id_duplicate()
     {
-        $this->addNewDonor($this->createDonor('A', States::ACTIVE, '', '', 'A', '50001111116', '820323-2783'));
+        $this->addNewDonor($this->createDonor('A', Active::CLASS, '', 'A', '50001111116', '820323-2783'));
         $this->shouldThrow(DonorAlreadyExistsException::CLASS)->duringAddNewDonor(
-            $this->createDonor('B', States::ACTIVE, '', '', 'B', '50001111116', '820323-2783')
+            $this->createDonor('B', Active::CLASS, '', 'B', '50001111116', '820323-2783')
         );
     }
 
     function it_throws_on_adding_a_payer_number_duplicate()
     {
-        $this->addNewDonor($this->createDonor('A', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'));
+        $this->addNewDonor($this->createDonor('A', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'));
         $this->shouldThrow(DonorAlreadyExistsException::CLASS)->duringAddNewDonor(
-            $this->createDonor('B', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2783')
+            $this->createDonor('B', Active::CLASS, '', 'p-nr', '50001111116', '820323-2783')
         );
     }
 
     function it_can_find_all_donors()
     {
-        $this->addNewDonor($this->createDonor('A', States::ACTIVE, '', '', 'A', '50001111116', '820323-2775'));
-        $this->addNewDonor($this->createDonor('B', States::ACTIVE, '', '', 'B', '50001111116', '820323-2783'));
+        $this->addNewDonor($this->createDonor('A', Active::CLASS, '', 'A', '50001111116', '820323-2775'));
+        $this->addNewDonor($this->createDonor('B', Active::CLASS, '', 'B', '50001111116', '820323-2783'));
         $this->findAll()->shouldReturnNrOfDonors(2);
     }
 
     function it_throws_on_delete_missing_donor()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringDeleteDonor(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775')
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775')
         );
     }
 
     function it_can_delete_donor()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->deleteDonor($donor);
         $this->findAll()->shouldReturnNrOfDonors(0);
@@ -108,14 +108,14 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_updateDonorName()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorName(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
     }
 
     function it_can_update_name()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->updateDonorName($donor, 'foobar');
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getName', 'foobar');
@@ -124,17 +124,17 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_updateDonorState()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorState(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
-            new ErrorState,
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
+            new Error,
             ''
         );
     }
 
     function it_can_update_state()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
-        $error =  new ErrorState;
+        $error = new Error;
         $this->updateDonorState($donor, $error);
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getState', $error);
     }
@@ -142,14 +142,14 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_updateDonorPayerNumber()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorPayerNumber(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
     }
 
     function it_can_update_payer_number()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->updateDonorPayerNumber($donor, 'payer-number');
         $this->requireByPayerNumber('payer-number')->shouldReturnDonorWithPayerNumber('payer-number');
@@ -157,8 +157,8 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_updating_to_a_payer_number_that_already_exists()
     {
-        $donorA = $this->createDonor('A', States::ACTIVE, '', '', 'A', '50001111116', '820323-2775');
-        $donorB = $this->createDonor('B', States::ACTIVE, '', '', 'B', '50001111116', '820323-2783');
+        $donorA = $this->createDonor('A', Active::CLASS, '', 'A', '50001111116', '820323-2775');
+        $donorB = $this->createDonor('B', Active::CLASS, '', 'B', '50001111116', '820323-2783');
         $this->addNewDonor($donorA);
         $this->addNewDonor($donorB);
         $this->shouldThrow(DonorAlreadyExistsException::CLASS)->duringUpdateDonorPayerNumber($donorA, 'B');
@@ -167,14 +167,14 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_updateDonorAmount()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorAmount(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
             new SEK('0')
         );
     }
 
     function it_can_update_amount()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $newAmount = new SEK('666');
         $this->updateDonorAmount($donor, $newAmount);
@@ -184,14 +184,14 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_updateDonorAddress()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorAddress(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
             new PostalAddress
         );
     }
 
     function it_can_update_address()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $newAddress = new PostalAddress('foo', 'bar');
         $this->updateDonorAddress($donor, $newAddress);
@@ -201,14 +201,14 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_updateDonorEmail()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorEmail(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
     }
 
     function it_can_update_email()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->updateDonorEmail($donor, 'foobar');
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getEmail', 'foobar');
@@ -217,14 +217,14 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_updateDonorPhone()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorPhone(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
     }
 
     function it_can_update_phone()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->updateDonorPhone($donor, 'foobar');
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getPhone', 'foobar');
@@ -233,14 +233,14 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_updateDonorComment()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorComment(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
     }
 
     function it_can_update_comment()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->updateDonorComment($donor, 'foobar');
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getComment', 'foobar');
@@ -249,7 +249,7 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_setDonorAttribute()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringSetDonorAttribute(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
             '',
             ''
         );
@@ -257,7 +257,7 @@ trait DonorRepositorySpecTrait
 
     function it_can_set_attribute()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->setDonorAttribute($donor, 'foo', 'bar');
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getAttributes', ['foo' => 'bar']);
@@ -265,7 +265,7 @@ trait DonorRepositorySpecTrait
 
     function it_can_set_multiple_attributes()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->setDonorAttribute($donor, 'foo', 'bar');
         $donor = $this->requireByMandateKey('m-key')->getWrappedObject();
@@ -276,14 +276,14 @@ trait DonorRepositorySpecTrait
     function it_throws_on_missing_deleteDonorAttribute()
     {
         $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringDeleteDonorAttribute(
-            $this->createDonor('m-key', States::ACTIVE, '', '', 'p-nr', '50001111116', '820323-2775'),
+            $this->createDonor('m-key', Active::CLASS, '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
     }
 
     function it_can_delete_attribute()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->setDonorAttribute($donor, 'foo', 'bar');
         $donor = $this->requireByMandateKey('m-key')->getWrappedObject();
@@ -293,7 +293,7 @@ trait DonorRepositorySpecTrait
 
     function it_only_updates_requested_field()
     {
-        $donor = $this->createDonor('m-key', States::ACTIVE, '', '', '', '50001111116', '820323-2775');
+        $donor = $this->createDonor('m-key', Active::CLASS, '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->updateDonorEmail($donor, 'mail');
         $this->updateDonorPhone($donor, 'phone');

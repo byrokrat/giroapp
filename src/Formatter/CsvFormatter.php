@@ -47,7 +47,6 @@ final class CsvFormatter implements FormatterInterface
         $headers = [
             'mandate-key',
             'state',
-            'state-desc',
             'mandate-source',
             'payer-number',
             'account',
@@ -81,7 +80,6 @@ final class CsvFormatter implements FormatterInterface
         $data = array_map('addslashes', [
             $donor->getMandateKey(),
             $donor->getState()->getStateId(),
-            $donor->getStateDesc(),
             $donor->getMandateSource(),
             $donor->getPayerNumber(),
             $donor->getAccount()->getNumber(),

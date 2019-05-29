@@ -142,12 +142,9 @@ final class JsonDonorRepository implements DonorRepositoryInterface
         $this->updateDonor($donor, ['name' => $newName]);
     }
 
-    public function updateDonorState(Donor $donor, StateInterface $newState, string $stateDesc = ''): void
+    public function updateDonorState(Donor $donor, StateInterface $newState): void
     {
-        $this->updateDonor($donor, [
-            'state' => $newState->getStateId(),
-            'state_desc' => $stateDesc ?: $newState->getDescription()
-        ]);
+        $this->updateDonor($donor, ['state' => $newState->getStateId()]);
     }
 
     public function updateDonorPayerNumber(Donor $donor, string $newPayerNumber): void
@@ -234,7 +231,6 @@ final class JsonDonorRepository implements DonorRepositoryInterface
             'type' => self::TYPE,
             'mandate_key' => $donor->getMandateKey(),
             'state' => $donor->getState()->getStateId(),
-            'state_desc' => $donor->getStateDesc(),
             'mandate_source' => $donor->getMandateSource(),
             'payer_number' => $donor->getPayerNumber(),
             'account' => $donor->getAccount()->getNumber(),
@@ -262,7 +258,6 @@ final class JsonDonorRepository implements DonorRepositoryInterface
         return $this->donorFactory->createDonor(
             $doc['mandate_key'],
             $doc['state'],
-            $doc['state_desc'],
             $doc['mandate_source'],
             $doc['payer_number'],
             $doc['account'],

@@ -22,22 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\States;
-
-class InactiveState extends AbstractState
+final class Paused implements StateInterface
 {
-    public function getStateId(): string
-    {
-        return States::INACTIVE;
-    }
+    use StateIdTrait;
 
     public function getDescription(): string
     {
-        return 'Donor is inactive (has been revoked/rejected)';
-    }
-
-    public function isPurgeable(): bool
-    {
-        return true;
+        return 'Donor is paused (no registered transaction)';
     }
 }

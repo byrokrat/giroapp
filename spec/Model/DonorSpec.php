@@ -17,7 +17,6 @@ use Prophecy\Argument;
 class DonorSpec extends ObjectBehavior
 {
     const MANDATE_KEY = 'mandate-key';
-    const STATE_DESC = 'state-desc';
     const PAYER_NUMBER = 'payer-number';
     const NAME = 'name';
     const EMAIL = 'email';
@@ -38,7 +37,6 @@ class DonorSpec extends ObjectBehavior
         $this->beConstructedWith(
             self::MANDATE_KEY,
             $state,
-            self::STATE_DESC,
             MandateSources::MANDATE_SOURCE_PAPER,
             self::PAYER_NUMBER,
             $account,
@@ -68,11 +66,6 @@ class DonorSpec extends ObjectBehavior
     function it_contains_a_state($state)
     {
         $this->getState()->shouldEqual($state);
-    }
-
-    function it_contains_a_state_desc()
-    {
-        $this->getStateDesc()->shouldEqual(self::STATE_DESC);
     }
 
     function it_contains_mandate_source()

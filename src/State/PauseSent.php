@@ -20,19 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Filter;
+namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\Model\Donor;
-
-final class PurgeableFilter implements FilterInterface
+final class PauseSent implements StateInterface, AwaitingResponseStateInterface
 {
-    public function getName(): string
-    {
-        return 'purgeable';
-    }
+    use StateIdTrait;
 
-    public function filterDonor(Donor $donor): bool
+    public function getDescription(): string
     {
-        return $donor->getState()->isPurgeable();
+        return 'Pause request has been sent to the bank';
     }
 }

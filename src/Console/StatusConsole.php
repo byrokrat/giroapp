@@ -23,7 +23,12 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
+use byrokrat\giroapp\State\AwaitingResponseStateInterface;
+use byrokrat\giroapp\State\Active;
+use byrokrat\giroapp\State\Error;
 use byrokrat\giroapp\State\ExportableStateInterface;
+use byrokrat\giroapp\State\Inactive;
+use byrokrat\giroapp\State\Paused;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -47,7 +52,7 @@ final class StatusConsole implements ConsoleInterface
         $command->addOption('exportable-count', null, InputOption::VALUE_NONE, 'Show only exportable count');
         $command->addOption('waiting-count', null, InputOption::VALUE_NONE, 'Show only awaiting response count');
         $command->addOption('error-count', null, InputOption::VALUE_NONE, 'Show only error count');
-        $command->addOption('purgeable-count', null, InputOption::VALUE_NONE, 'Show only purgeable count');
+        $command->addOption('inactive-count', null, InputOption::VALUE_NONE, 'Show only inactive count');
         $command->addOption('paused-count', null, InputOption::VALUE_NONE, 'Show only paused count');
     }
 
@@ -59,12 +64,12 @@ final class StatusConsole implements ConsoleInterface
             'exportable-count' => 0,
             'waiting-count' => 0,
             'error-count' => 0,
-            'purgeable-count' => 0,
+            'inactive-count' => 0,
             'paused-count' => 0,
         ];
 
         foreach ($this->donorQuery->findAll() as $donor) {
-            if ($donor->getState()->isActive()) {
+            if ($donor->getState() instanceof Active) {
                 $counts['donor-count']++;
                 $counts['monthly-amount'] = $counts['monthly-amount']->add($donor->getDonationAmount());
             }
@@ -73,19 +78,19 @@ final class StatusConsole implements ConsoleInterface
                 $counts['exportable-count']++;
             }
 
-            if ($donor->getState()->isAwaitingResponse()) {
+            if ($donor->getState() instanceof AwaitingResponseStateInterface) {
                 $counts['waiting-count']++;
             }
 
-            if ($donor->getState()->isError()) {
+            if ($donor->getState() instanceof Error) {
                 $counts['error-count']++;
             }
 
-            if ($donor->getState()->isPurgeable()) {
-                $counts['purgeable-count']++;
+            if ($donor->getState() instanceof Inactive) {
+                $counts['inactive-count']++;
             }
 
-            if ($donor->getState()->isPaused()) {
+            if ($donor->getState() instanceof Paused) {
                 $counts['paused-count']++;
             }
         }
@@ -104,7 +109,7 @@ final class StatusConsole implements ConsoleInterface
         $output->writeln($this->format('Exportables', $counts['exportable-count']));
         $output->writeln($this->format('Awaiting response', $counts['waiting-count']));
         $output->writeln($this->format('Errors', $counts['error-count']));
-        $output->writeln($this->format('Purgeables', $counts['purgeable-count']));
+        $output->writeln($this->format('Inactive', $counts['inactive-count']));
         $output->writeln($this->format('Paused', $counts['paused-count']));
     }
 

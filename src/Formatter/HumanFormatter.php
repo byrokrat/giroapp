@@ -69,7 +69,6 @@ final class HumanFormatter implements FormatterInterface
 
         $this->output->writeln("mandate-key: <info>{$donor->getMandateKey()}</info>");
         $this->output->writeln("state: <info>{$donor->getState()->getStateId()}</info>");
-        $this->output->writeln("state-desc: <info>{$donor->getStateDesc()}</info>");
         $this->output->writeln("mandate-source: <info>{$donor->getMandateSource()}</info>");
         $this->output->writeln("payer-number: <info>{$donor->getPayerNumber()}</info>");
         $this->output->writeln("account: <info>{$donor->getAccount()}</info>");

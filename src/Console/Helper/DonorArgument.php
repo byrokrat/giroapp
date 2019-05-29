@@ -38,11 +38,11 @@ trait DonorArgument
 {
     use DonorQueryProperty;
 
-    protected function configureDonorArgument(Command $command): void
+    protected function configureDonorArgument(Command $command, bool $required = true): void
     {
         $command->addArgument(
             'donor',
-            InputArgument::REQUIRED,
+            $required ? InputArgument::REQUIRED : InputArgument::OPTIONAL,
             'Donor identified by mandate key or payer number'
         );
 

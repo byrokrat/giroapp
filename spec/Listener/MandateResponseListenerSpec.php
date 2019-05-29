@@ -11,7 +11,9 @@ use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\State\Error;
+use byrokrat\giroapp\State\Inactive;
+use byrokrat\giroapp\State\MandateApproved;
 use byrokrat\id\IdInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\autogiro\Tree\Node;
@@ -118,21 +120,21 @@ class MandateResponseListenerSpec extends ObjectBehavior
     function its_inactive_on_mandate_deleted_response($event, $parentNode, $donor, $commandBus)
     {
         $parentNode->hasChild('DeletedFlag')->willReturn(true);
-        $commandBus->handle(new UpdateState($donor->getWrappedObject(), States::INACTIVE))->shouldBeCalled();
+        $commandBus->handle(new UpdateState($donor->getWrappedObject(), Inactive::CLASS))->shouldBeCalled();
         $this->onMandateResponseReceived($event);
     }
 
     function its_error_on_error_response($event, $parentNode, $donor, $commandBus)
     {
         $parentNode->hasChild('ErrorFlag')->willReturn(true);
-        $commandBus->handle(new UpdateState($donor->getWrappedObject(), States::ERROR))->shouldBeCalled();
+        $commandBus->handle(new UpdateState($donor->getWrappedObject(), Error::CLASS))->shouldBeCalled();
         $this->onMandateResponseReceived($event);
     }
 
     function its_approved_on_created_response($event, $parentNode, $donor, $commandBus)
     {
         $parentNode->hasChild('CreatedFlag')->willReturn(true);
-        $commandBus->handle(new UpdateState($donor->getWrappedObject(), States::MANDATE_APPROVED))->shouldBeCalled();
+        $commandBus->handle(new UpdateState($donor->getWrappedObject(), MandateApproved::CLASS))->shouldBeCalled();
         $this->onMandateResponseReceived($event);
     }
 }

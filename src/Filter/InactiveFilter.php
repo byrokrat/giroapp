@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Filter;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\State\Inactive;
 
 final class InactiveFilter implements FilterInterface
 {
@@ -33,6 +34,6 @@ final class InactiveFilter implements FilterInterface
 
     public function filterDonor(Donor $donor): bool
     {
-        return !$donor->getState()->isActive();
+        return $donor->getState() instanceof Inactive;
     }
 }

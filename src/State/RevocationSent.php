@@ -22,22 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\States;
-
-class PausedState extends AbstractState
+final class RevocationSent implements StateInterface, AwaitingResponseStateInterface
 {
-    public function getStateId(): string
-    {
-        return States::PAUSED;
-    }
+    use StateIdTrait;
 
     public function getDescription(): string
     {
-        return 'Donor is paused (no registered transaction)';
-    }
-
-    public function isPaused(): bool
-    {
-        return true;
+        return 'Revocation request has been sent to the bank';
     }
 }

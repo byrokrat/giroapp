@@ -7,6 +7,7 @@ namespace spec\byrokrat\giroapp\Filter;
 use byrokrat\giroapp\Filter\AwaitingResponseFilter;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\State\AwaitingResponseStateInterface;
 use byrokrat\giroapp\State\StateInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -28,10 +29,10 @@ class AwaitingResponseFilterSpec extends ObjectBehavior
         $this->getName()->shouldReturn('awaiting');
     }
 
-    function it_filters_donors(Donor $donor, StateInterface $state)
+    function it_filters_donors(Donor $donor, AwaitingResponseStateInterface $state)
     {
         $donor->getState()->willReturn($state);
-        $state->isAwaitingResponse()->willReturn(true)->shouldBeCalled();
+        $state->implement(StateInterface::CLASS);
         $this->filterDonor($donor)->shouldReturn(true);
     }
 }

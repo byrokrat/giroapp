@@ -7,7 +7,7 @@ namespace spec\byrokrat\giroapp\Filter;
 use byrokrat\giroapp\Filter\PausedFilter;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\Paused;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -28,10 +28,9 @@ class PausedFilterSpec extends ObjectBehavior
         $this->getName()->shouldReturn('paused');
     }
 
-    function it_filters_donors(Donor $donor, StateInterface $state)
+    function it_filters_donors(Donor $donor)
     {
-        $donor->getState()->willReturn($state);
-        $state->isPaused()->willReturn(true)->shouldBeCalled();
+        $donor->getState()->willReturn(new Paused);
         $this->filterDonor($donor)->shouldReturn(true);
     }
 }

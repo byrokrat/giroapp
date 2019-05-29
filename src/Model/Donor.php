@@ -46,11 +46,6 @@ class Donor
     /**
      * @var string
      */
-    private $stateDesc;
-
-    /**
-     * @var string
-     */
     private $mandateSource;
 
     /**
@@ -119,7 +114,6 @@ class Donor
     public function __construct(
         string $mandateKey,
         StateInterface $state,
-        string $stateDesc,
         string $mandateSource,
         string $payerNumber,
         AccountNumber $account,
@@ -136,7 +130,6 @@ class Donor
     ) {
         $this->mandateKey = $mandateKey;
         $this->state = $state;
-        $this->stateDesc = $stateDesc ?: $state->getDescription();
         $this->mandateSource = $mandateSource;
         $this->payerNumber = $payerNumber;
         $this->account = $account;
@@ -160,11 +153,6 @@ class Donor
     public function getState(): StateInterface
     {
         return $this->state;
-    }
-
-    public function getStateDesc(): string
-    {
-        return $this->stateDesc;
     }
 
     public function getMandateSource(): string

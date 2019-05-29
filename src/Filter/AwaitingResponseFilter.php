@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Filter;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\State\AwaitingResponseStateInterface;
 
 final class AwaitingResponseFilter implements FilterInterface
 {
@@ -33,6 +34,6 @@ final class AwaitingResponseFilter implements FilterInterface
 
     public function filterDonor(Donor $donor): bool
     {
-        return $donor->getState()->isAwaitingResponse();
+        return $donor->getState() instanceof AwaitingResponseStateInterface;
     }
 }

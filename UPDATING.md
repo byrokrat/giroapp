@@ -29,3 +29,5 @@
 * Removed the possibility to force deletion of active donors. Set a purgable state before removing.
 * Removed `XmlFormInterface`. Use a plugin and react to `DonorAdded` events instead.
 * Replaced `edit xxx --state=foo` with `edit-state xxx --new-state=foo`
+* Removed `purge` command. Use `remove -all` instead.
+* Removed the `state_desc` database field.

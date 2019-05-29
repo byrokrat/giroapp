@@ -55,7 +55,6 @@ class DonorFactory
     public function createDonor(
         string $mandateKey = '',
         string $state = '',
-        string $stateDesc = '',
         string $mandateSource = '',
         string $payerNumber = '',
         string $accountNumber = '',
@@ -73,7 +72,6 @@ class DonorFactory
         return new Donor(
             $mandateKey,
             $this->stateCollection->getState($state),
-            $stateDesc,
             $mandateSource,
             $payerNumber,
             $this->accountFactory->createAccount($accountNumber),

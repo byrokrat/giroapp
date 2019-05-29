@@ -22,22 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\autogiro\Writer\WriterInterface;
 
-class MandateSentState extends AbstractState
+final class NewDigitalMandate implements StateInterface, ExportableStateInterface
 {
-    public function getStateId(): string
-    {
-        return States::MANDATE_SENT;
-    }
+    use StateIdTrait;
 
     public function getDescription(): string
     {
-        return 'Mandate has been sent to the bank and is awaiting approval';
+        return 'A digital mandate has been received from the bank';
     }
 
-    public function isAwaitingResponse(): bool
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
-        return true;
+        $writer->acceptDigitalMandate($donor->getPayerNumber());
+        return MandateSent::CLASS;
     }
 }

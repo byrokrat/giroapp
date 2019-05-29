@@ -7,7 +7,7 @@ namespace spec\byrokrat\giroapp\Filter;
 use byrokrat\giroapp\Filter\ErrorFilter;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\Error;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -28,10 +28,9 @@ class ErrorFilterSpec extends ObjectBehavior
         $this->getName()->shouldReturn('error');
     }
 
-    function it_filters_donors(Donor $donor, StateInterface $state)
+    function it_filters_donors(Donor $donor)
     {
-        $donor->getState()->willReturn($state);
-        $state->isError()->willReturn(true)->shouldBeCalled();
+        $donor->getState()->willReturn(new Error);
         $this->filterDonor($donor)->shouldReturn(true);
     }
 }

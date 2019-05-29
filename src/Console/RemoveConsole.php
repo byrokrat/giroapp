@@ -24,8 +24,10 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus\RemoveDonor;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use byrokrat\giroapp\State\Inactive;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 final class RemoveConsole implements ConsoleInterface
@@ -35,13 +37,24 @@ final class RemoveConsole implements ConsoleInterface
     public function configure(Command $command): void
     {
         $command->setName('remove');
-        $command->setDescription('Completely remove a donor');
-        $command->setHelp('Completely remove a donor from the database');
-        $this->configureDonorArgument($command);
+        $command->setDescription('Completely remove donors');
+        $command->setHelp('Completely remove donors from the database');
+        $this->configureDonorArgument($command, false);
+        $command->addOption('all', 'a', InputOption::VALUE_NONE, 'Remove all inactive donors');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
+        if ($input->getOption('all')) {
+            foreach ($this->donorQuery->findAll() as $donor) {
+                if ($donor->getState() instanceof Inactive) {
+                    $this->commandBus->handle(new RemoveDonor($donor));
+                }
+            }
+
+            return;
+        }
+
         $this->commandBus->handle(new RemoveDonor($this->readDonor($input)));
     }
 }

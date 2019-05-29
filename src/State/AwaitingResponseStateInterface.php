@@ -18,22 +18,11 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\State;
 
-namespace byrokrat\giroapp\Filter;
-
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\Error;
-
-final class ErrorFilter implements FilterInterface
+/**
+ * Marker interface for states awaiting responses from bgc
+ */
+interface AwaitingResponseStateInterface
 {
-    public function getName(): string
-    {
-        return 'error';
-    }
-
-    public function filterDonor(Donor $donor): bool
-    {
-        return $donor->getState() instanceof Error;
-    }
 }

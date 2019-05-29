@@ -23,6 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Filter;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\State\Paused;
 
 final class PausedFilter implements FilterInterface
 {
@@ -33,6 +34,6 @@ final class PausedFilter implements FilterInterface
 
     public function filterDonor(Donor $donor): bool
     {
-        return $donor->getState()->isPaused();
+        return $donor->getState() instanceof Paused;
     }
 }

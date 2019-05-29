@@ -22,10 +22,6 @@
                     "type": "string",
                     "pattern": "^[A-Za-z_ -]+$"
                 },
-                "state-desc": {
-                    "description": "Mandate state description",
-                    "type": "string"
-                },
                 "mandate_source": {
                     "description": "Mandate source descriptor",
                     "type": "string",
@@ -129,7 +125,6 @@
                 "type",
                 "mandate_key",
                 "state",
-                "state_desc",
                 "mandate_source",
                 "payer_number",
                 "account",

@@ -22,22 +22,21 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\autogiro\Writer\WriterInterface;
 
-class ActiveState extends AbstractState
+final class NewMandate implements StateInterface, ExportableStateInterface
 {
-    public function getStateId(): string
-    {
-        return States::ACTIVE;
-    }
+    use StateIdTrait;
 
     public function getDescription(): string
     {
-        return 'Donor is active';
+        return 'A mandate has been received from the donor';
     }
 
-    public function isActive(): bool
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
-        return true;
+        $writer->addNewMandate($donor->getPayerNumber(), $donor->getAccount(), $donor->getDonorId());
+        return MandateSent::CLASS;
     }
 }

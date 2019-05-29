@@ -22,12 +22,13 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\States;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
 
-class MandateApprovedState extends AbstractState implements ExportableStateInterface
+final class MandateApproved implements StateInterface, ExportableStateInterface
 {
+    use StateIdTrait;
+
     /**
      * @var TransactionDateFactory
      */
@@ -43,11 +44,6 @@ class MandateApprovedState extends AbstractState implements ExportableStateInter
         return 'Mandate has been approved by the bank';
     }
 
-    public function getStateId(): string
-    {
-        return States::MANDATE_APPROVED;
-    }
-
     public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
         if ($donor->getDonationAmount()->isPositive()) {
@@ -59,6 +55,6 @@ class MandateApprovedState extends AbstractState implements ExportableStateInter
             );
         }
 
-        return States::ACTIVE;
+        return Active::CLASS;
     }
 }

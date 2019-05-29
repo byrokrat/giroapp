@@ -20,43 +20,9 @@
 
 namespace byrokrat\giroapp\State;
 
-/**
- * Defines a donor state in relation to bgc
- */
 interface StateInterface
 {
-    /**
-     * Get state identifier
-     */
     public function getStateId(): string;
 
-    /**
-     * Get free text state description
-     */
     public function getDescription(): string;
-
-    /**
-     * Check if a donor with this state is an active donor
-     */
-    public function isActive(): bool;
-
-    /**
-     * Check if a donor with this state is expecting a response from autogirot
-     */
-    public function isAwaitingResponse(): bool;
-
-    /**
-     * Check if a donor with this state is broken
-     */
-    public function isError(): bool;
-
-    /**
-     * Check if a donor with this state can be safely removed
-     */
-    public function isPurgeable(): bool;
-
-    /**
-     * Check if a donor with this state is paused
-     */
-    public function isPaused(): bool;
 }

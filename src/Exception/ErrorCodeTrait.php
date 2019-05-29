@@ -20,22 +20,14 @@
 
 namespace byrokrat\giroapp\Exception;
 
+use byrokrat\giroapp\Utils\ClassIdExtractor;
+
 trait ErrorCodeTrait
 {
     public function __construct(string $message = '', int $code = 0, \Throwable $previous = null)
     {
         if (!$code) {
-            $const = 'self::'
-                . rtrim(
-                    (string)preg_replace_callback(
-                        '/[A-Z][a-z]+/',
-                        function (array $matches) {
-                            return strtoupper($matches[0]) . '_';
-                        },
-                        (new \ReflectionClass($this))->getShortName()
-                    ),
-                    '_'
-                );
+            $const = 'self::' . (string)(new ClassIdExtractor($this));
 
             if (defined($const)) {
                 $code = (int)constant($const);

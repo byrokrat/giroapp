@@ -29,7 +29,9 @@ use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\NodeEvent;
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\State\Error;
+use byrokrat\giroapp\State\Inactive;
+use byrokrat\giroapp\State\MandateApproved;
 
 /**
  * Add or reject mandates based on autogiro response
@@ -91,17 +93,17 @@ class MandateResponseListener
         }
 
         if ($node->hasChild('CreatedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, States::MANDATE_APPROVED));
+            $this->commandBus->handle(new UpdateState($donor, MandateApproved::CLASS));
             return;
         }
 
         if ($node->hasChild('DeletedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, States::INACTIVE));
+            $this->commandBus->handle(new UpdateState($donor, Inactive::CLASS));
             return;
         }
 
         if ($node->hasChild('ErrorFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, States::ERROR));
+            $this->commandBus->handle(new UpdateState($donor, Error::CLASS));
             return;
         }
 

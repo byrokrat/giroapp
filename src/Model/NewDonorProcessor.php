@@ -23,7 +23,8 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Model;
 
 use byrokrat\giroapp\MandateSources;
-use byrokrat\giroapp\States;
+use byrokrat\giroapp\State\NewMandate;
+use byrokrat\giroapp\State\NewDigitalMandate;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\Utils\SystemClock;
@@ -62,7 +63,6 @@ class NewDonorProcessor
         return new Donor(
             $this->createMandateKey($newDonor->getDonorId(), $newDonor->getAccount()),
             $state,
-            $state->getDescription(),
             $newDonor->getMandateSource(),
             $newDonor->getPayerNumber(),
             $newDonor->getAccount(),
@@ -95,9 +95,9 @@ class NewDonorProcessor
         switch ($mandateSource) {
             case MandateSources::MANDATE_SOURCE_PAPER:
             case MandateSources::MANDATE_SOURCE_ONLINE_FORM:
-                return $this->stateCollection->getState(States::NEW_MANDATE);
+                return $this->stateCollection->getState(NewMandate::CLASS);
             case MandateSources::MANDATE_SOURCE_DIGITAL:
-                return $this->stateCollection->getState(States::NEW_DIGITAL_MANDATE);
+                return $this->stateCollection->getState(NewDigitalMandate::CLASS);
         }
 
         throw new \LogicException("Invalid mandate source: $mandateSource");

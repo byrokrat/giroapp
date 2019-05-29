@@ -7,7 +7,7 @@ namespace spec\byrokrat\giroapp\Filter;
 use byrokrat\giroapp\Filter\InactiveFilter;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\State\Inactive;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -28,10 +28,9 @@ class InactiveFilterSpec extends ObjectBehavior
         $this->getName()->shouldReturn('inactive');
     }
 
-    function it_filters_donors(Donor $donor, StateInterface $state)
+    function it_filters_donors(Donor $donor)
     {
-        $donor->getState()->willReturn($state);
-        $state->isActive()->willReturn(true)->shouldBeCalled();
-        $this->filterDonor($donor)->shouldReturn(false);
+        $donor->getState()->willReturn(new Inactive);
+        $this->filterDonor($donor)->shouldReturn(true);
     }
 }

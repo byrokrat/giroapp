@@ -36,9 +36,14 @@ trait CollectionTrait
         $this->items[$key] = $item;
     }
 
+    protected function hasItem(string $key): bool
+    {
+        return isset($this->items[$key]);
+    }
+
     protected function getItem(string $key)
     {
-        if (!isset($this->items[$key])) {
+        if (!$this->hasItem($key)) {
             throw new UnknownIdentifierException(sprintf(
                 "%s '%s' does not exist",
                 $this->describeItem(),

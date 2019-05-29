@@ -22,25 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\State;
 
-use byrokrat\giroapp\States;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\autogiro\Writer\WriterInterface;
-
-class RevokeMandateState extends AbstractState implements ExportableStateInterface
+final class Active implements StateInterface
 {
+    use StateIdTrait;
+
     public function getDescription(): string
     {
-        return 'Mandate is awaiting revocation';
-    }
-
-    public function getStateId(): string
-    {
-        return States::REVOKE_MANDATE;
-    }
-
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
-    {
-        $writer->deleteMandate($donor->getPayerNumber());
-        return States::REVOCATION_SENT;
+        return 'Donor is active';
     }
 }
