@@ -50,8 +50,8 @@ final class ApiVersion
             return 'dev-master';
         }
 
-        if (preg_match('/^([^-]+)-[^-]+-/', $version, $matches)) {
-            return $matches[1] . '-dev';
+        if (preg_match('/^([\d.]+)(-[a-zA-Z0-9]+)(@.+)?/', $version, $matches)) {
+            return isset($matches[3]) ? $matches[1] . '-dev' :  $matches[1] . $matches[2];
         }
 
         return $version;

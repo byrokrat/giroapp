@@ -9,8 +9,7 @@
         "KevinGH\\Box\\Compactor\\Php"
     ],
     "replacement-sigil": "$",
-    "git-tag": "app_version",
+    "git": "app_version",
     "algorithm": "SHA512",
-    "chmod": "0550",
-    "check-requirements": false
+    "chmod": "0550"
 }

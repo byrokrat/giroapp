@@ -68,7 +68,7 @@ class ApplicationWrapper
 
     public function executeVerbose(string $command): Result
     {
-        return $this->execute("$command -vvv");
+        return $this->execute("$command -v");
     }
 
     public function execute(string $command): Result

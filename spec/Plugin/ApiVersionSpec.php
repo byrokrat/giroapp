@@ -34,7 +34,7 @@ class ApiVersionSpec extends ObjectBehavior
 
     function it_identifies_dev_versions()
     {
-        $this->beConstructedWith('1.0.0-alpha4-29-g91710c1');
+        $this->beConstructedWith('1.0.0-alpha4@a5e2cdd');
         $this->getVersion()->shouldReturn('1.0.0-dev');
     }
 
