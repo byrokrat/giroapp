@@ -118,12 +118,12 @@ fileTask('vendor/autoload.php', ['vendor/autoload.php'], function() {
 desc('Globally install development tools');
 task('install_dev_tools', function() {
     shell('composer global require consolidation/cgr');
-    shell('cgr phpspec/phpspec');
-    shell('cgr behat/behat');
+    shell('cgr phpspec/phpspec:^5');
+    shell('cgr behat/behat:^3');
     shell('cgr hanneskod/readme-tester:^1.0@beta');
     shell('cgr phpstan/phpstan');
     shell('cgr squizlabs/php_codesniffer');
-    shell('cgr humbug/box --stability dev');
+    shell('cgr humbug/box:^3');
 });
 
 function shell(string $command)

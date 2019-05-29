@@ -8,9 +8,12 @@ php:
 
 install:
     - composer install
-    - composer global require chh/bob:^1@alpha
-    - export PATH=$PATH:$HOME/.config/composer/vendor/bin/:$HOME/.composer/vendor/bin/
-    - bob install_dev_tools
+    - export PATH=$PATH:$HOME/.config/composer/vendor/bin/
+    - composer global require consolidation/cgr
+    - cgr chh/bob:^1@alpha
+    - cgr phpspec/phpspec:^5
+    - cgr behat/behat:^3
+    - cgr humbug/box:^3
 
 script:
     - phpspec run --verbose
