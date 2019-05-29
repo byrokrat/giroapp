@@ -20,16 +20,32 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\amount\Currency\SEK;
 
-final class RemoveDonor
+final class DonorAmountUpdated extends DonorEvent
 {
-    use Helper\DonorAwareTrait;
+    /** @var SEK */
+    private $newAmount;
 
-    public function __construct(Donor $donor)
+    public function __construct(Donor $donor, SEK $newAmount)
     {
-        $this->setDonor($donor);
+        parent::__construct(
+            sprintf(
+                "Changed amount on mandate '%s' to '%s'",
+                $donor->getMandateKey(),
+                $newAmount
+            ),
+            $donor
+        );
+
+        $this->newAmount = $newAmount;
+    }
+
+    public function getNewAmount(): SEK
+    {
+        return $this->newAmount;
     }
 }

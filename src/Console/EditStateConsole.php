@@ -22,8 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\CommandBus\ChangeDonorState;
-use byrokrat\giroapp\CommandBus\ForceDonorState;
+use byrokrat\giroapp\CommandBus\UpdateState;
+use byrokrat\giroapp\CommandBus\ForceState;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\Validator\ChoiceValidator;
@@ -84,8 +84,8 @@ final class EditStateConsole implements ConsoleInterface
         );
 
         $command = $input->getOption('force')
-            ? new ForceDonorState($donor, $newStateId)
-            : new ChangeDonorState($donor, $newStateId);
+            ? new ForceState($donor, $newStateId)
+            : new UpdateState($donor, $newStateId);
 
         $this->commandBus->handle($command);
     }

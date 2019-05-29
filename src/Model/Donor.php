@@ -135,19 +135,20 @@ class Donor
         array $attributes = []
     ) {
         $this->mandateKey = $mandateKey;
-        $this->setState($state, $stateDesc);
+        $this->state = $state;
+        $this->stateDesc = $stateDesc ?: $state->getDescription();
         $this->mandateSource = $mandateSource;
-        $this->setPayerNumber($payerNumber);
+        $this->payerNumber = $payerNumber;
         $this->account = $account;
         $this->donorId = $donorId;
-        $this->setName($name);
-        $this->setPostalAddress($address);
-        $this->setEmail($email);
-        $this->setPhone($phone);
-        $this->setDonationAmount($donationAmount);
-        $this->setComment($comment);
+        $this->name = $name;
+        $this->address = $address;
+        $this->email = $email;
+        $this->phone = $phone;
+        $this->donationAmount = $donationAmount;
+        $this->comment = $comment;
         $this->created = $created;
-        $this->setUpdated($updated);
+        $this->updated = $updated;
         $this->attributes = $attributes;
     }
 
@@ -166,12 +167,6 @@ class Donor
         return $this->stateDesc;
     }
 
-    public function setState(StateInterface $state, string $stateDesc = ''): void
-    {
-        $this->state = $state;
-        $this->stateDesc = $stateDesc ?: $state->getDescription();
-    }
-
     public function getMandateSource(): string
     {
         return $this->mandateSource;
@@ -180,11 +175,6 @@ class Donor
     public function getPayerNumber(): string
     {
         return $this->payerNumber;
-    }
-
-    public function setPayerNumber(string $payerNumber): void
-    {
-        $this->payerNumber = $payerNumber;
     }
 
     public function getAccount(): AccountNumber
@@ -202,19 +192,9 @@ class Donor
         return $this->name;
     }
 
-    public function setName(string $name): void
-    {
-        $this->name = $name;
-    }
-
     public function getPostalAddress(): PostalAddress
     {
         return $this->address;
-    }
-
-    public function setPostalAddress(PostalAddress $address): void
-    {
-        $this->address = $address;
     }
 
     public function getEmail(): string
@@ -222,19 +202,9 @@ class Donor
         return $this->email;
     }
 
-    public function setEmail(string $email): void
-    {
-        $this->email = $email;
-    }
-
     public function getPhone(): string
     {
         return $this->phone;
-    }
-
-    public function setPhone(string $phone): void
-    {
-        $this->phone = $phone;
     }
 
     public function getDonationAmount(): SEK
@@ -242,19 +212,9 @@ class Donor
         return $this->donationAmount;
     }
 
-    public function setDonationAmount(SEK $donationAmount): void
-    {
-        $this->donationAmount = $donationAmount;
-    }
-
     public function getComment(): string
     {
         return $this->comment;
-    }
-
-    public function setComment(string $comment): void
-    {
-        $this->comment = $comment;
     }
 
     public function getCreated(): \DateTimeImmutable
@@ -267,30 +227,11 @@ class Donor
         return $this->updated;
     }
 
-    public function setUpdated(\DateTimeImmutable $updated): void
-    {
-        $this->updated = $updated;
-    }
-
-    /**
-     * Check if attribute is set
-     */
     public function hasAttribute(string $key): bool
     {
         return isset($this->attributes[$key]);
     }
 
-    /**
-     * Set an attribute
-     */
-    public function setAttribute(string $key, string $value): void
-    {
-        $this->attributes[$key] = $value;
-    }
-
-    /**
-     * Get attribute
-     */
     public function getAttribute(string $key): string
     {
         if (!$this->hasAttribute($key)) {
@@ -301,8 +242,6 @@ class Donor
     }
 
     /**
-     * Get all loaded attributes
-     *
      * @return string[]
      */
     public function getAttributes(): array

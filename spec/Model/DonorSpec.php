@@ -75,21 +75,6 @@ class DonorSpec extends ObjectBehavior
         $this->getStateDesc()->shouldEqual(self::STATE_DESC);
     }
 
-    function it_can_set_state(StateInterface $newState)
-    {
-        $this->getState()->shouldNotEqual($newState);
-        $this->setState($newState, 'desc');
-        $this->getState()->shouldEqual($newState);
-        $this->getStateDesc()->shouldEqual('desc');
-    }
-
-    function it_reads_default_state_descs(StateInterface $newState)
-    {
-        $newState->getDescription()->willReturn('foobar');
-        $this->setState($newState);
-        $this->getStateDesc()->shouldEqual('foobar');
-    }
-
     function it_contains_mandate_source()
     {
         $this->getMandateSource()->shouldEqual(MandateSources::MANDATE_SOURCE_PAPER);
@@ -98,13 +83,6 @@ class DonorSpec extends ObjectBehavior
     function it_contains_a_payer_number()
     {
         $this->getPayerNumber()->shouldEqual(self::PAYER_NUMBER);
-    }
-
-    function it_can_set_payer_number()
-    {
-        $payerNumber = 'some-new-payer-number';
-        $this->setPayerNumber($payerNumber);
-        $this->getPayerNumber()->shouldEqual($payerNumber);
     }
 
     function it_contains_an_account($account)
@@ -122,23 +100,9 @@ class DonorSpec extends ObjectBehavior
         $this->getName()->shouldEqual(self::NAME);
     }
 
-    function it_can_set_name()
-    {
-        $name = 'some-new-name';
-        $this->setName($name);
-        $this->getName()->shouldEqual($name);
-    }
-
     function it_contains_an_address($address)
     {
         $this->getPostalAddress()->shouldEqual($address);
-    }
-
-    function it_can_set_address(PostalAddress $newAddress)
-    {
-        $this->getPostalAddress()->shouldNotEqual($newAddress);
-        $this->setPostalAddress($newAddress);
-        $this->getPostalAddress()->shouldEqual($newAddress);
     }
 
     function it_contains_an_email()
@@ -146,23 +110,9 @@ class DonorSpec extends ObjectBehavior
         $this->getEmail()->shouldEqual(self::EMAIL);
     }
 
-    function it_can_set_email()
-    {
-        $newEmail = 'this@that.tld';
-        $this->setEmail($newEmail);
-        $this->getEmail()->shouldEqual($newEmail);
-    }
-
     function it_contains_a_phone_number()
     {
         $this->getPhone()->shouldEqual(self::PHONE);
-    }
-
-    function it_can_set_phone()
-    {
-        $newPhone = '+4670111111';
-        $this->setPhone($newPhone);
-        $this->getPhone()->shouldEqual($newPhone);
     }
 
     function it_contains_an_amount($donationAmount)
@@ -170,23 +120,9 @@ class DonorSpec extends ObjectBehavior
         $this->getDonationAmount()->shouldEqual($donationAmount);
     }
 
-    function it_can_set_amount(SEK $newAmount)
-    {
-        $this->getDonationAmount()->shouldNotEqual($newAmount);
-        $this->setDonationAmount($newAmount);
-        $this->getDonationAmount()->shouldEqual($newAmount);
-    }
-
     function it_contains_a_comment()
     {
         $this->getComment()->shouldEqual(self::COMMENT);
-    }
-
-    function it_can_set_comment()
-    {
-        $newComment = 'some comment...';
-        $this->setComment($newComment);
-        $this->getComment()->shouldEqual($newComment);
     }
 
     function it_contains_a_created_date($created)
@@ -199,12 +135,6 @@ class DonorSpec extends ObjectBehavior
         $this->getUpdated()->shouldEqual($updated);
     }
 
-    function it_can_set_updated_date(\DateTimeImmutable $newUpdated)
-    {
-        $this->setUpdated($newUpdated);
-        $this->getUpdated()->shouldEqual($newUpdated);
-    }
-
     function it_contains_attributes()
     {
         $this->getAttribute(self::ATTR_KEY)->shouldReturn(self::ATTR_VALUE);
@@ -212,19 +142,8 @@ class DonorSpec extends ObjectBehavior
 
     function it_can_check_for_attribute()
     {
-        $this->hasAttribute('foobar')->shouldReturn(false);
-    }
-
-    function it_recognizes_loaded_attributes()
-    {
-        $this->setAttribute('foobar', 'baz');
-        $this->hasAttribute('foobar')->shouldReturn(true);
-    }
-
-    function it_can_read_attributes()
-    {
-        $this->setAttribute('foobar', 'baz');
-        $this->getAttribute('foobar')->shouldReturn('baz');
+        $this->hasAttribute('does-not-exist')->shouldReturn(false);
+        $this->hasAttribute(self::ATTR_KEY)->shouldReturn(true);
     }
 
     function it_throws_exception_if_attribute_does_not_exist()

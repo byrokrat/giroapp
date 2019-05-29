@@ -22,20 +22,27 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\DependencyInjection;
+use byrokrat\giroapp\Event\DonorPhoneUpdated;
 
-abstract class DonorAwareCommand
+final class UpdatePhoneHandler
 {
-    /** @var Donor */
-    private $donor;
+    use DependencyInjection\DispatcherProperty,
+        DependencyInjection\DonorRepositoryProperty;
 
-    public function __construct(Donor $donor)
+    public function handle(UpdatePhone $command): void
     {
-        $this->donor = $donor;
-    }
+        $donor = $command->getDonor();
 
-    public function getDonor(): Donor
-    {
-        return $this->donor;
+        if ($command->getNewPhone() == $donor->getPhone()) {
+            return;
+        }
+
+        $this->donorRepository->updateDonorPhone($donor, $command->getNewPhone());
+
+        $this->dispatcher->dispatch(
+            DonorPhoneUpdated::CLASS,
+            new DonorPhoneUpdated($donor, $command->getNewPhone())
+        );
     }
 }

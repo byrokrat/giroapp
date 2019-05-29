@@ -13,6 +13,7 @@ The following example tells giroapp that the content of the custom data field
 use byrokrat\giroapp\Plugin\PluginInterface;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Event\DonorAdded;
+use byrokrat\giroapp\CommandBus\UpdatePhone;
 use League\Tactician\CommandBus;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -40,7 +41,7 @@ return new class implements PluginInterface {
 
                     if ($donor->hasAttribute('phone')) {
                         $this->commandBus->handle(
-                            new ChangeDonorPhone($donor, $donor->getAttribute('phone'))
+                            new UpdatePhone($donor, $donor->getAttribute('phone'))
                         );
                     }
                 }

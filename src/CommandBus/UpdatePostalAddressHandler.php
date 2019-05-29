@@ -20,32 +20,29 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\DependencyInjection;
+use byrokrat\giroapp\Event\DonorPostalAddressUpdated;
 
-final class DonorStateChanged extends DonorEvent
+final class UpdatePostalAddressHandler
 {
-    /** @var StateInterface */
-    private $newState;
+    use DependencyInjection\DispatcherProperty,
+        DependencyInjection\DonorRepositoryProperty;
 
-    public function __construct(Donor $donor, StateInterface $newState)
+    public function handle(UpdatePostalAddress $command): void
     {
-        parent::__construct(
-            sprintf(
-                "Changed state on mandate '%s' to '%s'",
-                $donor->getMandateKey(),
-                $newState->getStateId()
-            ),
-            $donor
+        $donor = $command->getDonor();
+
+        if ((string)$donor->getPostalAddress() == (string)$command->getNewPostalAddress()) {
+            return;
+        }
+
+        $this->donorRepository->updateDonorAddress($donor, $command->getNewPostalAddress());
+
+        $this->dispatcher->dispatch(
+            DonorPostalAddressUpdated::CLASS,
+            new DonorPostalAddressUpdated($donor, $command->getNewPostalAddress())
         );
-
-        $this->newState = $newState;
-    }
-
-    public function getNewState(): StateInterface
-    {
-        return $this->newState;
     }
 }

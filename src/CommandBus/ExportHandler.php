@@ -22,10 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\CommandBus\ChangeDonorState;
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
+use byrokrat\giroapp\CommandBus\UpdateState;
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\ExportGenerated;
 use byrokrat\giroapp\Event\LogEvent;
@@ -33,9 +31,11 @@ use byrokrat\giroapp\State\ExportableStateInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\autogiro\Writer\WriterInterface;
 
-final class ExportHandler extends DonorRepositoryAwareHandler
+final class ExportHandler
 {
-    use CommandBusProperty, DispatcherProperty, DonorQueryProperty;
+    use DependencyInjection\CommandBusProperty,
+        DependencyInjection\DispatcherProperty,
+        DependencyInjection\DonorQueryProperty;
 
     const DEFAULT_FILE_NAME = 'giroapp-export';
 
@@ -66,7 +66,7 @@ final class ExportHandler extends DonorRepositoryAwareHandler
                 );
 
                 $this->commandBus->handle(
-                    new ChangeDonorState(
+                    new UpdateState(
                         $donor,
                         $state->exportToAutogiro($donor, $this->autogiroWriter)
                     )

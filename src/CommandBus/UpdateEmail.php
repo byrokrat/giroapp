@@ -24,12 +24,21 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Model\Donor;
 
-final class RemoveDonor
+final class UpdateEmail
 {
     use Helper\DonorAwareTrait;
 
-    public function __construct(Donor $donor)
+    /** @var string */
+    private $email;
+
+    public function __construct(Donor $donor, string $email)
     {
         $this->setDonor($donor);
+        $this->email = $email;
+    }
+
+    public function getNewEmail(): string
+    {
+        return $this->email;
     }
 }

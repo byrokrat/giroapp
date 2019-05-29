@@ -24,12 +24,24 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Model\Donor;
 
-final class RemoveDonor
+/**
+ * Force donor to enter state, ignoring validating checks
+ */
+class ForceState
 {
     use Helper\DonorAwareTrait;
 
-    public function __construct(Donor $donor)
+    /** @var string */
+    private $newStateId;
+
+    public function __construct(Donor $donor, string $newStateId)
     {
         $this->setDonor($donor);
+        $this->newStateId = $newStateId;
+    }
+
+    public function getNewStateId(): string
+    {
+        return $this->newStateId;
     }
 }

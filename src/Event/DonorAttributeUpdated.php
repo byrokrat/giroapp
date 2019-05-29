@@ -20,16 +20,41 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Model\Donor;
 
-final class RemoveDonor
+final class DonorAttributeUpdated extends DonorEvent
 {
-    use Helper\DonorAwareTrait;
+    /** @var string */
+    private $key;
 
-    public function __construct(Donor $donor)
+    /** @var string */
+    private $value;
+
+    public function __construct(Donor $donor, string $key, string $value)
     {
-        $this->setDonor($donor);
+        parent::__construct(
+            sprintf(
+                "Changed attribute '%s' on mandate '%s' to '%s'",
+                $key,
+                $donor->getMandateKey(),
+                $value
+            ),
+            $donor
+        );
+
+        $this->key = $key;
+        $this->value = $value;
+    }
+
+    public function getAttributeKey(): string
+    {
+        return $this->key;
+    }
+
+    public function getAttributeValue(): string
+    {
+        return $this->value;
     }
 }

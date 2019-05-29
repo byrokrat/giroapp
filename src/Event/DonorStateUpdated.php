@@ -20,16 +20,32 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\State\StateInterface;
 
-final class RemoveDonor
+final class DonorStateUpdated extends DonorEvent
 {
-    use Helper\DonorAwareTrait;
+    /** @var StateInterface */
+    private $newState;
 
-    public function __construct(Donor $donor)
+    public function __construct(Donor $donor, StateInterface $newState)
     {
-        $this->setDonor($donor);
+        parent::__construct(
+            sprintf(
+                "Changed state on mandate '%s' to '%s'",
+                $donor->getMandateKey(),
+                $newState->getStateId()
+            ),
+            $donor
+        );
+
+        $this->newState = $newState;
+    }
+
+    public function getNewState(): StateInterface
+    {
+        return $this->newState;
     }
 }

@@ -22,37 +22,25 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Listener;
 
+use byrokrat\giroapp\CommandBus\UpdateState;
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\NodeEvent;
-use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\States;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
 
 /**
  * Add or reject mandates based on autogiro response
  */
 class MandateResponseListener
 {
-    /**
-     * @var DonorQueryInterface
-     */
-    private $donorQuery;
+    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\DispatcherProperty;
+    use DependencyInjection\DonorQueryProperty;
 
-    /**
-     * @var StateCollection
-     */
-    private $stateCollection;
-
-    public function __construct(DonorQueryInterface $donorQuery, StateCollection $stateCollection)
-    {
-        $this->donorQuery = $donorQuery;
-        $this->stateCollection = $stateCollection;
-    }
-
-    public function onMandateResponseReceived(NodeEvent $nodeEvent, string $eventName, Dispatcher $dispatcher): void
+    public function onMandateResponseReceived(NodeEvent $nodeEvent): void
     {
         $node = $nodeEvent->getNode();
 
@@ -63,7 +51,7 @@ class MandateResponseListener
         /** @var \byrokrat\id\IdInterface $nodeId */
         if ($nodeId = $node->getChild('StateId')->getValueFrom('Object')) {
             if ($donor->getDonorId()->format('S-sk') != $nodeId->format('S-sk')) {
-                $dispatcher->dispatch(
+                $this->dispatcher->dispatch(
                     Events::WARNING,
                     new LogEvent(
                         sprintf(
@@ -84,7 +72,7 @@ class MandateResponseListener
         /** @var \byrokrat\banking\AccountNumber $nodeAccount */
         if ($nodeAccount = $node->getChild('Account')->getValueFrom('Object')) {
             if (!$donor->getAccount()->equals($nodeAccount)) {
-                $dispatcher->dispatch(
+                $this->dispatcher->dispatch(
                     Events::WARNING,
                     new LogEvent(
                         sprintf(
@@ -102,29 +90,22 @@ class MandateResponseListener
             }
         }
 
-        $status = (string)$node->getChild('Status')->getValueFrom('Text');
-
-        $donorEvent = new DonorEvent("{$donor->getMandateKey()}: $status", $donor);
-
         if ($node->hasChild('CreatedFlag')) {
-            $donor->setState($this->stateCollection->getState(States::MANDATE_APPROVED), $status);
-            $dispatcher->dispatch(Events::MANDATE_APPROVED, $donorEvent);
+            $this->commandBus->handle(new UpdateState($donor, States::MANDATE_APPROVED));
             return;
         }
 
         if ($node->hasChild('DeletedFlag')) {
-            $donor->setState($this->stateCollection->getState(States::INACTIVE), $status);
-            $dispatcher->dispatch(Events::MANDATE_REVOKED, $donorEvent);
+            $this->commandBus->handle(new UpdateState($donor, States::INACTIVE));
             return;
         }
 
         if ($node->hasChild('ErrorFlag')) {
-            $donor->setState($this->stateCollection->getState(States::ERROR), $status);
-            $dispatcher->dispatch(Events::MANDATE_INVALIDATED, $donorEvent);
+            $this->commandBus->handle(new UpdateState($donor, States::ERROR));
             return;
         }
 
-        $dispatcher->dispatch(
+        $this->dispatcher->dispatch(
             Events::WARNING,
             new LogEvent(
                 sprintf(

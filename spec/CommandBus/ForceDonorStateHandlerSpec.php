@@ -4,10 +4,10 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\CommandBus\ForceDonorStateHandler;
-use byrokrat\giroapp\CommandBus\ForceDonorState;
+use byrokrat\giroapp\CommandBus\ForceStateHandler;
+use byrokrat\giroapp\CommandBus\ForceState;
 use byrokrat\giroapp\Db\DonorRepositoryInterface;
-use byrokrat\giroapp\Event\DonorStateChanged;
+use byrokrat\giroapp\Event\DonorStateUpdated;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
@@ -15,7 +15,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class ForceDonorStateHandlerSpec extends ObjectBehavior
+class ForceStateHandlerSpec extends ObjectBehavior
 {
     function let(
         StateCollection $stateCollection,
@@ -29,7 +29,7 @@ class ForceDonorStateHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ForceDonorStateHandler::CLASS);
+        $this->shouldHaveType(ForceStateHandler::CLASS);
     }
 
     function it_can_change_donor_state(
@@ -46,9 +46,9 @@ class ForceDonorStateHandlerSpec extends ObjectBehavior
         $stateCollection->getState('new-state')->willReturn($state);
 
         $donorRepository->updateDonorState($donor, $state)->shouldBeCalled();
-        $dispatcher->dispatch(DonorStateChanged::CLASS, Argument::type(DonorStateChanged::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(DonorStateUpdated::CLASS, Argument::type(DonorStateUpdated::CLASS))->shouldBeCalled();
 
-        $this->handle(new ForceDonorState($donor->getWrappedObject(), 'new-state'));
+        $this->handle(new ForceState($donor->getWrappedObject(), 'new-state'));
     }
 
     function it_ignores_unchanged_states(
@@ -64,6 +64,6 @@ class ForceDonorStateHandlerSpec extends ObjectBehavior
 
         $donorRepository->updateDonorState($donor, $state)->shouldNotBeCalled();
 
-        $this->handle(new ForceDonorState($donor->getWrappedObject(), 'old-state'));
+        $this->handle(new ForceState($donor->getWrappedObject(), 'old-state'));
     }
 }

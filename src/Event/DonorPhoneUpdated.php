@@ -20,16 +20,33 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Model\Donor;
 
-final class RemoveDonor
+final class DonorPhoneUpdated extends DonorEvent
 {
-    use Helper\DonorAwareTrait;
+    /**
+     * @var string
+     */
+    private $newPhone;
 
-    public function __construct(Donor $donor)
+    public function __construct(Donor $donor, string $newPhone)
     {
-        $this->setDonor($donor);
+        parent::__construct(
+            sprintf(
+                "Changed phone on mandate '%s' to '%s'",
+                $donor->getMandateKey(),
+                $newPhone
+            ),
+            $donor
+        );
+
+        $this->newPhone = $newPhone;
+    }
+
+    public function getNewPhone(): string
+    {
+        return $this->newPhone;
     }
 }

@@ -53,29 +53,9 @@ interface Events
     const XML_FILE_IMPORTED = 'XML_FILE_IMPORTED';
 
     /**
-     * A donor updated, expects a DonorEvent
-     */
-    const DONOR_UPDATED = 'DONOR_UPDATED';
-
-    /**
      * A mandate response received from bank, expects a NodeEvent
      */
     const MANDATE_RESPONSE_RECEIVED = 'MANDATE_RESPONSE_RECEIVED';
-
-    /**
-     * A mandate approved by the bank, expects a DonorEvent
-     */
-    const MANDATE_APPROVED = 'MANDATE_APPROVED';
-
-    /**
-     * A mandate revoked, expects a DonorEvent
-     */
-    const MANDATE_REVOKED = 'MANDATE_REVOKED';
-
-    /**
-     * A mandate is invalid and could not be approved, expects a DonorEvent
-     */
-    const MANDATE_INVALIDATED = 'MANDATE_INVALIDATED';
 
     /**
      * An unexpected and unrecoverable error, expects a LogEvent

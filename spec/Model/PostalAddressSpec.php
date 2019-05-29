@@ -45,4 +45,10 @@ class PostalAddressSpec extends ObjectBehavior
         $this->beConstructedWith('', '', '', '', 'foobar');
         $this->getPostalCity()->shouldEqual('foobar');
     }
+
+    function it_can_be_converted_to_string()
+    {
+        $this->beConstructedWith('Street 1', '', '', '12345', 'city');
+        $this->__toString()->shouldReturn("Street 1\n12345 city");
+    }
 }

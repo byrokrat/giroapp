@@ -20,16 +20,33 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Model\Donor;
 
-final class RemoveDonor
+final class DonorEmailUpdated extends DonorEvent
 {
-    use Helper\DonorAwareTrait;
+    /**
+     * @var string
+     */
+    private $newEmail;
 
-    public function __construct(Donor $donor)
+    public function __construct(Donor $donor, string $newEmail)
     {
-        $this->setDonor($donor);
+        parent::__construct(
+            sprintf(
+                "Changed mail on mandate '%s' to '%s'",
+                $donor->getMandateKey(),
+                $newEmail
+            ),
+            $donor
+        );
+
+        $this->newEmail = $newEmail;
+    }
+
+    public function getNewEmail(): string
+    {
+        return $this->newEmail;
     }
 }

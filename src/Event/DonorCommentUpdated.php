@@ -20,23 +20,33 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Db\DonorRepositoryInterface;
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\Model\Donor;
 
-abstract class DonorRepositoryAwareHandler
+final class DonorCommentUpdated extends DonorEvent
 {
-    use DispatcherProperty;
-
-    /** @var DonorRepositoryInterface */
-    protected $donorRepository;
-
     /**
-     * @required
+     * @var string
      */
-    public function setDonorRepository(DonorRepositoryInterface $donorRepository): void
+    private $newComment;
+
+    public function __construct(Donor $donor, string $newComment)
     {
-        $this->donorRepository = $donorRepository;
+        parent::__construct(
+            sprintf(
+                "Changed comment on mandate '%s' to '%s'",
+                $donor->getMandateKey(),
+                $newComment
+            ),
+            $donor
+        );
+
+        $this->newComment = $newComment;
+    }
+
+    public function getNewComment(): string
+    {
+        return $this->newComment;
     }
 }

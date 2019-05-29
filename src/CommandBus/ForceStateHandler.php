@@ -23,28 +23,37 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Event\DonorAdded;
-use byrokrat\giroapp\Model\NewDonorProcessor;
+use byrokrat\giroapp\Event\DonorStateUpdated;
+use byrokrat\giroapp\State\StateCollection;
 
-final class AddDonorHandler
+final class ForceStateHandler
 {
     use DependencyInjection\DispatcherProperty,
         DependencyInjection\DonorRepositoryProperty;
 
-    /** @var NewDonorProcessor */
-    private $donorProcessor;
+    /** @var StateCollection */
+    private $stateCollection;
 
-    public function __construct(NewDonorProcessor $donorProcessor)
+    public function __construct(StateCollection $stateCollection)
     {
-        $this->donorProcessor = $donorProcessor;
+        $this->stateCollection = $stateCollection;
     }
 
-    public function handle(AddDonor $command): void
+    public function handle(ForceState $command): void
     {
-        $donor = $this->donorProcessor->processNewDonor($command->getNewDonor());
+        $donor = $command->getDonor();
 
-        $this->donorRepository->addNewDonor($donor);
+        if ($command->getNewStateId() == $donor->getState()->getStateId()) {
+            return;
+        }
 
-        $this->dispatcher->dispatch(DonorAdded::CLASS, new DonorAdded($donor));
+        $newState = $this->stateCollection->getState($command->getNewStateId());
+
+        $this->donorRepository->updateDonorState($donor, $newState);
+
+        $this->dispatcher->dispatch(
+            DonorStateUpdated::CLASS,
+            new DonorStateUpdated($donor, $newState)
+        );
     }
 }

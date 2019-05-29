@@ -24,12 +24,21 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Model\Donor;
 
-final class RemoveDonor
+final class UpdateState
 {
     use Helper\DonorAwareTrait;
 
-    public function __construct(Donor $donor)
+    /** @var string */
+    private $newStateId;
+
+    public function __construct(Donor $donor, string $newStateId)
     {
         $this->setDonor($donor);
+        $this->newStateId = $newStateId;
+    }
+
+    public function getNewStateId(): string
+    {
+        return $this->newStateId;
     }
 }

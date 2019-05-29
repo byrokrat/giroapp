@@ -20,26 +20,31 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\PostalAddress;
 
-/**
- * Force donor to enter state, ignoring validating checks
- */
-class ForceDonorState extends DonorAwareCommand
+final class DonorPostalAddressUpdated extends DonorEvent
 {
-    /** @var string */
-    private $newStateId;
+    /** @var PostalAddress */
+    private $newPostalAddress;
 
-    public function __construct(Donor $donor, string $newStateId)
+    public function __construct(Donor $donor, PostalAddress $newPostalAddress)
     {
-        parent::__construct($donor);
-        $this->newStateId = $newStateId;
+        parent::__construct(
+            sprintf(
+                "Changed postal address on mandate '%s'",
+                $donor->getMandateKey()
+            ),
+            $donor
+        );
+
+        $this->newPostalAddress = $newPostalAddress;
     }
 
-    public function getNewStateId(): string
+    public function getNewPostalAddress(): PostalAddress
     {
-        return $this->newStateId;
+        return $this->newPostalAddress;
     }
 }

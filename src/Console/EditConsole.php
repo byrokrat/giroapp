@@ -22,10 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\Model\PostalAddress;
 use byrokrat\giroapp\Validator;
 use byrokrat\amount\Currency\SEK;
@@ -37,15 +35,12 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class EditConsole implements ConsoleInterface
 {
-    use DependencyInjection\AccountFactoryProperty,
-        DependencyInjection\DispatcherProperty,
-        DependencyInjection\IdFactoryProperty,
-        Helper\DonorArgument;
+    use CommandBusProperty, Helper\DonorArgument;
 
     /**
      * Maps option names to free text descriptions
      */
-    private const DESCRIPTIONS = [
+    private const DESCS = [
         'name' => 'Donor name',
         'amount' => 'Monthly donation amount',
         'address1' => 'Donor address line 1',
@@ -65,7 +60,7 @@ final class EditConsole implements ConsoleInterface
         $command->setDescription('Edit an existing donor');
         $command->setHelp('Edit a donor in the database.');
 
-        foreach (self::DESCRIPTIONS as $option => $desc) {
+        foreach (self::DESCS as $option => $desc) {
             $command->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
         }
 
@@ -86,103 +81,134 @@ final class EditConsole implements ConsoleInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $donor = $this->readDonor($input);
-
-        $descs = self::DESCRIPTIONS;
-
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 
-        $donor->setName(
-            $inputReader->readInput(
-                'name',
-                Helper\QuestionFactory::createQuestion($descs['name'], $donor->getName()),
-                new Validator\ValidatorCollection(
-                    new Validator\StringValidator,
-                    new Validator\NotEmptyValidator
-                )
-            )
-        );
+        $donor = $this->readDonor($input);
 
-        $donor->setDonationAmount(
-            new SEK(
+        $this->commandBus->handle(
+            new CommandBus\UpdateName(
+                $donor,
                 $inputReader->readInput(
-                    'amount',
-                    Helper\QuestionFactory::createQuestion($descs['amount'], $donor->getDonationAmount()->getAmount()),
+                    'name',
+                    Helper\QuestionFactory::createQuestion(self::DESCS['name'], $donor->getName()),
                     new Validator\ValidatorCollection(
-                        new Validator\NotEmptyValidator,
-                        new Validator\NumericValidator
+                        new Validator\StringValidator,
+                        new Validator\NotEmptyValidator
                     )
                 )
             )
         );
 
-        $donor->setPostalAddress(
-            new PostalAddress(
-                $inputReader->readInput(
-                    'address1',
-                    Helper\QuestionFactory::createQuestion($descs['address1'], $donor->getPostalAddress()->getLine1()),
-                    new Validator\StringValidator
-                ),
-                $inputReader->readInput(
-                    'address2',
-                    Helper\QuestionFactory::createQuestion($descs['address2'], $donor->getPostalAddress()->getLine2()),
-                    new Validator\StringValidator
-                ),
-                $inputReader->readInput(
-                    'address3',
-                    Helper\QuestionFactory::createQuestion($descs['address3'], $donor->getPostalAddress()->getLine3()),
-                    new Validator\StringValidator
-                ),
-                $inputReader->readInput(
-                    'postal-code',
-                    Helper\QuestionFactory::createQuestion(
-                        $descs['postal-code'],
-                        $donor->getPostalAddress()->getPostalCode()
+        $this->commandBus->handle(
+            new CommandBus\UpdateDonationAmount(
+                $donor,
+                new SEK(
+                    $inputReader->readInput(
+                        'amount',
+                        Helper\QuestionFactory::createQuestion(
+                            self::DESCS['amount'],
+                            $donor->getDonationAmount()->getAmount()
+                        ),
+                        new Validator\ValidatorCollection(
+                            new Validator\NotEmptyValidator,
+                            new Validator\NumericValidator
+                        )
+                    )
+                )
+            )
+        );
+
+        $this->commandBus->handle(
+            new CommandBus\UpdatePostalAddress(
+                $donor,
+                new PostalAddress(
+                    $inputReader->readInput(
+                        'address1',
+                        Helper\QuestionFactory::createQuestion(
+                            self::DESCS['address1'],
+                            $donor->getPostalAddress()->getLine1()
+                        ),
+                        new Validator\StringValidator
                     ),
-                    new Validator\PostalCodeValidator
-                ),
-                $inputReader->readInput(
-                    'postal-city',
-                    Helper\QuestionFactory::createQuestion(
-                        $descs['postal-city'],
-                        $donor->getPostalAddress()->getPostalCity()
+                    $inputReader->readInput(
+                        'address2',
+                        Helper\QuestionFactory::createQuestion(
+                            self::DESCS['address2'],
+                            $donor->getPostalAddress()->getLine2()
+                        ),
+                        new Validator\StringValidator
                     ),
+                    $inputReader->readInput(
+                        'address3',
+                        Helper\QuestionFactory::createQuestion(
+                            self::DESCS['address3'],
+                            $donor->getPostalAddress()->getLine3()
+                        ),
+                        new Validator\StringValidator
+                    ),
+                    $inputReader->readInput(
+                        'postal-code',
+                        Helper\QuestionFactory::createQuestion(
+                            self::DESCS['postal-code'],
+                            $donor->getPostalAddress()->getPostalCode()
+                        ),
+                        new Validator\PostalCodeValidator
+                    ),
+                    $inputReader->readInput(
+                        'postal-city',
+                        Helper\QuestionFactory::createQuestion(
+                            self::DESCS['postal-city'],
+                            $donor->getPostalAddress()->getPostalCity()
+                        ),
+                        new Validator\StringValidator
+                    )
+                )
+            )
+        );
+
+        $this->commandBus->handle(
+            new CommandBus\UpdateEmail(
+                $donor,
+                $inputReader->readInput(
+                    'email',
+                    Helper\QuestionFactory::createQuestion(self::DESCS['email'], $donor->getEmail()),
+                    new Validator\EmailValidator
+                )
+            )
+        );
+
+        $this->commandBus->handle(
+            new CommandBus\UpdatePhone(
+                $donor,
+                $inputReader->readInput(
+                    'phone',
+                    Helper\QuestionFactory::createQuestion(self::DESCS['phone'], $donor->getPhone()),
+                    new Validator\PhoneValidator
+                )
+            )
+        );
+
+        $this->commandBus->handle(
+            new CommandBus\UpdateComment(
+                $donor,
+                $inputReader->readInput(
+                    'comment',
+                    Helper\QuestionFactory::createQuestion(self::DESCS['comment'], $donor->getComment()),
                     new Validator\StringValidator
                 )
             )
         );
 
-        $donor->setEmail(
-            $inputReader->readInput(
-                'email',
-                Helper\QuestionFactory::createQuestion($descs['email'], $donor->getEmail()),
-                new Validator\EmailValidator
-            )
-        );
-
-        $donor->setPhone(
-            $inputReader->readInput(
-                'phone',
-                Helper\QuestionFactory::createQuestion($descs['phone'], $donor->getPhone()),
-                new Validator\PhoneValidator
-            )
-        );
-
-        $donor->setComment(
-            $inputReader->readInput(
-                'comment',
-                Helper\QuestionFactory::createQuestion($descs['comment'], $donor->getComment()),
-                new Validator\StringValidator
-            )
-        );
-
         foreach ($donor->getAttributes() as $attrKey => $attrValue) {
-            $donor->setAttribute(
-                $attrKey,
-                $inputReader->readInput(
-                    '',
-                    Helper\QuestionFactory::createQuestion("Attribute <info>$attrKey</info>", $attrValue),
-                    new Validator\StringValidator
+            $this->commandBus->handle(
+                new CommandBus\UpdateAttribute(
+                    $donor,
+                    $attrKey,
+                    $inputReader->readInput(
+                        '',
+                        Helper\QuestionFactory::createQuestion("Attribute <info>$attrKey</info>", $attrValue),
+                        new Validator\StringValidator
+                    )
                 )
             );
         }
@@ -204,21 +230,17 @@ final class EditConsole implements ConsoleInterface
                 break;
             }
 
-            $attrValue = $inputReader->readInput(
-                '',
-                Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
-                new Validator\StringValidator
+            $this->commandBus->handle(
+                new CommandBus\UpdateAttribute(
+                    $donor,
+                    $attrKey,
+                    $inputReader->readInput(
+                        '',
+                        Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
+                        new Validator\StringValidator
+                    )
+                )
             );
-
-            $donor->setAttribute($attrKey, $attrValue);
         }
-
-        $this->dispatcher->dispatch(
-            Events::DONOR_UPDATED,
-            new DonorEvent(
-                "Updated mandate <info>{$donor->getMandateKey()}</info>",
-                $donor
-            )
-        );
     }
 }

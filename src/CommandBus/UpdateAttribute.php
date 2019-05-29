@@ -24,12 +24,30 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Model\Donor;
 
-final class RemoveDonor
+final class UpdateAttribute
 {
     use Helper\DonorAwareTrait;
 
-    public function __construct(Donor $donor)
+    /** @var string */
+    private $key;
+
+    /** @var string */
+    private $value;
+
+    public function __construct(Donor $donor, string $key, string $value)
     {
         $this->setDonor($donor);
+        $this->key = $key;
+        $this->value = $value;
+    }
+
+    public function getAttributeKey(): string
+    {
+        return $this->key;
+    }
+
+    public function getAttributeValue(): string
+    {
+        return $this->value;
     }
 }

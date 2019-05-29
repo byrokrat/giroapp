@@ -23,13 +23,23 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Model\PostalAddress;
 
-final class RemoveDonor
+final class UpdatePostalAddress
 {
     use Helper\DonorAwareTrait;
 
-    public function __construct(Donor $donor)
+    /** @var PostalAddress */
+    private $newPostalAddress;
+
+    public function __construct(Donor $donor, PostalAddress $newPostalAddress)
     {
         $this->setDonor($donor);
+        $this->newPostalAddress = $newPostalAddress;
+    }
+
+    public function getNewPostalAddress(): PostalAddress
+    {
+        return $this->newPostalAddress;
     }
 }

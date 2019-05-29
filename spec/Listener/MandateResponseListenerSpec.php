@@ -5,19 +5,18 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Listener;
 
 use byrokrat\giroapp\Listener\MandateResponseListener;
+use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Events;
 use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\States;
 use byrokrat\id\IdInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\autogiro\Tree\Node;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface as Dispatcher;
+use League\Tactician\CommandBus;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -31,10 +30,8 @@ class MandateResponseListenerSpec extends ObjectBehavior
         Node $statusNode,
         Donor $donor,
         DonorQueryInterface $donorQuery,
-        StateCollection $stateCollection,
-        StateInterface $errorState,
-        StateInterface $inactiveState,
-        StateInterface $approvedState
+        CommandBus $commandBus,
+        EventDispatcherInterface $dispatcher
     ) {
         $event->getNode()->willReturn($parentNode);
 
@@ -59,11 +56,9 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $donor->getPayerNumber()->willReturn('');
         $donor->getMandateKey()->willReturn('');
 
-        $stateCollection->getState(States::MANDATE_APPROVED)->willReturn($approvedState);
-        $stateCollection->getState(States::INACTIVE)->willReturn($inactiveState);
-        $stateCollection->getState(States::ERROR)->willReturn($errorState);
-
-        $this->beConstructedWith($donorQuery, $stateCollection);
+        $this->setCommandBus($commandBus);
+        $this->setEventDispatcher($dispatcher);
+        $this->setDonorQuery($donorQuery);
     }
 
     function it_is_initializable()
@@ -75,9 +70,9 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $event,
         $idNode,
         $donor,
+        $dispatcher,
         IdInterface $nodeId,
-        IdInterface $donorId,
-        Dispatcher $disp
+        IdInterface $donorId
     ) {
         $idNode->getValueFrom('Object')->willReturn($nodeId);
         $donor->getDonorId()->willReturn($donorId);
@@ -85,19 +80,19 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $nodeId->format('S-sk')->willReturn('foo');
         $donorId->format('S-sk')->willReturn('NOT-foo');
 
-        $disp->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
 
-        $this->onMandateResponseReceived($event, '', $disp);
+        $this->onMandateResponseReceived($event);
     }
 
     function it_fails_if_node_contains_invalid_account(
         $event,
         $accountNode,
         $donor,
+        $dispatcher,
         AccountNumber $nodeAccount,
-        AccountNumber $donorAccount,
-        Dispatcher $disp
+        AccountNumber $donorAccount
     ) {
         $accountNode->getValueFrom('Object')->willReturn($nodeAccount);
         $donor->getAccount()->willReturn($donorAccount);
@@ -107,40 +102,37 @@ class MandateResponseListenerSpec extends ObjectBehavior
         $nodeAccount->getNumber()->willReturn('');
         $donorAccount->getNumber()->willReturn('');
 
-        $disp->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
 
-        $this->onMandateResponseReceived($event, '', $disp);
+        $this->onMandateResponseReceived($event);
     }
 
-    function it_fails_on_unknown_response_code($event, Dispatcher $disp)
+    function it_fails_on_unknown_response_code($event, $dispatcher)
     {
-        $disp->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Events::WARNING, Argument::type(LogEvent::CLASS))->shouldBeCalled();
         $event->stopPropagation()->shouldBeCalled();
-        $this->onMandateResponseReceived($event, '', $disp);
+        $this->onMandateResponseReceived($event);
     }
 
-    function its_inactive_on_mandate_deleted_response($event, $parentNode, $donor, $inactiveState, Dispatcher $disp)
+    function its_inactive_on_mandate_deleted_response($event, $parentNode, $donor, $commandBus)
     {
         $parentNode->hasChild('DeletedFlag')->willReturn(true);
-        $donor->setState($inactiveState, Argument::type('string'))->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_REVOKED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseReceived($event, '', $disp);
+        $commandBus->handle(new UpdateState($donor->getWrappedObject(), States::INACTIVE))->shouldBeCalled();
+        $this->onMandateResponseReceived($event);
     }
 
-    function its_error_on_error_response($event, $parentNode, $donor, $errorState, Dispatcher $disp)
+    function its_error_on_error_response($event, $parentNode, $donor, $commandBus)
     {
         $parentNode->hasChild('ErrorFlag')->willReturn(true);
-        $donor->setState($errorState, Argument::type('string'))->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_INVALIDATED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseReceived($event, '', $disp);
+        $commandBus->handle(new UpdateState($donor->getWrappedObject(), States::ERROR))->shouldBeCalled();
+        $this->onMandateResponseReceived($event);
     }
 
-    function its_approved_on_created_response($event, $parentNode, $donor, $approvedState, Dispatcher $disp)
+    function its_approved_on_created_response($event, $parentNode, $donor, $commandBus)
     {
         $parentNode->hasChild('CreatedFlag')->willReturn(true);
-        $donor->setState($approvedState, Argument::type('string'))->shouldBeCalled();
-        $disp->dispatch(Events::MANDATE_APPROVED, Argument::type(DonorEvent::CLASS))->shouldBeCalled();
-        $this->onMandateResponseReceived($event, '', $disp);
+        $commandBus->handle(new UpdateState($donor->getWrappedObject(), States::MANDATE_APPROVED))->shouldBeCalled();
+        $this->onMandateResponseReceived($event);
     }
 }

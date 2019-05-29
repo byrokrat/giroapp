@@ -20,27 +20,22 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\CommandBus\Helper;
 
-use byrokrat\giroapp\Exception\InvalidStateTransitionException;
+use byrokrat\giroapp\Model\Donor;
 
-final class ChangeDonorStateHandler
+trait DonorAwareTrait
 {
-    /** @var ForceDonorStateHandler */
-    private $forceHandler;
+    /** @var Donor */
+    private $donor;
 
-    public function __construct(ForceDonorStateHandler $forceHandler)
+    protected function setDonor(Donor $donor): void
     {
-        $this->forceHandler = $forceHandler;
+        $this->donor = $donor;
     }
-    public function handle(ChangeDonorState $command): void
-    {
-        // TODO this is where a state machine should validate transitions
-        // see all places where InvalidStateTransitionException is used
-        // no specs exist at this point. Write when I add the state machine...
 
-        $this->forceHandler->handle(
-            new ForceDonorState($command->getDonor(), $command->getNewStateId())
-        );
+    public function getDonor(): Donor
+    {
+        return $this->donor;
     }
 }

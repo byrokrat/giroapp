@@ -54,7 +54,7 @@ class OutputtingSubscriberSpec extends ObjectBehavior
         $event->getMessage()->willReturn('foobar');
 
         $errout->isVerbose()->willReturn(true);
-        $errout->writeln('DEBUG: foobar')->shouldBeCalled();
+        $errout->writeln('foobar')->shouldBeCalled();
 
         $this->onDebug($event);
     }

@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\CommandBus\ChangeDonorState;
+use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\States;
 use Symfony\Component\Console\Command\Command;
@@ -43,6 +43,6 @@ final class RevokeConsole implements ConsoleInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $this->commandBus->handle(new ChangeDonorState($this->readDonor($input), States::REVOKE_MANDATE));
+        $this->commandBus->handle(new UpdateState($this->readDonor($input), States::REVOKE_MANDATE));
     }
 }

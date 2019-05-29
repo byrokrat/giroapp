@@ -22,11 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorRemoved;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 
-final class RemoveDonorHandler extends DonorRepositoryAwareHandler
+final class RemoveDonorHandler
 {
+    use DependencyInjection\DispatcherProperty,
+        DependencyInjection\DonorRepositoryProperty;
+
     public function handle(RemoveDonor $command): void
     {
         $donor = $command->getDonor();

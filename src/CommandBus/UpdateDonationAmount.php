@@ -23,13 +23,23 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Model\Donor;
+use byrokrat\amount\Currency\SEK;
 
-final class RemoveDonor
+final class UpdateDonationAmount
 {
     use Helper\DonorAwareTrait;
 
-    public function __construct(Donor $donor)
+    /** @var SEK */
+    private $newAmount;
+
+    public function __construct(Donor $donor, SEK $newAmount)
     {
         $this->setDonor($donor);
+        $this->newAmount = $newAmount;
+    }
+
+    public function getNewAmount(): SEK
+    {
+        return $this->newAmount;
     }
 }

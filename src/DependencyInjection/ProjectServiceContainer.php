@@ -67,18 +67,32 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\AutogiroWriterFactory' => true,
             'byrokrat\\giroapp\\CommandBus\\AddDonor' => true,
             'byrokrat\\giroapp\\CommandBus\\AddDonorHandler' => true,
-            'byrokrat\\giroapp\\CommandBus\\ChangeDonorState' => true,
-            'byrokrat\\giroapp\\CommandBus\\ChangeDonorStateHandler' => true,
             'byrokrat\\giroapp\\CommandBus\\Commit' => true,
             'byrokrat\\giroapp\\CommandBus\\CommitHandler' => true,
             'byrokrat\\giroapp\\CommandBus\\Export' => true,
             'byrokrat\\giroapp\\CommandBus\\ExportHandler' => true,
-            'byrokrat\\giroapp\\CommandBus\\ForceDonorState' => true,
-            'byrokrat\\giroapp\\CommandBus\\ForceDonorStateHandler' => true,
+            'byrokrat\\giroapp\\CommandBus\\ForceState' => true,
+            'byrokrat\\giroapp\\CommandBus\\ForceStateHandler' => true,
             'byrokrat\\giroapp\\CommandBus\\RemoveDonor' => true,
             'byrokrat\\giroapp\\CommandBus\\RemoveDonorHandler' => true,
             'byrokrat\\giroapp\\CommandBus\\Rollback' => true,
             'byrokrat\\giroapp\\CommandBus\\RollbackHandler' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateAttribute' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateAttributeHandler' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateComment' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateCommentHandler' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateDonationAmount' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateDonationAmountHandler' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateEmail' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateEmailHandler' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateName' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateNameHandler' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdatePhone' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdatePhoneHandler' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdatePostalAddress' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdatePostalAddressHandler' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateState' => true,
+            'byrokrat\\giroapp\\CommandBus\\UpdateStateHandler' => true,
             'byrokrat\\giroapp\\Config\\ArrayRepository' => true,
             'byrokrat\\giroapp\\Config\\BaseDirReader' => true,
             'byrokrat\\giroapp\\Config\\ConfigManager' => true,
@@ -116,9 +130,16 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Event\\ChangesCommitted' => true,
             'byrokrat\\giroapp\\Event\\ChangesDiscarded' => true,
             'byrokrat\\giroapp\\Event\\DonorAdded' => true,
+            'byrokrat\\giroapp\\Event\\DonorAmountUpdated' => true,
+            'byrokrat\\giroapp\\Event\\DonorAttributeUpdated' => true,
+            'byrokrat\\giroapp\\Event\\DonorCommentUpdated' => true,
+            'byrokrat\\giroapp\\Event\\DonorEmailUpdated' => true,
             'byrokrat\\giroapp\\Event\\DonorEvent' => true,
+            'byrokrat\\giroapp\\Event\\DonorNameUpdated' => true,
+            'byrokrat\\giroapp\\Event\\DonorPhoneUpdated' => true,
+            'byrokrat\\giroapp\\Event\\DonorPostalAddressUpdated' => true,
             'byrokrat\\giroapp\\Event\\DonorRemoved' => true,
-            'byrokrat\\giroapp\\Event\\DonorStateChanged' => true,
+            'byrokrat\\giroapp\\Event\\DonorStateUpdated' => true,
             'byrokrat\\giroapp\\Event\\ExportGenerated' => true,
             'byrokrat\\giroapp\\Event\\FileEvent' => true,
             'byrokrat\\giroapp\\Event\\LogEvent' => true,
@@ -162,7 +183,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Formatter\\JsonFormatter' => true,
             'byrokrat\\giroapp\\Formatter\\ListFormatter' => true,
             'byrokrat\\giroapp\\Listener\\AutogiroImportingListener' => true,
-            'byrokrat\\giroapp\\Listener\\DonorPersistingListener' => true,
             'byrokrat\\giroapp\\Listener\\FileImportingListener' => true,
             'byrokrat\\giroapp\\Listener\\ImportHistoryListener' => true,
             'byrokrat\\giroapp\\Listener\\LoggingListener' => true,
@@ -269,49 +289,43 @@ class ProjectServiceContainer extends Container
         $h = ($this->privates['League\Tactician\CommandBus'] ?? $this->getCommandBusService());
         $i = ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService());
         $j = new \byrokrat\giroapp\Console\AddConsole();
-
-        $k = ($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? ($this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory()));
-        $l = ($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService());
-
-        $j->setAccountFactory($k);
+        $j->setAccountFactory(($this->privates['byrokrat\banking\AccountFactoryInterface'] ?? ($this->privates['byrokrat\banking\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())));
         $j->setCommandBus($h);
-        $j->setIdFactory($l);
-        $m = new \byrokrat\giroapp\Console\EditConsole();
-        $m->setAccountFactory($k);
-        $m->setEventDispatcher($i);
-        $m->setIdFactory($l);
-        $m->setDonorQuery($b);
-        $n = new \byrokrat\giroapp\Console\EditStateConsole($f);
-        $n->setCommandBus($h);
-        $n->setDonorQuery($b);
-        $o = new \byrokrat\giroapp\Console\ExportConsole();
-        $o->setCommandBus($h);
-        $p = new \byrokrat\giroapp\Console\ImportConsole(($this->privates['fs_cwd'] ?? $this->getFsCwdService()));
-        $p->setEventDispatcher($i);
-        $q = new \byrokrat\giroapp\Console\LsConsole($c, $d, $e);
+        $j->setIdFactory(($this->privates['byrokrat\id\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()));
+        $k = new \byrokrat\giroapp\Console\EditConsole();
+        $k->setCommandBus($h);
+        $k->setDonorQuery($b);
+        $l = new \byrokrat\giroapp\Console\EditStateConsole($f);
+        $l->setCommandBus($h);
+        $l->setDonorQuery($b);
+        $m = new \byrokrat\giroapp\Console\ExportConsole();
+        $m->setCommandBus($h);
+        $n = new \byrokrat\giroapp\Console\ImportConsole(($this->privates['fs_cwd'] ?? $this->getFsCwdService()));
+        $n->setEventDispatcher($i);
+        $o = new \byrokrat\giroapp\Console\LsConsole($c, $d, $e);
+        $o->setDonorQuery($b);
+        $p = new \byrokrat\giroapp\Console\PauseConsole();
+        $p->setCommandBus($h);
+        $p->setDonorQuery($b);
+        $q = new \byrokrat\giroapp\Console\PurgeConsole();
+        $q->setCommandBus($h);
         $q->setDonorQuery($b);
-        $r = new \byrokrat\giroapp\Console\PauseConsole();
+        $r = new \byrokrat\giroapp\Console\RemoveConsole();
         $r->setCommandBus($h);
         $r->setDonorQuery($b);
-        $s = new \byrokrat\giroapp\Console\PurgeConsole();
+        $s = new \byrokrat\giroapp\Console\RevokeConsole();
         $s->setCommandBus($h);
         $s->setDonorQuery($b);
-        $t = new \byrokrat\giroapp\Console\RemoveConsole();
-        $t->setCommandBus($h);
+        $t = new \byrokrat\giroapp\Console\ShowConsole($d);
         $t->setDonorQuery($b);
-        $u = new \byrokrat\giroapp\Console\RevokeConsole();
-        $u->setCommandBus($h);
+        $u = new \byrokrat\giroapp\Console\StatusConsole();
         $u->setDonorQuery($b);
-        $v = new \byrokrat\giroapp\Console\ShowConsole($d);
-        $v->setDonorQuery($b);
-        $w = new \byrokrat\giroapp\Console\StatusConsole();
-        $w->setDonorQuery($b);
-        $x = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("plugins_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
-        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'])))->createFiles($x);
+        $v = new \byrokrat\giroapp\Filesystem\StdFilesystem(($this->services['ini'] ?? $this->getIniService())->getConfigValue("plugins_dir"), ($this->privates['Symfony\Component\Filesystem\Filesystem'] ?? ($this->privates['Symfony\Component\Filesystem\Filesystem'] = new \Symfony\Component\Filesystem\Filesystem())));
+        ($this->privates['setup_mkdir'] ?? ($this->privates['setup_mkdir'] = new \byrokrat\giroapp\Filesystem\FilesystemConfigurator([0 => '.'])))->createFiles($v);
 
         $g->setCommandBus($h);
         $g->setEventDispatcher($i);
-        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\CorePlugin($j, $m, $n, $o, $p, $q, $r, $s, $t, $u, $v, $w, new \byrokrat\giroapp\Db\Json\JsonDriverFactory(), new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\InactiveFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\PurgeableFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), new \byrokrat\giroapp\Formatter\CsvFormatter(), new \byrokrat\giroapp\Formatter\HumanFormatter(), new \byrokrat\giroapp\Formatter\JsonFormatter(), new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter(), new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? ($this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_day_of_month"), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState(), new \byrokrat\giroapp\State\PauseMandateState(), new \byrokrat\giroapp\State\PauseSentState(), new \byrokrat\giroapp\State\PausedState()), new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($x)))->loadPlugin($g);
+        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\CorePlugin($j, $k, $l, $m, $n, $o, $p, $q, $r, $s, $t, $u, new \byrokrat\giroapp\Db\Json\JsonDriverFactory(), new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\InactiveFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\PurgeableFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), new \byrokrat\giroapp\Formatter\CsvFormatter(), new \byrokrat\giroapp\Formatter\HumanFormatter(), new \byrokrat\giroapp\Formatter\JsonFormatter(), new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter(), new \byrokrat\giroapp\State\ActiveState(), new \byrokrat\giroapp\State\ErrorState(), new \byrokrat\giroapp\State\InactiveState(), new \byrokrat\giroapp\State\NewMandateState(), new \byrokrat\giroapp\State\NewDigitalMandateState(), new \byrokrat\giroapp\State\MandateSentState(), new \byrokrat\giroapp\State\MandateApprovedState(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? ($this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_day_of_month"), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandateState(), new \byrokrat\giroapp\State\RevocationSentState(), new \byrokrat\giroapp\State\PauseMandateState(), new \byrokrat\giroapp\State\PauseSentState(), new \byrokrat\giroapp\State\PausedState()), new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($v)))->loadPlugin($g);
 
         $g->configureApplication($instance);
 
@@ -365,31 +379,51 @@ class ProjectServiceContainer extends Container
 
         $b = new \byrokrat\giroapp\CommandBus\AddDonorHandler(new \byrokrat\giroapp\Model\NewDonorProcessor($a, ($this->privates['byrokrat\giroapp\Utils\SystemClock'] ?? ($this->privates['byrokrat\giroapp\Utils\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()))));
 
-        $c = ($this->privates['byrokrat\giroapp\Db\DonorRepositoryInterface'] ?? $this->getDonorRepositoryInterfaceService());
-        $d = ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService());
+        $c = ($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService());
+        $d = ($this->privates['byrokrat\giroapp\Db\DonorRepositoryInterface'] ?? $this->getDonorRepositoryInterfaceService());
 
-        $b->setDonorRepository($c);
-        $b->setEventDispatcher($d);
-        $e = new \byrokrat\giroapp\CommandBus\ForceDonorStateHandler($a);
-        $e->setDonorRepository($c);
-        $e->setEventDispatcher($d);
+        $b->setEventDispatcher($c);
+        $b->setDonorRepository($d);
+        $e = new \byrokrat\giroapp\CommandBus\ForceStateHandler($a);
+        $e->setEventDispatcher($c);
+        $e->setDonorRepository($d);
         $f = ($this->privates['byrokrat\giroapp\Db\DriverInterface'] ?? $this->getDriverInterfaceService());
 
         $g = new \byrokrat\giroapp\CommandBus\CommitHandler($f);
-        $g->setEventDispatcher($d);
+        $g->setEventDispatcher($c);
         $h = new \byrokrat\giroapp\CommandBus\ExportHandler((new \byrokrat\giroapp\AutogiroWriterFactory(new \byrokrat\autogiro\Writer\WriterFactory()))->createWriter(($this->services['ini'] ?? $this->getIniService())->getConfig("org_bgc_nr"), ($this->privates['organization_bg'] ?? $this->getOrganizationBgService())));
 
         $i = new \byrokrat\giroapp\CommandBus\RemoveDonorHandler();
-        $i->setDonorRepository($c);
-        $i->setEventDispatcher($d);
+        $i->setEventDispatcher($c);
+        $i->setDonorRepository($d);
         $j = new \byrokrat\giroapp\CommandBus\RollbackHandler($f);
-        $j->setEventDispatcher($d);
+        $j->setEventDispatcher($c);
+        $k = new \byrokrat\giroapp\CommandBus\UpdateAttributeHandler();
+        $k->setEventDispatcher($c);
+        $k->setDonorRepository($d);
+        $l = new \byrokrat\giroapp\CommandBus\UpdateCommentHandler();
+        $l->setEventDispatcher($c);
+        $l->setDonorRepository($d);
+        $m = new \byrokrat\giroapp\CommandBus\UpdateDonationAmountHandler();
+        $m->setEventDispatcher($c);
+        $m->setDonorRepository($d);
+        $n = new \byrokrat\giroapp\CommandBus\UpdateEmailHandler();
+        $n->setEventDispatcher($c);
+        $n->setDonorRepository($d);
+        $o = new \byrokrat\giroapp\CommandBus\UpdateNameHandler();
+        $o->setEventDispatcher($c);
+        $o->setDonorRepository($d);
+        $p = new \byrokrat\giroapp\CommandBus\UpdatePhoneHandler();
+        $p->setEventDispatcher($c);
+        $p->setDonorRepository($d);
+        $q = new \byrokrat\giroapp\CommandBus\UpdatePostalAddressHandler();
+        $q->setEventDispatcher($c);
+        $q->setDonorRepository($d);
 
-        $this->privates['League\Tactician\CommandBus'] = $instance = (new \League\Tactician\Setup\QuickStart())->create(['byrokrat\\giroapp\\CommandBus\\AddDonor' => $b, 'byrokrat\\giroapp\\CommandBus\\ChangeDonorState' => new \byrokrat\giroapp\CommandBus\ChangeDonorStateHandler($e), 'byrokrat\\giroapp\\CommandBus\\Commit' => $g, 'byrokrat\\giroapp\\CommandBus\\Export' => $h, 'byrokrat\\giroapp\\CommandBus\\ForceDonorState' => $e, 'byrokrat\\giroapp\\CommandBus\\RemoveDonor' => $i, 'byrokrat\\giroapp\\CommandBus\\Rollback' => $j]);
+        $this->privates['League\Tactician\CommandBus'] = $instance = (new \League\Tactician\Setup\QuickStart())->create(['byrokrat\\giroapp\\CommandBus\\AddDonor' => $b, 'byrokrat\\giroapp\\CommandBus\\UpdateState' => new \byrokrat\giroapp\CommandBus\UpdateStateHandler($e), 'byrokrat\\giroapp\\CommandBus\\Commit' => $g, 'byrokrat\\giroapp\\CommandBus\\Export' => $h, 'byrokrat\\giroapp\\CommandBus\\ForceState' => $e, 'byrokrat\\giroapp\\CommandBus\\RemoveDonor' => $i, 'byrokrat\\giroapp\\CommandBus\\Rollback' => $j, 'byrokrat\\giroapp\\CommandBus\\UpdateAttribute' => $k, 'byrokrat\\giroapp\\CommandBus\\UpdateComment' => $l, 'byrokrat\\giroapp\\CommandBus\\UpdateDonationAmount' => $m, 'byrokrat\\giroapp\\CommandBus\\UpdateEmail' => $n, 'byrokrat\\giroapp\\CommandBus\\UpdateName' => $o, 'byrokrat\\giroapp\\CommandBus\\UpdatePhone' => $p, 'byrokrat\\giroapp\\CommandBus\\UpdatePostalAddress' => $q]);
 
-        $h->setDonorRepository($c);
-        $h->setEventDispatcher($d);
         $h->setCommandBus($instance);
+        $h->setEventDispatcher($c);
         $h->setDonorQuery(($this->services['byrokrat\giroapp\Db\DonorQueryInterface'] ?? $this->getDonorQueryInterfaceService()));
 
         return $instance;
@@ -422,24 +456,33 @@ class ProjectServiceContainer extends Container
         $instance->addListener('byrokrat\\giroapp\\Event\\DonorAdded', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
         }, 1 => 'dispatchInfo'], 10);
-        $instance->addListener('DONOR_UPDATED', [0 => function () {
+        $instance->addListener('byrokrat\\giroapp\\Event\\DonorAmountUpdated', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
         }, 1 => 'dispatchInfo'], 10);
-        $instance->addListener('MANDATE_APPROVED', [0 => function () {
+        $instance->addListener('byrokrat\\giroapp\\Event\\DonorAttributeUpdated', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
         }, 1 => 'dispatchInfo'], 10);
-        $instance->addListener('MANDATE_REVOKED', [0 => function () {
+        $instance->addListener('byrokrat\\giroapp\\Event\\DonorCommentUpdated', [0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('byrokrat\\giroapp\\Event\\DonorEmailUpdated', [0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('byrokrat\\giroapp\\Event\\DonorNameUpdated', [0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('byrokrat\\giroapp\\Event\\DonorPhoneUpdated', [0 => function () {
+            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
+        }, 1 => 'dispatchInfo'], 10);
+        $instance->addListener('byrokrat\\giroapp\\Event\\DonorPostalAddressUpdated', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
         }, 1 => 'dispatchInfo'], 10);
         $instance->addListener('byrokrat\\giroapp\\Event\\DonorRemoved', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
         }, 1 => 'dispatchInfo'], 10);
-        $instance->addListener('byrokrat\\giroapp\\Event\\DonorStateChanged', [0 => function () {
+        $instance->addListener('byrokrat\\giroapp\\Event\\DonorStateUpdated', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
         }, 1 => 'dispatchInfo'], 10);
-        $instance->addListener('MANDATE_INVALIDATED', [0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
-        }, 1 => 'dispatchWarning'], 10);
         $instance->addListener('byrokrat\\giroapp\\Event\\ChangesCommitted', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] ?? ($this->privates['byrokrat\giroapp\Listener\MonitoringListener'] = new \byrokrat\giroapp\Listener\MonitoringListener()));
         }, 1 => 'dispatchDebug'], 10);
@@ -491,18 +534,6 @@ class ProjectServiceContainer extends Container
         $instance->addListener('MANDATE_RESPONSE_RECEIVED', [0 => function () {
             return ($this->privates['byrokrat\giroapp\Listener\MandateResponseListener'] ?? $this->getMandateResponseListenerService());
         }, 1 => 'onMANDATERESPONSERECEIVED']);
-        $instance->addListener('DONOR_UPDATED', [0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated']);
-        $instance->addListener('MANDATE_APPROVED', [0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated']);
-        $instance->addListener('MANDATE_REVOKED', [0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated']);
-        $instance->addListener('MANDATE_INVALIDATED', [0 => function () {
-            return ($this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] ?? $this->getDonorPersistingListenerService());
-        }, 1 => 'onDonorUpdated']);
 
         return $instance;
     }
@@ -617,16 +648,6 @@ class ProjectServiceContainer extends Container
     }
 
     /**
-     * Gets the private 'byrokrat\giroapp\Listener\DonorPersistingListener' shared autowired service.
-     *
-     * @return \byrokrat\giroapp\Listener\DonorPersistingListener
-     */
-    protected function getDonorPersistingListenerService()
-    {
-        return $this->privates['byrokrat\giroapp\Listener\DonorPersistingListener'] = new \byrokrat\giroapp\Listener\DonorPersistingListener(($this->privates['byrokrat\giroapp\Db\DonorRepositoryInterface'] ?? $this->getDonorRepositoryInterfaceService()));
-    }
-
-    /**
      * Gets the private 'byrokrat\giroapp\Listener\ImportHistoryListener' shared autowired service.
      *
      * @return \byrokrat\giroapp\Listener\ImportHistoryListener
@@ -657,7 +678,13 @@ class ProjectServiceContainer extends Container
      */
     protected function getMandateResponseListenerService()
     {
-        return $this->privates['byrokrat\giroapp\Listener\MandateResponseListener'] = new \byrokrat\giroapp\Listener\MandateResponseListener(($this->services['byrokrat\giroapp\Db\DonorQueryInterface'] ?? $this->getDonorQueryInterfaceService()), ($this->privates['byrokrat\giroapp\State\StateCollection'] ?? ($this->privates['byrokrat\giroapp\State\StateCollection'] = new \byrokrat\giroapp\State\StateCollection())));
+        $this->privates['byrokrat\giroapp\Listener\MandateResponseListener'] = $instance = new \byrokrat\giroapp\Listener\MandateResponseListener();
+
+        $instance->setCommandBus(($this->privates['League\Tactician\CommandBus'] ?? $this->getCommandBusService()));
+        $instance->setEventDispatcher(($this->privates['Symfony\Component\EventDispatcher\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
+        $instance->setDonorQuery(($this->services['byrokrat\giroapp\Db\DonorQueryInterface'] ?? $this->getDonorQueryInterfaceService()));
+
+        return $instance;
     }
 
     /**

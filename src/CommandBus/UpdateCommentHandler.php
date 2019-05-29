@@ -22,14 +22,27 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\DependencyInjection;
+use byrokrat\giroapp\Event\DonorCommentUpdated;
 
-final class RemoveDonor
+final class UpdateCommentHandler
 {
-    use Helper\DonorAwareTrait;
+    use DependencyInjection\DispatcherProperty,
+        DependencyInjection\DonorRepositoryProperty;
 
-    public function __construct(Donor $donor)
+    public function handle(UpdateComment $command): void
     {
-        $this->setDonor($donor);
+        $donor = $command->getDonor();
+
+        if ($command->getNewComment() == $donor->getComment()) {
+            return;
+        }
+
+        $this->donorRepository->updateDonorComment($donor, $command->getNewComment());
+
+        $this->dispatcher->dispatch(
+            DonorCommentUpdated::CLASS,
+            new DonorCommentUpdated($donor, $command->getNewComment())
+        );
     }
 }

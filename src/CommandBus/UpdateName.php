@@ -23,21 +23,22 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\StateInterface;
 
-final class ChangeDonorState extends DonorAwareCommand
+final class UpdateName
 {
-    /** @var string */
-    private $newStateId;
+    use Helper\DonorAwareTrait;
 
-    public function __construct(Donor $donor, string $newStateId)
+    /** @var string */
+    private $name;
+
+    public function __construct(Donor $donor, string $name)
     {
-        parent::__construct($donor);
-        $this->newStateId = $newStateId;
+        $this->setDonor($donor);
+        $this->name = $name;
     }
 
-    public function getNewStateId(): string
+    public function getNewName(): string
     {
-        return $this->newStateId;
+        return $this->name;
     }
 }

@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\CommandBus\ChangeDonorState;
+use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\States;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
@@ -53,7 +53,7 @@ final class PauseConsole implements ConsoleInterface
                 throw new InvalidStateTransitionException('Unable to restart donor that is not paused.');
             }
 
-            $this->commandBus->handle(new ChangeDonorState($donor, States::MANDATE_APPROVED));
+            $this->commandBus->handle(new UpdateState($donor, States::MANDATE_APPROVED));
 
             return;
         }
@@ -62,6 +62,6 @@ final class PauseConsole implements ConsoleInterface
             throw new InvalidStateTransitionException('Unable to pause non active donor.');
         }
 
-        $this->commandBus->handle(new ChangeDonorState($donor, States::PAUSE_MANDATE));
+        $this->commandBus->handle(new UpdateState($donor, States::PAUSE_MANDATE));
     }
 }

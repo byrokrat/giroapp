@@ -23,28 +23,28 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Event\DonorAdded;
-use byrokrat\giroapp\Model\NewDonorProcessor;
+use byrokrat\giroapp\Event\DonorAttributeUpdated;
 
-final class AddDonorHandler
+final class UpdateAttributeHandler
 {
     use DependencyInjection\DispatcherProperty,
         DependencyInjection\DonorRepositoryProperty;
 
-    /** @var NewDonorProcessor */
-    private $donorProcessor;
-
-    public function __construct(NewDonorProcessor $donorProcessor)
+    public function handle(UpdateAttribute $command): void
     {
-        $this->donorProcessor = $donorProcessor;
-    }
+        $donor = $command->getDonor();
 
-    public function handle(AddDonor $command): void
-    {
-        $donor = $this->donorProcessor->processNewDonor($command->getNewDonor());
+        if ($donor->hasAttribute($command->getAttributeKey())
+            && $command->getAttributeValue() == $donor->getAttribute($command->getAttributeKey())
+        ) {
+            return;
+        }
 
-        $this->donorRepository->addNewDonor($donor);
+        $this->donorRepository->setDonorAttribute($donor, $command->getAttributeKey(), $command->getAttributeValue());
 
-        $this->dispatcher->dispatch(DonorAdded::CLASS, new DonorAdded($donor));
+        $this->dispatcher->dispatch(
+            DonorAttributeUpdated::CLASS,
+            new DonorAttributeUpdated($donor, $command->getAttributeKey(), $command->getAttributeValue())
+        );
     }
 }

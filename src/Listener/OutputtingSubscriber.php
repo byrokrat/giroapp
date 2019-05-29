@@ -70,7 +70,7 @@ final class OutputtingSubscriber implements EventSubscriberInterface
     public function onDebug(LogEvent $event): void
     {
         if ($this->errout->isVerbose()) {
-            $this->errout->writeln('DEBUG: ' . $event->getMessage());
+            $this->errout->writeln($event->getMessage());
         }
     }
 }

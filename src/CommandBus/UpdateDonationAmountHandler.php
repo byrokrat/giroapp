@@ -22,14 +22,27 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\DependencyInjection;
+use byrokrat\giroapp\Event\DonorAmountUpdated;
 
-final class RemoveDonor
+final class UpdateDonationAmountHandler
 {
-    use Helper\DonorAwareTrait;
+    use DependencyInjection\DispatcherProperty,
+        DependencyInjection\DonorRepositoryProperty;
 
-    public function __construct(Donor $donor)
+    public function handle(UpdateDonationAmount $command): void
     {
-        $this->setDonor($donor);
+        $donor = $command->getDonor();
+
+        if ($donor->getDonationAmount()->equals($command->getNewAmount())) {
+            return;
+        }
+
+        $this->donorRepository->updateDonorAmount($donor, $command->getNewAmount());
+
+        $this->dispatcher->dispatch(
+            DonorAmountUpdated::CLASS,
+            new DonorAmountUpdated($donor, $command->getNewAmount())
+        );
     }
 }

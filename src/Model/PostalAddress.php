@@ -90,4 +90,14 @@ class PostalAddress
     {
         return $this->postalCity;
     }
+
+    public function __toString(): string
+    {
+        return implode(PHP_EOL, array_filter([
+            $this->getLine1(),
+            $this->getLine2(),
+            $this->getLine3(),
+            "{$this->getPostalCode()} {$this->getPostalCity()}"
+        ]));
+    }
 }

@@ -20,16 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\DependencyInjection;
 
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Db\DonorRepositoryInterface;
 
-final class RemoveDonor
+/**
+ * Use this trait to automatically inject a donor repository object
+ */
+trait DonorRepositoryProperty
 {
-    use Helper\DonorAwareTrait;
+    /**
+     * @var DonorRepositoryInterface
+     */
+    protected $donorRepository;
 
-    public function __construct(Donor $donor)
+    /**
+     * @required
+     */
+    public function setDonorRepository(DonorRepositoryInterface $donorRepository): void
     {
-        $this->setDonor($donor);
+        $this->donorRepository = $donorRepository;
     }
 }
