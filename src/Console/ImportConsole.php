@@ -22,33 +22,29 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\CommandBus\ImportAutogiroFile;
+use byrokrat\giroapp\CommandBus\ImportXmlFile;
+use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
+use byrokrat\giroapp\Xml\XmlObject;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Streamer\Stream;
 
 final class ImportConsole implements ConsoleInterface
 {
-    use DispatcherProperty;
+    use CommandBusProperty;
 
     /** @var FilesystemInterface */
     private $filesystem;
 
-    /** @var Stream */
-    private $stdin;
-
-    public function __construct(FilesystemInterface $filesystem, Stream $stdin = null)
+    public function __construct(FilesystemInterface $filesystem)
     {
         $this->filesystem = $filesystem;
-        $this->stdin = $stdin ?: new Stream(STDIN);
     }
 
     public function configure(Command $command): void
@@ -62,45 +58,36 @@ final class ImportConsole implements ConsoleInterface
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
                 'One or more paths to import'
             )
-            ->addOption(
-                'force',
-                'f',
-                InputOption::VALUE_NONE,
-                'Force import even if a precondition fails'
-            )
         ;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $force = !!$input->getOption('force');
-
         $paths = (array)$input->getArgument('path');
 
-        if (empty($paths)) {
-            $this->importFile(new Sha256File('STDIN', $this->stdin->getContent()), $force);
+        if (empty($paths) && defined('STDIN')) {
+            $this->importFile(new Sha256File('STDIN', (new Stream(STDIN))->getContent()));
         }
 
         foreach ($paths as $path) {
             if ($this->filesystem->isFile($path)) {
-                $this->importFile($this->filesystem->readFile($path), $force);
+                $this->importFile($this->filesystem->readFile($path));
                 continue;
             }
 
             foreach ($this->filesystem->readDir($path) as $file) {
-                $this->importFile($file, $force);
+                $this->importFile($file);
             }
         }
     }
 
-    private function importFile(FileInterface $file, bool $force): void
+    private function importFile(FileInterface $file): void
     {
-        $this->dispatcher->dispatch(
-            $force ? Events::FILE_FORCEFULLY_IMPORTED : Events::FILE_IMPORTED,
-            new FileEvent(
-                "Importing file <info>{$file->getFilename()}</info>",
-                $file
-            )
-        );
+        if ($xml = XmlObject::fromString($file->getContent())) {
+            $this->commandBus->handle(new ImportXmlFile($file, $xml));
+            return;
+        }
+
+        $this->commandBus->handle(new ImportAutogiroFile($file));
     }
 }

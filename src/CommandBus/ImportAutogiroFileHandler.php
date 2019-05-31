@@ -20,27 +20,23 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\CommandBus;
 
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\AutogiroVisitor;
-use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
+use byrokrat\giroapp\Event\AutogiroFileImported;
+use byrokrat\giroapp\Exception\UnknownFileException;
 use byrokrat\autogiro\Parser\ParserInterface;
 use byrokrat\autogiro\Exception as AutogiroException;
 
-/**
- * Listener that parses autogiro files
- */
-class AutogiroImportingListener
+final class ImportAutogiroFileHandler
 {
-    /**
-     * @var ParserInterface
-     */
+    use DispatcherProperty;
+
+    /** @var ParserInterface */
     private $parser;
 
-    /**
-     * @var AutogiroVisitor
-     */
+    /** @var AutogiroVisitor */
     private $visitor;
 
     public function __construct(ParserInterface $parser, AutogiroVisitor $visitor)
@@ -49,12 +45,16 @@ class AutogiroImportingListener
         $this->visitor = $visitor;
     }
 
-    public function onAutogiroFileImported(FileEvent $event): void
+    public function handle(ImportAutogiroFile $command): void
     {
         try {
-            $this->parser->parse($event->getFile()->getContent())->accept($this->visitor);
+            $this->parser->parse($command->getFile()->getContent())->accept($this->visitor);
         } catch (AutogiroException $e) {
-            throw new InvalidAutogiroFileException("Invalid autogiro file: {$e->getMessage()}");
+            throw new UnknownFileException(
+                "Unable to import '{$command->getFile()->getFilename()}', unknown file type."
+            );
         }
+
+        $this->dispatcher->dispatch(AutogiroFileImported::CLASS, new AutogiroFileImported($command->getFile()));
     }
 }

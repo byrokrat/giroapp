@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\CommandBus\CommandBusInterface;
 use byrokrat\giroapp\CommandBus\Commit;
 use byrokrat\giroapp\CommandBus\Rollback;
 use byrokrat\giroapp\Event\ExecutionStarted;
@@ -29,7 +30,6 @@ use byrokrat\giroapp\Event\ExecutionStopped;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Exception as GiroappException;
 use byrokrat\giroapp\Listener\OutputtingSubscriber;
-use League\Tactician\CommandBus;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,7 +42,7 @@ final class SymfonyCommandAdapter extends Command
     /** @var ConsoleInterface */
     private $console;
 
-    /** @var CommandBus */
+    /** @var CommandBusInterface */
     private $commandBus;
 
     /** @var EventDispatcherInterface */
@@ -50,7 +50,7 @@ final class SymfonyCommandAdapter extends Command
 
     public function __construct(
         ConsoleInterface $console,
-        CommandBus $commandBus,
+        CommandBusInterface $commandBus,
         EventDispatcherInterface $dispatcher
     ) {
         $this->console = $console;

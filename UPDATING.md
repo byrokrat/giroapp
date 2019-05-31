@@ -31,3 +31,4 @@
 * Replaced `edit xxx --state=foo` with `edit-state xxx --new-state=foo`
 * Removed `purge` command. Use `remove -all` instead.
 * Removed the `state_desc` database field.
+* Added a propper service layer (see docs/service_layer.md)

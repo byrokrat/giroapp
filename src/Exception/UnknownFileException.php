@@ -18,32 +18,14 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp;
+namespace byrokrat\giroapp\Exception;
 
-interface Events
+use byrokrat\giroapp\Exception as GiroappException;
+
+/**
+ * Exception thrown when a file type is unknown
+ */
+final class UnknownFileException extends \RuntimeException implements GiroappException
 {
-    /**
-     * A file imported, expects an FileEvent
-     */
-    const FILE_IMPORTED = 'FILE_IMPORTED';
-
-    /**
-     * A file forcefully imported, expects an FileEvent
-     */
-    const FILE_FORCEFULLY_IMPORTED = 'FILE_FORCEFULLY_IMPORTED';
-
-    /**
-     * An autogiro file imported, expects an FileEvent
-     */
-    const AUTOGIRO_FILE_IMPORTED = 'AUTOGIRO_FILE_IMPORTED';
-
-    /**
-     * An XML file imported, expects an XmlEvent
-     */
-    const XML_FILE_IMPORTED = 'XML_FILE_IMPORTED';
-
-    /**
-     * A mandate response received from bank, expects a NodeEvent
-     */
-    const MANDATE_RESPONSE_RECEIVED = 'MANDATE_RESPONSE_RECEIVED';
+    use ErrorCodeTrait;
 }

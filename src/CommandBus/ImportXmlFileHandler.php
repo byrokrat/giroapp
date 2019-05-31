@@ -22,38 +22,30 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
+use byrokrat\giroapp\CommandBus\AddDonor;
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Event\DonorStateUpdated;
-use byrokrat\giroapp\State\StateCollection;
+use byrokrat\giroapp\Event\XmlFileImported;
+use byrokrat\giroapp\Xml\XmlMandateParser;
 
-final class ForceStateHandler
+final class ImportXmlFileHandler
 {
-    use DependencyInjection\DispatcherProperty,
-        DependencyInjection\DonorRepositoryProperty;
+    use DependencyInjection\CommandBusProperty,
+        DependencyInjection\DispatcherProperty;
 
-    /** @var StateCollection */
-    private $stateCollection;
+    /** @var XmlMandateParser */
+    private $parser;
 
-    public function __construct(StateCollection $stateCollection)
+    public function __construct(XmlMandateParser $parser)
     {
-        $this->stateCollection = $stateCollection;
+        $this->parser = $parser;
     }
 
-    public function handle(ForceState $command): void
+    public function handle(ImportXmlFile $command): void
     {
-        $donor = $command->getDonor();
-
-        $newState = $this->stateCollection->getState($command->getNewStateId());
-
-        if ($newState->getStateId() == $donor->getState()->getStateId()) {
-            return;
+        foreach ($this->parser->parse($command->getXmlObject()) as $newDonor) {
+            $this->commandBus->handle(new AddDonor($newDonor));
         }
 
-        $this->donorRepository->updateDonorState($donor, $newState);
-
-        $this->dispatcher->dispatch(
-            DonorStateUpdated::CLASS,
-            new DonorStateUpdated($donor, $newState)
-        );
+        $this->dispatcher->dispatch(XmlFileImported::CLASS, new XmlFileImported($command->getFile()));
     }
 }

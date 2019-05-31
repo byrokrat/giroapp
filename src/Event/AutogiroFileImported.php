@@ -20,23 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DependencyInjection;
+namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\CommandBus\CommandBusInterface;
+use byrokrat\giroapp\Filesystem\FileInterface;
 
-/**
- * Use this trait to automatically inject the command bus
- */
-trait CommandBusProperty
+final class AutogiroFileImported extends FileEvent
 {
-    /** @var CommandBusInterface */
-    protected $commandBus;
-
-    /**
-     * @required
-     */
-    public function setCommandBus(CommandBusInterface $commandBus): void
+    public function __construct(FileInterface $file)
     {
-        $this->commandBus = $commandBus;
+        parent::__construct("Imported autogiro file '{$file->getFilename()}'", $file);
     }
 }

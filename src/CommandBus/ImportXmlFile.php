@@ -20,25 +20,32 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\CommandBus;
 
-use Symfony\Component\EventDispatcher\Event;
-use byrokrat\autogiro\Tree\Node;
+use byrokrat\giroapp\Xml\XmlObject;
+use byrokrat\giroapp\Filesystem\FileInterface;
 
-class NodeEvent extends Event
+final class ImportXmlFile
 {
-    /**
-     * @var Node
-     */
-    private $node;
+    /** @var FileInterface */
+    private $file;
 
-    public function __construct(Node $node)
+    /** @var XmlObject */
+    private $xml;
+
+    public function __construct(FileInterface $file, XmlObject $xml)
     {
-        $this->node = $node;
+        $this->file = $file;
+        $this->xml = $xml;
     }
 
-    public function getNode(): Node
+    public function getFile(): FileInterface
     {
-        return $this->node;
+        return $this->file;
+    }
+
+    public function getXmlObject(): XmlObject
+    {
+        return $this->xml;
     }
 }

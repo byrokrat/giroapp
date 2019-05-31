@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Plugin;
 
+use byrokrat\giroapp\CommandBus\CommandBusInterface;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Console\SymfonyCommandAdapter;
@@ -40,7 +41,6 @@ use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
 use Composer\Semver\Semver;
-use League\Tactician\CommandBus;
 use Symfony\Component\Console\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -131,7 +131,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         return $this->configManager->getConfig($key)->getValue();
     }
 
-    public function getCommandBus(): CommandBus
+    public function getCommandBus(): CommandBusInterface
     {
         return $this->commandBus;
     }
@@ -139,6 +139,11 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function getDonorQuery(): DonorQueryInterface
     {
         return $this->donorQuery;
+    }
+
+    public function registerPlugin(PluginInterface $plugin): void
+    {
+        $plugin->loadPlugin($this);
     }
 
     public function registerConsoleCommand(ConsoleInterface $consoleCommand): void

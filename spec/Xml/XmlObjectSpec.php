@@ -70,6 +70,19 @@ class XmlObjectSpec extends ObjectBehavior
         ]);
     }
 
+    function it_can_use_static_constructor()
+    {
+        $this->beConstructedThrough('fromString', ['<a><b>foobar</b></a>']);
+        $this->asXml()->shouldContain('<a><b>foobar</b></a>');
+    }
+
+    function it_can_returns_null_on_static_constructor_fails()
+    {
+        // this line is a just a fake to be able to access the static constructor..
+        $this->beConstructedWith('<a></a>');
+        $this->fromString('this-is-not-valid-xml')->shouldReturn(null);
+    }
+
     function getMatchers(): array
     {
         return [

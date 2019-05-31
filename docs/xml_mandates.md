@@ -14,7 +14,6 @@ use byrokrat\giroapp\Plugin\PluginInterface;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Event\DonorAdded;
 use byrokrat\giroapp\CommandBus\UpdatePhone;
-use League\Tactician\CommandBus;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 return new class implements PluginInterface {
@@ -23,7 +22,7 @@ return new class implements PluginInterface {
         $env->registerSubscriber(
             new class($env->getCommandBus()) implements EventSubscriberInterface
             {
-                public function __construct(CommandBus $commandBus)
+                public function __construct($commandBus)
                 {
                     $this->commandBus = $commandBus;
                 }

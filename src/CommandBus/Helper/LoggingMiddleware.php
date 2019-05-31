@@ -20,23 +20,33 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DependencyInjection;
+namespace byrokrat\giroapp\CommandBus\Helper;
 
-use byrokrat\giroapp\CommandBus\CommandBusInterface;
+use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\Event\LogEvent;
+use League\Tactician\Middleware;
+use Psr\Log\LogLevel;
 
-/**
- * Use this trait to automatically inject the command bus
- */
-trait CommandBusProperty
+final class LoggingMiddleware implements Middleware
 {
-    /** @var CommandBusInterface */
-    protected $commandBus;
+    use DispatcherProperty;
 
-    /**
-     * @required
-     */
-    public function setCommandBus(CommandBusInterface $commandBus): void
+    public function execute($command, callable $next)
     {
-        $this->commandBus = $commandBus;
+        $commandClass = get_class($command);
+
+        $this->dispatcher->dispatch(
+            LogEvent::CLASS,
+            new LogEvent("Enter command $commandClass", [], LogLevel::DEBUG)
+        );
+
+        $returnValue = $next($command);
+
+        $this->dispatcher->dispatch(
+            LogEvent::CLASS,
+            new LogEvent("Command $commandClass finished without errors", [], LogLevel::DEBUG)
+        );
+
+        return $returnValue;
     }
 }

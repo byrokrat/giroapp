@@ -8,6 +8,8 @@ use byrokrat\giroapp\Config\IniRepository;
 
 class ApplicationWrapper
 {
+    const EXECUTABLE_PLACEHOLDER = '@giroapp@';
+
     /** @var string */
     private $cwd;
 
@@ -25,6 +27,8 @@ class ApplicationWrapper
 
     public function __construct(string $executable, bool $debug)
     {
+        putenv("GIROAPP_INSTALL_PATH=" . __DIR__ . '/../../');
+
         $this->cwd = sys_get_temp_dir() . '/giroapp_test_' . microtime();
         mkdir($this->cwd);
         $baseDir = "{$this->cwd}/giroapp";
@@ -63,20 +67,22 @@ class ApplicationWrapper
 
     public function __call(string $command , array $arguments): Result
     {
-        return $this->executeVerbose("$command " . implode(' ', $arguments));
-    }
-
-    public function executeVerbose(string $command): Result
-    {
-        return $this->execute("$command -v");
+        return $this->execute("$command " . implode(' ', $arguments));
     }
 
     public function execute(string $command): Result
     {
+        return $this->executeRaw(self::EXECUTABLE_PLACEHOLDER . " $command -v");
+    }
+
+    public function executeRaw(string $command): Result
+    {
         ($this->debugDump)($command, '$');
 
+        $command = str_replace(self::EXECUTABLE_PLACEHOLDER, $this->executable, $command);
+
         $process = proc_open(
-            "{$this->executable} $command --no-interaction --no-ansi",
+            "$command -v --no-interaction --no-ansi",
             [
                 1 => ["pipe", "w"],
                 2 => ["pipe", "w"]
@@ -111,6 +117,11 @@ class ApplicationWrapper
         file_put_contents("{$this->cwd}/$filename", $content);
 
         return $filename;
+    }
+
+    public function renameFile(string $oldName, string $newName): void
+    {
+        rename("{$this->cwd}/$oldName", "{$this->cwd}/$newName");
     }
 
     public function createPlugin(string $content): void

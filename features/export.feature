@@ -7,6 +7,7 @@ Feature: Exporting files to autogirot
     Given a fresh installation
     And a configuration file:
         """
+        org_id = 1234567897
         org_bgc_nr = 111111
         org_bg = 58056201
         """

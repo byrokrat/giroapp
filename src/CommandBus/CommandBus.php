@@ -18,14 +18,30 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-namespace byrokrat\giroapp\Exception;
+declare(strict_types = 1);
 
-use byrokrat\giroapp\Exception as GiroappException;
+namespace byrokrat\giroapp\CommandBus;
 
-/**
- * Exception thrown when an xml form specification contains an invalid value
- */
-final class InvalidXmlFormException extends \RuntimeException implements GiroappException
+use League\Tactician\CommandBus as TacticianCommandBus;
+
+final class CommandBus implements CommandBusInterface
 {
-    use ErrorCodeTrait;
+    /**
+     * @var TacticianCommandBus
+     */
+    private $commandBus;
+
+    public function __construct(TacticianCommandBus $commandBus)
+    {
+        $this->commandBus = $commandBus;
+    }
+
+    /**
+     * @param  object $command
+     * @return mixed
+     */
+    public function handle($command)
+    {
+        return $this->commandBus->handle($command);
+    }
 }

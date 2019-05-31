@@ -47,6 +47,15 @@ class XmlObject
         }
     }
 
+    public static function fromString(string $content): ?self
+    {
+        try {
+            return new self($content);
+        } catch (InvalidXmlException $e) {
+            return null;
+        }
+    }
+
     /**
      * Cast to xml string
      */

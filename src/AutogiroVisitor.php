@@ -22,41 +22,34 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp;
 
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\CommandBus\UpdateState;
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Config\ConfigInterface;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\NodeEvent;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
+use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\State\Error;
+use byrokrat\giroapp\State\Inactive;
+use byrokrat\giroapp\State\MandateApproved;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\AccountNumber;
+use byrokrat\id\IdInterface;
 
-/**
- * Giroapp visitor of autogiro files
- */
 class AutogiroVisitor extends Visitor
 {
-    use DispatcherProperty;
+    use DependencyInjection\CommandBusProperty,
+        DependencyInjection\DonorQueryProperty;
 
-    /**
-     * @var ConfigInterface
-     */
+    /** @var ConfigInterface */
     private $orgBgcNr;
 
-    /**
-     * @var AccountNumber
-     */
+    /** @var AccountNumber */
     private $orgBankgiro;
 
     public function __construct(ConfigInterface $orgBgcNr, AccountNumber $orgBankgiro)
     {
         $this->orgBgcNr = $orgBgcNr;
         $this->orgBankgiro = $orgBankgiro;
-    }
-
-    public function beforeMandateResponse(Node $node): void
-    {
-        $this->dispatcher->dispatch(Events::MANDATE_RESPONSE_RECEIVED, new NodeEvent($node));
     }
 
     public function beforeOpening(Node $node): void
@@ -83,6 +76,72 @@ class AutogiroVisitor extends Visitor
                     'File contains invalid payee bankgiro account number, found: %s, expexting: %s',
                     $payeeBankgiro->getNumber(),
                     $this->orgBankgiro->getNumber()
+                )
+            );
+        }
+    }
+
+    public function beforeMandateResponse(Node $node): void
+    {
+        $donor = $this->donorQuery->requireByPayerNumber($node->getValueFrom('PayerNumber'));
+
+        /** @var ?IdInterface $nodeId */
+        if ($nodeId = $node->getChild('StateId')->getValueFrom('Object')) {
+            $this->validateDonorId($nodeId, $donor);
+        }
+
+        /** @var ?AccountNumber $nodeAccount */
+        if ($nodeAccount = $node->getChild('Account')->getValueFrom('Object')) {
+            $this->validateDonorAccountNumber($nodeAccount, $donor);
+        }
+
+        if ($node->hasChild('CreatedFlag')) {
+            $this->commandBus->handle(new UpdateState($donor, MandateApproved::CLASS));
+            return;
+        }
+
+        if ($node->hasChild('DeletedFlag')) {
+            $this->commandBus->handle(new UpdateState($donor, Inactive::CLASS));
+            return;
+        }
+
+        if ($node->hasChild('ErrorFlag')) {
+            $this->commandBus->handle(new UpdateState($donor, Error::CLASS));
+            return;
+        }
+
+        throw new InvalidAutogiroFileException(
+            sprintf(
+                '%s: invalid mandate status code: %s',
+                $donor->getMandateKey(),
+                (string)$node->getChild('Status')->getValueFrom('Number')
+            )
+        );
+    }
+
+    private function validateDonorAccountNumber(AccountNumber $nodeAccount, Donor $donor): void
+    {
+        if (!$nodeAccount->equals($donor->getAccount())) {
+            throw new InvalidAutogiroFileException(
+                sprintf(
+                    "Invalid mandate response for payer number '%s', found account '%s', expecting '%s'",
+                    $donor->getPayerNumber(),
+                    $nodeAccount->getNumber(),
+                    $donor->getAccount()->getNumber()
+                )
+            );
+        }
+    }
+
+    private function validateDonorId(IdInterface $nodeId, Donor $donor): void
+    {
+        if ($nodeId->format('S-sk') != $donor->getDonorId()->format('S-sk')) {
+            throw new InvalidAutogiroFileException(
+                sprintf(
+                    "Invalid mandate response for payer number '%s', found donor id '%s', expecting '%s'",
+                    $donor->getPayerNumber(),
+                    $nodeId->format('S-sk'),
+                    $donor->getDonorId()->format('S-sk')
                 )
             );
         }

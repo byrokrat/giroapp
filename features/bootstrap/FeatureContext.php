@@ -107,11 +107,30 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Given a file named :filename:
+     */
+    public function aFileNamed($filename, PyStringNode $content): void
+    {
+        $this->app->renameFile(
+            $this->app->createFile((string)$content),
+            $filename
+        );
+    }
+
+    /**
      * @When I run :command
      */
     public function iRun($command): void
     {
-        $this->result = $this->app->executeVerbose($command);
+        $this->result = $this->app->execute($command);
+    }
+
+    /**
+     * @When i run raw command :command
+     */
+    public function iRunRawCommand($command)
+    {
+        $this->result = $this->app->executeRaw($command);
     }
 
     /**
@@ -122,6 +141,14 @@ class FeatureContext implements Context
         $this->result = $this->app->import(
             $this->app->createFile((string)$content)
         );
+    }
+
+    /**
+     * @When I import using STDIN:
+     */
+    public function iImportUsingStdin(PyStringNode $content)
+    {
+        $this->result = $this->app->executeRaw("echo '$content' | " . $this->app::EXECUTABLE_PLACEHOLDER . " import");
     }
 
     /**
@@ -166,7 +193,7 @@ class FeatureContext implements Context
      */
     public function theDatabaseContainsDonor($donor)
     {
-        $this->result = $this->app->execute("show $donor --format=json");
+        $this->result = $this->app->show("$donor --format=json");
         $this->thereIsNoError();
     }
 

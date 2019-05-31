@@ -4,6 +4,7 @@ parameters:
 imports:
     - { resource: fs.yaml }
     - { resource: listeners.yaml }
+    - { resource: service_layer.yaml }
 
 services:
     _defaults:
@@ -27,6 +28,7 @@ services:
 
     byrokrat\giroapp\Plugin\EnvironmentInterface:
         alias: byrokrat\giroapp\Plugin\ConfiguringEnvironment
+        public: true
 
     byrokrat\giroapp\Plugin\ConfiguringEnvironment:
         class: ~
@@ -89,7 +91,6 @@ services:
     byrokrat\giroapp\Db\DonorQueryInterface:
         class: byrokrat\giroapp\Db\DonorQueryDecorator
         arguments: ['@byrokrat\giroapp\Db\DonorRepositoryInterface']
-        public: true
         lazy: true
 
     byrokrat\giroapp\Db\ImportHistoryInterface:
@@ -139,29 +140,6 @@ services:
     byrokrat\id\OrganizationIdFactory:
         class: ~
         autowire: false
-
-    League\Tactician\CommandBus:
-        class: ~
-        factory: 'League\Tactician\Setup\QuickStart:create'
-        arguments:
-            -
-                byrokrat\giroapp\CommandBus\AddDonor: '@byrokrat\giroapp\CommandBus\AddDonorHandler'
-                byrokrat\giroapp\CommandBus\Commit: '@byrokrat\giroapp\CommandBus\CommitHandler'
-                byrokrat\giroapp\CommandBus\Export: '@byrokrat\giroapp\CommandBus\ExportHandler'
-                byrokrat\giroapp\CommandBus\ForceState: '@byrokrat\giroapp\CommandBus\ForceStateHandler'
-                byrokrat\giroapp\CommandBus\RemoveDonor: '@byrokrat\giroapp\CommandBus\RemoveDonorHandler'
-                byrokrat\giroapp\CommandBus\Rollback: '@byrokrat\giroapp\CommandBus\RollbackHandler'
-                byrokrat\giroapp\CommandBus\UpdateAttribute: '@byrokrat\giroapp\CommandBus\UpdateAttributeHandler'
-                byrokrat\giroapp\CommandBus\UpdateComment: '@byrokrat\giroapp\CommandBus\UpdateCommentHandler'
-                byrokrat\giroapp\CommandBus\UpdateDonationAmount: '@byrokrat\giroapp\CommandBus\UpdateDonationAmountHandler'
-                byrokrat\giroapp\CommandBus\UpdateEmail: '@byrokrat\giroapp\CommandBus\UpdateEmailHandler'
-                byrokrat\giroapp\CommandBus\UpdateName: '@byrokrat\giroapp\CommandBus\UpdateNameHandler'
-                byrokrat\giroapp\CommandBus\UpdatePhone: '@byrokrat\giroapp\CommandBus\UpdatePhoneHandler'
-                byrokrat\giroapp\CommandBus\UpdatePostalAddress: '@byrokrat\giroapp\CommandBus\UpdatePostalAddressHandler'
-                byrokrat\giroapp\CommandBus\UpdateState: '@byrokrat\giroapp\CommandBus\UpdateStateHandler'
-
-    League\Tactician\Setup\QuickStart:
-        class: ~
 
     Psr\Log\LoggerInterface:
         class: Apix\Log\Logger\File

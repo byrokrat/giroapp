@@ -18,25 +18,13 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\CommandBus;
 
-namespace byrokrat\giroapp\DependencyInjection;
-
-use byrokrat\giroapp\CommandBus\CommandBusInterface;
-
-/**
- * Use this trait to automatically inject the command bus
- */
-trait CommandBusProperty
+interface CommandBusInterface
 {
-    /** @var CommandBusInterface */
-    protected $commandBus;
-
     /**
-     * @required
+     * @param  object $command
+     * @return mixed
      */
-    public function setCommandBus(CommandBusInterface $commandBus): void
-    {
-        $this->commandBus = $commandBus;
-    }
+    public function handle($command);
 }

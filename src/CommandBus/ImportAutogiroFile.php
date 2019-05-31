@@ -20,29 +20,22 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Xml\XmlObject;
 use byrokrat\giroapp\Filesystem\FileInterface;
 
-/**
- * Dispatched when an xml file is imported
- */
-class XmlEvent extends FileEvent
+final class ImportAutogiroFile
 {
-    /**
-     * @var XmlObject
-     */
-    private $xml;
+    /** @var FileInterface */
+    private $file;
 
-    public function __construct(string $message, FileInterface $file, XmlObject $xml)
+    public function __construct(FileInterface $file)
     {
-        parent::__construct($message, $file);
-        $this->xml = $xml;
+        $this->file = $file;
     }
 
-    public function getXmlObject(): XmlObject
+    public function getFile(): FileInterface
     {
-        return $this->xml;
+        return $this->file;
     }
 }

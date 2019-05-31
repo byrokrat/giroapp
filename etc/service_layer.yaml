@@ -1,0 +1,52 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+
+    byrokrat\giroapp\CommandBus\CommandBusInterface:
+        class: byrokrat\giroapp\CommandBus\CommandBus
+
+    League\Tactician\CommandBus:
+        class: ~
+        arguments:
+            -
+                - '@byrokrat\giroapp\CommandBus\Helper\LoggingMiddleware'
+                - '@League\Tactician\Plugins\LockingMiddleware'
+                - '@League\Tactician\Handler\CommandHandlerMiddleware'
+
+    League\Tactician\Plugins\LockingMiddleware:
+        class: ~
+
+    League\Tactician\Handler\CommandHandlerMiddleware:
+        class: ~
+        arguments:
+            - '@League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor'
+            - '@League\Tactician\Handler\Locator\InMemoryLocator'
+            - '@League\Tactician\Handler\MethodNameInflector\HandleInflector'
+
+    League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor:
+        class: ~
+
+    League\Tactician\Handler\Locator\InMemoryLocator:
+        class: ~
+        arguments:
+            -
+                byrokrat\giroapp\CommandBus\AddDonor: '@byrokrat\giroapp\CommandBus\AddDonorHandler'
+                byrokrat\giroapp\CommandBus\Commit: '@byrokrat\giroapp\CommandBus\CommitHandler'
+                byrokrat\giroapp\CommandBus\Export: '@byrokrat\giroapp\CommandBus\ExportHandler'
+                byrokrat\giroapp\CommandBus\ForceState: '@byrokrat\giroapp\CommandBus\ForceStateHandler'
+                byrokrat\giroapp\CommandBus\ImportAutogiroFile: '@byrokrat\giroapp\CommandBus\ImportAutogiroFileHandler'
+                byrokrat\giroapp\CommandBus\ImportXmlFile: '@byrokrat\giroapp\CommandBus\ImportXmlFileHandler'
+                byrokrat\giroapp\CommandBus\RemoveDonor: '@byrokrat\giroapp\CommandBus\RemoveDonorHandler'
+                byrokrat\giroapp\CommandBus\Rollback: '@byrokrat\giroapp\CommandBus\RollbackHandler'
+                byrokrat\giroapp\CommandBus\UpdateAttribute: '@byrokrat\giroapp\CommandBus\UpdateAttributeHandler'
+                byrokrat\giroapp\CommandBus\UpdateComment: '@byrokrat\giroapp\CommandBus\UpdateCommentHandler'
+                byrokrat\giroapp\CommandBus\UpdateDonationAmount: '@byrokrat\giroapp\CommandBus\UpdateDonationAmountHandler'
+                byrokrat\giroapp\CommandBus\UpdateEmail: '@byrokrat\giroapp\CommandBus\UpdateEmailHandler'
+                byrokrat\giroapp\CommandBus\UpdateName: '@byrokrat\giroapp\CommandBus\UpdateNameHandler'
+                byrokrat\giroapp\CommandBus\UpdatePhone: '@byrokrat\giroapp\CommandBus\UpdatePhoneHandler'
+                byrokrat\giroapp\CommandBus\UpdatePostalAddress: '@byrokrat\giroapp\CommandBus\UpdatePostalAddressHandler'
+                byrokrat\giroapp\CommandBus\UpdateState: '@byrokrat\giroapp\CommandBus\UpdateStateHandler'
+
+    League\Tactician\Handler\MethodNameInflector\HandleInflector:
+        class: ~

@@ -8,6 +8,8 @@ use byrokrat\giroapp\Plugin\ConfiguringEnvironment;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Plugin\ApiVersion;
 use byrokrat\giroapp\Plugin\ApiVersionConstraint;
+use byrokrat\giroapp\Plugin\PluginInterface;
+use byrokrat\giroapp\CommandBus\CommandBusInterface;
 use byrokrat\giroapp\Console\SymfonyCommandAdapter;
 use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Config\ConfigManager;
@@ -24,7 +26,6 @@ use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
-use League\Tactician\CommandBus;
 use Symfony\Component\Console\Application;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -42,7 +43,7 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         StateCollection $stateCollection,
         ConfigManager $configManager,
         EventDispatcherInterface $dispatcher,
-        CommandBus $commandBus
+        CommandBusInterface $commandBus
     ) {
         $this->beConstructedWith(
             new ApiVersion('1.0'),
@@ -95,6 +96,12 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
     function it_contains_a_donor_query($donorQuery)
     {
         $this->getDonorQuery()->shouldReturn($donorQuery);
+    }
+
+    function it_can_register_plugins(PluginInterface $plugin)
+    {
+        $plugin->loadPlugin($this)->shouldBeCalled();
+        $this->registerPlugin($plugin);
     }
 
     function it_can_register_consoles($dispatcher, $commandBus, ConsoleInterface $console, Application $application)

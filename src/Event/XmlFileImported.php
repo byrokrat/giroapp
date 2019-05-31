@@ -20,31 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\CommandBus\AddDonor;
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-use byrokrat\giroapp\Event\XmlEvent;
-use byrokrat\giroapp\Xml\XmlMandateParser;
+use byrokrat\giroapp\Filesystem\FileInterface;
 
-class XmlImportingListener
+final class XmlFileImported extends FileEvent
 {
-    use CommandBusProperty;
-
-    /**
-     * @var XmlMandateParser
-     */
-    private $parser;
-
-    public function __construct(XmlMandateParser $parser)
+    public function __construct(FileInterface $file)
     {
-        $this->parser = $parser;
-    }
-
-    public function onXmlFileImported(XmlEvent $event): void
-    {
-        foreach ($this->parser->parse($event->getXmlObject()) as $newDonor) {
-            $this->commandBus->handle(new AddDonor($newDonor));
-        }
+        parent::__construct("Imported xml file '{$file->getFilename()}'", $file);
     }
 }

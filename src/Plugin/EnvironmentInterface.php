@@ -20,6 +20,7 @@
 
 namespace byrokrat\giroapp\Plugin;
 
+use byrokrat\giroapp\CommandBus\CommandBusInterface;
 use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
@@ -28,7 +29,6 @@ use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateInterface;
-use League\Tactician\CommandBus;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 interface EnvironmentInterface
@@ -46,12 +46,17 @@ interface EnvironmentInterface
     /**
      * Service layer hook
      */
-    public function getCommandBus(): CommandBus;
+    public function getCommandBus(): CommandBusInterface;
 
     /**
      * Repository read hook
      */
     public function getDonorQuery(): DonorQueryInterface;
+
+    /**
+     * Register a plugin
+     */
+    public function registerPlugin(PluginInterface $plugin): void;
 
     /**
      * Register a console command
