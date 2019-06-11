@@ -6,9 +6,9 @@ namespace spec\byrokrat\giroapp\Filter;
 
 use byrokrat\giroapp\Filter\ExportableFilter;
 use byrokrat\giroapp\Filter\FilterInterface;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\ExportableStateInterface;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\State\ExportableStateInterface;
+use byrokrat\giroapp\Domain\State\StateInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

@@ -22,9 +22,9 @@ namespace byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
 use byrokrat\giroapp\Exception\DonorAlreadyExistsException;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\PostalAddress;
+use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\amount\Currency\SEK;
 
 /**

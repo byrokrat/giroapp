@@ -7,7 +7,7 @@ namespace spec\byrokrat\giroapp\Db;
 use byrokrat\giroapp\Db\ImportHistoryInterface;
 use byrokrat\giroapp\Exception\FileAlreadyImportedException;
 use byrokrat\giroapp\Filesystem\HashedFile;
-use byrokrat\giroapp\Model\FileThatWasImported;
+use byrokrat\giroapp\Domain\FileThatWasImported;
 use Prophecy\Argument;
 
 trait ImportHistorySpecTrait

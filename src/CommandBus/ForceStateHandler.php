@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorStateUpdated;
-use byrokrat\giroapp\State\StateCollection;
+use byrokrat\giroapp\Domain\State\StateCollection;
 
 final class ForceStateHandler
 {

@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus\Helper;
 
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Domain\Donor;
 
 trait DonorAwareTrait
 {

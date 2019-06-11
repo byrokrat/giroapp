@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Db\Json;
 use byrokrat\giroapp\Db\ImportHistoryInterface;
 use byrokrat\giroapp\Exception\FileAlreadyImportedException;
 use byrokrat\giroapp\Filesystem\FileInterface;
-use byrokrat\giroapp\Model\FileThatWasImported;
+use byrokrat\giroapp\Domain\FileThatWasImported;
 use byrokrat\giroapp\Utils\SystemClock;
 use hanneskod\yaysondb\CollectionInterface;
 

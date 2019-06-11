@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Sorter;
 
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Domain\Donor;
 
 final class AmountSorter implements SorterInterface
 {

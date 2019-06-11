@@ -22,8 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Db;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorCollection;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\DonorCollection;
 
 /**
  * Used to extract a donor query from a donor repository implementation

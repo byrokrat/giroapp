@@ -5,11 +5,11 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Db\DriverEnvironment;
-use byrokrat\giroapp\Model\DonorFactory;
+use byrokrat\giroapp\Domain\DonorFactory;
 use byrokrat\giroapp\Utils\SystemClock;
-use byrokrat\giroapp\State\StateCollection;
-use byrokrat\giroapp\State\Active;
-use byrokrat\giroapp\State\Error;
+use byrokrat\giroapp\Domain\State\StateCollection;
+use byrokrat\giroapp\Domain\State\Active;
+use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\PersonalIdFactory;
 

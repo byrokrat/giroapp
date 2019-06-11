@@ -22,8 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\PostalAddress;
 
 final class DonorPostalAddressUpdated extends DonorEvent
 {

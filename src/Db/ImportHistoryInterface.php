@@ -22,7 +22,7 @@ namespace byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Exception\FileAlreadyImportedException;
 use byrokrat\giroapp\Filesystem\FileInterface;
-use byrokrat\giroapp\Model\FileThatWasImported;
+use byrokrat\giroapp\Domain\FileThatWasImported;
 
 /**
  * Defines the interface for interacting with the import history repository

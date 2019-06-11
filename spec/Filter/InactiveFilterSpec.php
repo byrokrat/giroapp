@@ -6,8 +6,8 @@ namespace spec\byrokrat\giroapp\Filter;
 
 use byrokrat\giroapp\Filter\InactiveFilter;
 use byrokrat\giroapp\Filter\FilterInterface;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\Inactive;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\State\Inactive;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

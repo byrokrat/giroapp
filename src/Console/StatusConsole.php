@@ -23,12 +23,12 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
-use byrokrat\giroapp\State\AwaitingResponseStateInterface;
-use byrokrat\giroapp\State\Active;
-use byrokrat\giroapp\State\Error;
-use byrokrat\giroapp\State\ExportableStateInterface;
-use byrokrat\giroapp\State\Inactive;
-use byrokrat\giroapp\State\Paused;
+use byrokrat\giroapp\Domain\State\AwaitingResponseStateInterface;
+use byrokrat\giroapp\Domain\State\Active;
+use byrokrat\giroapp\Domain\State\Error;
+use byrokrat\giroapp\Domain\State\ExportableStateInterface;
+use byrokrat\giroapp\Domain\State\Inactive;
+use byrokrat\giroapp\Domain\State\Paused;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;

@@ -6,8 +6,8 @@ namespace spec\byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Db\DonorQueryDecorator;
 use byrokrat\giroapp\Db\DonorQueryInterface;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorCollection;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\DonorCollection;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

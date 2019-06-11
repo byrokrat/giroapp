@@ -28,7 +28,7 @@ use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Event\Listener\ListenerInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\Domain\State\StateInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
 class Plugin implements PluginInterface

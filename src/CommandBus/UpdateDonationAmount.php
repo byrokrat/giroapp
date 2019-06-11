@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Domain\Donor;
 use byrokrat\amount\Currency\SEK;
 
 final class UpdateDonationAmount

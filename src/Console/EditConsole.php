@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\CommandBus;
-use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Validator;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Command\Command;

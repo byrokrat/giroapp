@@ -8,7 +8,7 @@ use byrokrat\giroapp\CommandBus\UpdateNameHandler;
 use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Event;
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Domain\Donor;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;

@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\CommandBus\ForceState;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-use byrokrat\giroapp\State\StateCollection;
+use byrokrat\giroapp\Domain\State\StateCollection;
 use byrokrat\giroapp\Validator\ChoiceValidator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

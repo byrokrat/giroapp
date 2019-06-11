@@ -72,7 +72,7 @@ Use the dedicated `DonorStateListener` to fire on specific donor state transitio
 use byrokrat\giroapp\Plugin\Plugin;
 use byrokrat\giroapp\Event\DonorStateUpdated;
 use byrokrat\giroapp\Event\Listener\DonorStateListener;
-use byrokrat\giroapp\State\MandateApproved;
+use byrokrat\giroapp\Domain\State\MandateApproved;
 
 return new Plugin(
     new DonorStateListener(MandateApproved::CLASS, function (DonorStateUpdated $event) {

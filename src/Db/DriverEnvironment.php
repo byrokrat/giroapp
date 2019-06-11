@@ -22,7 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Db;
 
-use byrokrat\giroapp\Model\DonorFactory;
+use byrokrat\giroapp\Domain\DonorFactory;
 use byrokrat\giroapp\Utils\SystemClock;
 
 /**

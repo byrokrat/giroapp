@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus\RemoveDonor;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-use byrokrat\giroapp\State\Inactive;
+use byrokrat\giroapp\Domain\State\Inactive;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;

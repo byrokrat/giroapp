@@ -96,7 +96,7 @@ services:
         factory: 'byrokrat\giroapp\Db\DriverInterface:getImportHistory'
         lazy: true
 
-    byrokrat\giroapp\State\TransactionDateFactory:
+    byrokrat\giroapp\Domain\State\TransactionDateFactory:
         class: ~
         arguments:
             $dayOfMonth: "@=service('ini').getConfig('trans_day_of_month')"
@@ -106,14 +106,14 @@ services:
         class: ~
         arguments: ['@organization_id', '@organization_bg']
 
-    byrokrat\giroapp\AutogiroVisitor:
+    byrokrat\giroapp\Autogiro\AutogiroVisitor:
         class: ~
         arguments:
             - "@=service('ini').getConfig('org_bgc_nr')"
             - '@organization_bg'
 
     byrokrat\autogiro\Writer\WriterInterface:
-        factory: 'byrokrat\giroapp\AutogiroWriterFactory:createWriter'
+        factory: 'byrokrat\giroapp\Autogiro\AutogiroWriterFactory:createWriter'
         arguments:
             - "@=service('ini').getConfig('org_bgc_nr')"
             - '@organization_bg'

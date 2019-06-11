@@ -20,7 +20,7 @@
 
 namespace byrokrat\giroapp\Filter;
 
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Domain\Donor;
 
 interface FilterInterface
 {

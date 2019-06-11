@@ -6,8 +6,8 @@ namespace spec\byrokrat\giroapp\Sorter;
 
 use byrokrat\giroapp\Sorter\StateSorter;
 use byrokrat\giroapp\Sorter\SorterInterface;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\State\StateInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

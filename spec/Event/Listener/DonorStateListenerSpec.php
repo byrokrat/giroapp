@@ -6,7 +6,7 @@ namespace spec\byrokrat\giroapp\Event\Listener;
 
 use byrokrat\giroapp\Event\Listener\DonorStateListener;
 use byrokrat\giroapp\Event\DonorStateUpdated;
-use byrokrat\giroapp\State\StateInterface;
+use byrokrat\giroapp\Domain\State\StateInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

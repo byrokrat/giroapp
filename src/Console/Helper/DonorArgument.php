@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Validator\DonorKeyValidator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;

@@ -22,8 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Filter;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\Active;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\State\Active;
 
 final class ActiveFilter implements FilterInterface
 {

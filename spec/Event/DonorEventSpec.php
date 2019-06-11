@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Event\DonorEvent;
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Domain\Donor;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 

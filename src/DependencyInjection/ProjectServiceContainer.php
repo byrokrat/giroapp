@@ -69,8 +69,8 @@ class ProjectServiceContainer extends Container
             'byrokrat\\autogiro\\Writer\\WriterInterface' => true,
             'byrokrat\\banking\\AccountFactoryInterface' => true,
             'byrokrat\\banking\\BankgiroFactory' => true,
-            'byrokrat\\giroapp\\AutogiroVisitor' => true,
-            'byrokrat\\giroapp\\AutogiroWriterFactory' => true,
+            'byrokrat\\giroapp\\Autogiro\\AutogiroVisitor' => true,
+            'byrokrat\\giroapp\\Autogiro\\AutogiroWriterFactory' => true,
             'byrokrat\\giroapp\\CommandBus\\AddDonor' => true,
             'byrokrat\\giroapp\\CommandBus\\AddDonorHandler' => true,
             'byrokrat\\giroapp\\CommandBus\\CommandBus' => true,
@@ -140,6 +140,27 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Db\\Json\\JsonDriverFactory' => true,
             'byrokrat\\giroapp\\Db\\Json\\JsonImportHistory' => true,
             'byrokrat\\giroapp\\DependencyInjection\\ProjectServiceContainer' => true,
+            'byrokrat\\giroapp\\Domain\\Donor' => true,
+            'byrokrat\\giroapp\\Domain\\DonorCollection' => true,
+            'byrokrat\\giroapp\\Domain\\DonorFactory' => true,
+            'byrokrat\\giroapp\\Domain\\FileThatWasImported' => true,
+            'byrokrat\\giroapp\\Domain\\NewDonor' => true,
+            'byrokrat\\giroapp\\Domain\\NewDonorProcessor' => true,
+            'byrokrat\\giroapp\\Domain\\PostalAddress' => true,
+            'byrokrat\\giroapp\\Domain\\State\\Active' => true,
+            'byrokrat\\giroapp\\Domain\\State\\Error' => true,
+            'byrokrat\\giroapp\\Domain\\State\\Inactive' => true,
+            'byrokrat\\giroapp\\Domain\\State\\MandateApproved' => true,
+            'byrokrat\\giroapp\\Domain\\State\\MandateSent' => true,
+            'byrokrat\\giroapp\\Domain\\State\\NewDigitalMandate' => true,
+            'byrokrat\\giroapp\\Domain\\State\\NewMandate' => true,
+            'byrokrat\\giroapp\\Domain\\State\\PauseMandate' => true,
+            'byrokrat\\giroapp\\Domain\\State\\PauseSent' => true,
+            'byrokrat\\giroapp\\Domain\\State\\Paused' => true,
+            'byrokrat\\giroapp\\Domain\\State\\RevocationSent' => true,
+            'byrokrat\\giroapp\\Domain\\State\\RevokeMandate' => true,
+            'byrokrat\\giroapp\\Domain\\State\\StateCollection' => true,
+            'byrokrat\\giroapp\\Domain\\State\\TransactionDateFactory' => true,
             'byrokrat\\giroapp\\Event\\AutogiroFileImported' => true,
             'byrokrat\\giroapp\\Event\\ChangesCommitted' => true,
             'byrokrat\\giroapp\\Event\\ChangesDiscarded' => true,
@@ -202,13 +223,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Formatter\\HumanFormatter' => true,
             'byrokrat\\giroapp\\Formatter\\JsonFormatter' => true,
             'byrokrat\\giroapp\\Formatter\\ListFormatter' => true,
-            'byrokrat\\giroapp\\Model\\Donor' => true,
-            'byrokrat\\giroapp\\Model\\DonorCollection' => true,
-            'byrokrat\\giroapp\\Model\\DonorFactory' => true,
-            'byrokrat\\giroapp\\Model\\FileThatWasImported' => true,
-            'byrokrat\\giroapp\\Model\\NewDonor' => true,
-            'byrokrat\\giroapp\\Model\\NewDonorProcessor' => true,
-            'byrokrat\\giroapp\\Model\\PostalAddress' => true,
             'byrokrat\\giroapp\\Plugin\\ApiVersion' => true,
             'byrokrat\\giroapp\\Plugin\\ApiVersionConstraint' => true,
             'byrokrat\\giroapp\\Plugin\\ConfiguringEnvironment' => true,
@@ -225,20 +239,6 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Sorter\\SorterCollection' => true,
             'byrokrat\\giroapp\\Sorter\\StateSorter' => true,
             'byrokrat\\giroapp\\Sorter\\UpdatedSorter' => true,
-            'byrokrat\\giroapp\\State\\Active' => true,
-            'byrokrat\\giroapp\\State\\Error' => true,
-            'byrokrat\\giroapp\\State\\Inactive' => true,
-            'byrokrat\\giroapp\\State\\MandateApproved' => true,
-            'byrokrat\\giroapp\\State\\MandateSent' => true,
-            'byrokrat\\giroapp\\State\\NewDigitalMandate' => true,
-            'byrokrat\\giroapp\\State\\NewMandate' => true,
-            'byrokrat\\giroapp\\State\\PauseMandate' => true,
-            'byrokrat\\giroapp\\State\\PauseSent' => true,
-            'byrokrat\\giroapp\\State\\Paused' => true,
-            'byrokrat\\giroapp\\State\\RevocationSent' => true,
-            'byrokrat\\giroapp\\State\\RevokeMandate' => true,
-            'byrokrat\\giroapp\\State\\StateCollection' => true,
-            'byrokrat\\giroapp\\State\\TransactionDateFactory' => true,
             'byrokrat\\giroapp\\Utils\\ClassIdExtractor' => true,
             'byrokrat\\giroapp\\Utils\\LogFormatter' => true,
             'byrokrat\\giroapp\\Utils\\SystemClock' => true,
@@ -305,7 +305,7 @@ class ProjectServiceContainer extends Container
         $b = new \byrokrat\giroapp\Filter\FilterCollection();
         $c = new \byrokrat\giroapp\Formatter\FormatterCollection();
         $d = new \byrokrat\giroapp\Sorter\SorterCollection();
-        $e = ($this->privates['byrokrat\\giroapp\\State\\StateCollection'] ?? ($this->privates['byrokrat\\giroapp\\State\\StateCollection'] = new \byrokrat\giroapp\State\StateCollection()));
+        $e = ($this->privates['byrokrat\\giroapp\\Domain\\State\\StateCollection'] ?? ($this->privates['byrokrat\\giroapp\\Domain\\State\\StateCollection'] = new \byrokrat\giroapp\Domain\State\StateCollection()));
 
         $this->services['byrokrat\\giroapp\\Plugin\\EnvironmentInterface'] = $instance = new \byrokrat\giroapp\Plugin\ConfiguringEnvironment(($this->privates['byrokrat\\giroapp\\Plugin\\ApiVersion'] ?? ($this->privates['byrokrat\\giroapp\\Plugin\\ApiVersion'] = new \byrokrat\giroapp\Plugin\ApiVersion())), $a, ($this->privates['Fig\\EventDispatcher\\AggregateProvider'] ?? $this->getAggregateProviderService()), ($this->privates['Crell\\Tukio\\OrderedProviderInterface'] ?? $this->getOrderedProviderInterfaceService()), ($this->privates['byrokrat\\giroapp\\Db\\DriverFactoryCollection'] ?? ($this->privates['byrokrat\\giroapp\\Db\\DriverFactoryCollection'] = new \byrokrat\giroapp\Db\DriverFactoryCollection())), $b, $c, $d, $e, ($this->services['ini'] ?? $this->getIniService()));
 
@@ -344,7 +344,7 @@ class ProjectServiceContainer extends Container
 
         $instance->setCommandBus($f);
         $instance->setEventDispatcher(($this->privates['Psr\\EventDispatcher\\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService()));
-        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\CorePlugin($g, $h, $i, $j, $k, $l, $m, $n, $o, $p, $q, new \byrokrat\giroapp\Db\Json\JsonDriverFactory(), new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\InactiveFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), new \byrokrat\giroapp\Formatter\CsvFormatter(), new \byrokrat\giroapp\Formatter\HumanFormatter(), new \byrokrat\giroapp\Formatter\JsonFormatter(), new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter(), new \byrokrat\giroapp\State\Active(), new \byrokrat\giroapp\State\Error(), new \byrokrat\giroapp\State\Inactive(), new \byrokrat\giroapp\State\NewMandate(), new \byrokrat\giroapp\State\NewDigitalMandate(), new \byrokrat\giroapp\State\MandateSent(), new \byrokrat\giroapp\State\MandateApproved(new \byrokrat\giroapp\State\TransactionDateFactory(($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] ?? ($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_day_of_month"), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\State\RevokeMandate(), new \byrokrat\giroapp\State\RevocationSent(), new \byrokrat\giroapp\State\PauseMandate(), new \byrokrat\giroapp\State\PauseSent(), new \byrokrat\giroapp\State\Paused()), new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($r)))->loadPlugin($instance);
+        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\CorePlugin($g, $h, $i, $j, $k, $l, $m, $n, $o, $p, $q, new \byrokrat\giroapp\Db\Json\JsonDriverFactory(), new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\InactiveFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), new \byrokrat\giroapp\Formatter\CsvFormatter(), new \byrokrat\giroapp\Formatter\HumanFormatter(), new \byrokrat\giroapp\Formatter\JsonFormatter(), new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter(), new \byrokrat\giroapp\Domain\State\Active(), new \byrokrat\giroapp\Domain\State\Error(), new \byrokrat\giroapp\Domain\State\Inactive(), new \byrokrat\giroapp\Domain\State\NewMandate(), new \byrokrat\giroapp\Domain\State\NewDigitalMandate(), new \byrokrat\giroapp\Domain\State\MandateSent(), new \byrokrat\giroapp\Domain\State\MandateApproved(new \byrokrat\giroapp\Domain\State\TransactionDateFactory(($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] ?? ($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_day_of_month"), ($this->services['ini'] ?? $this->getIniService())->getConfig("trans_min_days_in_future"))), new \byrokrat\giroapp\Domain\State\RevokeMandate(), new \byrokrat\giroapp\Domain\State\RevocationSent(), new \byrokrat\giroapp\Domain\State\PauseMandate(), new \byrokrat\giroapp\Domain\State\PauseSent(), new \byrokrat\giroapp\Domain\State\Paused()), new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($r)))->loadPlugin($instance);
 
         return $instance;
     }
@@ -459,9 +459,9 @@ class ProjectServiceContainer extends Container
         $b = ($this->privates['Psr\\EventDispatcher\\EventDispatcherInterface'] ?? $this->getEventDispatcherInterfaceService());
 
         $a->setEventDispatcher($b);
-        $c = ($this->privates['byrokrat\\giroapp\\State\\StateCollection'] ?? ($this->privates['byrokrat\\giroapp\\State\\StateCollection'] = new \byrokrat\giroapp\State\StateCollection()));
+        $c = ($this->privates['byrokrat\\giroapp\\Domain\\State\\StateCollection'] ?? ($this->privates['byrokrat\\giroapp\\Domain\\State\\StateCollection'] = new \byrokrat\giroapp\Domain\State\StateCollection()));
 
-        $d = new \byrokrat\giroapp\CommandBus\AddDonorHandler(new \byrokrat\giroapp\Model\NewDonorProcessor($c, ($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] ?? ($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()))));
+        $d = new \byrokrat\giroapp\CommandBus\AddDonorHandler(new \byrokrat\giroapp\Domain\NewDonorProcessor($c, ($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] ?? ($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock()))));
 
         $e = ($this->privates['byrokrat\\giroapp\\Db\\DonorRepositoryInterface'] ?? $this->getDonorRepositoryInterfaceService());
 
@@ -473,12 +473,12 @@ class ProjectServiceContainer extends Container
         $g->setEventDispatcher($b);
         $h = $this->getOrganizationBgService();
 
-        $i = new \byrokrat\giroapp\CommandBus\ExportHandler((new \byrokrat\giroapp\AutogiroWriterFactory(new \byrokrat\autogiro\Writer\WriterFactory()))->createWriter(($this->services['ini'] ?? $this->getIniService())->getConfig("org_bgc_nr"), $h));
+        $i = new \byrokrat\giroapp\CommandBus\ExportHandler((new \byrokrat\giroapp\Autogiro\AutogiroWriterFactory(new \byrokrat\autogiro\Writer\WriterFactory()))->createWriter(($this->services['ini'] ?? $this->getIniService())->getConfig("org_bgc_nr"), $h));
 
         $j = new \byrokrat\giroapp\CommandBus\ForceStateHandler($c);
         $j->setEventDispatcher($b);
         $j->setDonorRepository($e);
-        $k = new \byrokrat\giroapp\AutogiroVisitor(($this->services['ini'] ?? $this->getIniService())->getConfig("org_bgc_nr"), $h);
+        $k = new \byrokrat\giroapp\Autogiro\AutogiroVisitor(($this->services['ini'] ?? $this->getIniService())->getConfig("org_bgc_nr"), $h);
 
         $l = new \byrokrat\giroapp\CommandBus\ImportAutogiroFileHandler((new \byrokrat\autogiro\Parser\ParserFactory())->createParser(), $k);
         $l->setEventDispatcher($b);
@@ -580,7 +580,7 @@ class ProjectServiceContainer extends Container
      */
     protected function getDriverEnvironmentService()
     {
-        return $this->privates['byrokrat\\giroapp\\Db\\DriverEnvironment'] = new \byrokrat\giroapp\Db\DriverEnvironment(($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] ?? ($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), new \byrokrat\giroapp\Model\DonorFactory(($this->privates['byrokrat\\giroapp\\State\\StateCollection'] ?? ($this->privates['byrokrat\\giroapp\\State\\StateCollection'] = new \byrokrat\giroapp\State\StateCollection())), ($this->privates['byrokrat\\banking\\AccountFactoryInterface'] ?? ($this->privates['byrokrat\\banking\\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())), ($this->privates['byrokrat\\id\\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService())));
+        return $this->privates['byrokrat\\giroapp\\Db\\DriverEnvironment'] = new \byrokrat\giroapp\Db\DriverEnvironment(($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] ?? ($this->privates['byrokrat\\giroapp\\Utils\\SystemClock'] = new \byrokrat\giroapp\Utils\SystemClock())), new \byrokrat\giroapp\Domain\DonorFactory(($this->privates['byrokrat\\giroapp\\Domain\\State\\StateCollection'] ?? ($this->privates['byrokrat\\giroapp\\Domain\\State\\StateCollection'] = new \byrokrat\giroapp\Domain\State\StateCollection())), ($this->privates['byrokrat\\banking\\AccountFactoryInterface'] ?? ($this->privates['byrokrat\\banking\\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())), ($this->privates['byrokrat\\id\\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService())));
     }
 
     /**
@@ -746,35 +746,35 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
         
     ];
 
-    public function findAll() : \byrokrat\giroapp\Model\DonorCollection
+    public function findAll() : \byrokrat\giroapp\Domain\DonorCollection
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'findAll', array(), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
         return $this->valueHoldere6c45->findAll();
     }
 
-    public function findByMandateKey(string $mandateKey) : ?\byrokrat\giroapp\Model\Donor
+    public function findByMandateKey(string $mandateKey) : ?\byrokrat\giroapp\Domain\Donor
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'findByMandateKey', array('mandateKey' => $mandateKey), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
         return $this->valueHoldere6c45->findByMandateKey($mandateKey);
     }
 
-    public function requireByMandateKey(string $mandateKey) : \byrokrat\giroapp\Model\Donor
+    public function requireByMandateKey(string $mandateKey) : \byrokrat\giroapp\Domain\Donor
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'requireByMandateKey', array('mandateKey' => $mandateKey), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
         return $this->valueHoldere6c45->requireByMandateKey($mandateKey);
     }
 
-    public function findByPayerNumber(string $payerNumber) : ?\byrokrat\giroapp\Model\Donor
+    public function findByPayerNumber(string $payerNumber) : ?\byrokrat\giroapp\Domain\Donor
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'findByPayerNumber', array('payerNumber' => $payerNumber), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
         return $this->valueHoldere6c45->findByPayerNumber($payerNumber);
     }
 
-    public function requireByPayerNumber(string $payerNumber) : \byrokrat\giroapp\Model\Donor
+    public function requireByPayerNumber(string $payerNumber) : \byrokrat\giroapp\Domain\Donor
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'requireByPayerNumber', array('payerNumber' => $payerNumber), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1002,7 +1002,7 @@ class DonorRepositoryInterface_13c774f implements \ProxyManager\Proxy\VirtualPro
         
     ];
 
-    public function addNewDonor(\byrokrat\giroapp\Model\Donor $newDonor) : void
+    public function addNewDonor(\byrokrat\giroapp\Domain\Donor $newDonor) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'addNewDonor', array('newDonor' => $newDonor), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1010,7 +1010,7 @@ class DonorRepositoryInterface_13c774f implements \ProxyManager\Proxy\VirtualPro
 return;
     }
 
-    public function deleteDonor(\byrokrat\giroapp\Model\Donor $donor) : void
+    public function deleteDonor(\byrokrat\giroapp\Domain\Donor $donor) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'deleteDonor', array('donor' => $donor), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1018,7 +1018,7 @@ return;
 return;
     }
 
-    public function updateDonorName(\byrokrat\giroapp\Model\Donor $donor, string $newName) : void
+    public function updateDonorName(\byrokrat\giroapp\Domain\Donor $donor, string $newName) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'updateDonorName', array('donor' => $donor, 'newName' => $newName), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1026,7 +1026,7 @@ return;
 return;
     }
 
-    public function updateDonorState(\byrokrat\giroapp\Model\Donor $donor, \byrokrat\giroapp\State\StateInterface $newState) : void
+    public function updateDonorState(\byrokrat\giroapp\Domain\Donor $donor, \byrokrat\giroapp\Domain\State\StateInterface $newState) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'updateDonorState', array('donor' => $donor, 'newState' => $newState), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1034,7 +1034,7 @@ return;
 return;
     }
 
-    public function updateDonorPayerNumber(\byrokrat\giroapp\Model\Donor $donor, string $newPayerNumber) : void
+    public function updateDonorPayerNumber(\byrokrat\giroapp\Domain\Donor $donor, string $newPayerNumber) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'updateDonorPayerNumber', array('donor' => $donor, 'newPayerNumber' => $newPayerNumber), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1042,7 +1042,7 @@ return;
 return;
     }
 
-    public function updateDonorAmount(\byrokrat\giroapp\Model\Donor $donor, \byrokrat\amount\Currency\SEK $newAmount) : void
+    public function updateDonorAmount(\byrokrat\giroapp\Domain\Donor $donor, \byrokrat\amount\Currency\SEK $newAmount) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'updateDonorAmount', array('donor' => $donor, 'newAmount' => $newAmount), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1050,7 +1050,7 @@ return;
 return;
     }
 
-    public function updateDonorAddress(\byrokrat\giroapp\Model\Donor $donor, \byrokrat\giroapp\Model\PostalAddress $newAddress) : void
+    public function updateDonorAddress(\byrokrat\giroapp\Domain\Donor $donor, \byrokrat\giroapp\Domain\PostalAddress $newAddress) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'updateDonorAddress', array('donor' => $donor, 'newAddress' => $newAddress), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1058,7 +1058,7 @@ return;
 return;
     }
 
-    public function updateDonorEmail(\byrokrat\giroapp\Model\Donor $donor, string $newEmail) : void
+    public function updateDonorEmail(\byrokrat\giroapp\Domain\Donor $donor, string $newEmail) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'updateDonorEmail', array('donor' => $donor, 'newEmail' => $newEmail), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1066,7 +1066,7 @@ return;
 return;
     }
 
-    public function updateDonorPhone(\byrokrat\giroapp\Model\Donor $donor, string $newPhone) : void
+    public function updateDonorPhone(\byrokrat\giroapp\Domain\Donor $donor, string $newPhone) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'updateDonorPhone', array('donor' => $donor, 'newPhone' => $newPhone), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1074,7 +1074,7 @@ return;
 return;
     }
 
-    public function updateDonorComment(\byrokrat\giroapp\Model\Donor $donor, string $newComment) : void
+    public function updateDonorComment(\byrokrat\giroapp\Domain\Donor $donor, string $newComment) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'updateDonorComment', array('donor' => $donor, 'newComment' => $newComment), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1082,7 +1082,7 @@ return;
 return;
     }
 
-    public function setDonorAttribute(\byrokrat\giroapp\Model\Donor $donor, string $key, string $value) : void
+    public function setDonorAttribute(\byrokrat\giroapp\Domain\Donor $donor, string $key, string $value) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'setDonorAttribute', array('donor' => $donor, 'key' => $key, 'value' => $value), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1090,7 +1090,7 @@ return;
 return;
     }
 
-    public function deleteDonorAttribute(\byrokrat\giroapp\Model\Donor $donor, string $key) : void
+    public function deleteDonorAttribute(\byrokrat\giroapp\Domain\Donor $donor, string $key) : void
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'deleteDonorAttribute', array('donor' => $donor, 'key' => $key), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1098,35 +1098,35 @@ return;
 return;
     }
 
-    public function findAll() : \byrokrat\giroapp\Model\DonorCollection
+    public function findAll() : \byrokrat\giroapp\Domain\DonorCollection
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'findAll', array(), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
         return $this->valueHoldere6c45->findAll();
     }
 
-    public function findByMandateKey(string $mandateKey) : ?\byrokrat\giroapp\Model\Donor
+    public function findByMandateKey(string $mandateKey) : ?\byrokrat\giroapp\Domain\Donor
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'findByMandateKey', array('mandateKey' => $mandateKey), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
         return $this->valueHoldere6c45->findByMandateKey($mandateKey);
     }
 
-    public function requireByMandateKey(string $mandateKey) : \byrokrat\giroapp\Model\Donor
+    public function requireByMandateKey(string $mandateKey) : \byrokrat\giroapp\Domain\Donor
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'requireByMandateKey', array('mandateKey' => $mandateKey), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
         return $this->valueHoldere6c45->requireByMandateKey($mandateKey);
     }
 
-    public function findByPayerNumber(string $payerNumber) : ?\byrokrat\giroapp\Model\Donor
+    public function findByPayerNumber(string $payerNumber) : ?\byrokrat\giroapp\Domain\Donor
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'findByPayerNumber', array('payerNumber' => $payerNumber), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
         return $this->valueHoldere6c45->findByPayerNumber($payerNumber);
     }
 
-    public function requireByPayerNumber(string $payerNumber) : \byrokrat\giroapp\Model\Donor
+    public function requireByPayerNumber(string $payerNumber) : \byrokrat\giroapp\Domain\Donor
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'requireByPayerNumber', array('payerNumber' => $payerNumber), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 
@@ -1459,7 +1459,7 @@ class ImportHistoryInterface_32011a6 implements \ProxyManager\Proxy\VirtualProxy
 return;
     }
 
-    public function fileWasImported(\byrokrat\giroapp\Filesystem\FileInterface $file) : ?\byrokrat\giroapp\Model\FileThatWasImported
+    public function fileWasImported(\byrokrat\giroapp\Filesystem\FileInterface $file) : ?\byrokrat\giroapp\Domain\FileThatWasImported
     {
         $this->initializer5445f && ($this->initializer5445f->__invoke($valueHoldere6c45, $this, 'fileWasImported', array('file' => $file), $this->initializer5445f) || 1) && $this->valueHoldere6c45 = $valueHoldere6c45;
 

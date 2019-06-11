@@ -27,7 +27,7 @@ use byrokrat\giroapp\Db;
 use byrokrat\giroapp\Filter;
 use byrokrat\giroapp\Formatter;
 use byrokrat\giroapp\Sorter;
-use byrokrat\giroapp\State;
+use byrokrat\giroapp\Domain\State;
 
 final class CorePlugin extends Plugin
 {

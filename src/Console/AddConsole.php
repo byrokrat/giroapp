@@ -24,9 +24,9 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus\AddDonor;
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\MandateSources;
-use byrokrat\giroapp\Model\NewDonor;
-use byrokrat\giroapp\Model\PostalAddress;
+use byrokrat\giroapp\Domain\MandateSources;
+use byrokrat\giroapp\Domain\NewDonor;
+use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Validator;
 use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Command\Command;

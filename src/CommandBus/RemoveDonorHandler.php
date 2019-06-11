@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorRemoved;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
-use byrokrat\giroapp\State\Inactive;
+use byrokrat\giroapp\Domain\State\Inactive;
 
 final class RemoveDonorHandler
 {

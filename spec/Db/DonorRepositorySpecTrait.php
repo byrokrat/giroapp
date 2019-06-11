@@ -7,12 +7,12 @@ namespace spec\byrokrat\giroapp\Db;
 use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
 use byrokrat\giroapp\Exception\DonorAlreadyExistsException;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorCollection;
-use byrokrat\giroapp\Model\PostalAddress;
-use byrokrat\giroapp\State\StateInterface;
-use byrokrat\giroapp\State\Error;
-use byrokrat\giroapp\State\Active;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\DonorCollection;
+use byrokrat\giroapp\Domain\PostalAddress;
+use byrokrat\giroapp\Domain\State\StateInterface;
+use byrokrat\giroapp\Domain\State\Error;
+use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\amount\Currency\SEK;
 use Prophecy\Argument;
 

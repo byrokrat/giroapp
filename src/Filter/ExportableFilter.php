@@ -22,8 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Filter;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\ExportableStateInterface;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 
 final class ExportableFilter implements FilterInterface
 {

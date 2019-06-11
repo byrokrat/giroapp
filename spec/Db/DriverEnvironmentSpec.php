@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Db\DriverEnvironment;
-use byrokrat\giroapp\Model\DonorFactory;
+use byrokrat\giroapp\Domain\DonorFactory;
 use byrokrat\giroapp\Utils\SystemClock;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;

@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorAdded;
-use byrokrat\giroapp\Model\NewDonorProcessor;
+use byrokrat\giroapp\Domain\NewDonorProcessor;
 
 final class AddDonorHandler
 {

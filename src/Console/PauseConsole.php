@@ -24,10 +24,10 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-use byrokrat\giroapp\State\Active;
-use byrokrat\giroapp\State\MandateApproved;
-use byrokrat\giroapp\State\Paused;
-use byrokrat\giroapp\State\PauseMandate;
+use byrokrat\giroapp\Domain\State\Active;
+use byrokrat\giroapp\Domain\State\MandateApproved;
+use byrokrat\giroapp\Domain\State\Paused;
+use byrokrat\giroapp\Domain\State\PauseMandate;
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;

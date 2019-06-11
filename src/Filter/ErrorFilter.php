@@ -22,8 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Filter;
 
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\State\Error;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\State\Error;
 
 final class ErrorFilter implements FilterInterface
 {

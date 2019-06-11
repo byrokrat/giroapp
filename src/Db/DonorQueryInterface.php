@@ -21,8 +21,8 @@
 namespace byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
-use byrokrat\giroapp\Model\Donor;
-use byrokrat\giroapp\Model\DonorCollection;
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\DonorCollection;
 
 /**
  * Defines the interface for querying the donor repository

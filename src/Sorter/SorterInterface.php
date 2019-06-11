@@ -20,7 +20,7 @@
 
 namespace byrokrat\giroapp\Sorter;
 
-use byrokrat\giroapp\Model\Donor;
+use byrokrat\giroapp\Domain\Donor;
 
 interface SorterInterface
 {

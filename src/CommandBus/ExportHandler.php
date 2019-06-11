@@ -26,7 +26,7 @@ use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\FileExported;
 use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\State\ExportableStateInterface;
+use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\autogiro\Writer\WriterInterface;
 use Psr\Log\LogLevel;

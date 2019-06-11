@@ -22,8 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
+use byrokrat\giroapp\Autogiro\AutogiroVisitor;
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\AutogiroVisitor;
 use byrokrat\giroapp\Event\AutogiroFileImported;
 use byrokrat\giroapp\Exception\UnknownFileException;
 use byrokrat\autogiro\Parser\ParserInterface;
