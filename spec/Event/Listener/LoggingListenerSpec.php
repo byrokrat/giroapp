@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace spec\byrokrat\giroapp\Listener;
+namespace spec\byrokrat\giroapp\Event\Listener;
 
-use byrokrat\giroapp\Listener\LoggingListener;
+use byrokrat\giroapp\Event\Listener\LoggingListener;
 use byrokrat\giroapp\Event\LogEvent;
 use Psr\Log\LoggerInterface;
 use PhpSpec\ObjectBehavior;
@@ -30,6 +30,6 @@ class LoggingListenerSpec extends ObjectBehavior
 
         $logger->log('severity', 'msg', ['context'])->shouldBeCalled();
 
-        $this->onLogEvent($event);
+        $this->__invoke($event);
     }
 }

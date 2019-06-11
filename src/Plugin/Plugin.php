@@ -26,16 +26,18 @@ use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
+use byrokrat\giroapp\Event\Listener\ListenerInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
 
 class Plugin implements PluginInterface
 {
-    /**
-     * @var object[]
-     */
+    /** @var array */
     private $objects;
+
+    /** @var string */
+    private $pluginName = '';
 
     public function __construct(...$objects)
     {
@@ -45,29 +47,47 @@ class Plugin implements PluginInterface
     final public function loadPlugin(EnvironmentInterface $environment): void
     {
         foreach ($this->objects as $item) {
-            if ($item instanceof ApiVersionConstraint) {
-                $environment->assertApiVersion($item);
-            }
-            if ($item instanceof DriverFactoryInterface) {
-                $environment->registerDatabaseDriver($item);
-            }
-            if ($item instanceof ConsoleInterface) {
-                $environment->registerConsoleCommand($item);
-            }
-            if ($item instanceof EventSubscriberInterface) {
-                $environment->registerSubscriber($item);
-            }
-            if ($item instanceof FilterInterface) {
-                $environment->registerDonorFilter($item);
-            }
-            if ($item instanceof FormatterInterface) {
-                $environment->registerDonorFormatter($item);
-            }
-            if ($item instanceof SorterInterface) {
-                $environment->registerDonorSorter($item);
-            }
-            if ($item instanceof StateInterface) {
-                $environment->registerDonorState($item);
+            switch (true) {
+                case $item instanceof ApiVersionConstraint:
+                    $environment->assertApiVersion($item);
+                    $this->pluginName = $item->getName();
+                    break;
+                case $item instanceof DriverFactoryInterface:
+                    $environment->registerDatabaseDriver($item);
+                    break;
+                case $item instanceof ConsoleInterface:
+                    $environment->registerConsoleCommand($item);
+                    break;
+                case $item instanceof ListenerInterface:
+                    if (!is_callable($item)) {
+                        throw new \LogicException(sprintf(
+                            'Class %s implements the ListenerInterface but is not callable',
+                            get_class($item)
+                        ));
+                    }
+                    $environment->registerListener($item);
+                    break;
+                case $item instanceof ListenerProviderInterface:
+                    $environment->registerListenerProvider($item);
+                    break;
+                case $item instanceof FilterInterface:
+                    $environment->registerDonorFilter($item);
+                    break;
+                case $item instanceof FormatterInterface:
+                    $environment->registerDonorFormatter($item);
+                    break;
+                case $item instanceof SorterInterface:
+                    $environment->registerDonorSorter($item);
+                    break;
+                case $item instanceof StateInterface:
+                    $environment->registerDonorState($item);
+                    break;
+                default:
+                    throw new \InvalidArgumentException(sprintf(
+                        "Unknown item type '%s' in plugin '%s'",
+                        is_object($item) ? get_class($item) : gettype($item),
+                        $this->pluginName
+                    ));
             }
         }
     }

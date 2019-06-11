@@ -2,8 +2,8 @@ parameters:
     env(GIROAPP_INI): 'giroapp.ini'
 
 imports:
+    - { resource: event_dispatcher.yaml }
     - { resource: fs.yaml }
-    - { resource: listeners.yaml }
     - { resource: service_layer.yaml }
 
 services:
@@ -15,7 +15,6 @@ services:
 
     byrokrat\giroapp\:
         resource: '../src/*'
-        exclude: '../src/{Listener}'
 
     Symfony\Component\Console\Application:
         class: ~
@@ -149,8 +148,5 @@ services:
               arguments: ["@=service('ini').getConfigValue('log_level')"]
             - method: setLogFormatter
               arguments: ['@byrokrat\giroapp\Utils\LogFormatter']
-
-    Symfony\Component\EventDispatcher\EventDispatcherInterface:
-        class: 'Symfony\Component\EventDispatcher\EventDispatcher'
 
     Symfony\Component\Filesystem\Filesystem: ~

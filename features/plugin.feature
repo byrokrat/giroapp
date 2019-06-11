@@ -10,22 +10,13 @@ Feature: Plugins
         use byrokrat\giroapp\Plugin\PluginInterface;
         use byrokrat\giroapp\Plugin\EnvironmentInterface;
         use byrokrat\giroapp\Event\ExecutionStarted;
-        use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
         class TestPlugin implements PluginInterface
         {
             public function loadPlugin(EnvironmentInterface $environment): void
             {
-                $environment->registerSubscriber(new class implements EventSubscriberInterface {
-                    public static function getSubscribedEvents()
-                    {
-                        return [ExecutionStarted::CLASS => 'onExecutionStart'];
-                    }
-
-                    public function onExecutionStart()
-                    {
-                        echo "my-cool-plugin-is-executed";
-                    }
+                $environment->registerListener(function (ExecutionStarted $event) {
+                    echo "my-cool-plugin-is-executed";
                 });
             }
         }

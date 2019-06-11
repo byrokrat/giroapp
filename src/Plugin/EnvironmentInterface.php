@@ -29,7 +29,7 @@ use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
 
 interface EnvironmentInterface
 {
@@ -69,9 +69,14 @@ interface EnvironmentInterface
     public function registerDatabaseDriver(DriverFactoryInterface $driverFactory): void;
 
     /**
-     * Register an event subscriber
+     * Register an event listener
      */
-    public function registerSubscriber(EventSubscriberInterface $subscriber): void;
+    public function registerListener(callable $listener): void;
+
+    /**
+     * Register an event listener provider
+     */
+    public function registerListenerProvider(ListenerProviderInterface $provider): void;
 
     /**
      * Register a custom donor filter

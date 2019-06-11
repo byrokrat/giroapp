@@ -20,14 +20,33 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\Event\Listener;
 
-use byrokrat\giroapp\Filesystem\FileInterface;
+use byrokrat\giroapp\Event\DonorStateUpdated;
 
-final class ExportGenerated extends FileEvent
+final class DonorStateListener implements ListenerInterface
 {
-    public function __construct(FileInterface $file)
+    /** @var string */
+    private $stateId;
+
+    /** @var callable */
+    private $listener;
+
+    /**
+     * @param callable $listener Must take a DonorStateUpdated argument
+     */
+    public function __construct(string $stateId, callable $listener)
     {
-        parent::__construct('Generating file to export', $file);
+        $this->stateId = $stateId;
+        $this->listener = $listener;
+    }
+
+    public function __invoke(DonorStateUpdated $event): void
+    {
+        if ($event->getNewState()->getStateId() == $this->stateId
+            || $event->getNewState() instanceof $this->stateId
+        ) {
+            ($this->listener)($event);
+        }
     }
 }

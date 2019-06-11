@@ -8,7 +8,7 @@ use byrokrat\giroapp\CommandBus\CommitHandler;
 use byrokrat\giroapp\CommandBus\Commit;
 use byrokrat\giroapp\Db\DriverInterface;
 use byrokrat\giroapp\Event\ChangesCommitted;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -28,7 +28,7 @@ class CommitHandlerSpec extends ObjectBehavior
     function it_dispatches_on_database_commit($dbDriver, $dispatcher)
     {
         $dbDriver->commit()->willReturn(true)->shouldBeCalled();
-        $dispatcher->dispatch(ChangesCommitted::CLASS, new ChangesCommitted)->shouldBeCalled();
+        $dispatcher->dispatch(new ChangesCommitted)->shouldBeCalled();
         $this->handle(new Commit);
     }
 

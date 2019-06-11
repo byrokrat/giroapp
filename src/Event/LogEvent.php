@@ -23,9 +23,8 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Event;
 
 use Psr\Log\LogLevel;
-use Symfony\Component\EventDispatcher\Event;
 
-class LogEvent extends Event
+class LogEvent
 {
     private const LOG_LEVEL_MAP = [
         LogLevel::EMERGENCY => 8,

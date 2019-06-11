@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Filesystem\FileInterface;
 
-final class XmlFileImported extends FileEvent
+final class XmlFileImported extends FileImported
 {
     public function __construct(FileInterface $file)
     {

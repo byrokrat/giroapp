@@ -1,0 +1,47 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+
+    Psr\EventDispatcher\EventDispatcherInterface:
+        class: Crell\Tukio\Dispatcher
+        arguments:
+            - '@Fig\EventDispatcher\AggregateProvider'
+
+    Fig\EventDispatcher\AggregateProvider:
+        class: ~
+        calls:
+            - method: addProvider
+              arguments: ['@Crell\Tukio\OrderedProviderInterface']
+
+    Crell\Tukio\OrderedProviderInterface:
+        class: Crell\Tukio\OrderedListenerProvider
+        calls:
+            - method: addListener
+              arguments: ['@byrokrat\giroapp\Event\Listener\ImportHistoryListener']
+            - method: addListener
+              arguments: ['@byrokrat\giroapp\Event\Listener\LoggingListener']
+            - method: addListener
+              arguments:
+                  - ['@import_dumper', 'onFileEvent']
+                  - 0
+                  - null
+                  - byrokrat\giroapp\Event\FileImported
+            - method: addListener
+              arguments: [['@import_dumper', 'onExecutionStopped']]
+            - method: addListener
+              arguments:
+                  - ['@export_dumper', 'onFileEvent']
+                  - 0
+                  - null
+                  - byrokrat\giroapp\Event\FileExported
+            - method: addListener
+              arguments: [['@export_dumper', 'onExecutionStopped']]
+
+    import_dumper:
+        class: byrokrat\giroapp\Event\Listener\FileDumpingListener
+        arguments: ['@fs_imports', '@byrokrat\giroapp\Filesystem\RenamingProcessor']
+
+    export_dumper:
+        class: byrokrat\giroapp\Event\Listener\FileDumpingListener
+        arguments: ['@fs_exports', '@byrokrat\giroapp\Filesystem\RenamingProcessor']

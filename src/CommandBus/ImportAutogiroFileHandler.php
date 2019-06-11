@@ -55,6 +55,6 @@ final class ImportAutogiroFileHandler
             );
         }
 
-        $this->dispatcher->dispatch(AutogiroFileImported::CLASS, new AutogiroFileImported($command->getFile()));
+        $this->dispatcher->dispatch(new AutogiroFileImported($command->getFile()));
     }
 }

@@ -22,39 +22,39 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\CommandBus\CommandBusInterface;
 use byrokrat\giroapp\CommandBus\Commit;
 use byrokrat\giroapp\CommandBus\Rollback;
 use byrokrat\giroapp\Event\ExecutionStarted;
 use byrokrat\giroapp\Event\ExecutionStopped;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Exception as GiroappException;
-use byrokrat\giroapp\Listener\OutputtingSubscriber;
+use byrokrat\giroapp\Event\Listener\OutputtingListener;
+use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 final class SymfonyCommandAdapter extends Command
 {
     /** @var ConsoleInterface */
     private $console;
 
-    /** @var CommandBusInterface */
-    private $commandBus;
+    /** @var EnvironmentInterface */
+    private $environment;
 
     /** @var EventDispatcherInterface */
     private $dispatcher;
 
     public function __construct(
         ConsoleInterface $console,
-        CommandBusInterface $commandBus,
+        EnvironmentInterface $environment,
         EventDispatcherInterface $dispatcher
     ) {
         $this->console = $console;
-        $this->commandBus = $commandBus;
+        $this->environment = $environment;
         $this->dispatcher = $dispatcher;
         parent::__construct();
     }
@@ -70,16 +70,17 @@ final class SymfonyCommandAdapter extends Command
             throw new \InvalidArgumentException('Output must implement ConsoleOutputInterface');
         }
 
-        $this->dispatcher->addSubscriber(new OutputtingSubscriber($output->getErrorOutput()));
+        $this->environment->registerListener(new OutputtingListener($output->getErrorOutput()));
+
+        $commandBus = $this->environment->getCommandBus();
 
         try {
-            $this->dispatcher->dispatch(ExecutionStarted::CLASS, new ExecutionStarted);
+            $this->dispatcher->dispatch(new ExecutionStarted);
             $this->console->execute($input, $output);
-            $this->commandBus->handle(new Commit);
-            $this->dispatcher->dispatch(ExecutionStopped::CLASS, new ExecutionStopped);
+            $commandBus->handle(new Commit);
+            $this->dispatcher->dispatch(new ExecutionStopped);
         } catch (GiroappException $e) {
             $this->dispatcher->dispatch(
-                LogEvent::CLASS,
                 new LogEvent(
                     $e->getMessage(),
                     [
@@ -89,12 +90,11 @@ final class SymfonyCommandAdapter extends Command
                 )
             );
 
-            $this->commandBus->handle(new Rollback);
+            $commandBus->handle(new Rollback);
 
             return $e->getCode();
         } catch (\Exception $e) {
             $this->dispatcher->dispatch(
-                LogEvent::CLASS,
                 new LogEvent(
                     $e->getMessage(),
                     [
@@ -107,7 +107,7 @@ final class SymfonyCommandAdapter extends Command
                 )
             );
 
-            $this->commandBus->handle(new Rollback);
+            $commandBus->handle(new Rollback);
 
             return $e->getCode() ?: GiroappException::GENERIC_ERROR;
         }

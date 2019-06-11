@@ -11,9 +11,10 @@ use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
+use byrokrat\giroapp\Event\Listener\ListenerInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -38,11 +39,29 @@ class PluginSpec extends ObjectBehavior
         $env->registerDatabaseDriver($driverFactory)->shouldHaveBeenCalled();
     }
 
-    function it_registers_subscribers(EventSubscriberInterface $subscriber, EnvironmentInterface $env)
+    function it_throws_on_non_callable_listeners(ListenerInterface $listener, EnvironmentInterface $env)
     {
-        $this->beConstructedWith($subscriber);
+        $this->beConstructedWith($listener);
+        $this->shouldThrow(\LogicException::CLASS)->duringLoadPlugin($env);
+    }
+
+    function it_registers_listeners(EnvironmentInterface $env)
+    {
+        $listener = new class() implements ListenerInterface {
+            public function __invoke()
+            {
+            }
+        };
+        $this->beConstructedWith($listener);
         $this->loadPlugin($env);
-        $env->registerSubscriber($subscriber)->shouldHaveBeenCalled();
+        $env->registerListener($listener)->shouldHaveBeenCalled();
+    }
+
+    function it_registers_listener_providers(ListenerProviderInterface $provider, EnvironmentInterface $env)
+    {
+        $this->beConstructedWith($provider);
+        $this->loadPlugin($env);
+        $env->registerListenerProvider($provider)->shouldHaveBeenCalled();
     }
 
     function it_registers_filters(FilterInterface $filter, EnvironmentInterface $env)
@@ -89,9 +108,9 @@ class PluginSpec extends ObjectBehavior
         $env->registerDonorState($state)->shouldHaveBeenCalled();
     }
 
-    function it_ignore_unknowns(EnvironmentInterface $env)
+    function it_throws_on_unknowns(EnvironmentInterface $env)
     {
         $this->beConstructedWith('this-is-not-known');
-        $this->loadPlugin($env);
+        $this->shouldThrow(\InvalidArgumentException::CLASS)->duringLoadPlugin($env);
     }
 }

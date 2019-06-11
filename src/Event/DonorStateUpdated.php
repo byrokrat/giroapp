@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Event;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
 
-final class DonorStateUpdated extends DonorEvent
+class DonorStateUpdated extends DonorEvent
 {
     /** @var StateInterface */
     private $newState;

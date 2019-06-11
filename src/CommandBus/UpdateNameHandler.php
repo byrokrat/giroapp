@@ -41,7 +41,6 @@ final class UpdateNameHandler
         $this->donorRepository->updateDonorName($donor, $command->getNewName());
 
         $this->dispatcher->dispatch(
-            DonorNameUpdated::CLASS,
             new DonorNameUpdated($donor, $command->getNewName())
         );
     }

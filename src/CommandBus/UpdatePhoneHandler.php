@@ -41,7 +41,6 @@ final class UpdatePhoneHandler
         $this->donorRepository->updateDonorPhone($donor, $command->getNewPhone());
 
         $this->dispatcher->dispatch(
-            DonorPhoneUpdated::CLASS,
             new DonorPhoneUpdated($donor, $command->getNewPhone())
         );
     }

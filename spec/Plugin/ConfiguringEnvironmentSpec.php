@@ -27,8 +27,10 @@ use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
 use Symfony\Component\Console\Application;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
+use Fig\EventDispatcher\AggregateProvider;
+use Crell\Tukio\OrderedProviderInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -36,6 +38,8 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
 {
     function let(
         DonorQueryInterface $donorQuery,
+        AggregateProvider $aggregateProvider,
+        OrderedProviderInterface $orderedProvider,
         DriverFactoryCollection $dbDriverFactoryCollection,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
@@ -48,6 +52,8 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $this->beConstructedWith(
             new ApiVersion('1.0'),
             $donorQuery,
+            $aggregateProvider,
+            $orderedProvider,
             $dbDriverFactoryCollection,
             $filterCollection,
             $formatterCollection,
@@ -104,14 +110,14 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $this->registerPlugin($plugin);
     }
 
-    function it_can_register_consoles($dispatcher, $commandBus, ConsoleInterface $console, Application $application)
+    function it_can_register_consoles($dispatcher, ConsoleInterface $console, Application $application)
     {
         $this->registerConsoleCommand($console);
         $this->configureApplication($application);
 
         $adapter = new SymfonyCommandAdapter(
             $console->getWrappedObject(),
-            $commandBus->getWrappedObject(),
+            $this->getWrappedObject(),
             $dispatcher->getWrappedObject()
         );
 
@@ -124,10 +130,18 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $dbDriverFactoryCollection->addDriverFactory($driverFactory)->shouldHaveBeenCalled();
     }
 
-    function it_can_register_subscribers($dispatcher, EventSubscriberInterface $subscriber)
+    function it_can_register_listeners($orderedProvider)
     {
-        $this->registerSubscriber($subscriber);
-        $dispatcher->addSubscriber($subscriber)->shouldHaveBeenCalled();
+        $listener = function () {
+        };
+        $orderedProvider->addListener($listener)->willReturn('')->shouldBeCalled();
+        $this->registerListener($listener);
+    }
+
+    function it_can_register_listener_providers($aggregateProvider, ListenerProviderInterface $provider)
+    {
+        $aggregateProvider->addProvider($provider)->willReturn($aggregateProvider)->shouldBeCalled();
+        $this->registerListenerProvider($provider);
     }
 
     function it_can_register_filters($filterCollection, FilterInterface $filter)

@@ -8,7 +8,7 @@ use byrokrat\giroapp\CommandBus\RollbackHandler;
 use byrokrat\giroapp\CommandBus\Rollback;
 use byrokrat\giroapp\Db\DriverInterface;
 use byrokrat\giroapp\Event\ChangesDiscarded;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -28,7 +28,7 @@ class RollbackHandlerSpec extends ObjectBehavior
     function it_dispatches_on_database_rollback($dbDriver, $dispatcher)
     {
         $dbDriver->rollback()->willReturn(true)->shouldBeCalled();
-        $dispatcher->dispatch(ChangesDiscarded::CLASS, new ChangesDiscarded)->shouldBeCalled();
+        $dispatcher->dispatch(new ChangesDiscarded)->shouldBeCalled();
         $this->handle(new Rollback);
     }
 

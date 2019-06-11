@@ -11,7 +11,7 @@ use byrokrat\giroapp\Event\DonorStateUpdated;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -46,7 +46,7 @@ class ForceStateHandlerSpec extends ObjectBehavior
         $stateCollection->getState('new-state')->willReturn($state);
 
         $donorRepository->updateDonorState($donor, $state)->shouldBeCalled();
-        $dispatcher->dispatch(DonorStateUpdated::CLASS, Argument::type(DonorStateUpdated::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Argument::type(DonorStateUpdated::CLASS))->shouldBeCalled();
 
         $this->handle(new ForceState($donor->getWrappedObject(), 'new-state'));
     }
@@ -54,7 +54,6 @@ class ForceStateHandlerSpec extends ObjectBehavior
     function it_ignores_unchanged_states(
         $stateCollection,
         $donorRepository,
-        $dispatcher,
         Donor $donor,
         StateInterface $state
     ) {

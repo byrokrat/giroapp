@@ -41,7 +41,7 @@ final class CommitHandler
     public function handle(Commit $commit): void
     {
         if ($this->dbDriver->commit()) {
-            $this->dispatcher->dispatch(ChangesCommitted::CLASS, new ChangesCommitted);
+            $this->dispatcher->dispatch(new ChangesCommitted);
         }
     }
 }

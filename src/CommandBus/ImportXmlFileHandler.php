@@ -46,6 +46,6 @@ final class ImportXmlFileHandler
             $this->commandBus->handle(new AddDonor($newDonor));
         }
 
-        $this->dispatcher->dispatch(XmlFileImported::CLASS, new XmlFileImported($command->getFile()));
+        $this->dispatcher->dispatch(new XmlFileImported($command->getFile()));
     }
 }

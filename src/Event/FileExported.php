@@ -20,25 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Db\ImportHistoryInterface;
-use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\Filesystem\FileInterface;
 
-class ImportHistoryListener
+final class FileExported extends FileEvent
 {
-    /**
-     * @var ImportHistoryInterface
-     */
-    private $importHistory;
-
-    public function __construct(ImportHistoryInterface $importHistory)
+    public function __construct(FileInterface $file)
     {
-        $this->importHistory = $importHistory;
-    }
-
-    public function onFileImported(FileEvent $event): void
-    {
-        $this->importHistory->addToImportHistory($event->getFile());
+        parent::__construct('Generating file to export', $file);
     }
 }

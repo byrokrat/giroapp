@@ -41,7 +41,6 @@ final class UpdateDonationAmountHandler
         $this->donorRepository->updateDonorAmount($donor, $command->getNewAmount());
 
         $this->dispatcher->dispatch(
-            DonorAmountUpdated::CLASS,
             new DonorAmountUpdated($donor, $command->getNewAmount())
         );
     }

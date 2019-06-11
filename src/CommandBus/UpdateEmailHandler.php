@@ -41,7 +41,6 @@ final class UpdateEmailHandler
         $this->donorRepository->updateDonorEmail($donor, $command->getNewEmail());
 
         $this->dispatcher->dispatch(
-            DonorEmailUpdated::CLASS,
             new DonorEmailUpdated($donor, $command->getNewEmail())
         );
     }

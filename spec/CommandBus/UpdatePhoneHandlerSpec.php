@@ -9,7 +9,7 @@ use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Event;
 use byrokrat\giroapp\Model\Donor;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -41,7 +41,7 @@ class UpdatePhoneHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorPhone($donor, 'new')->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Event\DonorPhoneUpdated::CLASS, Argument::type(Event\DonorPhoneUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorPhoneUpdated::CLASS))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdatePhone($donor->getWrappedObject(), 'new'));

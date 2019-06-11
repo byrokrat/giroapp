@@ -45,6 +45,6 @@ final class AddDonorHandler
 
         $this->donorRepository->addNewDonor($donor);
 
-        $this->dispatcher->dispatch(DonorAdded::CLASS, new DonorAdded($donor));
+        $this->dispatcher->dispatch(new DonorAdded($donor));
     }
 }

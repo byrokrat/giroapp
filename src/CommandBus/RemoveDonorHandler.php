@@ -42,6 +42,6 @@ final class RemoveDonorHandler
 
         $this->donorRepository->deleteDonor($donor);
 
-        $this->dispatcher->dispatch(DonorRemoved::CLASS, new DonorRemoved($donor));
+        $this->dispatcher->dispatch(new DonorRemoved($donor));
     }
 }

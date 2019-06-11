@@ -36,14 +36,12 @@ final class LoggingMiddleware implements Middleware
         $commandClass = get_class($command);
 
         $this->dispatcher->dispatch(
-            LogEvent::CLASS,
             new LogEvent("Enter command $commandClass", [], LogLevel::DEBUG)
         );
 
         $returnValue = $next($command);
 
         $this->dispatcher->dispatch(
-            LogEvent::CLASS,
             new LogEvent("Command $commandClass finished without errors", [], LogLevel::DEBUG)
         );
 

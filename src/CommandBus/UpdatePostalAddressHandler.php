@@ -41,7 +41,6 @@ final class UpdatePostalAddressHandler
         $this->donorRepository->updateDonorAddress($donor, $command->getNewPostalAddress());
 
         $this->dispatcher->dispatch(
-            DonorPostalAddressUpdated::CLASS,
             new DonorPostalAddressUpdated($donor, $command->getNewPostalAddress())
         );
     }

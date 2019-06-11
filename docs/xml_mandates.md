@@ -14,38 +14,19 @@ use byrokrat\giroapp\Plugin\PluginInterface;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Event\DonorAdded;
 use byrokrat\giroapp\CommandBus\UpdatePhone;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 return new class implements PluginInterface {
     public function loadPlugin(EnvironmentInterface $env): void
     {
-        $env->registerSubscriber(
-            new class($env->getCommandBus()) implements EventSubscriberInterface
-            {
-                public function __construct($commandBus)
-                {
-                    $this->commandBus = $commandBus;
-                }
+        $env->registerListener(function (DonorAdded $event) use ($env) {
+            $donor = $event->getDonor();
 
-                public static function getSubscribedEvents()
-                {
-                    return [
-                        DonorAdded::CLASS => 'onDonorAdded'
-                    ];
-                }
-
-                public function onDonorAdded(DonorAdded $event)
-                {
-                    $donor = $event->getDonor();
-
-                    if ($donor->hasAttribute('phone')) {
-                        $this->commandBus->handle(
-                            new UpdatePhone($donor, $donor->getAttribute('phone'))
-                        );
-                    }
-                }
+            if ($donor->hasAttribute('phone')) {
+                $env->getCommandBus()->handle(
+                    new UpdatePhone($donor, $donor->getAttribute('phone'))
+                );
             }
-        );
+        });
     }
 };
 ```

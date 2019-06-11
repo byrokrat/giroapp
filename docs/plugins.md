@@ -6,13 +6,14 @@ The plugin must return a `PluginInterface` instance.
 
 Plugins may register
 
-* Event subscribers
+* psr-14 event listeners and listener providers
 * Console commands
 * Donor filters
 * Donor formatters
 * Donor sorters
 * Donor states
 * Database drivers
+* Other plugins
 
 Here is an example plugin that sends notifications on application error:
 
@@ -22,75 +23,66 @@ use byrokrat\giroapp\Plugin\PluginInterface;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Event\LogEvent;
 use Psr\Log\LogLevel;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 return new class implements PluginInterface {
     public function loadPlugin(EnvironmentInterface $env): void
     {
-        $env->registerSubscriber(new ErrorNotifyingSubscriber);
+        $env->registerListener(function (LogEvent $event) {
+            if ($event->getSeverity() == LogLevel::ERROR) {
+                send_sms_to_admin($event->getMessage());
+            }
+        });
     }
 };
-
-class ErrorNotifyingSubscriber implements EventSubscriberInterface
-{
-    public static function getSubscribedEvents()
-    {
-        return [
-            LogEvent::CLASS => ['onLogEvent', 100]
-        ];
-    }
-
-    public function onLogEvent(LogEvent $event)
-    {
-        if ($event->getSeverity() == LogLevel::ERROR) {
-            send_sms_to_admin($event->getMessage());
-        }
-    }
-}
 ```
 
 For a more condensed syntax you may use the `Plugin` class that automatically
 registers objects into the environment.
 
-Here is an example that sends mails to added donors:
+Here is an example that forces the donation amount to be at least 100 SEK:
 
-<!-- @example Condensed-plugin -->
+<!-- @example validate-donation-amount -->
 ```php
 use byrokrat\giroapp\Plugin\Plugin;
-use byrokrat\giroapp\Events;
-use byrokrat\giroapp\Event\DonorEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use byrokrat\giroapp\Event\DonorAdded;
+use byrokrat\giroapp\Event\Listener\ListenerInterface;
+use byrokrat\amount\Currency\SEK;
 
 return new Plugin(
-    new class implements EventSubscriberInterface
+    new class() implements ListenerInterface
     {
-        public static function getSubscribedEvents()
+        function __invoke(DonorAdded $event)
         {
-            return [
-                Events::MANDATE_APPROVED => 'onApprovedDonor'
-            ];
-        }
+            $donor = $event->getDonor();
 
-        public function onApprovedDonor(DonorEvent $donorEvent)
-        {
-            send_mail_to_donor(
-                $donorEvent->getDonor()->getEmail(),
-                "Welcome {$donorEvent->getDonor()->getName()}, you are now a donor!"
-            );
+            if (!$donor->getDonationAmount()->isGreaterThanOrEquals(new SEK('100'))) {
+                throw new \RuntimeException('Donation amount must be at least 100');
+            }
         }
     }
 );
 ```
 
-## Listener priorities
+## Listening to donor state transitions
 
-When subscribing to events you may optionally set a priority to manage the call
-order of registered listeners. The higher the priority, the earlier a listener
-is executed. Internally giroapp event listeners use priorities ranging from `-10`
-to `10`. This means that if you set a plugin priority to a value higher than `10`
-it will be executed before the event is handled internally (and you may stop
-event propagation if needed). If you set a plugin priority to a value lower than
-`-10` the plugin will be executed after the event has been handled internally.
+Use the dedicated `DonorStateListener` to fire on specific donor state transitions:
+
+<!-- @example mandate-approved-listener -->
+```php
+use byrokrat\giroapp\Plugin\Plugin;
+use byrokrat\giroapp\Event\DonorStateUpdated;
+use byrokrat\giroapp\Event\Listener\DonorStateListener;
+use byrokrat\giroapp\State\MandateApproved;
+
+return new Plugin(
+    new DonorStateListener(MandateApproved::CLASS, function (DonorStateUpdated $event) {
+        send_mail_to_donor(
+            $event->getDonor()->getEmail(),
+            "Welcome {$event->getDonor()->getName()}, you are now a donor!"
+        );
+    })
+);
+```
 
 ## Specifying the supported giroapp api version
 

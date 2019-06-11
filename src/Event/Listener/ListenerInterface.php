@@ -18,27 +18,13 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
-
-namespace byrokrat\giroapp\DependencyInjection;
-
-use Psr\EventDispatcher\EventDispatcherInterface;
+namespace byrokrat\giroapp\Event\Listener;
 
 /**
- * Use this trait to automatically inject an event dispatcher
+ * A marker interface to identify something as a listener.
+ *
+ * Note that listeners MUST be callable, eg implement an __invoke() method.
  */
-trait DispatcherProperty
+interface ListenerInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    /**
-     * @required
-     */
-    public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
-    {
-        $this->dispatcher = $dispatcher;
-    }
 }

@@ -42,61 +42,52 @@ use byrokrat\giroapp\State\StateCollection;
 use byrokrat\giroapp\State\StateInterface;
 use Composer\Semver\Semver;
 use Symfony\Component\Console\Application;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Psr\EventDispatcher\ListenerProviderInterface;
+use Fig\EventDispatcher\AggregateProvider;
+use Crell\Tukio\OrderedProviderInterface;
 
 final class ConfiguringEnvironment implements EnvironmentInterface
 {
     use CommandBusProperty, DispatcherProperty;
 
-    /**
-     * @var ApiVersion
-     */
+    /** @var ApiVersion */
     private $apiVersion;
 
-    /**
-     * @var DonorQueryInterface
-     */
+    /** @var DonorQueryInterface */
     private $donorQuery;
 
-    /**
-     * @var DriverFactoryCollection
-     */
+    /** @var AggregateProvider */
+    private $aggregateProvider;
+
+    /** @var OrderedProviderInterface */
+    private $orderedProvider;
+
+    /** @var DriverFactoryCollection */
     private $dbDriverFactoryCollection;
 
-    /**
-     * @var FilterCollection
-     */
+    /** @var FilterCollection */
     private $filterCollection;
 
-    /**
-     * @var FormatterCollection
-     */
+    /** @var FormatterCollection */
     private $formatterCollection;
 
-    /**
-     * @var SorterCollection
-     */
+    /** @var SorterCollection */
     private $sorterCollection;
 
-    /**
-     * @var StateCollection
-     */
+    /** @var StateCollection */
     private $stateCollection;
 
-    /**
-     * @var ConfigManager
-     */
+    /** @var ConfigManager */
     private $configManager;
 
-    /**
-     * @var ConsoleInterface[]
-     */
+    /** @var ConsoleInterface[] */
     private $consoleCommands = [];
 
     public function __construct(
         ApiVersion $apiVersion,
         DonorQueryInterface $donorQuery,
+        AggregateProvider $aggregateProvider,
+        OrderedProviderInterface $orderedProvider,
         DriverFactoryCollection $dbDriverFactoryCollection,
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
@@ -106,6 +97,8 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     ) {
         $this->apiVersion = $apiVersion;
         $this->donorQuery = $donorQuery;
+        $this->aggregateProvider = $aggregateProvider;
+        $this->orderedProvider = $orderedProvider;
         $this->dbDriverFactoryCollection = $dbDriverFactoryCollection;
         $this->filterCollection = $filterCollection;
         $this->formatterCollection = $formatterCollection;
@@ -156,9 +149,14 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         $this->dbDriverFactoryCollection->addDriverFactory($driverFactory);
     }
 
-    public function registerSubscriber(EventSubscriberInterface $subscriber): void
+    public function registerListener(callable $listener): void
     {
-        $this->dispatcher->addSubscriber($subscriber);
+        $this->orderedProvider->addListener($listener);
+    }
+
+    public function registerListenerProvider(ListenerProviderInterface $provider): void
+    {
+        $this->aggregateProvider->addProvider($provider);
     }
 
     public function registerDonorFilter(FilterInterface $donorFilter): void
@@ -184,7 +182,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function configureApplication(Application $application): void
     {
         foreach ($this->consoleCommands as $consoleCommand) {
-            $application->add(new SymfonyCommandAdapter($consoleCommand, $this->commandBus, $this->dispatcher));
+            $application->add(new SymfonyCommandAdapter($consoleCommand, $this, $this->dispatcher));
         }
     }
 }

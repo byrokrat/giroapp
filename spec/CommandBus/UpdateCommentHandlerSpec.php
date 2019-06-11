@@ -9,7 +9,7 @@ use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Event;
 use byrokrat\giroapp\Model\Donor;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -41,7 +41,7 @@ class UpdateCommentHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorComment($donor, 'new')->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Event\DonorCommentUpdated::CLASS, Argument::type(Event\DonorCommentUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorCommentUpdated::CLASS))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdateComment($donor->getWrappedObject(), 'new'));

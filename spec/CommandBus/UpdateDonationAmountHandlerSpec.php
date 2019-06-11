@@ -10,7 +10,7 @@ use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Event;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\amount\Currency\SEK;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -42,7 +42,7 @@ class UpdateDonationAmountHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorAmount($donor, new SEK('200'))->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Event\DonorAmountUpdated::CLASS, Argument::type(Event\DonorAmountUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorAmountUpdated::CLASS))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdateDonationAmount($donor->getWrappedObject(), new SEK('200')));

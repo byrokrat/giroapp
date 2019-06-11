@@ -41,7 +41,6 @@ final class UpdateCommentHandler
         $this->donorRepository->updateDonorComment($donor, $command->getNewComment());
 
         $this->dispatcher->dispatch(
-            DonorCommentUpdated::CLASS,
             new DonorCommentUpdated($donor, $command->getNewComment())
         );
     }

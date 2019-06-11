@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Event\XmlFileImported;
-use byrokrat\giroapp\Event\FileEvent;
+use byrokrat\giroapp\Event\FileImported;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -23,9 +23,9 @@ class XmlFileImportedSpec extends ObjectBehavior
         $this->shouldHaveType(XmlFileImported::CLASS);
     }
 
-    function it_is_a_file_event()
+    function it_is_a_file_imported_event()
     {
-        $this->shouldHaveType(FileEvent::CLASS);
+        $this->shouldHaveType(FileImported::CLASS);
     }
 
     function it_contains_a_file($file)

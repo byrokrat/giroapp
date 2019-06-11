@@ -43,7 +43,6 @@ final class UpdateAttributeHandler
         $this->donorRepository->setDonorAttribute($donor, $command->getAttributeKey(), $command->getAttributeValue());
 
         $this->dispatcher->dispatch(
-            DonorAttributeUpdated::CLASS,
             new DonorAttributeUpdated($donor, $command->getAttributeKey(), $command->getAttributeValue())
         );
     }

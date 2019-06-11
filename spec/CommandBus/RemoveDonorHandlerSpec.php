@@ -12,7 +12,7 @@ use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\State\StateInterface;
 use byrokrat\giroapp\State\Inactive;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -43,7 +43,7 @@ class RemoveDonorHandlerSpec extends ObjectBehavior
         $donor->getMandateKey()->willReturn('foo');
 
         $donorRepository->deleteDonor($donor)->shouldBeCalled();
-        $dispatcher->dispatch(DonorRemoved::CLASS, Argument::type(DonorRemoved::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Argument::type(DonorRemoved::CLASS))->shouldBeCalled();
 
         $this->handle(new RemoveDonor($donor->getWrappedObject()));
     }

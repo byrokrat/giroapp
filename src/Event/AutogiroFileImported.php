@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Filesystem\FileInterface;
 
-final class AutogiroFileImported extends FileEvent
+final class AutogiroFileImported extends FileImported
 {
     public function __construct(FileInterface $file)
     {

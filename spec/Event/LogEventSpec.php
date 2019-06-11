@@ -6,7 +6,6 @@ namespace spec\byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Event\LogEvent;
 use Psr\Log\LogLevel;
-use Symfony\Component\EventDispatcher\Event;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -20,11 +19,6 @@ class LogEventSpec extends ObjectBehavior
     function it_is_initializable()
     {
         $this->shouldHaveType(LogEvent::CLASS);
-    }
-
-    function it_is_an_event()
-    {
-        $this->shouldHaveType(Event::CLASS);
     }
 
     function it_contains_a_message()

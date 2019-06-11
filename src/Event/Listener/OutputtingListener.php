@@ -20,54 +20,43 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Event\Listener;
 
 use byrokrat\giroapp\Event\LogEvent;
 use Psr\Log\LogLevel;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/**
- * Write warning, info and debug messages to output
- */
-final class OutputtingSubscriber implements EventSubscriberInterface
+final class OutputtingListener implements ListenerInterface
 {
     /**
      * @var OutputInterface
      */
-    private $errout;
+    private $output;
 
-    public static function getSubscribedEvents()
+    public function __construct(OutputInterface $output)
     {
-        return [
-            LogEvent::CLASS => ['onLogEvent', -10],
-        ];
+        $this->output = $output;
     }
 
-    public function __construct(OutputInterface $errout)
-    {
-        $this->errout = $errout;
-    }
-
-    public function onLogEvent(LogEvent $event): void
+    public function __invoke(LogEvent $event): void
     {
         switch ($event->getSeverity()) {
             case LogLevel::EMERGENCY:
             case LogLevel::ALERT:
             case LogLevel::CRITICAL:
             case LogLevel::ERROR:
-                $this->errout->writeln("<error>ERROR: {$event->getMessage()}</error>");
+                $this->output->writeln("<error>ERROR: {$event->getMessage()}</error>");
                 break;
             case LogLevel::WARNING:
-                $this->errout->writeln("<question>WARNING: {$event->getMessage()}</question>");
+                $this->output->writeln("<question>WARNING: {$event->getMessage()}</question>");
                 break;
             case LogLevel::NOTICE:
             case LogLevel::INFO:
-                $this->errout->writeln($event->getMessage());
+                $this->output->writeln($event->getMessage());
                 break;
             case LogLevel::DEBUG:
-                if ($this->errout->isVerbose()) {
-                    $this->errout->writeln($event->getMessage());
+                if ($this->output->isVerbose()) {
+                    $this->output->writeln($event->getMessage());
                 }
                 break;
         }

@@ -20,25 +20,8 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Event\LogEvent;
-use Psr\Log\LoggerInterface;
-
-final class LoggingListener
+class FileImported extends FileEvent
 {
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
-
-    public function __construct(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    public function onLogEvent(LogEvent $event): void
-    {
-        $this->logger->log($event->getSeverity(), $event->getMessage(), $event->getContext());
-    }
 }

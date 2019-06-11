@@ -20,17 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Listener;
+namespace byrokrat\giroapp\Event\Listener;
 
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Event\LogEvent;
+use Psr\Log\LoggerInterface;
 
-class MonitoringListener
+final class LoggingListener implements ListenerInterface
 {
-    use DispatcherProperty;
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
-    public function onLogEvent(LogEvent $event): void
+    public function __construct(LoggerInterface $logger)
     {
-        $this->dispatcher->dispatch(LogEvent::CLASS, $event);
+        $this->logger = $logger;
+    }
+
+    public function __invoke(LogEvent $event): void
+    {
+        $this->logger->log($event->getSeverity(), $event->getMessage(), $event->getContext());
     }
 }

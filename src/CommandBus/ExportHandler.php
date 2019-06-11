@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Event\ExportGenerated;
+use byrokrat\giroapp\Event\FileExported;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\State\ExportableStateInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
@@ -61,7 +61,6 @@ final class ExportHandler
 
             if ($state instanceof ExportableStateInterface) {
                 $this->dispatcher->dispatch(
-                    LogEvent::CLASS,
                     new LogEvent("Exporting mandate '{$donor->getMandateKey()}'", [], LogLevel::DEBUG)
                 );
 
@@ -83,8 +82,7 @@ final class ExportHandler
         $content = $this->autogiroWriter->getContent();
 
         $this->dispatcher->dispatch(
-            ExportGenerated::CLASS,
-            new ExportGenerated(new Sha256File(self::DEFAULT_FILE_NAME, $content))
+            new FileExported(new Sha256File(self::DEFAULT_FILE_NAME, $content))
         );
 
         return $content;

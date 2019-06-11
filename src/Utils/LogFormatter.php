@@ -35,7 +35,9 @@ final class LogFormatter extends BaseFormatter
             strtoupper($log->name),
             self::interpolate(strip_tags($log->message), $log->context),
             implode(', ', array_reduce(array_keys($log->context), function ($values, $key) use ($log) {
-                $values[] = "$key:{$log->context[$key]}";
+                if (is_scalar($log->context[$key])) {
+                    $values[] = "$key:{$log->context[$key]}";
+                }
                 return $values;
             }, []))
         );

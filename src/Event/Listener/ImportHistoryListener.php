@@ -20,25 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\DependencyInjection;
+namespace byrokrat\giroapp\Event\Listener;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
+use byrokrat\giroapp\Db\ImportHistoryInterface;
+use byrokrat\giroapp\Event\FileImported;
 
-/**
- * Use this trait to automatically inject an event dispatcher
- */
-trait DispatcherProperty
+final class ImportHistoryListener implements ListenerInterface
 {
     /**
-     * @var EventDispatcherInterface
+     * @var ImportHistoryInterface
      */
-    protected $dispatcher;
+    private $importHistory;
 
-    /**
-     * @required
-     */
-    public function setEventDispatcher(EventDispatcherInterface $dispatcher): void
+    public function __construct(ImportHistoryInterface $importHistory)
     {
-        $this->dispatcher = $dispatcher;
+        $this->importHistory = $importHistory;
+    }
+
+    public function __invoke(FileImported $event): void
+    {
+        $this->importHistory->addToImportHistory($event->getFile());
     }
 }

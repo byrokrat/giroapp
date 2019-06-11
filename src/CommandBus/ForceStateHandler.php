@@ -51,9 +51,6 @@ final class ForceStateHandler
 
         $this->donorRepository->updateDonorState($donor, $newState);
 
-        $this->dispatcher->dispatch(
-            DonorStateUpdated::CLASS,
-            new DonorStateUpdated($donor, $newState)
-        );
+        $this->dispatcher->dispatch(new DonorStateUpdated($donor, $newState));
     }
 }

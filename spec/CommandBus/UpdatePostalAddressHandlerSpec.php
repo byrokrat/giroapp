@@ -10,7 +10,7 @@ use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Event;
 use byrokrat\giroapp\Model\Donor;
 use byrokrat\giroapp\Model\PostalAddress;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -42,7 +42,7 @@ class UpdatePostalAddressHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorAddress($donor, new PostalAddress('new'))->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Event\DonorPostalAddressUpdated::CLASS, Argument::type(Event\DonorPostalAddressUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorPostalAddressUpdated::CLASS))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdatePostalAddress($donor->getWrappedObject(), new PostalAddress('new')));
