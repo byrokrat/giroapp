@@ -31,6 +31,7 @@ use byrokrat\giroapp\Db\DriverFactoryCollection;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
@@ -122,6 +123,11 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function readConfig(string $key): string
     {
         return $this->configManager->getConfig($key)->getValue();
+    }
+
+    public function log(string $level, string $message, array $context = []): void
+    {
+        $this->dispatcher->dispatch(new LogEvent($message, $context, $level));
     }
 
     public function getCommandBus(): CommandBusInterface

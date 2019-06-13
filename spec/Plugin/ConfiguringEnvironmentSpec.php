@@ -17,6 +17,7 @@ use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Db\DriverFactoryCollection;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
@@ -92,6 +93,12 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $configManager->getConfig('foo')->willReturn($config);
         $config->getValue()->willReturn('bar');
         $this->readConfig('foo')->shouldReturn('bar');
+    }
+
+    function it_can_log($dispatcher)
+    {
+        $this->log('debug', 'message', ['context']);
+        $dispatcher->dispatch(new LogEvent('message', ['context'], 'debug'))->shouldHaveBeenCalled();
     }
 
     function it_contains_a_command_bus($commandBus)

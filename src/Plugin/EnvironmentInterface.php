@@ -44,6 +44,11 @@ interface EnvironmentInterface
     public function readConfig(string $key): string;
 
     /**
+     * Log a message. Use one of the Psr\Log\LogLevel constants.
+     */
+    public function log(string $level, string $message, array $context = []): void;
+
+    /**
      * Service layer hook
      */
     public function getCommandBus(): CommandBusInterface;
