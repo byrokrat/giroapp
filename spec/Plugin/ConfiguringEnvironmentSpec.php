@@ -17,7 +17,6 @@ use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Db\DriverFactoryCollection;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
-use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
@@ -32,6 +31,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Fig\EventDispatcher\AggregateProvider;
 use Crell\Tukio\OrderedProviderInterface;
+use Psr\Log\LoggerInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -48,9 +48,11 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         StateCollection $stateCollection,
         ConfigManager $configManager,
         EventDispatcherInterface $dispatcher,
-        CommandBusInterface $commandBus
+        CommandBusInterface $commandBus,
+        LoggerInterface $logger
     ) {
         $this->beConstructedWith(
+            $logger,
             new ApiVersion('1.0'),
             $donorQuery,
             $aggregateProvider,
@@ -95,10 +97,9 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         $this->readConfig('foo')->shouldReturn('bar');
     }
 
-    function it_can_log($dispatcher)
+    function it_contains_a_logger($logger)
     {
-        $this->log('debug', 'message', ['context']);
-        $dispatcher->dispatch(new LogEvent('message', ['context'], 'debug'))->shouldHaveBeenCalled();
+        $this->getLogger()->shouldReturn($logger);
     }
 
     function it_contains_a_command_bus($commandBus)

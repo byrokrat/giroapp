@@ -30,6 +30,7 @@ use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
+use Psr\Log\LoggerInterface;
 
 interface EnvironmentInterface
 {
@@ -44,9 +45,9 @@ interface EnvironmentInterface
     public function readConfig(string $key): string;
 
     /**
-     * Log a message. Use one of the Psr\Log\LogLevel constants.
+     * Get a psr logger.
      */
-    public function log(string $level, string $message, array $context = []): void;
+    public function getLogger(): LoggerInterface;
 
     /**
      * Service layer hook

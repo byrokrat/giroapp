@@ -31,7 +31,6 @@ use byrokrat\giroapp\Db\DriverFactoryCollection;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
@@ -46,10 +45,14 @@ use Symfony\Component\Console\Application;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Fig\EventDispatcher\AggregateProvider;
 use Crell\Tukio\OrderedProviderInterface;
+use Psr\Log\LoggerInterface;
 
 final class ConfiguringEnvironment implements EnvironmentInterface
 {
     use CommandBusProperty, DispatcherProperty;
+
+    /** @var LoggerInterface */
+    private $logger;
 
     /** @var ApiVersion */
     private $apiVersion;
@@ -85,6 +88,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     private $consoleCommands = [];
 
     public function __construct(
+        LoggerInterface $logger,
         ApiVersion $apiVersion,
         DonorQueryInterface $donorQuery,
         AggregateProvider $aggregateProvider,
@@ -96,6 +100,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         StateCollection $stateCollection,
         ConfigManager $configManager
     ) {
+        $this->logger = $logger;
         $this->apiVersion = $apiVersion;
         $this->donorQuery = $donorQuery;
         $this->aggregateProvider = $aggregateProvider;
@@ -125,9 +130,9 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         return $this->configManager->getConfig($key)->getValue();
     }
 
-    public function log(string $level, string $message, array $context = []): void
+    public function getLogger(): LoggerInterface
     {
-        $this->dispatcher->dispatch(new LogEvent($message, $context, $level));
+        return $this->logger;
     }
 
     public function getCommandBus(): CommandBusInterface
