@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Domain;
 
 use byrokrat\giroapp\Domain\NewDonor;
-use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
@@ -16,27 +15,15 @@ use Prophecy\Argument;
 class NewDonorSpec extends ObjectBehavior
 {
     const PAYER_NUMBER = 'payer-number';
-    const NAME = 'name';
-    const EMAIL = 'email';
-    const PHONE = 'phone';
-    const COMMENT = 'comment';
-    const ATTR_KEY = 'ATTR_KEY';
-    const ATTR_VALUE = 'ATTR_VALUE';
 
-    function let(AccountNumber $account, PersonalId $donorId, PostalAddress $address, SEK $donationAmount)
+    function let(AccountNumber $account, PersonalId $donorId, SEK $donationAmount)
     {
         $this->beConstructedWith(
             MandateSources::MANDATE_SOURCE_PAPER,
             self::PAYER_NUMBER,
             $account,
             $donorId,
-            self::NAME,
-            $address,
-            self::EMAIL,
-            self::PHONE,
-            $donationAmount,
-            self::COMMENT,
-            [self::ATTR_KEY => self::ATTR_VALUE]
+            $donationAmount
         );
     }
 
@@ -65,38 +52,8 @@ class NewDonorSpec extends ObjectBehavior
         $this->getDonorId()->shouldEqual($donorId);
     }
 
-    function it_contains_a_name()
-    {
-        $this->getName()->shouldEqual(self::NAME);
-    }
-
-    function it_contains_an_address($address)
-    {
-        $this->getPostalAddress()->shouldEqual($address);
-    }
-
-    function it_contains_an_email()
-    {
-        $this->getEmail()->shouldEqual(self::EMAIL);
-    }
-
-    function it_contains_a_phone_number()
-    {
-        $this->getPhone()->shouldEqual(self::PHONE);
-    }
-
     function it_contains_an_amount($donationAmount)
     {
         $this->getDonationAmount()->shouldEqual($donationAmount);
-    }
-
-    function it_contains_a_comment()
-    {
-        $this->getComment()->shouldEqual(self::COMMENT);
-    }
-
-    function it_can_show_all_attributes()
-    {
-        $this->getAttributes()->shouldReturn([self::ATTR_KEY => self::ATTR_VALUE]);
     }
 }

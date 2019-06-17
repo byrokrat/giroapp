@@ -11,11 +11,7 @@ services:
         arguments:
             -
                 - '@byrokrat\giroapp\CommandBus\Helper\LoggingMiddleware'
-                - '@League\Tactician\Plugins\LockingMiddleware'
                 - '@League\Tactician\Handler\CommandHandlerMiddleware'
-
-    League\Tactician\Plugins\LockingMiddleware:
-        class: ~
 
     League\Tactician\Handler\CommandHandlerMiddleware:
         class: ~

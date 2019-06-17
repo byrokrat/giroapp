@@ -31,7 +31,7 @@ final class DonorAdded extends DonorEvent
         parent::__construct(
             sprintf(
                 "Added donor '%s' with mandate key '%s'",
-                $donor->getName(),
+                $donor->getPayerNumber(),
                 $donor->getMandateKey()
             ),
             $donor

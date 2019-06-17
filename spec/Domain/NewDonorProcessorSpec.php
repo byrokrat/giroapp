@@ -27,7 +27,6 @@ class NewDonorProcessorSpec extends ObjectBehavior
         SystemClock $systemClock,
         StateInterface $state,
         NewDonor $newDonor,
-        PostalAddress $address,
         IdInterface $id,
         AccountNumber $account
     ) {
@@ -37,17 +36,11 @@ class NewDonorProcessorSpec extends ObjectBehavior
         $state->getDescription()->willReturn('');
         $id->format('Ss')->willReturn('1');
         $account->get16()->willReturn('11');
-        $newDonor->getPostalAddress()->willReturn($address);
         $newDonor->getDonorId()->willReturn($id);
         $newDonor->getAccount()->willReturn($account);
         $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_PAPER);
         $newDonor->getPayerNumber()->willReturn('');
-        $newDonor->getName()->willReturn('');
-        $newDonor->getEmail()->willReturn('');
-        $newDonor->getPhone()->willReturn('');
         $newDonor->getDonationAmount()->willReturn(new SEK('1'));
-        $newDonor->getComment()->willReturn('');
-        $newDonor->getAttributes()->willReturn([]);
     }
 
     function it_is_initializable()
@@ -59,7 +52,6 @@ class NewDonorProcessorSpec extends ObjectBehavior
         $stateCollection,
         $systemClock,
         $state,
-        PostalAddress $address,
         IdInterface $id,
         AccountNumber $account
     ) {
@@ -78,13 +70,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
             'payer-number',
             $account->getWrappedObject(),
             $id->getWrappedObject(),
-            'name',
-            $address->getWrappedObject(),
-            'mail',
-            'phone',
-            $amount,
-            'comment',
-            ['attributes']
+            $amount
         ))->shouldBeLike(new Donor(
             'pPy7LDdwRb1YKXAx',
             $state->getWrappedObject(),
@@ -92,15 +78,15 @@ class NewDonorProcessorSpec extends ObjectBehavior
             'payer-number',
             $account->getWrappedObject(),
             $id->getWrappedObject(),
-            'name',
-            $address->getWrappedObject(),
-            'mail',
-            'phone',
+            '',
+            new PostalAddress,
+            '',
+            '',
             $amount,
-            'comment',
+            '',
             $now,
             $now,
-            ['attributes']
+            []
         ));
     }
 

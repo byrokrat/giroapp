@@ -40,54 +40,21 @@ class NewDonor
     /** @var IdInterface */
     private $donorId;
 
-    /** @var string */
-    private $name;
-
-    /** @var PostalAddress */
-    private $address;
-
-    /** @var string */
-    private $email;
-
-    /** @var string */
-    private $phone;
-
     /** @var SEK */
     private $donationAmount;
 
-    /** @var string */
-    private $comment;
-
-    /** @var string[] */
-    private $attributes;
-
-    /**
-     * @param string[] $attributes
-     */
     public function __construct(
         string $mandateSource,
         string $payerNumber,
         AccountNumber $account,
         IdInterface $donorId,
-        string $name,
-        PostalAddress $address,
-        string $email,
-        string $phone,
-        SEK $donationAmount,
-        string $comment,
-        array $attributes = []
+        SEK $donationAmount
     ) {
         $this->mandateSource = $mandateSource;
         $this->payerNumber = $payerNumber;
         $this->account = $account;
         $this->donorId = $donorId;
-        $this->name = $name;
-        $this->address = $address;
-        $this->email = $email;
-        $this->phone = $phone;
         $this->donationAmount = $donationAmount;
-        $this->comment = $comment;
-        $this->attributes = $attributes;
     }
 
     public function getMandateSource(): string
@@ -110,41 +77,8 @@ class NewDonor
         return $this->donorId;
     }
 
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function getPostalAddress(): PostalAddress
-    {
-        return $this->address;
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-    public function getPhone(): string
-    {
-        return $this->phone;
-    }
-
     public function getDonationAmount(): SEK
     {
         return $this->donationAmount;
-    }
-
-    public function getComment(): string
-    {
-        return $this->comment;
-    }
-
-    /**
-     * @return string[]
-     */
-    public function getAttributes(): array
-    {
-        return $this->attributes;
     }
 }

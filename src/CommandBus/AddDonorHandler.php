@@ -23,8 +23,8 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Event\DonorAdded;
 use byrokrat\giroapp\Domain\NewDonorProcessor;
+use byrokrat\giroapp\Event\DonorAdded;
 
 final class AddDonorHandler
 {

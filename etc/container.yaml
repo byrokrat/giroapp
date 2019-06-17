@@ -102,7 +102,7 @@ services:
             $dayOfMonth: "@=service('ini').getConfig('trans_day_of_month')"
             $minDaysInFuture: "@=service('ini').getConfig('trans_min_days_in_future')"
 
-    byrokrat\giroapp\Xml\XmlMandateParser:
+    byrokrat\giroapp\Xml\XmlMandateProcessor:
         class: ~
         arguments: ['@organization_id', '@organization_bg']
 

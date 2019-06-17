@@ -55,7 +55,6 @@ class ProjectServiceContainer extends Container
             'League\\Tactician\\Handler\\CommandNameExtractor\\ClassNameExtractor' => true,
             'League\\Tactician\\Handler\\Locator\\InMemoryLocator' => true,
             'League\\Tactician\\Handler\\MethodNameInflector\\HandleInflector' => true,
-            'League\\Tactician\\Plugins\\LockingMiddleware' => true,
             'Psr\\Container\\ContainerInterface' => true,
             'Psr\\EventDispatcher\\EventDispatcherInterface' => true,
             'Psr\\Log\\LoggerInterface' => true,
@@ -256,7 +255,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Validator\\PostalCodeValidator' => true,
             'byrokrat\\giroapp\\Validator\\StringValidator' => true,
             'byrokrat\\giroapp\\Validator\\ValidatorCollection' => true,
-            'byrokrat\\giroapp\\Xml\\XmlMandateParser' => true,
+            'byrokrat\\giroapp\\Xml\\XmlMandateProcessor' => true,
             'byrokrat\\giroapp\\Xml\\XmlObject' => true,
             'byrokrat\\id\\IdFactoryInterface' => true,
             'byrokrat\\id\\OrganizationIdFactory' => true,
@@ -313,6 +312,7 @@ class ProjectServiceContainer extends Container
         $g = new \byrokrat\giroapp\Console\AddConsole();
         $g->setAccountFactory(($this->privates['byrokrat\\banking\\AccountFactoryInterface'] ?? ($this->privates['byrokrat\\banking\\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())));
         $g->setCommandBus($f);
+        $g->setDonorRepository(($this->privates['byrokrat\\giroapp\\Db\\DonorRepositoryInterface'] ?? $this->getDonorRepositoryInterfaceService()));
         $g->setIdFactory(($this->privates['byrokrat\\id\\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService()));
         $h = new \byrokrat\giroapp\Console\EditConsole();
         $h->setCommandBus($f);
@@ -484,47 +484,51 @@ class ProjectServiceContainer extends Container
         $l->setEventDispatcher($b);
         $m = ($this->privates['byrokrat\\id\\IdFactoryInterface'] ?? $this->getIdFactoryInterfaceService());
 
-        $n = new \byrokrat\giroapp\CommandBus\ImportXmlFileHandler(new \byrokrat\giroapp\Xml\XmlMandateParser($m->createId(($this->services['ini'] ?? $this->getIniService())->getConfigValue("org_id")), $h, ($this->privates['byrokrat\\banking\\AccountFactoryInterface'] ?? ($this->privates['byrokrat\\banking\\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())), $m));
+        $n = new \byrokrat\giroapp\Xml\XmlMandateProcessor($m->createId(($this->services['ini'] ?? $this->getIniService())->getConfigValue("org_id")), $h);
 
-        $o = new \byrokrat\giroapp\CommandBus\RemoveDonorHandler();
+        $o = new \byrokrat\giroapp\CommandBus\ImportXmlFileHandler($n);
         $o->setEventDispatcher($b);
-        $o->setDonorRepository($e);
-        $p = new \byrokrat\giroapp\CommandBus\RollbackHandler($f);
+        $p = new \byrokrat\giroapp\CommandBus\RemoveDonorHandler();
         $p->setEventDispatcher($b);
-        $q = new \byrokrat\giroapp\CommandBus\UpdateAttributeHandler();
+        $p->setDonorRepository($e);
+        $q = new \byrokrat\giroapp\CommandBus\RollbackHandler($f);
         $q->setEventDispatcher($b);
-        $q->setDonorRepository($e);
-        $r = new \byrokrat\giroapp\CommandBus\UpdateCommentHandler();
+        $r = new \byrokrat\giroapp\CommandBus\UpdateAttributeHandler();
         $r->setEventDispatcher($b);
         $r->setDonorRepository($e);
-        $s = new \byrokrat\giroapp\CommandBus\UpdateDonationAmountHandler();
+        $s = new \byrokrat\giroapp\CommandBus\UpdateCommentHandler();
         $s->setEventDispatcher($b);
         $s->setDonorRepository($e);
-        $t = new \byrokrat\giroapp\CommandBus\UpdateEmailHandler();
+        $t = new \byrokrat\giroapp\CommandBus\UpdateDonationAmountHandler();
         $t->setEventDispatcher($b);
         $t->setDonorRepository($e);
-        $u = new \byrokrat\giroapp\CommandBus\UpdateNameHandler();
+        $u = new \byrokrat\giroapp\CommandBus\UpdateEmailHandler();
         $u->setEventDispatcher($b);
         $u->setDonorRepository($e);
-        $v = new \byrokrat\giroapp\CommandBus\UpdatePhoneHandler();
+        $v = new \byrokrat\giroapp\CommandBus\UpdateNameHandler();
         $v->setEventDispatcher($b);
         $v->setDonorRepository($e);
-        $w = new \byrokrat\giroapp\CommandBus\UpdatePostalAddressHandler();
+        $w = new \byrokrat\giroapp\CommandBus\UpdatePhoneHandler();
         $w->setEventDispatcher($b);
         $w->setDonorRepository($e);
+        $x = new \byrokrat\giroapp\CommandBus\UpdatePostalAddressHandler();
+        $x->setEventDispatcher($b);
+        $x->setDonorRepository($e);
 
-        $this->privates['byrokrat\\giroapp\\CommandBus\\CommandBus'] = $instance = new \byrokrat\giroapp\CommandBus\CommandBus(new \League\Tactician\CommandBus([0 => $a, 1 => new \League\Tactician\Plugins\LockingMiddleware(), 2 => new \League\Tactician\Handler\CommandHandlerMiddleware(new \League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor(), new \League\Tactician\Handler\Locator\InMemoryLocator(['byrokrat\\giroapp\\CommandBus\\AddDonor' => $d, 'byrokrat\\giroapp\\CommandBus\\Commit' => $g, 'byrokrat\\giroapp\\CommandBus\\Export' => $i, 'byrokrat\\giroapp\\CommandBus\\ForceState' => $j, 'byrokrat\\giroapp\\CommandBus\\ImportAutogiroFile' => $l, 'byrokrat\\giroapp\\CommandBus\\ImportXmlFile' => $n, 'byrokrat\\giroapp\\CommandBus\\RemoveDonor' => $o, 'byrokrat\\giroapp\\CommandBus\\Rollback' => $p, 'byrokrat\\giroapp\\CommandBus\\UpdateAttribute' => $q, 'byrokrat\\giroapp\\CommandBus\\UpdateComment' => $r, 'byrokrat\\giroapp\\CommandBus\\UpdateDonationAmount' => $s, 'byrokrat\\giroapp\\CommandBus\\UpdateEmail' => $t, 'byrokrat\\giroapp\\CommandBus\\UpdateName' => $u, 'byrokrat\\giroapp\\CommandBus\\UpdatePhone' => $v, 'byrokrat\\giroapp\\CommandBus\\UpdatePostalAddress' => $w, 'byrokrat\\giroapp\\CommandBus\\UpdateState' => new \byrokrat\giroapp\CommandBus\UpdateStateHandler($j)]), new \League\Tactician\Handler\MethodNameInflector\HandleInflector())]));
+        $this->privates['byrokrat\\giroapp\\CommandBus\\CommandBus'] = $instance = new \byrokrat\giroapp\CommandBus\CommandBus(new \League\Tactician\CommandBus([0 => $a, 1 => new \League\Tactician\Handler\CommandHandlerMiddleware(new \League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor(), new \League\Tactician\Handler\Locator\InMemoryLocator(['byrokrat\\giroapp\\CommandBus\\AddDonor' => $d, 'byrokrat\\giroapp\\CommandBus\\Commit' => $g, 'byrokrat\\giroapp\\CommandBus\\Export' => $i, 'byrokrat\\giroapp\\CommandBus\\ForceState' => $j, 'byrokrat\\giroapp\\CommandBus\\ImportAutogiroFile' => $l, 'byrokrat\\giroapp\\CommandBus\\ImportXmlFile' => $o, 'byrokrat\\giroapp\\CommandBus\\RemoveDonor' => $p, 'byrokrat\\giroapp\\CommandBus\\Rollback' => $q, 'byrokrat\\giroapp\\CommandBus\\UpdateAttribute' => $r, 'byrokrat\\giroapp\\CommandBus\\UpdateComment' => $s, 'byrokrat\\giroapp\\CommandBus\\UpdateDonationAmount' => $t, 'byrokrat\\giroapp\\CommandBus\\UpdateEmail' => $u, 'byrokrat\\giroapp\\CommandBus\\UpdateName' => $v, 'byrokrat\\giroapp\\CommandBus\\UpdatePhone' => $w, 'byrokrat\\giroapp\\CommandBus\\UpdatePostalAddress' => $x, 'byrokrat\\giroapp\\CommandBus\\UpdateState' => new \byrokrat\giroapp\CommandBus\UpdateStateHandler($j)]), new \League\Tactician\Handler\MethodNameInflector\HandleInflector())]));
 
+        $n->setAccountFactory(($this->privates['byrokrat\\banking\\AccountFactoryInterface'] ?? ($this->privates['byrokrat\\banking\\AccountFactoryInterface'] = new \byrokrat\banking\AccountFactory())));
         $n->setCommandBus($instance);
-        $n->setEventDispatcher($b);
-        $x = ($this->privates['byrokrat\\giroapp\\Db\\DonorQueryInterface'] ?? $this->getDonorQueryInterfaceService());
+        $n->setDonorRepository($e);
+        $n->setIdFactory($m);
+        $y = ($this->privates['byrokrat\\giroapp\\Db\\DonorQueryInterface'] ?? $this->getDonorQueryInterfaceService());
 
         $k->setCommandBus($instance);
-        $k->setDonorQuery($x);
+        $k->setDonorQuery($y);
 
         $i->setCommandBus($instance);
         $i->setEventDispatcher($b);
-        $i->setDonorQuery($x);
+        $i->setDonorQuery($y);
 
         return $instance;
     }

@@ -22,30 +22,25 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\CommandBus\AddDonor;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\XmlFileImported;
-use byrokrat\giroapp\Xml\XmlMandateParser;
+use byrokrat\giroapp\Xml\XmlMandateProcessor;
 
 final class ImportXmlFileHandler
 {
-    use DependencyInjection\CommandBusProperty,
-        DependencyInjection\DispatcherProperty;
+    use DependencyInjection\DispatcherProperty;
 
-    /** @var XmlMandateParser */
-    private $parser;
+    /** @var XmlMandateProcessor */
+    private $processor;
 
-    public function __construct(XmlMandateParser $parser)
+    public function __construct(XmlMandateProcessor $processor)
     {
-        $this->parser = $parser;
+        $this->processor = $processor;
     }
 
     public function handle(ImportXmlFile $command): void
     {
-        foreach ($this->parser->parse($command->getXmlObject()) as $newDonor) {
-            $this->commandBus->handle(new AddDonor($newDonor));
-        }
-
+        $this->processor->process($command->getXmlObject());
         $this->dispatcher->dispatch(new XmlFileImported($command->getFile()));
     }
 }

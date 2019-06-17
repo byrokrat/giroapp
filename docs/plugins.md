@@ -39,7 +39,8 @@ return new class implements PluginInterface {
 For a more condensed syntax you may use the `Plugin` class that automatically
 registers objects into the environment.
 
-Here is an example that forces the donation amount to be at least 100 SEK:
+Here is an example that forces the donation amount on added donors to be at
+least 100 SEK:
 
 <!-- @example validate-donation-amount -->
 ```php

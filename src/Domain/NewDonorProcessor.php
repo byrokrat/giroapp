@@ -58,24 +58,22 @@ class NewDonorProcessor
 
     public function processNewDonor(NewDonor $newDonor): Donor
     {
-        $state = $this->createState($newDonor->getMandateSource());
-
         return new Donor(
             $this->createMandateKey($newDonor->getDonorId(), $newDonor->getAccount()),
-            $state,
+            $this->createState($newDonor->getMandateSource()),
             $newDonor->getMandateSource(),
             $newDonor->getPayerNumber(),
             $newDonor->getAccount(),
             $newDonor->getDonorId(),
-            $newDonor->getName(),
-            $newDonor->getPostalAddress(),
-            $newDonor->getEmail(),
-            $newDonor->getPhone(),
+            '',
+            new PostalAddress,
+            '',
+            '',
             $newDonor->getDonationAmount(),
-            $newDonor->getComment(),
+            '',
             $this->systemClock->getNow(),
             $this->systemClock->getNow(),
-            $newDonor->getAttributes()
+            []
         );
     }
 
