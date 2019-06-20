@@ -6,11 +6,28 @@ Feature: Removing donors
   Scenario: I remove an inactive donor
     Given a fresh installation
     And there are donors:
-      | payer-number | state  |
+      | payer-number | state    |
       | 12345        | INACTIVE |
     When I run "remove 12345"
     And I run "show 12345"
     Then I get a "DONOR_DOES_NOT_EXIST_EXCEPTION" error
+
+    Scenario: I try to remove a non-inactive donor
+      Given a fresh installation
+      And there are donors:
+        | payer-number | stat   |
+        | 12345        | ACTIVE |
+      When I run "remove 12345"
+      Then the database contains donor "12345" with "state" matching "ACTIVE"
+
+    Scenario: I force removal of a non-inactive donor
+      Given a fresh installation
+      And there are donors:
+        | payer-number | stat   |
+        | 12345        | ACTIVE |
+      When I run "remove 12345 -f"
+      And I run "show 12345"
+      Then I get a "DONOR_DOES_NOT_EXIST_EXCEPTION" error
 
     Scenario: I remove all donors
       Given a fresh installation
