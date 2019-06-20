@@ -1,33 +1,6 @@
-# Updating to alpha-5
+# Updating to alpha-6
 
-> This is the guide for updating from alpha-3 or 4 to alpha-5. Instructions for updating
-> from alpha-2 can be fund [here](https://github.com/byrokrat/giroapp/blob/1.0.0-alpha3/UPDATING.md).
+> This is the guide for updating from alpha-5 to alpha-6. Instructions for updating
+> from alpha-3 or 4 can be fund [here](https://github.com/byrokrat/giroapp/blob/1.0.0-alpha5/UPDATING.md).
 
-## Notable changes in alpha-5
-
-* Added more filters.
-* Multiple filters are now allowed with the `ls` command.
-* Adds support for negated filters using the `--filter-not` option.
-* Added sorters.
-* Supports importing files from multiple files and directories.
-* Better exception handling with error codes.
-* All paths are now specified using `giroapp.ini` directives. See `giroapp.ini.dist`.
-  You will need to patch your local copy with the new settings.
-* Some default directory names have changed, specificaly the `var` directory
-  is no longer used.
-* Replaced `GIROAPP_PATH` environment variable with `GIROAPP_INI` pointing to the
-  `giroapp.ini` to use. Update your environment accordingly.
-* Plugins may now specify api version constraints.
-* Logging con now be configured in `giroapp.ini`.
-* Removed the `validate` command.
-* Removed the `migrate` command.
-* Requires php `>= 7.2`.
-* New database interface and the possibility to add custom databases through plugins..
-* Renamed `Console/CommandInterface` => `Console/ConsoleInterface` and
-  `Plugin/EnvironmentInterface::registerCommand()` => `Plugin/EnvironmentInterface::registerConsoleCommand()`.
-* Removed the possibility to force deletion of active donors. Set a purgable state before removing.
-* Removed `XmlFormInterface`. Use a plugin and react to `DonorAdded` events instead.
-* Replaced `edit xxx --state=foo` with `edit-state xxx --new-state=foo`
-* Removed `purge` command. Use `remove -all` instead.
-* Removed the `state_desc` database field.
-* Added a propper service layer (see docs/service_layer.md)
+## Notable changes in alpha-6
