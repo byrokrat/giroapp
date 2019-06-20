@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\CommandBus\ForceRemoveDonor;
 use byrokrat\giroapp\CommandBus\RemoveDonor;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\Domain\State\Inactive;
@@ -41,6 +42,7 @@ final class RemoveConsole implements ConsoleInterface
         $command->setHelp('Completely remove donors from the database');
         $this->configureDonorArgument($command, false);
         $command->addOption('all', 'a', InputOption::VALUE_NONE, 'Remove all inactive donors');
+        $command->addOption('force', 'f', InputOption::VALUE_NONE, 'Force removal (ignored if -a is used)');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -55,6 +57,10 @@ final class RemoveConsole implements ConsoleInterface
             return;
         }
 
-        $this->commandBus->handle(new RemoveDonor($this->readDonor($input)));
+        $command = $input->getOption('force')
+            ? new ForceRemoveDonor($this->readDonor($input))
+            : new RemoveDonor($this->readDonor($input));
+
+        $this->commandBus->handle($command);
     }
 }

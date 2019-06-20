@@ -23,21 +23,20 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
+use byrokrat\giroapp\Event\DonorRemoved;
 use byrokrat\giroapp\Domain\State\Removed;
 
-final class RemoveDonorHandler
+final class ForceRemoveDonorHandler
 {
-    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\DispatcherProperty,
+        DependencyInjection\DonorRepositoryProperty;
 
-    public function handle(RemoveDonor $command): void
+    public function handle(ForceRemoveDonor $command): void
     {
         $donor = $command->getDonor();
 
-        $this->commandBus->handle(new UpdateState(
-            $donor,
-            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Removed::CLASS)
-        ));
+        $this->donorRepository->deleteDonor($donor);
 
-        $this->commandBus->handle(new ForceRemoveDonor($donor));
+        $this->dispatcher->dispatch(new DonorRemoved($donor));
     }
 }
