@@ -6,20 +6,25 @@ namespace spec\byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\CommandBus\RemoveDonorHandler;
 use byrokrat\giroapp\CommandBus\RemoveDonor;
+use byrokrat\giroapp\CommandBus\CommandBusInterface;
+use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Event\DonorRemoved;
-use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\StateInterface;
-use byrokrat\giroapp\Domain\State\Inactive;
+use byrokrat\giroapp\Domain\State\Removed;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 class RemoveDonorHandlerSpec extends ObjectBehavior
 {
-    function let(DonorRepositoryInterface $donorRepository, EventDispatcherInterface $dispatcher)
-    {
+    function let(
+        CommandBusInterface $commandBus,
+        DonorRepositoryInterface $donorRepository,
+        EventDispatcherInterface $dispatcher
+    ) {
+        $this->setCommandBus($commandBus);
         $this->setDonorRepository($donorRepository);
         $this->setEventDispatcher($dispatcher);
     }
@@ -29,18 +34,15 @@ class RemoveDonorHandlerSpec extends ObjectBehavior
         $this->shouldHaveType(RemoveDonorHandler::CLASS);
     }
 
-    function it_throws_on_non_prugeable_donors(Donor $donor, StateInterface $state)
+    function it_removes_donors($commandBus, $donorRepository, $dispatcher, Donor $donor)
     {
-        $donor->getState()->willReturn($state);
-        $this->shouldThrow(InvalidStateTransitionException::CLASS)->duringHandle(
-            new RemoveDonor($donor->getWrappedObject())
-        );
-    }
-
-    function it_removes_donors($donorRepository, $dispatcher, Donor $donor)
-    {
-        $donor->getState()->willReturn(new Inactive);
         $donor->getMandateKey()->willReturn('foo');
+
+        $commandBus->handle(new UpdateState(
+            $donor->getWrappedObject(),
+            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Removed::CLASS)
+        ))->shouldBeCalled();
+
 
         $donorRepository->deleteDonor($donor)->shouldBeCalled();
         $dispatcher->dispatch(Argument::type(DonorRemoved::CLASS))->shouldBeCalled();

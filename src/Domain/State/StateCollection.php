@@ -34,6 +34,13 @@ class StateCollection
         return 'State';
     }
 
+    public function __construct(StateInterface ...$states)
+    {
+        foreach ($states as $state) {
+            $this->addState($state);
+        }
+    }
+
     public function addState(StateInterface $state): void
     {
         $this->addItem($state->getStateId(), $state);

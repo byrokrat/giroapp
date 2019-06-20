@@ -28,7 +28,6 @@ use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\giroapp\Domain\State\MandateApproved;
 use byrokrat\giroapp\Domain\State\Paused;
 use byrokrat\giroapp\Domain\State\PauseMandate;
-use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -52,19 +51,17 @@ final class PauseConsole implements ConsoleInterface
         $donor = $this->readDonor($input);
 
         if ($input->getOption('restart')) {
-            if (!$donor->getState() instanceof Paused) {
-                throw new InvalidStateTransitionException('Unable to restart donor that is not paused.');
-            }
-
-            $this->commandBus->handle(new UpdateState($donor, MandateApproved::CLASS));
+            $this->commandBus->handle(new UpdateState(
+                $donor,
+                (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(MandateApproved::CLASS)
+            ));
 
             return;
         }
 
-        if (!$donor->getState() instanceof Active) {
-            throw new InvalidStateTransitionException('Unable to pause non active donor.');
-        }
-
-        $this->commandBus->handle(new UpdateState($donor, PauseMandate::CLASS));
+        $this->commandBus->handle(new UpdateState(
+            $donor,
+            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(PauseMandate::CLASS)
+        ));
     }
 }

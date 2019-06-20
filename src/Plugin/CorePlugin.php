@@ -27,7 +27,6 @@ use byrokrat\giroapp\Db;
 use byrokrat\giroapp\Filter;
 use byrokrat\giroapp\Formatter;
 use byrokrat\giroapp\Sorter;
-use byrokrat\giroapp\Domain\State;
 
 final class CorePlugin extends Plugin
 {
@@ -60,19 +59,7 @@ final class CorePlugin extends Plugin
         Sorter\PayerNumberSorter $payerSorter,
         Sorter\AmountSorter $amountSorter,
         Sorter\CreatedSorter $createdSorter,
-        Sorter\UpdatedSorter $updatedSorter,
-        State\Active $activeState,
-        State\Error $errorState,
-        State\Inactive $inactiveState,
-        State\NewMandate $newMandateState,
-        State\NewDigitalMandate $newDigitalMandateState,
-        State\MandateSent $mandateSentState,
-        State\MandateApproved $mandateApprovedState,
-        State\RevokeMandate $revokeMandateState,
-        State\RevocationSent $revocationSentState,
-        State\PauseMandate $pauseMandateState,
-        State\PauseSent $pauseSentState,
-        State\Paused $pausedState
+        Sorter\UpdatedSorter $updatedSorter
     ) {
         parent::__construct(...func_get_args());
     }

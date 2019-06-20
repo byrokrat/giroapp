@@ -38,8 +38,6 @@ use byrokrat\giroapp\Formatter\FormatterCollection;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
-use byrokrat\giroapp\Domain\State\StateCollection;
-use byrokrat\giroapp\Domain\State\StateInterface;
 use Composer\Semver\Semver;
 use Symfony\Component\Console\Application;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -78,9 +76,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     /** @var SorterCollection */
     private $sorterCollection;
 
-    /** @var StateCollection */
-    private $stateCollection;
-
     /** @var ConfigManager */
     private $configManager;
 
@@ -97,7 +92,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
         SorterCollection $sorterCollection,
-        StateCollection $stateCollection,
         ConfigManager $configManager
     ) {
         $this->logger = $logger;
@@ -109,7 +103,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         $this->filterCollection = $filterCollection;
         $this->formatterCollection = $formatterCollection;
         $this->sorterCollection = $sorterCollection;
-        $this->stateCollection = $stateCollection;
         $this->configManager = $configManager;
     }
 
@@ -183,11 +176,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function registerDonorSorter(SorterInterface $donorSorter): void
     {
         $this->sorterCollection->addSorter($donorSorter);
-    }
-
-    public function registerDonorState(StateInterface $donorState): void
-    {
-        $this->stateCollection->addState($donorState);
     }
 
     public function configureApplication(Application $application): void

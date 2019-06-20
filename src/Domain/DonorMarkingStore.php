@@ -20,24 +20,25 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Domain\State;
+namespace byrokrat\giroapp\Domain;
 
-use byrokrat\giroapp\Domain\Donor;
-use byrokrat\autogiro\Writer\WriterInterface;
+use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
+use Symfony\Component\Workflow\Marking;
 
-final class RevokeMandate implements StateInterface, ExportableStateInterface
+final class DonorMarkingStore implements MarkingStoreInterface
 {
-    use StateIdTrait;
-
-    public function getDescription(): string
+    public function getMarking(object $subject)
     {
-        return 'Mandate is awaiting revocation';
+        if (!$subject instanceof Donor) {
+            throw new \InvalidArgumentException('DonorMargingStore expects a Donor subject');
+        }
+
+        $stateId = $subject->getState()->getStateId();
+
+        return new Marking([$stateId => 1]);
     }
 
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
+    public function setMarking(object $subject, Marking $marking, array $context = [])
     {
-        $writer->deleteMandate($donor->getPayerNumber());
-
-        return (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(RevocationSent::CLASS);
     }
 }

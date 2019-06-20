@@ -1,0 +1,70 @@
+services:
+    _defaults:
+        public: false
+        autowire: true
+
+    byrokrat\giroapp\Domain\State\:
+        resource: '../src/Domain/State/*'
+
+    byrokrat\giroapp\Domain\State\StateCollection:
+        class: ~
+        arguments:
+            - '@byrokrat\giroapp\Domain\State\Active'
+            - '@byrokrat\giroapp\Domain\State\Error'
+            - '@byrokrat\giroapp\Domain\State\Inactive'
+            - '@byrokrat\giroapp\Domain\State\NewMandate'
+            - '@byrokrat\giroapp\Domain\State\NewDigitalMandate'
+            - '@byrokrat\giroapp\Domain\State\MandateSent'
+            - '@byrokrat\giroapp\Domain\State\MandateApproved'
+            - '@byrokrat\giroapp\Domain\State\RevokeMandate'
+            - '@byrokrat\giroapp\Domain\State\RevocationSent'
+            - '@byrokrat\giroapp\Domain\State\PauseMandate'
+            - '@byrokrat\giroapp\Domain\State\PauseSent'
+            - '@byrokrat\giroapp\Domain\State\Paused'
+            - '@byrokrat\giroapp\Domain\State\Removed'
+
+    byrokrat\giroapp\Domain\State\WorkflowConfigurator:
+        class: ~
+        arguments:
+            -
+                - NEW_MANDATE: MANDATE_SENT
+                - NEW_DIGITAL_MANDATE: MANDATE_SENT
+                - MANDATE_SENT: MANDATE_APPROVED
+                - MANDATE_SENT: ERROR
+                - MANDATE_APPROVED: ACTIVE
+
+                # Revocation from ag file
+                - ACTIVE: INACTIVE
+
+                - ACTIVE: REVOKE_MANDATE
+                - REVOKE_MANDATE: REVOCATION_SENT
+                - REVOCATION_SENT: INACTIVE
+
+                - ACTIVE: PAUSE_MANDATE
+                - PAUSE_MANDATE: PAUSE_SENT
+                - PAUSE_SENT: PAUSED
+                # restart...
+                - PAUSED: MANDATE_APPROVED
+
+                - INACTIVE: REMOVED
+
+    byrokrat\giroapp\Domain\State\TransactionDateFactory:
+        class: ~
+        arguments:
+            $dayOfMonth: "@=service('ini').getConfig('trans_day_of_month')"
+            $minDaysInFuture: "@=service('ini').getConfig('trans_min_days_in_future')"
+
+    Symfony\Component\Workflow\WorkflowInterface:
+        class: Symfony\Component\Workflow\Workflow
+        arguments:
+            - '@Symfony\Component\Workflow\Definition'
+            - '@byrokrat\giroapp\Domain\DonorMarkingStore'
+
+    Symfony\Component\Workflow\Definition:
+        class: ~
+        factory: 'Symfony\Component\Workflow\DefinitionBuilder:build'
+
+    Symfony\Component\Workflow\DefinitionBuilder:
+        class: ~
+        arguments: ["@=service('byrokrat\\\\giroapp\\\\Domain\\\\State\\\\StateCollection').getItemKeys()"]
+        configurator: 'byrokrat\giroapp\Domain\State\WorkflowConfigurator:configureTransitions'

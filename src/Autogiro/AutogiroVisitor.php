@@ -96,17 +96,26 @@ class AutogiroVisitor extends Visitor
         }
 
         if ($node->hasChild('CreatedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, MandateApproved::CLASS));
+            $this->commandBus->handle(new UpdateState(
+                $donor,
+                (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(MandateApproved::CLASS)
+            ));
             return;
         }
 
         if ($node->hasChild('DeletedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, Inactive::CLASS));
+            $this->commandBus->handle(new UpdateState(
+                $donor,
+                (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Inactive::CLASS)
+            ));
             return;
         }
 
         if ($node->hasChild('ErrorFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, Error::CLASS));
+            $this->commandBus->handle(new UpdateState(
+                $donor,
+                (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Error::CLASS)
+            ));
             return;
         }
 

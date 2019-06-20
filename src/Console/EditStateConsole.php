@@ -51,7 +51,11 @@ final class EditStateConsole implements ConsoleInterface
     {
         $command->setName('edit-state');
         $command->setDescription('Edit donor state');
-        $command->setHelp('Edit donor state');
+        $command->setHelp(
+            'Edit donor state. Please note that you should only attempt to edit '
+            . 'donor states if you really know what you are doing as manual edits '
+            . 'may produce incomplete states.'
+        );
         $this->configureDonorArgument($command);
         $command->addOption(
             'new-state',

@@ -37,6 +37,7 @@ final class NewMandate implements StateInterface, ExportableStateInterface
     public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
         $writer->addNewMandate($donor->getPayerNumber(), $donor->getAccount(), $donor->getDonorId());
-        return MandateSent::CLASS;
+
+        return (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(MandateSent::CLASS);
     }
 }

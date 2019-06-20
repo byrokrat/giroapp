@@ -9,7 +9,6 @@
 * Multiple filters are now allowed with the `ls` command.
 * Adds support for negated filters using the `--filter-not` option.
 * Added sorters.
-* Added posibility to load custom donor states through plugins.
 * Supports importing files from multiple files and directories.
 * Better exception handling with error codes.
 * All paths are now specified using `giroapp.ini` directives. See `giroapp.ini.dist`.

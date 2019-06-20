@@ -13,7 +13,6 @@ use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Event\Listener\ListenerInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
-use byrokrat\giroapp\Domain\State\StateInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -85,13 +84,6 @@ class PluginSpec extends ObjectBehavior
         $env->registerDonorSorter($sorter)->shouldHaveBeenCalled();
     }
 
-    function it_registers_states(StateInterface $state, EnvironmentInterface $env)
-    {
-        $this->beConstructedWith($state);
-        $this->loadPlugin($env);
-        $env->registerDonorState($state)->shouldHaveBeenCalled();
-    }
-
     function it_asserts_version_constraints(EnvironmentInterface $env)
     {
         $constraint = new ApiVersionConstraint('', '');
@@ -100,12 +92,12 @@ class PluginSpec extends ObjectBehavior
         $env->assertApiVersion($constraint)->shouldHaveBeenCalled();
     }
 
-    function it_takes_multiple_args(FilterInterface $filter, StateInterface $state, EnvironmentInterface $env)
+    function it_takes_multiple_args(FilterInterface $filter, SorterInterface $sorter, EnvironmentInterface $env)
     {
-        $this->beConstructedWith($filter, $state);
+        $this->beConstructedWith($filter, $sorter);
         $this->loadPlugin($env);
         $env->registerDonorFilter($filter)->shouldHaveBeenCalled();
-        $env->registerDonorState($state)->shouldHaveBeenCalled();
+        $env->registerDonorSorter($sorter)->shouldHaveBeenCalled();
     }
 
     function it_throws_on_unknowns(EnvironmentInterface $env)

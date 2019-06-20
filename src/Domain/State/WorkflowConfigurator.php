@@ -22,22 +22,25 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Domain\Donor;
-use byrokrat\autogiro\Writer\WriterInterface;
+use Symfony\Component\Workflow\DefinitionBuilder;
+use Symfony\Component\Workflow\Transition;
 
-final class RevokeMandate implements StateInterface, ExportableStateInterface
+final class WorkflowConfigurator
 {
-    use StateIdTrait;
+    /** @var array */
+    private $validTransitions;
 
-    public function getDescription(): string
+    public function __construct(array $validTransitions)
     {
-        return 'Mandate is awaiting revocation';
+        $this->validTransitions = $validTransitions;
     }
 
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
+    public function configureTransitions(DefinitionBuilder $definition): void
     {
-        $writer->deleteMandate($donor->getPayerNumber());
-
-        return (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(RevocationSent::CLASS);
+        foreach ($this->validTransitions as $transition) {
+            foreach ($transition as $from => $to) {
+                $definition->addTransition(new Transition($to, $from, $to));
+            }
+        }
     }
 }

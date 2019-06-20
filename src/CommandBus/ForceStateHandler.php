@@ -26,7 +26,7 @@ use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorStateUpdated;
 use byrokrat\giroapp\Domain\State\StateCollection;
 
-final class ForceStateHandler
+class ForceStateHandler
 {
     use DependencyInjection\DispatcherProperty,
         DependencyInjection\DonorRepositoryProperty;

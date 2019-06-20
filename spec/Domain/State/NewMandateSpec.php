@@ -47,7 +47,9 @@ class NewMandateSpec extends ObjectBehavior
         $donor->getPayerNumber()->willReturn('foobar');
         $donor->getAccount()->willReturn($account);
         $donor->getDonorId()->willReturn($id);
-        $this->exportToAutogiro($donor, $writer)->shouldReturn(MandateSent::CLASS);
+        $this->exportToAutogiro($donor, $writer)->shouldReturn(
+            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(MandateSent::CLASS)
+        );
         $writer->addNewMandate('foobar', $account, $id)->shouldHaveBeenCalled();
     }
 }

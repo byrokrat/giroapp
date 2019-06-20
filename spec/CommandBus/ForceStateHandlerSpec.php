@@ -37,15 +37,18 @@ class ForceStateHandlerSpec extends ObjectBehavior
         $donorRepository,
         $dispatcher,
         Donor $donor,
-        StateInterface $state
+        StateInterface $oldState,
+        StateInterface $newState
     ) {
         $donor->getMandateKey()->willReturn('');
-        $donor->getState()->willReturn($state);
-        $state->getStateId()->willReturn('old-state');
+        $donor->getState()->willReturn($oldState);
 
-        $stateCollection->getState('new-state')->willReturn($state);
+        $oldState->getStateId()->willReturn('old-state');
+        $newState->getStateId()->willReturn('new-state');
 
-        $donorRepository->updateDonorState($donor, $state)->shouldBeCalled();
+        $stateCollection->getState('new-state')->willReturn($newState);
+
+        $donorRepository->updateDonorState($donor, $newState)->shouldBeCalled();
         $dispatcher->dispatch(Argument::type(DonorStateUpdated::CLASS))->shouldBeCalled();
 
         $this->handle(new ForceState($donor->getWrappedObject(), 'new-state'));
@@ -60,6 +63,8 @@ class ForceStateHandlerSpec extends ObjectBehavior
         $donor->getMandateKey()->willReturn('');
         $donor->getState()->willReturn($state);
         $state->getStateId()->willReturn('old-state');
+
+        $stateCollection->getState('old-state')->willReturn($state);
 
         $donorRepository->updateDonorState($donor, $state)->shouldNotBeCalled();
 

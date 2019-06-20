@@ -2,6 +2,7 @@ parameters:
     env(GIROAPP_INI): 'giroapp.ini'
 
 imports:
+    - { resource: donor_states.yaml }
     - { resource: event_dispatcher.yaml }
     - { resource: fs.yaml }
     - { resource: service_layer.yaml }
@@ -15,6 +16,7 @@ services:
 
     byrokrat\giroapp\:
         resource: '../src/*'
+        exclude: '../src/Domain/State/*'
 
     Symfony\Component\Console\Application:
         class: ~
@@ -96,12 +98,6 @@ services:
     byrokrat\giroapp\Db\ImportHistoryInterface:
         factory: 'byrokrat\giroapp\Db\DriverInterface:getImportHistory'
         lazy: true
-
-    byrokrat\giroapp\Domain\State\TransactionDateFactory:
-        class: ~
-        arguments:
-            $dayOfMonth: "@=service('ini').getConfig('trans_day_of_month')"
-            $minDaysInFuture: "@=service('ini').getConfig('trans_min_days_in_future')"
 
     byrokrat\giroapp\Xml\XmlMandateProcessor:
         class: ~

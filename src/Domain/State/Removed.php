@@ -22,22 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Domain\Donor;
-use byrokrat\autogiro\Writer\WriterInterface;
-
-final class RevokeMandate implements StateInterface, ExportableStateInterface
+final class Removed implements StateInterface
 {
     use StateIdTrait;
 
     public function getDescription(): string
     {
-        return 'Mandate is awaiting revocation';
-    }
-
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
-    {
-        $writer->deleteMandate($donor->getPayerNumber());
-
-        return (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(RevocationSent::CLASS);
+        return 'Zombie state for mandates that should be removed';
     }
 }

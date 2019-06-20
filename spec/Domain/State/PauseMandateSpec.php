@@ -43,7 +43,9 @@ class PauseMandateSpec extends ObjectBehavior
     function it_can_be_exported(Donor $donor, WriterInterface $writer)
     {
         $donor->getPayerNumber()->willReturn('foobar');
-        $this->exportToAutogiro($donor, $writer)->shouldReturn(PauseSent::CLASS);
+        $this->exportToAutogiro($donor, $writer)->shouldReturn(
+            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(PauseSent::CLASS)
+        );
         $writer->deletePayments('foobar')->shouldHaveBeenCalled();
     }
 }

@@ -37,6 +37,7 @@ final class PauseMandate implements StateInterface, ExportableStateInterface
     public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
         $writer->deletePayments($donor->getPayerNumber());
-        return PauseSent::CLASS;
+
+        return (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(PauseSent::CLASS);
     }
 }

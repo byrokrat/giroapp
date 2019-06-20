@@ -24,21 +24,22 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorRemoved;
-use byrokrat\giroapp\Exception\InvalidStateTransitionException;
-use byrokrat\giroapp\Domain\State\Inactive;
+use byrokrat\giroapp\Domain\State\Removed;
 
 final class RemoveDonorHandler
 {
-    use DependencyInjection\DispatcherProperty,
+    use DependencyInjection\CommandBusProperty,
+        DependencyInjection\DispatcherProperty,
         DependencyInjection\DonorRepositoryProperty;
 
     public function handle(RemoveDonor $command): void
     {
         $donor = $command->getDonor();
 
-        if (!$donor->getState() instanceof Inactive) {
-            throw new InvalidStateTransitionException('Unable to remove active donor');
-        }
+        $this->commandBus->handle(new UpdateState(
+            $donor,
+            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Removed::CLASS)
+        ));
 
         $this->donorRepository->deleteDonor($donor);
 

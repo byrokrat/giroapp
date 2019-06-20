@@ -43,6 +43,9 @@ final class RevokeConsole implements ConsoleInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $this->commandBus->handle(new UpdateState($this->readDonor($input), RevokeMandate::CLASS));
+        $this->commandBus->handle(new UpdateState(
+            $this->readDonor($input),
+            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(RevokeMandate::CLASS)
+        ));
     }
 }

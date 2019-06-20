@@ -23,24 +23,46 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Exception\InvalidStateTransitionException;
+use Symfony\Component\Workflow\WorkflowInterface;
+use Symfony\Component\Workflow\Transition;
 
 final class UpdateStateHandler
 {
     /** @var ForceStateHandler */
     private $forceHandler;
 
-    public function __construct(ForceStateHandler $forceHandler)
+    /** @var WorkflowInterface */
+    private $workflow;
+
+    public function __construct(ForceStateHandler $forceHandler, WorkflowInterface $workflow)
     {
         $this->forceHandler = $forceHandler;
+        $this->workflow = $workflow;
     }
     public function handle(UpdateState $command): void
     {
-        // TODO this is where a state machine should validate transitions
-        // see all places where InvalidStateTransitionException is used
-        // no specs exist at this point. Write when I add the state machine...
+        $donor = $command->getDonor();
+        $newStateId = $command->getNewStateId();
+
+        if (!$this->workflow->can($donor, $newStateId)) {
+            throw new InvalidStateTransitionException(sprintf(
+                "Unable to set state '%s' to donor '%s' (possible values: '%s')",
+                $newStateId,
+                $donor->getMandateKey(),
+                implode(
+                    "', '",
+                    array_map(
+                        function (Transition $transition): string {
+                            return $transition->getName();
+                        },
+                        $this->workflow->getEnabledTransitions($donor)
+                    )
+                )
+            ));
+        }
 
         $this->forceHandler->handle(
-            new ForceState($command->getDonor(), $command->getNewStateId())
+            new ForceState($donor, $newStateId)
         );
     }
 }
