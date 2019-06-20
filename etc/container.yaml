@@ -138,12 +138,10 @@ services:
         autowire: false
 
     Psr\Log\LoggerInterface:
-        class: Apix\Log\Logger\File
-        arguments: ["@=service('ini').getConfigValue('log_file')"]
-        calls:
-            - method: setMinLevel
-              arguments: ["@=service('ini').getConfigValue('log_level')"]
-            - method: setLogFormatter
-              arguments: ['@byrokrat\giroapp\Utils\LogFormatter']
+        factory: byrokrat\giroapp\Utils\LoggerFactory:createLogger
+        arguments:
+            - "@=service('ini').getConfigValue('log_file')"
+            - "@=service('ini').getConfigValue('log_level')"
+            - "@=service('ini').getConfigValue('log_format')"
 
     Symfony\Component\Filesystem\Filesystem: ~

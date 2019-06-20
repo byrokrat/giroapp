@@ -22,24 +22,17 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Utils;
 
-use Apix\Log\LogEntry;
-use Apix\Log\LogFormatter as BaseFormatter;
+use Psr\Log\LoggerInterface;
+use Katzgrau\KLogger\Logger;
 
-final class LogFormatter extends BaseFormatter
+final class LoggerFactory
 {
-    public function format(LogEntry $log)
+    public function createLogger(string $filename, string $level, string $format): LoggerInterface
     {
-        return sprintf(
-            '[%s] [%s] %s (%s)',
-            date('Y-m-d H:i:s', $log->timestamp),
-            strtoupper($log->name),
-            self::interpolate(strip_tags($log->message), $log->context),
-            implode(', ', array_reduce(array_keys($log->context), function ($values, $key) use ($log) {
-                if (is_scalar($log->context[$key])) {
-                    $values[] = "$key:{$log->context[$key]}";
-                }
-                return $values;
-            }, []))
-        );
+        return new Logger(dirname($filename), $level, [
+            'filename' => basename($filename),
+            'logFormat' => $format,
+            'appendContext' => false
+        ]);
     }
 }

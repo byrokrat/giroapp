@@ -41,7 +41,7 @@
         "fig/event-dispatcher-util": "^1",
         "crell/tukio": "^1",
         "psr/log": "^1",
-        "apix/log": "^1.2",
+        "katzgrau/klogger": "^1",
         "symfony/dependency-injection": "^4",
         "symfony/console": "^4",
         "symfony/finder": "^4",
