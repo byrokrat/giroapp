@@ -58,7 +58,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
         $now = new \DateTimeImmutable;
         $systemClock->getNow()->willReturn($now);
 
-        $stateCollection->getState(NewMandate::CLASS)->willReturn($state);
+        $stateCollection->getState(NewMandate::getStateId())->willReturn($state);
 
         $amount = new SEK('1');
 
@@ -93,21 +93,21 @@ class NewDonorProcessorSpec extends ObjectBehavior
     function it_sets_new_state_on_source_paper($stateCollection, $state, $newDonor)
     {
         $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_PAPER);
-        $stateCollection->getState(NewMandate::CLASS)->shouldBeCalled()->willReturn($state);
+        $stateCollection->getState(NewMandate::getStateId())->shouldBeCalled()->willReturn($state);
         $this->processNewDonor($newDonor);
     }
 
     function it_sets_new_state_on_source_online($stateCollection, $state, $newDonor)
     {
         $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_ONLINE_FORM);
-        $stateCollection->getState(NewMandate::CLASS)->shouldBeCalled()->willReturn($state);
+        $stateCollection->getState(NewMandate::getStateId())->shouldBeCalled()->willReturn($state);
         $this->processNewDonor($newDonor);
     }
 
     function it_sets_new_digital_on_source_digital($stateCollection, $state, $newDonor)
     {
         $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_DIGITAL);
-        $stateCollection->getState(NewDigitalMandate::CLASS)->shouldBeCalled()->willReturn($state);
+        $stateCollection->getState(NewDigitalMandate::getStateId())->shouldBeCalled()->willReturn($state);
         $this->processNewDonor($newDonor);
     }
 

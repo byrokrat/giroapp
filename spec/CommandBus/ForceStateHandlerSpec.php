@@ -32,19 +32,32 @@ class ForceStateHandlerSpec extends ObjectBehavior
         $this->shouldHaveType(ForceStateHandler::CLASS);
     }
 
-    function it_can_change_donor_state(
-        $stateCollection,
-        $donorRepository,
-        $dispatcher,
-        Donor $donor,
-        StateInterface $oldState,
-        StateInterface $newState
-    ) {
+    function it_can_change_donor_state($stateCollection, $donorRepository, $dispatcher, Donor $donor)
+    {
+        $oldState = new class() implements StateInterface {
+            public static function getStateId(): string
+            {
+                return 'old-state';
+            }
+
+            public function getDescription(): string
+            {
+            }
+        };
+
+        $newState = new class() implements StateInterface {
+            public static function getStateId(): string
+            {
+                return 'new-state';
+            }
+
+            public function getDescription(): string
+            {
+            }
+        };
+
         $donor->getMandateKey()->willReturn('');
         $donor->getState()->willReturn($oldState);
-
-        $oldState->getStateId()->willReturn('old-state');
-        $newState->getStateId()->willReturn('new-state');
 
         $stateCollection->getState('new-state')->willReturn($newState);
 
@@ -54,15 +67,21 @@ class ForceStateHandlerSpec extends ObjectBehavior
         $this->handle(new ForceState($donor->getWrappedObject(), 'new-state'));
     }
 
-    function it_ignores_unchanged_states(
-        $stateCollection,
-        $donorRepository,
-        Donor $donor,
-        StateInterface $state
-    ) {
+    function it_ignores_unchanged_states($stateCollection, $donorRepository, Donor $donor)
+    {
+        $state = new class() implements StateInterface {
+            public static function getStateId(): string
+            {
+                return 'old-state';
+            }
+
+            public function getDescription(): string
+            {
+            }
+        };
+
         $donor->getMandateKey()->willReturn('');
         $donor->getState()->willReturn($state);
-        $state->getStateId()->willReturn('old-state');
 
         $stateCollection->getState('old-state')->willReturn($state);
 

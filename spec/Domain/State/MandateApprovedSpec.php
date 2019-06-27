@@ -66,9 +66,7 @@ class MandateApprovedSpec extends ObjectBehavior
         $date = new \DateTimeImmutable;
         $dateFactory->createNextTransactionDate()->willReturn($date);
 
-        $this->exportToAutogiro($donor, $writer)->shouldReturn(
-            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Active::CLASS)
-        );
+        $this->exportToAutogiro($donor, $writer)->shouldReturn(Active::getStateId());
 
         $writer->addMonthlyPayment('payer_number', $amount, $date, 'mandate_key')->shouldHaveBeenCalled();
     }

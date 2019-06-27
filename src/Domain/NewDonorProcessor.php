@@ -93,9 +93,9 @@ class NewDonorProcessor
         switch ($mandateSource) {
             case MandateSources::MANDATE_SOURCE_PAPER:
             case MandateSources::MANDATE_SOURCE_ONLINE_FORM:
-                return $this->stateCollection->getState(NewMandate::CLASS);
+                return $this->stateCollection->getState(NewMandate::getStateId());
             case MandateSources::MANDATE_SOURCE_DIGITAL:
-                return $this->stateCollection->getState(NewDigitalMandate::CLASS);
+                return $this->stateCollection->getState(NewDigitalMandate::getStateId());
         }
 
         throw new \LogicException("Invalid mandate source: $mandateSource");

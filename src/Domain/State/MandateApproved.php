@@ -55,6 +55,6 @@ final class MandateApproved implements StateInterface, ExportableStateInterface
             );
         }
 
-        return (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Active::CLASS);
+        return Active::getStateId();
     }
 }

@@ -28,10 +28,7 @@ class RemoveDonorHandlerSpec extends ObjectBehavior
 
     function it_removes_donors($commandBus, Donor $donor)
     {
-        $commandBus->handle(new UpdateState(
-            $donor->getWrappedObject(),
-            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Removed::CLASS)
-        ))->shouldBeCalled();
+        $commandBus->handle(new UpdateState($donor->getWrappedObject(), Removed::getStateId()))->shouldBeCalled();
 
         $commandBus->handle(new ForceRemoveDonor($donor->getWrappedObject()))->shouldBeCalled();
 

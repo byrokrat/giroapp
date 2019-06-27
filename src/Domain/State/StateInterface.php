@@ -22,7 +22,7 @@ namespace byrokrat\giroapp\Domain\State;
 
 interface StateInterface
 {
-    public function getStateId(): string;
+    public static function getStateId(): string;
 
     public function getDescription(): string;
 }

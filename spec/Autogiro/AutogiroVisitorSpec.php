@@ -187,10 +187,9 @@ class AutogiroVisitorSpec extends ObjectBehavior
 
         $parentNode->hasChild('CreatedFlag')->willReturn(true);
 
-        $commandBus->handle(new UpdateState(
-            $donor->getWrappedObject(),
-            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(MandateApproved::CLASS)
-        ))->shouldBeCalled();
+        $commandBus->handle(
+            new UpdateState($donor->getWrappedObject(), MandateApproved::getStateId())
+        )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
     }
@@ -215,10 +214,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $parentNode->hasChild('CreatedFlag')->willReturn(false);
         $parentNode->hasChild('DeletedFlag')->willReturn(true);
 
-        $commandBus->handle(new UpdateState(
-            $donor->getWrappedObject(),
-            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Inactive::CLASS)
-        ))->shouldBeCalled();
+        $commandBus->handle(new UpdateState($donor->getWrappedObject(), Inactive::getStateId()))->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
     }
@@ -244,10 +240,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $parentNode->hasChild('DeletedFlag')->willReturn(false);
         $parentNode->hasChild('ErrorFlag')->willReturn(true);
 
-        $commandBus->handle(new UpdateState(
-            $donor->getWrappedObject(),
-            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(Error::CLASS)
-        ))->shouldBeCalled();
+        $commandBus->handle(new UpdateState($donor->getWrappedObject(), Error::getStateId()))->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
     }

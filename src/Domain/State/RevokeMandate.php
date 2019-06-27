@@ -38,6 +38,6 @@ final class RevokeMandate implements StateInterface, ExportableStateInterface
     {
         $writer->deleteMandate($donor->getPayerNumber());
 
-        return (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(RevocationSent::CLASS);
+        return RevocationSent::getStateId();
     }
 }

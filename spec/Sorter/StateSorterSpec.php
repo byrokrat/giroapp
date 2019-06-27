@@ -28,13 +28,29 @@ class StateSorterSpec extends ObjectBehavior
         $this->getName()->shouldReturn('state');
     }
 
-    function it_sorts_donors(Donor $left, Donor $right, StateInterface $stateLeft, StateInterface $stateRight)
+    function it_sorts_donors(Donor $left, Donor $right)
     {
-        $left->getState()->willReturn($stateLeft);
-        $right->getState()->willReturn($stateRight);
+        $left->getState()->willReturn(new class() implements StateInterface {
+            public static function getStateId(): string
+            {
+                return 'A';
+            }
 
-        $stateLeft->getStateId()->willReturn('A');
-        $stateRight->getStateId()->willReturn('B');
+            public function getDescription(): string
+            {
+            }
+        });
+
+        $right->getState()->willReturn(new class() implements StateInterface {
+            public static function getStateId(): string
+            {
+                return 'B';
+            }
+
+            public function getDescription(): string
+            {
+            }
+        });
 
         $this->compareDonors($left, $right)->shouldReturn(-1);
     }

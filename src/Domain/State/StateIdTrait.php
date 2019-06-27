@@ -26,8 +26,8 @@ use byrokrat\giroapp\Utils\ClassIdExtractor;
 
 trait StateIdTrait
 {
-    public function getStateId(): string
+    public static function getStateId(): string
     {
-        return (string)(new ClassIdExtractor($this));
+        return (string)(new ClassIdExtractor(static::CLASS));
     }
 }

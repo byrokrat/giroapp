@@ -33,6 +33,6 @@ final class StateSorter implements SorterInterface
 
     public function compareDonors(Donor $left, Donor $right): int
     {
-        return strcasecmp($left->getState()->getStateId(), $right->getState()->getStateId());
+        return strcasecmp($left->getState()::getStateId(), $right->getState()::getStateId());
     }
 }

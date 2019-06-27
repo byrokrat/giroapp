@@ -38,6 +38,6 @@ final class NewDigitalMandate implements StateInterface, ExportableStateInterfac
     {
         $writer->acceptDigitalMandate($donor->getPayerNumber());
 
-        return (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(MandateSent::CLASS);
+        return MandateSent::getStateId();
     }
 }

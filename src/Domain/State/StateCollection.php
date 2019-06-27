@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Utils\ClassIdExtractor;
 use byrokrat\giroapp\Utils\CollectionTrait;
 
 class StateCollection
@@ -48,10 +47,6 @@ class StateCollection
 
     public function getState(string $stateId): StateInterface
     {
-        if ($this->hasItem($stateId)) {
-            return $this->getItem($stateId);
-        }
-
-        return $this->getItem((string)(new ClassIdExtractor($stateId)));
+        return $this->getItem($stateId);
     }
 }

@@ -45,7 +45,7 @@ class ForceStateHandler
 
         $newState = $this->stateCollection->getState($command->getNewStateId());
 
-        if ($newState->getStateId() == $donor->getState()->getStateId()) {
+        if ($newState::getStateId() == $donor->getState()::getStateId()) {
             return;
         }
 

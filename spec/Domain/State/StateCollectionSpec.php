@@ -6,7 +6,6 @@ namespace spec\byrokrat\giroapp\Domain\State;
 
 use byrokrat\giroapp\Domain\State\StateCollection;
 use byrokrat\giroapp\Domain\State\StateInterface;
-use byrokrat\giroapp\Domain\State\Error;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -17,17 +16,20 @@ class StateCollectionSpec extends ObjectBehavior
         $this->shouldHaveType(StateCollection::CLASS);
     }
 
-    function it_can_get_by_id(StateInterface $state)
+    function it_can_store_states()
     {
-        $state->getStateId()->willReturn('foobar');
+        $state = new class() implements StateInterface {
+            public static function getStateId(): string
+            {
+                return 'foobar';
+            }
+
+            public function getDescription(): string
+            {
+                return '';
+            }
+        };
         $this->addState($state);
         $this->getState('foobar')->shouldReturn($state);
-    }
-
-    function it_can_get_by_class_name()
-    {
-        $error = new Error;
-        $this->addState($error);
-        $this->getState(Error::CLASS)->shouldReturn($error);
     }
 }

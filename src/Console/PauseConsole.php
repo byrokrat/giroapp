@@ -51,17 +51,11 @@ final class PauseConsole implements ConsoleInterface
         $donor = $this->readDonor($input);
 
         if ($input->getOption('restart')) {
-            $this->commandBus->handle(new UpdateState(
-                $donor,
-                (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(MandateApproved::CLASS)
-            ));
+            $this->commandBus->handle(new UpdateState($donor, MandateApproved::getStateId()));
 
             return;
         }
 
-        $this->commandBus->handle(new UpdateState(
-            $donor,
-            (string)new \byrokrat\giroapp\Utils\ClassIdExtractor(PauseMandate::CLASS)
-        ));
+        $this->commandBus->handle(new UpdateState($donor, PauseMandate::getStateId()));
     }
 }

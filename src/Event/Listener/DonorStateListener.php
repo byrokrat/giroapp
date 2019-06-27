@@ -43,7 +43,7 @@ final class DonorStateListener implements ListenerInterface
 
     public function __invoke(DonorStateUpdated $event): void
     {
-        if ($event->getNewState()->getStateId() == $this->stateId
+        if ($event->getNewState()::getStateId() == $this->stateId
             || $event->getNewState() instanceof $this->stateId
         ) {
             ($this->listener)($event);

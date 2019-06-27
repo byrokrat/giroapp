@@ -18,10 +18,20 @@ class DonorStateListenerSpec extends ObjectBehavior
         $this->shouldHaveType(DonorStateListener::CLASS);
     }
 
-    function it_ignores_unknown_states(DonorStateUpdated $event, StateInterface $state)
+    function it_ignores_unknown_states(DonorStateUpdated $event)
     {
+        $state = new class() implements StateInterface {
+            public static function getStateId(): string
+            {
+                return 'foo';
+            }
+
+            public function getDescription(): string
+            {
+            }
+        };
+
         $event->getNewState()->willReturn($state);
-        $state->getStateId()->willReturn('foo');
 
         $called = false;
         $this->beConstructedWith('not-foo-id', function () use (&$called) {
@@ -35,10 +45,20 @@ class DonorStateListenerSpec extends ObjectBehavior
         }
     }
 
-    function it_calls_listener_on_id_match(DonorStateUpdated $event, StateInterface $state)
+    function it_calls_listener_on_id_match(DonorStateUpdated $event)
     {
+        $state = new class() implements StateInterface {
+            public static function getStateId(): string
+            {
+                return 'foo';
+            }
+
+            public function getDescription(): string
+            {
+            }
+        };
+
         $event->getNewState()->willReturn($state);
-        $state->getStateId()->willReturn('foo');
 
         $called = false;
         $this->beConstructedWith('foo', function () use (&$called) {
@@ -52,10 +72,20 @@ class DonorStateListenerSpec extends ObjectBehavior
         }
     }
 
-    function it_calls_listener_on_implements_match(DonorStateUpdated $event, StateInterface $state)
+    function it_calls_listener_on_implements_match(DonorStateUpdated $event)
     {
+        $state = new class() implements StateInterface {
+            public static function getStateId(): string
+            {
+                return 'foo';
+            }
+
+            public function getDescription(): string
+            {
+            }
+        };
+
         $event->getNewState()->willReturn($state);
-        $state->getStateId()->willReturn('foo');
 
         $called = false;
         $this->beConstructedWith(StateInterface::CLASS, function () use (&$called) {
