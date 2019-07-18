@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9785d943c4eccf2b1158aa7ca87d69b",
+    "content-hash": "2a828428bfdb9d76d47d00d44dac9439",
     "packages": [
         {
             "name": "byrokrat/amount",
@@ -444,16 +444,16 @@
         },
         {
             "name": "hanneskod/yaysondb",
-            "version": "2.1.3",
+            "version": "2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hanneskod/yaysondb.git",
-                "reference": "0a68f88b6e933315d212a032c117e45950c77b0c"
+                "reference": "793d8438ab002c56ba45a45dbde2de1557130177"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hanneskod/yaysondb/zipball/0a68f88b6e933315d212a032c117e45950c77b0c",
-                "reference": "0a68f88b6e933315d212a032c117e45950c77b0c",
+                "url": "https://api.github.com/repos/hanneskod/yaysondb/zipball/793d8438ab002c56ba45a45dbde2de1557130177",
+                "reference": "793d8438ab002c56ba45a45dbde2de1557130177",
                 "shasum": ""
             },
             "require": {
@@ -487,19 +487,19 @@
                 "jsondb",
                 "nosql"
             ],
-            "time": "2018-10-12T19:53:34+00:00"
+            "time": "2019-07-15T16:44:53+00:00"
         },
         {
             "name": "hashids/hashids",
             "version": "2.0.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ivanakimov/hashids.php.git",
+                "url": "https://github.com/vinkla/hashids.git",
                 "reference": "7a945a5192d4a5c8888364970feece9bc26179df"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ivanakimov/hashids.php/zipball/7a945a5192d4a5c8888364970feece9bc26179df",
+                "url": "https://api.github.com/repos/vinkla/hashids/zipball/7a945a5192d4a5c8888364970feece9bc26179df",
                 "reference": "7a945a5192d4a5c8888364970feece9bc26179df",
                 "shasum": ""
             },

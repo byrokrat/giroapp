@@ -33,7 +33,7 @@ final class RemoveDonorHandler
     {
         $donor = $command->getDonor();
 
-        $this->commandBus->handle(new UpdateState($donor, Removed::getStateId()));
+        $this->commandBus->handle(new UpdateState($donor, Removed::getStateId(), 'Donor removed'));
 
         $this->commandBus->handle(new ForceRemoveDonor($donor));
     }

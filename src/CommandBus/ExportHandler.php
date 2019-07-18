@@ -67,7 +67,8 @@ final class ExportHandler
                 $this->commandBus->handle(
                     new UpdateState(
                         $donor,
-                        $state->exportToAutogiro($donor, $this->autogiroWriter)
+                        $state->exportToAutogiro($donor, $this->autogiroWriter),
+                        'Exported to BGC'
                     )
                 );
 

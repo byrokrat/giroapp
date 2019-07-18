@@ -27,6 +27,7 @@ use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\Domain\State\RevokeMandate;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 final class RevokeConsole implements ConsoleInterface
@@ -39,10 +40,16 @@ final class RevokeConsole implements ConsoleInterface
         $command->setDescription('Revoke a donor mandate');
         $command->setHelp('Revoke a mandate and stop receiving donations from donor');
         $this->configureDonorArgument($command);
+        $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing state change');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $this->commandBus->handle(new UpdateState($this->readDonor($input), RevokeMandate::getStateId()));
+        /** @var string $msg */
+        $msg = $input->getOption('message') ?: 'Revoked by user';
+
+        $this->commandBus->handle(
+            new UpdateState($this->readDonor($input), RevokeMandate::getStateId(), $msg)
+        );
     }
 }

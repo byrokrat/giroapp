@@ -164,6 +164,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $donor->getMandateKey()->willReturn('');
         $parentNode->getChild('Status')->willReturn($statusNode);
         $statusNode->getValueFrom('Number')->willReturn('');
+        $statusNode->getValueFrom('Text')->willReturn('');
 
         $this->shouldThrow(InvalidAutogiroFileException::CLASS)->duringBeforeMandateResponse($parentNode);
     }
@@ -174,7 +175,8 @@ class AutogiroVisitorSpec extends ObjectBehavior
         Node $parentNode,
         Donor $donor,
         Node $idNode,
-        Node $accountNode
+        Node $accountNode,
+        Node $statusNode
     ) {
         $parentNode->getValueFrom('PayerNumber')->willReturn('payer-number');
         $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
@@ -187,8 +189,11 @@ class AutogiroVisitorSpec extends ObjectBehavior
 
         $parentNode->hasChild('CreatedFlag')->willReturn(true);
 
+        $parentNode->getChild('Status')->willReturn($statusNode);
+        $statusNode->getValueFrom('Text')->willReturn('desc');
+
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), MandateApproved::getStateId())
+            new UpdateState($donor->getWrappedObject(), MandateApproved::getStateId(), 'desc')
         )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
@@ -200,7 +205,8 @@ class AutogiroVisitorSpec extends ObjectBehavior
         Node $parentNode,
         Donor $donor,
         Node $idNode,
-        Node $accountNode
+        Node $accountNode,
+        Node $statusNode
     ) {
         $parentNode->getValueFrom('PayerNumber')->willReturn('payer-number');
         $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
@@ -214,7 +220,12 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $parentNode->hasChild('CreatedFlag')->willReturn(false);
         $parentNode->hasChild('DeletedFlag')->willReturn(true);
 
-        $commandBus->handle(new UpdateState($donor->getWrappedObject(), Inactive::getStateId()))->shouldBeCalled();
+        $parentNode->getChild('Status')->willReturn($statusNode);
+        $statusNode->getValueFrom('Text')->willReturn('desc');
+
+        $commandBus->handle(
+            new UpdateState($donor->getWrappedObject(), Inactive::getStateId(), 'desc')
+        )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
     }
@@ -225,7 +236,8 @@ class AutogiroVisitorSpec extends ObjectBehavior
         Node $parentNode,
         Donor $donor,
         Node $idNode,
-        Node $accountNode
+        Node $accountNode,
+        Node $statusNode
     ) {
         $parentNode->getValueFrom('PayerNumber')->willReturn('payer-number');
         $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
@@ -240,7 +252,12 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $parentNode->hasChild('DeletedFlag')->willReturn(false);
         $parentNode->hasChild('ErrorFlag')->willReturn(true);
 
-        $commandBus->handle(new UpdateState($donor->getWrappedObject(), Error::getStateId()))->shouldBeCalled();
+        $parentNode->getChild('Status')->willReturn($statusNode);
+        $statusNode->getValueFrom('Text')->willReturn('desc');
+
+        $commandBus->handle(
+            new UpdateState($donor->getWrappedObject(), Error::getStateId(), 'desc')
+        )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
     }

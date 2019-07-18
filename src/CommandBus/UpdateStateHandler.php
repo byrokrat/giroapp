@@ -62,7 +62,7 @@ final class UpdateStateHandler
         }
 
         $this->forceHandler->handle(
-            new ForceState($donor, $newStateId)
+            new ForceState($donor, $newStateId, $command->getUpdateDescription())
         );
     }
 }

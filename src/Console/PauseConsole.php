@@ -44,18 +44,22 @@ final class PauseConsole implements ConsoleInterface
         $command->setHelp('Pause a mandate and temporarily stop receiving donations from donor');
         $this->configureDonorArgument($command);
         $command->addOption('restart', null, InputOption::VALUE_NONE, 'Restart a previously paused donor');
+        $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing state change');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         $donor = $this->readDonor($input);
 
+        /** @var string $msg */
+        $msg = $input->getOption('message') ?: 'Edited by user';
+
         if ($input->getOption('restart')) {
-            $this->commandBus->handle(new UpdateState($donor, MandateApproved::getStateId()));
+            $this->commandBus->handle(new UpdateState($donor, MandateApproved::getStateId(), $msg));
 
             return;
         }
 
-        $this->commandBus->handle(new UpdateState($donor, PauseMandate::getStateId()));
+        $this->commandBus->handle(new UpdateState($donor, PauseMandate::getStateId(), $msg));
     }
 }

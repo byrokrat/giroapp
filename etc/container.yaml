@@ -86,6 +86,10 @@ services:
         arguments: ["@=service('ini').getConfigValue('db_dsn')"]
         lazy: true
 
+    byrokrat\giroapp\Db\DonorEventStoreInterface:
+        factory: 'byrokrat\giroapp\Db\DriverInterface:getDonorEventStore'
+        lazy: true
+
     byrokrat\giroapp\Db\DonorRepositoryInterface:
         factory: 'byrokrat\giroapp\Db\DriverInterface:getDonorRepository'
         lazy: true

@@ -30,7 +30,10 @@ class DonorStateUpdated extends DonorEvent
     /** @var StateInterface */
     private $newState;
 
-    public function __construct(Donor $donor, StateInterface $newState)
+    /** @var string */
+    private $desc;
+
+    public function __construct(Donor $donor, StateInterface $newState, string $desc)
     {
         parent::__construct(
             sprintf(
@@ -42,10 +45,16 @@ class DonorStateUpdated extends DonorEvent
         );
 
         $this->newState = $newState;
+        $this->desc = $desc;
     }
 
     public function getNewState(): StateInterface
     {
         return $this->newState;
+    }
+
+    public function getUpdateDescription(): string
+    {
+        return $this->desc;
     }
 }

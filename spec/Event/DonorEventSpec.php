@@ -13,12 +13,10 @@ class DonorEventSpec extends ObjectBehavior
 {
     function let(Donor $donor)
     {
-        $this->beConstructedWith('', $donor);
-    }
-
-    function it_is_initializable()
-    {
-        $this->shouldHaveType(DonorEvent::CLASS);
+        $this->beConstructedThrough(function () use ($donor) {
+            return new class('message', $donor->getWrappedObject()) extends DonorEvent {
+            };
+        });
     }
 
     function it_contains_a_donor($donor)
@@ -28,7 +26,6 @@ class DonorEventSpec extends ObjectBehavior
 
     function it_contains_a_message($donor)
     {
-        $this->beConstructedWith('message', $donor);
         $this->getMessage()->shouldBeLike('message');
     }
 }

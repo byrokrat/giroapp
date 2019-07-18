@@ -26,11 +26,14 @@ use byrokrat\giroapp\Db\DriverFactoryInterface;
 use byrokrat\giroapp\Db\DriverInterface;
 use hanneskod\yaysondb\Yaysondb;
 use hanneskod\yaysondb\Engine\FlysystemEngine;
+use hanneskod\yaysondb\Engine\LogEngine;
+use hanneskod\yaysondb\Engine\FlatJsonDecoder;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Adapter\Local;
 
 final class JsonDriverFactory implements DriverFactoryInterface
 {
+    private const DONOR_EVENTS_FILE = 'donor_events.json_lines';
     private const DONORS_FILE = 'donors.json';
     private const IMPORTS_FILE = 'imports.json';
 
@@ -43,7 +46,7 @@ final class JsonDriverFactory implements DriverFactoryInterface
     {
         $filesystem = new Filesystem(new Local($dsn));
 
-        foreach ([self::DONORS_FILE, self::IMPORTS_FILE] as $requiredFile) {
+        foreach ([self::DONORS_FILE, self::IMPORTS_FILE, self::DONOR_EVENTS_FILE] as $requiredFile) {
             if (!$filesystem->has($requiredFile)) {
                 $filesystem->write($requiredFile, '');
             }
@@ -51,6 +54,7 @@ final class JsonDriverFactory implements DriverFactoryInterface
 
         return new JsonDriver(
             new Yaysondb([
+                'donor_events' => new LogEngine($dsn . '/' . self::DONOR_EVENTS_FILE, new FlatJsonDecoder),
                 'donors' => new FlysystemEngine(self::DONORS_FILE, $filesystem),
                 'imports' => new FlysystemEngine(self::IMPORTS_FILE, $filesystem),
             ])

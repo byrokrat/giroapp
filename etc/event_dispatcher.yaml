@@ -18,6 +18,8 @@ services:
         class: Crell\Tukio\OrderedListenerProvider
         calls:
             - method: addListener
+              arguments: ['@byrokrat\giroapp\Event\Listener\DonorEventRecorder']
+            - method: addListener
               arguments: ['@byrokrat\giroapp\Event\Listener\ImportHistoryListener']
             - method: addListener
               arguments: ['@byrokrat\giroapp\Event\Listener\LoggingListener']

@@ -28,6 +28,11 @@ namespace byrokrat\giroapp\Db;
 interface DriverInterface
 {
     /**
+     * Get the donor event store for this driver
+     */
+    public function getDonorEventStore(DriverEnvironment $environment): DonorEventStoreInterface;
+
+    /**
      * Get the donor repository for this driver
      */
     public function getDonorRepository(DriverEnvironment $environment): DonorRepositoryInterface;

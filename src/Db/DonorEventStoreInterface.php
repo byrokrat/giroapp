@@ -18,26 +18,24 @@
  * Copyright 2016-19 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+namespace byrokrat\giroapp\Db;
 
-namespace byrokrat\giroapp\Event;
-
-use byrokrat\giroapp\Domain\Donor;
-use Psr\Log\LogLevel;
-
-abstract class DonorEvent extends LogEvent
+/**
+ * Defines the interface for interacting with the donor event source
+ *
+ * All concrete database layers must contain an implementation of this interface
+ */
+interface DonorEventStoreInterface
 {
-    /** @var Donor */
-    private $donor;
+    public function addDonorEventEntry(DonorEventEntry $entry): void;
 
-    public function __construct(string $message, Donor $donor, string $severity = LogLevel::INFO)
-    {
-        parent::__construct($message, [], $severity);
-        $this->donor = $donor;
-    }
+    /**
+     * @return iterable & DonorEventEntry[] Iterator that yields donor event items
+     */
+    public function readEntriesForMandateKey(string $mandateKey): iterable;
 
-    public function getDonor(): Donor
-    {
-        return $this->donor;
-    }
+    /**
+     * @return iterable & DonorEventEntry[] Iterator that yields donor event items
+     */
+    public function readAllEntries(): iterable;
 }

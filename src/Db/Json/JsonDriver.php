@@ -24,6 +24,7 @@ namespace byrokrat\giroapp\Db\Json;
 
 use byrokrat\giroapp\Db\DriverInterface;
 use byrokrat\giroapp\Db\DriverEnvironment;
+use byrokrat\giroapp\Db\DonorEventStoreInterface;
 use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Db\ImportHistoryInterface;
 use hanneskod\yaysondb\Yaysondb;
@@ -36,6 +37,11 @@ final class JsonDriver implements DriverInterface
     public function __construct(Yaysondb $db)
     {
         $this->db = $db;
+    }
+
+    public function getDonorEventStore(DriverEnvironment $environment): DonorEventStoreInterface
+    {
+        return new JsonDonorEventStore($this->db->collection('donor_events'));
     }
 
     public function getDonorRepository(DriverEnvironment $environment): DonorRepositoryInterface

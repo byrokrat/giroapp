@@ -35,7 +35,8 @@ class UpdateStateHandlerSpec extends ObjectBehavior
 
         $this->shouldThrow(InvalidStateTransitionException::CLASS)->duringHandle(new UpdateState(
             $donor->getWrappedObject(),
-            'new-state'
+            'new-state',
+            'desc'
         ));
     }
 
@@ -43,8 +44,8 @@ class UpdateStateHandlerSpec extends ObjectBehavior
     {
         $workflow->can($donor, 'new-state')->willReturn(true);
 
-        $forceStateHandler->handle(new ForceState($donor->getWrappedObject(), 'new-state'))->shouldBeCalled();
+        $forceStateHandler->handle(new ForceState($donor->getWrappedObject(), 'new-state', 'desc'))->shouldBeCalled();
 
-        $this->handle(new UpdateState($donor->getWrappedObject(), 'new-state'));
+        $this->handle(new UpdateState($donor->getWrappedObject(), 'new-state', 'desc'));
     }
 }

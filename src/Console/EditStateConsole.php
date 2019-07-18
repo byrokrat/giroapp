@@ -64,6 +64,7 @@ final class EditStateConsole implements ConsoleInterface
             'New donor state identifier'
         );
         $command->addOption('force', 'f', InputOption::VALUE_NONE, 'Force new state');
+        $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing state change');
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -87,9 +88,12 @@ final class EditStateConsole implements ConsoleInterface
             new ChoiceValidator($validStates)
         );
 
+        /** @var string $msg */
+        $msg = $input->getOption('message') ?: 'Edited by user';
+
         $command = $input->getOption('force')
-            ? new ForceState($donor, $newStateId)
-            : new UpdateState($donor, $newStateId);
+            ? new ForceState($donor, $newStateId, $msg)
+            : new UpdateState($donor, $newStateId, $msg);
 
         $this->commandBus->handle($command);
     }

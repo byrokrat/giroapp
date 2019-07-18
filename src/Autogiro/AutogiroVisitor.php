@@ -95,20 +95,22 @@ class AutogiroVisitor extends Visitor
             $this->validateDonorAccountNumber($nodeAccount, $donor);
         }
 
+        $desc = (string)$node->getChild('Status')->getValueFrom('Text');
+
         if ($node->hasChild('CreatedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, MandateApproved::getStateId()));
+            $this->commandBus->handle(new UpdateState($donor, MandateApproved::getStateId(), $desc));
 
             return;
         }
 
         if ($node->hasChild('DeletedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, Inactive::getStateId()));
+            $this->commandBus->handle(new UpdateState($donor, Inactive::getStateId(), $desc));
 
             return;
         }
 
         if ($node->hasChild('ErrorFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, Error::getStateId()));
+            $this->commandBus->handle(new UpdateState($donor, Error::getStateId(), $desc));
 
             return;
         }

@@ -34,14 +34,23 @@ class ForceState
     /** @var string */
     private $newStateId;
 
-    public function __construct(Donor $donor, string $newStateId)
+    /** @var string */
+    private $desc;
+
+    public function __construct(Donor $donor, string $newStateId, string $desc)
     {
         $this->setDonor($donor);
         $this->newStateId = $newStateId;
+        $this->desc = $desc;
     }
 
     public function getNewStateId(): string
     {
         return $this->newStateId;
+    }
+
+    public function getUpdateDescription(): string
+    {
+        return $this->desc;
     }
 }

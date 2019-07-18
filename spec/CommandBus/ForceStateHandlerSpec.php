@@ -64,7 +64,7 @@ class ForceStateHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorState($donor, $newState)->shouldBeCalled();
         $dispatcher->dispatch(Argument::type(DonorStateUpdated::CLASS))->shouldBeCalled();
 
-        $this->handle(new ForceState($donor->getWrappedObject(), 'new-state'));
+        $this->handle(new ForceState($donor->getWrappedObject(), 'new-state', 'desc'));
     }
 
     function it_ignores_unchanged_states($stateCollection, $donorRepository, Donor $donor)
@@ -87,6 +87,6 @@ class ForceStateHandlerSpec extends ObjectBehavior
 
         $donorRepository->updateDonorState($donor, $state)->shouldNotBeCalled();
 
-        $this->handle(new ForceState($donor->getWrappedObject(), 'old-state'));
+        $this->handle(new ForceState($donor->getWrappedObject(), 'old-state', 'desc'));
     }
 }
