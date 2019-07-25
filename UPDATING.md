@@ -7,6 +7,7 @@
 
 * Added the `log_format` ini setting and fixed broken `log_level` compliance.
 * Added a donor event store database. Please see `Updating the database` below.
+* Fixed bugg #190, donor addresses no longer fails when unknown fields are present.
 
 ## Updating the database
 
