@@ -10,6 +10,7 @@
 * Fixed bugg #190, donor addresses no longer fails when unknown fields are present.
 * Renamed `inactive` filter `revoked`.
 * Support the complete pause-restart cycle.
+* Now records transaction reports to `DonorEventStore`.
 
 ## Updating the database
 

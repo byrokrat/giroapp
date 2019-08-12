@@ -22,25 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\Domain\Donor;
-use Psr\Log\LogLevel;
-
-abstract class DonorEvent extends LogEvent
+final class TransactionFailed extends TransactionEvent
 {
-    /** @var Donor */
-    private $donor;
-
-    public function __construct(string $message, Donor $donor, string $severity = LogLevel::INFO, array $context = [])
-    {
-        $context['mandate_key'] = $donor->getMandateKey();
-
-        parent::__construct($message, $context, $severity);
-
-        $this->donor = $donor;
-    }
-
-    public function getDonor(): Donor
-    {
-        return $this->donor;
-    }
 }

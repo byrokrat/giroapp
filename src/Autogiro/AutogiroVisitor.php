@@ -32,6 +32,8 @@ use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\Paused;
 use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
+use byrokrat\giroapp\Event\TransactionFailed;
+use byrokrat\giroapp\Event\TransactionPerformed;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\AccountNumber;
@@ -40,6 +42,7 @@ use byrokrat\id\IdInterface;
 class AutogiroVisitor extends Visitor
 {
     use DependencyInjection\CommandBusProperty,
+        DependencyInjection\DispatcherProperty,
         DependencyInjection\DonorQueryProperty;
 
     /** @var ConfigInterface */
@@ -160,6 +163,13 @@ class AutogiroVisitor extends Visitor
         $this->commandBus->handle(
             new UpdateState($donor, Active::getStateId(), 'Transaction active on ' . $date->format('Y-m-d'))
         );
+
+        /** @var \byrokrat\amount\Currency\SEK $amount */
+        $amount = $node->getChild('Amount')->getValueFrom('Object');
+
+        $eventClassName = $success ? TransactionPerformed::CLASS : TransactionFailed::CLASS;
+
+        $this->dispatcher->dispatch(new $eventClassName($donor, $amount, $date));
     }
 
     private function validateDonorAccountNumber(AccountNumber $nodeAccount, Donor $donor): void

@@ -19,6 +19,8 @@ use byrokrat\giroapp\Event\DonorPhoneUpdated;
 use byrokrat\giroapp\Event\DonorPostalAddressUpdated;
 use byrokrat\giroapp\Event\DonorRemoved;
 use byrokrat\giroapp\Event\DonorStateUpdated;
+use byrokrat\giroapp\Event\TransactionPerformed;
+use byrokrat\giroapp\Event\TransactionFailed;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
 use byrokrat\amount\Currency\SEK;
@@ -178,6 +180,26 @@ class DonorEventNormalizerSpec extends ObjectBehavior
         $this->normalizeEvent(new DonorStateUpdated($donor->getWrappedObject(), $state, 'desc'))->shouldReturn([
             'state' => 'FOO',
             'state_update_description' => 'desc',
+        ]);
+    }
+
+    function it_normalizes_transaction_performed($donor)
+    {
+        $this->normalizeEvent(
+            new TransactionPerformed($donor->getWrappedObject(), new SEK('100'), new \DateTimeImmutable('20190812'))
+        )->shouldReturn([
+            'transaction_amount' => '100.00',
+            'transaction_date' => '2019-08-12'
+        ]);
+    }
+
+    function it_normalizes_transaction_failed($donor)
+    {
+        $this->normalizeEvent(
+            new TransactionFailed($donor->getWrappedObject(), new SEK('100'), new \DateTimeImmutable('20190812'))
+        )->shouldReturn([
+            'transaction_amount' => '100.00',
+            'transaction_date' => '2019-08-12'
         ]);
     }
 }

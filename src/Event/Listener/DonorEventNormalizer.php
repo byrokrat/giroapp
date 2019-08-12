@@ -33,6 +33,7 @@ use byrokrat\giroapp\Event\DonorPhoneUpdated;
 use byrokrat\giroapp\Event\DonorPostalAddressUpdated;
 use byrokrat\giroapp\Event\DonorRemoved;
 use byrokrat\giroapp\Event\DonorStateUpdated;
+use byrokrat\giroapp\Event\TransactionEvent;
 
 class DonorEventNormalizer
 {
@@ -105,6 +106,11 @@ class DonorEventNormalizer
                 return [
                     'state' => $event->getNewState()->getStateId(),
                     'state_update_description' => $event->getUpdateDescription(),
+                ];
+            case $event instanceof TransactionEvent:
+                return [
+                    'transaction_amount' => $event->getAmount()->getString(),
+                    'transaction_date' => $event->getDate()->format('Y-m-d'),
                 ];
         }
 

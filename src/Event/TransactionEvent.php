@@ -23,24 +23,43 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Utils\ClassIdExtractor;
+use byrokrat\amount\Currency\SEK;
 use Psr\Log\LogLevel;
 
-abstract class DonorEvent extends LogEvent
+abstract class TransactionEvent extends DonorEvent
 {
-    /** @var Donor */
-    private $donor;
+    /** @var SEK */
+    private $amount;
 
-    public function __construct(string $message, Donor $donor, string $severity = LogLevel::INFO, array $context = [])
+    /** @var \DateTimeImmutable */
+    private $date;
+
+    public function __construct(Donor $donor, SEK $amount, \DateTimeImmutable $date)
     {
-        $context['mandate_key'] = $donor->getMandateKey();
+        parent::__construct(
+            sprintf(
+                '%s: SEK %s from %s on %s',
+                new ClassIdExtractor($this),
+                $amount,
+                $donor->getMandateKey(),
+                $date->format('Y-m-d')
+            ),
+            $donor,
+            LogLevel::INFO
+        );
 
-        parent::__construct($message, $context, $severity);
-
-        $this->donor = $donor;
+        $this->amount = $amount;
+        $this->date = $date;
     }
 
-    public function getDonor(): Donor
+    public function getAmount(): SEK
     {
-        return $this->donor;
+        return $this->amount;
+    }
+
+    public function getDate(): \DateTimeImmutable
+    {
+        return $this->date;
     }
 }

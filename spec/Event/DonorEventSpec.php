@@ -13,6 +13,7 @@ class DonorEventSpec extends ObjectBehavior
 {
     function let(Donor $donor)
     {
+        $donor->getMandateKey()->willReturn('');
         $this->beConstructedThrough(function () use ($donor) {
             return new class('message', $donor->getWrappedObject()) extends DonorEvent {
             };

@@ -16,10 +16,14 @@ use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\Paused;
 use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
+use byrokrat\giroapp\Event\TransactionFailed;
+use byrokrat\giroapp\Event\TransactionPerformed;
+use byrokrat\amount\Currency\SEK;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -29,11 +33,13 @@ class AutogiroVisitorSpec extends ObjectBehavior
         ConfigInterface $orgBgcNr,
         AccountNumber $orgBg,
         CommandBusInterface $commandBus,
-        DonorQueryInterface $donorQuery
+        DonorQueryInterface $donorQuery,
+        EventDispatcherInterface $dispatcher
     ) {
         $this->beConstructedWith($orgBgcNr, $orgBg);
         $this->setCommandBus($commandBus);
         $this->setDonorQuery($donorQuery);
+        $this->setEventDispatcher($dispatcher);
     }
 
     function it_is_initializable()
@@ -289,19 +295,28 @@ class AutogiroVisitorSpec extends ObjectBehavior
     function it_handles_successful_payment_responses(
         $donorQuery,
         $commandBus,
+        $dispatcher,
         Node $parentNode,
         Donor $donor,
-        Node $dateNode
+        Node $dateNode,
+        Node $amountNode
     ) {
+        $donor->getMandateKey()->willReturn('');
+
         $parentNode->getValueFrom('PayerNumber')->willReturn('payer-number');
         $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
 
         $parentNode->getChild('Date')->willReturn($dateNode);
         $dateNode->getValueFrom('Object')->willReturn(new \DateTimeImmutable('20190812'));
 
+        $parentNode->getChild('Amount')->willReturn($amountNode);
+        $amountNode->getValueFrom('Object')->willReturn(new SEK('100'));
+
         $commandBus->handle(
             new UpdateState($donor->getWrappedObject(), Active::getStateId(), 'Transaction active on 2019-08-12')
         )->shouldBeCalled();
+
+        $dispatcher->dispatch(Argument::type(TransactionPerformed::CLASS))->shouldBeCalled();
 
         $this->beforeSuccessfulIncomingPaymentResponse($parentNode);
     }
@@ -309,19 +324,28 @@ class AutogiroVisitorSpec extends ObjectBehavior
     function it_handles_failed_payment_responses(
         $donorQuery,
         $commandBus,
+        $dispatcher,
         Node $parentNode,
         Donor $donor,
-        Node $dateNode
+        Node $dateNode,
+        Node $amountNode
     ) {
+        $donor->getMandateKey()->willReturn('');
+
         $parentNode->getValueFrom('PayerNumber')->willReturn('payer-number');
         $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
 
         $parentNode->getChild('Date')->willReturn($dateNode);
         $dateNode->getValueFrom('Object')->willReturn(new \DateTimeImmutable('20190812'));
 
+        $parentNode->getChild('Amount')->willReturn($amountNode);
+        $amountNode->getValueFrom('Object')->willReturn(new SEK('100'));
+
         $commandBus->handle(
             new UpdateState($donor->getWrappedObject(), Active::getStateId(), 'Transaction active on 2019-08-12')
         )->shouldBeCalled();
+
+        $dispatcher->dispatch(Argument::type(TransactionFailed::CLASS))->shouldBeCalled();
 
         $this->beforeFailedIncomingPaymentResponse($parentNode);
     }

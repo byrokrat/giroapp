@@ -51,7 +51,11 @@ final class ImportAutogiroFileHandler
             $this->parser->parse($command->getFile()->getContent())->accept($this->visitor);
         } catch (AutogiroException $e) {
             throw new UnknownFileException(
-                "Unable to import '{$command->getFile()->getFilename()}', unknown file type."
+                sprintf(
+                    "Unable to import '%s'. %s",
+                    $command->getFile()->getFilename(),
+                    $e->getMessage()
+                )
             );
         }
 
