@@ -41,6 +41,7 @@ final class CorePlugin extends Plugin
         Console\RemoveConsole $removeConsole,
         Console\RevokeConsole $revokeConsole,
         Console\ShowConsole $showConsole,
+        Console\ShowTransactionsConsole $showTransactionConsole,
         Console\StatusConsole $statusConsole,
         Db\Json\JsonDriverFactory $jsonDriverFactory,
         Filter\ActiveFilter $activeFilter,

@@ -11,6 +11,7 @@
 * Renamed `inactive` filter `revoked`.
 * Support the complete pause-restart cycle.
 * Now records transaction reports to `DonorEventStore`.
+* Added the `show-trans` command to inspect recorded transactions.
 
 ## Updating the database
 
