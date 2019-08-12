@@ -22,39 +22,12 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Domain\Donor;
-use byrokrat\autogiro\Writer\WriterInterface;
-
-final class AwaitingTransactionRegistration implements StateInterface, ExportableStateInterface
+final class TransactionRegistrationSent implements StateInterface, AwaitingResponseStateInterface
 {
     use StateIdTrait;
 
-    /**
-     * @var TransactionDateFactory
-     */
-    private $dateFactory;
-
-    public function __construct(TransactionDateFactory $dateFactory)
-    {
-        $this->dateFactory = $dateFactory;
-    }
-
     public function getDescription(): string
     {
-        return 'Transaction is awaiting bank registration';
-    }
-
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
-    {
-        if ($donor->getDonationAmount()->isPositive()) {
-            $writer->addMonthlyPayment(
-                $donor->getPayerNumber(),
-                $donor->getDonationAmount(),
-                $this->dateFactory->createNextTransactionDate(),
-                $donor->getMandateKey()
-            );
-        }
-
-        return TransactionRegistrationSent::getStateId();
+        return 'Transaction has been registered with the bank';
     }
 }

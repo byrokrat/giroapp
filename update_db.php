@@ -20,6 +20,7 @@ $stateTranslations = [
     'PAUSED' => 'PAUSED',
     'REMOVED' => 'REMOVED',
     'ERROR' => 'ERROR',
+    'TRANSACTION_REGISTRATION_SENT' => 'TRANSACTION_REGISTRATION_SENT',
 ];
 
 // Setup

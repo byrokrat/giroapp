@@ -22,6 +22,7 @@ services:
             - '@byrokrat\giroapp\Domain\State\Removed'
             - '@byrokrat\giroapp\Domain\State\RevocationSent'
             - '@byrokrat\giroapp\Domain\State\Revoked'
+            - '@byrokrat\giroapp\Domain\State\TransactionRegistrationSent'
 
     byrokrat\giroapp\Domain\State\WorkflowConfigurator:
         class: ~
@@ -31,7 +32,8 @@ services:
                 - NEW_DIGITAL_MANDATE: MANDATE_SENT
                 - MANDATE_SENT: AWAITING_TRANSACTION_REGISTRATION
                 - MANDATE_SENT: ERROR
-                - AWAITING_TRANSACTION_REGISTRATION: ACTIVE
+                - AWAITING_TRANSACTION_REGISTRATION: TRANSACTION_REGISTRATION_SENT
+                - TRANSACTION_REGISTRATION_SENT: ACTIVE
 
                 # Revocation from ag file
                 - ACTIVE: REVOKED

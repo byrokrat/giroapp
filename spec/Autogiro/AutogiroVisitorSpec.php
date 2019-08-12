@@ -11,7 +11,9 @@ use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\giroapp\Domain\State\Error;
+use byrokrat\giroapp\Domain\State\Paused;
 use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
 use byrokrat\autogiro\Tree\Node;
@@ -260,5 +262,67 @@ class AutogiroVisitorSpec extends ObjectBehavior
         )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
+    }
+
+    function it_handles_successful_payment_amendment_responses(
+        $donorQuery,
+        $commandBus,
+        Node $parentNode,
+        Donor $donor,
+        Node $dateNode
+    ) {
+        $parentNode->getValueFrom('PayerNumber')->willReturn('payer-number');
+        $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
+
+        $parentNode->getChild('Date')->willReturn($dateNode);
+        $dateNode->getValueFrom('Object')->willReturn(new \DateTimeImmutable('20190812'));
+
+        $parentNode->hasChild('RevocationFlag')->willReturn(true);
+
+        $commandBus->handle(
+            new UpdateState($donor->getWrappedObject(), Paused::getStateId(), 'Transaction paused on 2019-08-12')
+        )->shouldBeCalled();
+
+        $this->beforeSuccessfulIncomingAmendmentResponse($parentNode);
+    }
+
+    function it_handles_successful_payment_responses(
+        $donorQuery,
+        $commandBus,
+        Node $parentNode,
+        Donor $donor,
+        Node $dateNode
+    ) {
+        $parentNode->getValueFrom('PayerNumber')->willReturn('payer-number');
+        $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
+
+        $parentNode->getChild('Date')->willReturn($dateNode);
+        $dateNode->getValueFrom('Object')->willReturn(new \DateTimeImmutable('20190812'));
+
+        $commandBus->handle(
+            new UpdateState($donor->getWrappedObject(), Active::getStateId(), 'Transaction active on 2019-08-12')
+        )->shouldBeCalled();
+
+        $this->beforeSuccessfulIncomingPaymentResponse($parentNode);
+    }
+
+    function it_handles_failed_payment_responses(
+        $donorQuery,
+        $commandBus,
+        Node $parentNode,
+        Donor $donor,
+        Node $dateNode
+    ) {
+        $parentNode->getValueFrom('PayerNumber')->willReturn('payer-number');
+        $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
+
+        $parentNode->getChild('Date')->willReturn($dateNode);
+        $dateNode->getValueFrom('Object')->willReturn(new \DateTimeImmutable('20190812'));
+
+        $commandBus->handle(
+            new UpdateState($donor->getWrappedObject(), Active::getStateId(), 'Transaction active on 2019-08-12')
+        )->shouldBeCalled();
+
+        $this->beforeFailedIncomingPaymentResponse($parentNode);
     }
 }

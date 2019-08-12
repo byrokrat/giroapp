@@ -54,7 +54,7 @@ Feature: Exporting files to autogirot
         01\d{8}AUTOGIRO                                            1111110058056201
         82\d{8}1    00000000000123450000000999000058056201wkjmljAZVk7KQz9w
         """
-    And the database contains donor "12345" with "state" matching "ACTIVE"
+    And the database contains donor "12345" with "state" matching "TRANSACTION_REGISTRATION_SENT"
 
   Scenario: I revoke a donor mandate
     Given there are donors:

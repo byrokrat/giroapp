@@ -44,6 +44,10 @@ final class UpdateStateHandler
         $donor = $command->getDonor();
         $newStateId = $command->getNewStateId();
 
+        if ($newStateId == $donor->getState()::getStateId()) {
+            return;
+        }
+
         if (!$this->workflow->can($donor, $newStateId)) {
             throw new InvalidStateTransitionException(sprintf(
                 "Unable to set state '%s' to donor '%s' (possible values: '%s')",

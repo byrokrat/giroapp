@@ -72,7 +72,7 @@ Feature: Importing files
        """
    Then the database contains donor "12345" with "state" matching "AWAITING_TRANSACTION_REGISTRATION"
 
-  Scenario: I import an autogiro file rejecting a mandate register request
+  Scenario: I import an autogiro file rejecting a mandate registration request
     Given there are donors:
       | payer-number | state        |
       | 12345        | MANDATE_SENT |
@@ -95,3 +95,16 @@ Feature: Importing files
         092017081799000000001
         """
     Then the database contains donor "12345" with "state" matching "REVOKED"
+
+  Scenario: I import an autogiro file with a succesfull transaction report
+    Given there are donors:
+      | payer-number | state                         |
+      | 12345        | TRANSACTION_REGISTRATION_SENT |
+    When I import:
+        """
+        01AUTOGIRO              20190701113835820825BET. SPEC & STOPP TK1234560058056201
+        15000000000000000000033000082032327752019070100010000000000000010000   00000002
+        82201907011    00000000000123450000000100000058056201AAAAAAAAAAAAAAAA          0
+        09201907019900000001000000000001000000000000000000000000000000000000
+        """
+    Then the database contains donor "12345" with "state" matching "ACTIVE"

@@ -27,7 +27,9 @@ use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Domain\Donor;
+use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\giroapp\Domain\State\Error;
+use byrokrat\giroapp\Domain\State\Paused;
 use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
 use byrokrat\autogiro\Visitor\Visitor;
@@ -121,6 +123,42 @@ class AutogiroVisitor extends Visitor
                 $donor->getMandateKey(),
                 (string)$node->getChild('Status')->getValueFrom('Number')
             )
+        );
+    }
+
+    public function beforeSuccessfulIncomingAmendmentResponse(Node $node): void
+    {
+        $donor = $this->donorQuery->requireByPayerNumber($node->getValueFrom('PayerNumber'));
+
+        /** @var \DateTimeImmutable $date */
+        $date = $node->getChild('Date')->getValueFrom('Object');
+
+        if ($node->hasChild('RevocationFlag')) {
+            $this->commandBus->handle(
+                new UpdateState($donor, Paused::getStateId(), 'Transaction paused on ' . $date->format('Y-m-d'))
+            );
+        }
+    }
+
+    public function beforeSuccessfulIncomingPaymentResponse(Node $node): void
+    {
+        $this->processIncomingPayment($node, true);
+    }
+
+    public function beforeFailedIncomingPaymentResponse(Node $node): void
+    {
+        $this->processIncomingPayment($node, false);
+    }
+
+    private function processIncomingPayment(Node $node, bool $success): void
+    {
+        $donor = $this->donorQuery->requireByPayerNumber($node->getValueFrom('PayerNumber'));
+
+        /** @var \DateTimeImmutable $date */
+        $date = $node->getChild('Date')->getValueFrom('Object');
+
+        $this->commandBus->handle(
+            new UpdateState($donor, Active::getStateId(), 'Transaction active on ' . $date->format('Y-m-d'))
         );
     }
 
