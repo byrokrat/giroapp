@@ -6,6 +6,7 @@ namespace spec\byrokrat\giroapp\Autogiro;
 
 use byrokrat\giroapp\Autogiro\AutogiroVisitor;
 use byrokrat\giroapp\CommandBus\CommandBusInterface;
+use byrokrat\giroapp\CommandBus\ForceState;
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Db\DonorQueryInterface;
@@ -232,7 +233,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $statusNode->getValueFrom('Text')->willReturn('desc');
 
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), Revoked::getStateId(), 'desc')
+            new ForceState($donor->getWrappedObject(), Revoked::getStateId(), 'desc')
         )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
@@ -264,7 +265,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $statusNode->getValueFrom('Text')->willReturn('desc');
 
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), Error::getStateId(), 'desc')
+            new ForceState($donor->getWrappedObject(), Error::getStateId(), 'desc')
         )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);

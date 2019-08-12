@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Autogiro;
 
+use byrokrat\giroapp\CommandBus\ForceState;
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Config\ConfigInterface;
@@ -109,13 +110,13 @@ class AutogiroVisitor extends Visitor
         }
 
         if ($node->hasChild('DeletedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, Revoked::getStateId(), $desc));
+            $this->commandBus->handle(new ForceState($donor, Revoked::getStateId(), $desc));
 
             return;
         }
 
         if ($node->hasChild('ErrorFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, Error::getStateId(), $desc));
+            $this->commandBus->handle(new ForceState($donor, Error::getStateId(), $desc));
 
             return;
         }

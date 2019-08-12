@@ -31,23 +31,18 @@ services:
                 - NEW_MANDATE: MANDATE_SENT
                 - NEW_DIGITAL_MANDATE: MANDATE_SENT
                 - MANDATE_SENT: AWAITING_TRANSACTION_REGISTRATION
-                - MANDATE_SENT: ERROR
                 - AWAITING_TRANSACTION_REGISTRATION: TRANSACTION_REGISTRATION_SENT
                 - TRANSACTION_REGISTRATION_SENT: ACTIVE
-
-                # Revocation from ag file
-                - ACTIVE: REVOKED
 
                 - ACTIVE: AWAITING_REVOCATION
                 - AWAITING_REVOCATION: REVOCATION_SENT
                 - REVOCATION_SENT: REVOKED
+                - REVOKED: REMOVED
 
                 - ACTIVE: AWAITING_PAUSE
                 - AWAITING_PAUSE: PAUSE_SENT
                 - PAUSE_SENT: PAUSED
                 - PAUSED: AWAITING_TRANSACTION_REGISTRATION
-
-                - REVOKED: REMOVED
 
     byrokrat\giroapp\Domain\State\TransactionDateFactory:
         class: ~
