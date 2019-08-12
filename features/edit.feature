@@ -39,8 +39,8 @@ Feature: Editing donors
   Scenario: I edit a donor and change state
     Given a fresh installation
     And there are donors:
-      | payer-number | state            |
-      | 1            | MANDATE_APPROVED |
+      | payer-number | state                             |
+      | 1            | AWAITING_TRANSACTION_REGISTRATION |
     When I run "edit-state 1 --new-state ACTIVE"
     Then there is no error
     And the database contains donor "1" with "state" matching "ACTIVE"

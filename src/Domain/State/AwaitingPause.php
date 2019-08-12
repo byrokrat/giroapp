@@ -25,19 +25,19 @@ namespace byrokrat\giroapp\Domain\State;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
 
-final class RevokeMandate implements StateInterface, ExportableStateInterface
+final class AwaitingPause implements StateInterface, ExportableStateInterface
 {
     use StateIdTrait;
 
     public function getDescription(): string
     {
-        return 'Mandate is awaiting revocation';
+        return 'Mandate is awaiting to be paused';
     }
 
     public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
-        $writer->deleteMandate($donor->getPayerNumber());
+        $writer->deletePayments($donor->getPayerNumber());
 
-        return RevocationSent::getStateId();
+        return PauseSent::getStateId();
     }
 }

@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\CommandBus\ForceRemoveDonor;
 use byrokrat\giroapp\CommandBus\RemoveDonor;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-use byrokrat\giroapp\Domain\State\Inactive;
+use byrokrat\giroapp\Domain\State\Revoked;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -41,7 +41,7 @@ final class RemoveConsole implements ConsoleInterface
         $command->setDescription('Completely remove donors');
         $command->setHelp('Completely remove donors from the database');
         $this->configureDonorArgument($command, false);
-        $command->addOption('all', 'a', InputOption::VALUE_NONE, 'Remove all inactive donors');
+        $command->addOption('all', 'a', InputOption::VALUE_NONE, 'Remove all revoked mandates');
         $command->addOption('force', 'f', InputOption::VALUE_NONE, 'Force removal (ignored if -a is used)');
     }
 
@@ -49,7 +49,7 @@ final class RemoveConsole implements ConsoleInterface
     {
         if ($input->getOption('all')) {
             foreach ($this->donorQuery->findAll() as $donor) {
-                if ($donor->getState() instanceof Inactive) {
+                if ($donor->getState() instanceof Revoked) {
                     $this->commandBus->handle(new RemoveDonor($donor));
                 }
             }

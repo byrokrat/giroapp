@@ -4,17 +4,17 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Domain\State\Inactive;
+use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\Donor;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class InactiveSpec extends ObjectBehavior
+class RevokedSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(Inactive::CLASS);
+        $this->shouldHaveType(Revoked::CLASS);
     }
 
     function it_implements_the_state_interface()
@@ -24,7 +24,7 @@ class InactiveSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getStateId()->shouldEqual('INACTIVE');
+        $this->getStateId()->shouldEqual('REVOKED');
     }
 
     function it_contains_a_description()

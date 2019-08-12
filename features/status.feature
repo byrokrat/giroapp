@@ -6,12 +6,12 @@ Feature: Examine database status
   Background:
     Given a fresh installation
     And there are donors:
-      | payer-number | state               | id          | amount |
-      | 1            | ACTIVE              | 840821-3067 | 100    |
-      | 3            | MANDATE_APPROVED    | 550319-1016 | 100    |
-      | 5            | NEW_DIGITAL_MANDATE | 650211-5097 | 100    |
-      | 6            | NEW_MANDATE         | 950819-4058 | 100    |
-      | 8            | REVOKE_MANDATE      | 890121-5742 | 100    |
+      | payer-number | state                             | id          | amount |
+      | 1            | ACTIVE                            | 840821-3067 | 100    |
+      | 3            | AWAITING_TRANSACTION_REGISTRATION | 550319-1016 | 100    |
+      | 5            | NEW_DIGITAL_MANDATE               | 650211-5097 | 100    |
+      | 6            | NEW_MANDATE                       | 950819-4058 | 100    |
+      | 8            | AWAITING_REVOCATION               | 890121-5742 | 100    |
 
   Scenario: I check the donor count
     When I run "status --donor-count"

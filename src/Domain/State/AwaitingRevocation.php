@@ -25,36 +25,19 @@ namespace byrokrat\giroapp\Domain\State;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
 
-final class MandateApproved implements StateInterface, ExportableStateInterface
+final class AwaitingRevocation implements StateInterface, ExportableStateInterface
 {
     use StateIdTrait;
 
-    /**
-     * @var TransactionDateFactory
-     */
-    private $dateFactory;
-
-    public function __construct(TransactionDateFactory $dateFactory)
-    {
-        $this->dateFactory = $dateFactory;
-    }
-
     public function getDescription(): string
     {
-        return 'Mandate has been approved by the bank';
+        return 'Mandate is awaiting revocation';
     }
 
     public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
     {
-        if ($donor->getDonationAmount()->isPositive()) {
-            $writer->addMonthlyPayment(
-                $donor->getPayerNumber(),
-                $donor->getDonationAmount(),
-                $this->dateFactory->createNextTransactionDate(),
-                $donor->getMandateKey()
-            );
-        }
+        $writer->deleteMandate($donor->getPayerNumber());
 
-        return Active::getStateId();
+        return RevocationSent::getStateId();
     }
 }

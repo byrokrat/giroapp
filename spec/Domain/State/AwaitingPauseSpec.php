@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Domain\State\PauseMandate;
+use byrokrat\giroapp\Domain\State\AwaitingPause;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\State\PauseSent;
@@ -13,11 +13,11 @@ use byrokrat\autogiro\Writer\WriterInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class PauseMandateSpec extends ObjectBehavior
+class AwaitingPauseSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(PauseMandate::CLASS);
+        $this->shouldHaveType(AwaitingPause::CLASS);
     }
 
     function it_implements_the_state_interface()
@@ -27,7 +27,7 @@ class PauseMandateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getStateId()->shouldEqual('PAUSE_MANDATE');
+        $this->getStateId()->shouldEqual('AWAITING_PAUSE');
     }
 
     function it_contains_a_description()

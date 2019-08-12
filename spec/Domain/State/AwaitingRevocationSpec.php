@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Domain\State\RevokeMandate;
+use byrokrat\giroapp\Domain\State\AwaitingRevocation;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\State\RevocationSent;
@@ -13,11 +13,11 @@ use byrokrat\autogiro\Writer\WriterInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class RevokeMandateSpec extends ObjectBehavior
+class AwaitingRevocationSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(RevokeMandate::CLASS);
+        $this->shouldHaveType(AwaitingRevocation::CLASS);
     }
 
     function it_implements_the_state_interface()
@@ -27,7 +27,7 @@ class RevokeMandateSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getStateId()->shouldEqual('REVOKE_MANDATE');
+        $this->getStateId()->shouldEqual('AWAITING_REVOCATION');
     }
 
     function it_contains_a_description()

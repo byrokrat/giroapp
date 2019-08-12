@@ -12,7 +12,6 @@ use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\NewDonorProcessor;
 use byrokrat\giroapp\Domain\State\StateInterface;
-use byrokrat\giroapp\Domain\State\Inactive;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;

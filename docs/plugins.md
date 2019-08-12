@@ -72,10 +72,10 @@ Use the dedicated `DonorStateListener` to fire on specific donor state transitio
 use byrokrat\giroapp\Plugin\Plugin;
 use byrokrat\giroapp\Event\DonorStateUpdated;
 use byrokrat\giroapp\Event\Listener\DonorStateListener;
-use byrokrat\giroapp\Domain\State\MandateApproved;
+use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
 
 return new Plugin(
-    new DonorStateListener(MandateApproved::CLASS, function (DonorStateUpdated $event) {
+    new DonorStateListener(AwaitingTransactionRegistration::CLASS, function (DonorStateUpdated $event) {
         send_mail_to_donor(
             $event->getDonor()->getEmail(),
             "Welcome {$event->getDonor()->getName()}, you are now a donor!"

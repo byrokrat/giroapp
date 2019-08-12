@@ -10,7 +10,7 @@ Feature: Pause mandates
       | 12345        | ACTIVE |
     When I run "pause 12345"
     Then there is no error
-    And the database contains donor "12345" with "state" matching "PAUSE_MANDATE"
+    And the database contains donor "12345" with "state" matching "AWAITING_PAUSE"
 
  Scenario: I try to pause a mandate that is not active
    Given a fresh installation
@@ -27,7 +27,7 @@ Feature: Pause mandates
       | 12345        | PAUSED |
     When I run "pause 12345 --restart"
     Then there is no error
-    And the database contains donor "12345" with "state" matching "MANDATE_APPROVED"
+    And the database contains donor "12345" with "state" matching "AWAITING_TRANSACTION_REGISTRATION"
 
  Scenario: I try to restart a mandate that is not paused
    Given a fresh installation

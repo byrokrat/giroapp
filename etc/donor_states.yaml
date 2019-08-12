@@ -10,18 +10,18 @@ services:
         class: ~
         arguments:
             - '@byrokrat\giroapp\Domain\State\Active'
+            - '@byrokrat\giroapp\Domain\State\AwaitingPause'
+            - '@byrokrat\giroapp\Domain\State\AwaitingRevocation'
+            - '@byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration'
             - '@byrokrat\giroapp\Domain\State\Error'
-            - '@byrokrat\giroapp\Domain\State\Inactive'
-            - '@byrokrat\giroapp\Domain\State\NewMandate'
-            - '@byrokrat\giroapp\Domain\State\NewDigitalMandate'
             - '@byrokrat\giroapp\Domain\State\MandateSent'
-            - '@byrokrat\giroapp\Domain\State\MandateApproved'
-            - '@byrokrat\giroapp\Domain\State\RevokeMandate'
-            - '@byrokrat\giroapp\Domain\State\RevocationSent'
-            - '@byrokrat\giroapp\Domain\State\PauseMandate'
+            - '@byrokrat\giroapp\Domain\State\NewDigitalMandate'
+            - '@byrokrat\giroapp\Domain\State\NewMandate'
             - '@byrokrat\giroapp\Domain\State\PauseSent'
             - '@byrokrat\giroapp\Domain\State\Paused'
             - '@byrokrat\giroapp\Domain\State\Removed'
+            - '@byrokrat\giroapp\Domain\State\RevocationSent'
+            - '@byrokrat\giroapp\Domain\State\Revoked'
 
     byrokrat\giroapp\Domain\State\WorkflowConfigurator:
         class: ~
@@ -29,24 +29,23 @@ services:
             -
                 - NEW_MANDATE: MANDATE_SENT
                 - NEW_DIGITAL_MANDATE: MANDATE_SENT
-                - MANDATE_SENT: MANDATE_APPROVED
+                - MANDATE_SENT: AWAITING_TRANSACTION_REGISTRATION
                 - MANDATE_SENT: ERROR
-                - MANDATE_APPROVED: ACTIVE
+                - AWAITING_TRANSACTION_REGISTRATION: ACTIVE
 
                 # Revocation from ag file
-                - ACTIVE: INACTIVE
+                - ACTIVE: REVOKED
 
-                - ACTIVE: REVOKE_MANDATE
-                - REVOKE_MANDATE: REVOCATION_SENT
-                - REVOCATION_SENT: INACTIVE
+                - ACTIVE: AWAITING_REVOCATION
+                - AWAITING_REVOCATION: REVOCATION_SENT
+                - REVOCATION_SENT: REVOKED
 
-                - ACTIVE: PAUSE_MANDATE
-                - PAUSE_MANDATE: PAUSE_SENT
+                - ACTIVE: AWAITING_PAUSE
+                - AWAITING_PAUSE: PAUSE_SENT
                 - PAUSE_SENT: PAUSED
-                # restart...
-                - PAUSED: MANDATE_APPROVED
+                - PAUSED: AWAITING_TRANSACTION_REGISTRATION
 
-                - INACTIVE: REMOVED
+                - REVOKED: REMOVED
 
     byrokrat\giroapp\Domain\State\TransactionDateFactory:
         class: ~

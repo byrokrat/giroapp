@@ -20,24 +20,20 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Domain\State;
+namespace byrokrat\giroapp\Filter;
 
 use byrokrat\giroapp\Domain\Donor;
-use byrokrat\autogiro\Writer\WriterInterface;
+use byrokrat\giroapp\Domain\State\Revoked;
 
-final class PauseMandate implements StateInterface, ExportableStateInterface
+final class RevokedFilter implements FilterInterface
 {
-    use StateIdTrait;
-
-    public function getDescription(): string
+    public function getName(): string
     {
-        return 'Mandate is awaiting to be paused';
+        return 'revoked';
     }
 
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
+    public function filterDonor(Donor $donor): bool
     {
-        $writer->deletePayments($donor->getPayerNumber());
-
-        return PauseSent::getStateId();
+        return $donor->getState() instanceof Revoked;
     }
 }

@@ -20,20 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Filter;
+namespace byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Domain\Donor;
-use byrokrat\giroapp\Domain\State\Inactive;
-
-final class InactiveFilter implements FilterInterface
+final class Revoked implements StateInterface
 {
-    public function getName(): string
-    {
-        return 'inactive';
-    }
+    use StateIdTrait;
 
-    public function filterDonor(Donor $donor): bool
+    public function getDescription(): string
     {
-        return $donor->getState() instanceof Inactive;
+        return 'Donor is revoked (or has been rejected)';
     }
 }

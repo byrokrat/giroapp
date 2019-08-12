@@ -58,7 +58,7 @@ Feature: Importing files
       73005805620100000000000123455000000001111116198203232775     043220170817
       092017081799000000001
       """
-    Then the database contains donor "12345" with "state" matching "MANDATE_APPROVED"
+    Then the database contains donor "12345" with "state" matching "AWAITING_TRANSACTION_REGISTRATION"
 
   Scenario: I import mandate approval using STDIN
     Given there are donors:
@@ -70,7 +70,7 @@ Feature: Importing files
        73005805620100000000000123455000000001111116198203232775     043220170817
        092017081799000000001
        """
-   Then the database contains donor "12345" with "state" matching "MANDATE_APPROVED"
+   Then the database contains donor "12345" with "state" matching "AWAITING_TRANSACTION_REGISTRATION"
 
   Scenario: I import an autogiro file rejecting a mandate register request
     Given there are donors:
@@ -94,4 +94,4 @@ Feature: Importing files
         73005805620100000000000123455000000001111116198203232775     033320170817
         092017081799000000001
         """
-    Then the database contains donor "12345" with "state" matching "INACTIVE"
+    Then the database contains donor "12345" with "state" matching "REVOKED"

@@ -4,7 +4,7 @@ declare(strict_types = 1);
 
 namespace spec\byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Domain\State\MandateApproved;
+use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
 use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Domain\State\StateInterface;
@@ -15,7 +15,7 @@ use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
-class MandateApprovedSpec extends ObjectBehavior
+class AwaitingTransactionRegistrationSpec extends ObjectBehavior
 {
     function let(TransactionDateFactory $dateFactory)
     {
@@ -24,7 +24,7 @@ class MandateApprovedSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(MandateApproved::CLASS);
+        $this->shouldHaveType(AwaitingTransactionRegistration::CLASS);
     }
 
     function it_implements_the_state_interface()
@@ -34,7 +34,7 @@ class MandateApprovedSpec extends ObjectBehavior
 
     function it_contains_an_id()
     {
-        $this->getStateId()->shouldEqual('MANDATE_APPROVED');
+        $this->getStateId()->shouldEqual('AWAITING_TRANSACTION_REGISTRATION');
     }
 
     function it_contains_a_description()

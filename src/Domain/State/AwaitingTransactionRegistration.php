@@ -22,12 +22,39 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Domain\State;
 
-final class Inactive implements StateInterface
+use byrokrat\giroapp\Domain\Donor;
+use byrokrat\autogiro\Writer\WriterInterface;
+
+final class AwaitingTransactionRegistration implements StateInterface, ExportableStateInterface
 {
     use StateIdTrait;
 
+    /**
+     * @var TransactionDateFactory
+     */
+    private $dateFactory;
+
+    public function __construct(TransactionDateFactory $dateFactory)
+    {
+        $this->dateFactory = $dateFactory;
+    }
+
     public function getDescription(): string
     {
-        return 'Donor is inactive (has been revoked/rejected)';
+        return 'Mandate has been approved by the bank';
+    }
+
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
+    {
+        if ($donor->getDonationAmount()->isPositive()) {
+            $writer->addMonthlyPayment(
+                $donor->getPayerNumber(),
+                $donor->getDonationAmount(),
+                $this->dateFactory->createNextTransactionDate(),
+                $donor->getMandateKey()
+            );
+        }
+
+        return Active::getStateId();
     }
 }

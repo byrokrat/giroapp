@@ -46,8 +46,8 @@ Feature: Exporting files to autogirot
 
   Scenario: I register transactions from donor
     Given there are donors:
-      | id         | account     | payer-number | state            | amount |
-      | 8203232775 | 50001111116 | 12345        | MANDATE_APPROVED | 999    |
+      | id         | account     | payer-number | state                             | amount |
+      | 8203232775 | 50001111116 | 12345        | AWAITING_TRANSACTION_REGISTRATION | 999    |
     When I run "export"
     Then the output matches:
         """
@@ -58,8 +58,8 @@ Feature: Exporting files to autogirot
 
   Scenario: I revoke a donor mandate
     Given there are donors:
-      | payer-number | state          |
-      | 12345        | REVOKE_MANDATE |
+      | payer-number | state               |
+      | 12345        | AWAITING_REVOCATION |
     When I run "export"
     Then the output matches:
         """

@@ -44,7 +44,7 @@ final class CorePlugin extends Plugin
         Console\StatusConsole $statusConsole,
         Db\Json\JsonDriverFactory $jsonDriverFactory,
         Filter\ActiveFilter $activeFilter,
-        Filter\InactiveFilter $incativeFilter,
+        Filter\RevokedFilter $revokedFilter,
         Filter\ExportableFilter $exportableFilter,
         Filter\ErrorFilter $errorFilter,
         Filter\PausedFilter $pausedFilter,

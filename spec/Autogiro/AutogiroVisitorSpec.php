@@ -12,8 +12,8 @@ use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\Error;
-use byrokrat\giroapp\Domain\State\Inactive;
-use byrokrat\giroapp\Domain\State\MandateApproved;
+use byrokrat\giroapp\Domain\State\Revoked;
+use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\banking\AccountNumber;
@@ -193,7 +193,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $statusNode->getValueFrom('Text')->willReturn('desc');
 
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), MandateApproved::getStateId(), 'desc')
+            new UpdateState($donor->getWrappedObject(), AwaitingTransactionRegistration::getStateId(), 'desc')
         )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
@@ -224,7 +224,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $statusNode->getValueFrom('Text')->willReturn('desc');
 
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), Inactive::getStateId(), 'desc')
+            new UpdateState($donor->getWrappedObject(), Revoked::getStateId(), 'desc')
         )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);

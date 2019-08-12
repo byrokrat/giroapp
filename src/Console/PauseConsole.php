@@ -25,9 +25,9 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\Domain\State\Active;
-use byrokrat\giroapp\Domain\State\MandateApproved;
+use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
 use byrokrat\giroapp\Domain\State\Paused;
-use byrokrat\giroapp\Domain\State\PauseMandate;
+use byrokrat\giroapp\Domain\State\AwaitingPause;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -55,11 +55,11 @@ final class PauseConsole implements ConsoleInterface
         $msg = $input->getOption('message') ?: 'Edited by user';
 
         if ($input->getOption('restart')) {
-            $this->commandBus->handle(new UpdateState($donor, MandateApproved::getStateId(), $msg));
+            $this->commandBus->handle(new UpdateState($donor, AwaitingTransactionRegistration::getStateId(), $msg));
 
             return;
         }
 
-        $this->commandBus->handle(new UpdateState($donor, PauseMandate::getStateId(), $msg));
+        $this->commandBus->handle(new UpdateState($donor, AwaitingPause::getStateId(), $msg));
     }
 }

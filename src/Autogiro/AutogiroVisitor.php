@@ -28,8 +28,8 @@ use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\Error;
-use byrokrat\giroapp\Domain\State\Inactive;
-use byrokrat\giroapp\Domain\State\MandateApproved;
+use byrokrat\giroapp\Domain\State\Revoked;
+use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\AccountNumber;
@@ -98,13 +98,13 @@ class AutogiroVisitor extends Visitor
         $desc = (string)$node->getChild('Status')->getValueFrom('Text');
 
         if ($node->hasChild('CreatedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, MandateApproved::getStateId(), $desc));
+            $this->commandBus->handle(new UpdateState($donor, AwaitingTransactionRegistration::getStateId(), $desc));
 
             return;
         }
 
         if ($node->hasChild('DeletedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, Inactive::getStateId(), $desc));
+            $this->commandBus->handle(new UpdateState($donor, Revoked::getStateId(), $desc));
 
             return;
         }
