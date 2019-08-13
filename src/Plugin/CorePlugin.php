@@ -38,6 +38,7 @@ final class CorePlugin extends Plugin
         Console\EditStateConsole $editStateConsole,
         Console\ExportConsole $expotConsole,
         Console\ImportConsole $importConsole,
+        Console\InitConsole $initConsole,
         Console\LsConsole $lsConsole,
         Console\PauseConsole $pauseConsole,
         Console\RemoveConsole $removeConsole,

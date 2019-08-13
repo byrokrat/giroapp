@@ -4,6 +4,9 @@
         "src",
         "vendor"
     ],
+    "files-bin": [
+        "giroapp.ini.dist"
+    ],
     "compression": "GZ",
     "compactors": [
         "KevinGH\\Box\\Compactor\\Php"

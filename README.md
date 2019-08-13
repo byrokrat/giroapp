@@ -10,15 +10,13 @@ Command line app for managing autogiro donations.
 
 1. Download the latest phar archive from the [releases](https://github.com/byrokrat/giroapp/releases) tab.
 
-2. Copy `giroapp.phar` to desired installation target (for example `/opt`).
+2. Optionally drop the `.phar` extension.
 
-3. Optionally rename `giroapp.phar` => `giroapp`.
+3. Run `giroapp init` to create a default `giroapp.ini` in the current directory.
 
-4. Copy [`giroapp.ini.dist`](giroapp.ini.dist) to `giroapp.ini` at desired location.
+4. Edit `giroapp.ini` using a standard text editor.
 
-4. Optionally specify the location of the configuration file. See below.
-
-6. Edit `giroapp.ini` to your needs.
+5. Optionally specify the location of the configuration file. See below.
 
 ### Specifying the location of giroapp.ini
 
@@ -26,7 +24,7 @@ By default giroapp looks for configurations in a file called `giroapp.ini` in
 the current working directory. Tell giroapp where to look for configurations
 be defining a `GIROAPP_INI` environment variable.
 
-### Adding plugins
+## Plugins
 
 Giroapp supports dynamic [plugins](docs/plugins.md). Officially supported plugins:
 

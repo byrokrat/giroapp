@@ -16,6 +16,7 @@
 * Added the possibility to change donation amounts using the `edit-amount` command.
   Note that the `edit` command no longer handles new amounts.
 * Added the `edit-payer-number` command to change payer number. Experimental.
+* Added a `init` command to simplify the installation process.
 
 ## Updating the database
 
