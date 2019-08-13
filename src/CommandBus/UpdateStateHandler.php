@@ -28,30 +28,23 @@ use Symfony\Component\Workflow\Transition;
 
 final class UpdateStateHandler
 {
-    /** @var ForceStateHandler */
-    private $forceHandler;
-
     /** @var WorkflowInterface */
     private $workflow;
 
-    public function __construct(ForceStateHandler $forceHandler, WorkflowInterface $workflow)
+    public function __construct(WorkflowInterface $workflow)
     {
-        $this->forceHandler = $forceHandler;
         $this->workflow = $workflow;
     }
     public function handle(UpdateState $command): void
     {
         $donor = $command->getDonor();
-        $newStateId = $command->getNewStateId();
 
-        if ($newStateId == $donor->getState()::getStateId()) {
-            return;
-        }
+        $transitionId = $command->getTransitionId();
 
-        if (!$this->workflow->can($donor, $newStateId)) {
+        if (!$this->workflow->can($donor, $transitionId)) {
             throw new InvalidStateTransitionException(sprintf(
-                "Unable to set state '%s' to donor '%s' (possible values: '%s')",
-                $newStateId,
+                "Unable to perform transition '%s' on donor '%s' (possible values: '%s')",
+                $transitionId,
                 $donor->getMandateKey(),
                 implode(
                     "', '",
@@ -65,8 +58,6 @@ final class UpdateStateHandler
             ));
         }
 
-        $this->forceHandler->handle(
-            new ForceState($donor, $newStateId, $command->getUpdateDescription())
-        );
+        $this->workflow->apply($donor, $transitionId, ['desc' => $command->getUpdateDescription()]);
     }
 }

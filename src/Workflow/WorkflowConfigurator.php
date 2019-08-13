@@ -20,7 +20,7 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Domain\State;
+namespace byrokrat\giroapp\Workflow;
 
 use Symfony\Component\Workflow\DefinitionBuilder;
 use Symfony\Component\Workflow\Transition;
@@ -28,18 +28,18 @@ use Symfony\Component\Workflow\Transition;
 final class WorkflowConfigurator
 {
     /** @var array */
-    private $validTransitions;
+    private $transitions;
 
-    public function __construct(array $validTransitions)
+    public function __construct(array $transitions)
     {
-        $this->validTransitions = $validTransitions;
+        $this->transitions = $transitions;
     }
 
     public function configureTransitions(DefinitionBuilder $definition): void
     {
-        foreach ($this->validTransitions as $transition) {
-            foreach ($transition as $from => $to) {
-                $definition->addTransition(new Transition($to, $from, $to));
+        foreach ($this->transitions as $transition) {
+            foreach ($transition as $name => list($from, $to)) {
+                $definition->addTransition(new Transition($name, $from, $to));
             }
         }
     }

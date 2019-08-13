@@ -12,6 +12,7 @@
 * Support the complete pause-restart cycle.
 * Now records transaction reports to `DonorEventStore`.
 * Added the `show-trans` command to inspect recorded transactions.
+* The `edit-state` command now always forces new state.
 
 ## Updating the database
 

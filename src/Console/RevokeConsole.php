@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
-use byrokrat\giroapp\Domain\State\AwaitingRevocation;
+use byrokrat\giroapp\Workflow\Transitions;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -49,7 +49,7 @@ final class RevokeConsole implements ConsoleInterface
         $msg = $input->getOption('message') ?: 'Revoked by user';
 
         $this->commandBus->handle(
-            new UpdateState($this->readDonor($input), AwaitingRevocation::getStateId(), $msg)
+            new UpdateState($this->readDonor($input), Transitions::INITIATE_REVOCATION, $msg)
         );
     }
 }

@@ -10,7 +10,7 @@ use byrokrat\giroapp\CommandBus\ForceRemoveDonor;
 use byrokrat\giroapp\CommandBus\CommandBusInterface;
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\Domain\Donor;
-use byrokrat\giroapp\Domain\State\Removed;
+use byrokrat\giroapp\Workflow\Transitions;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -29,7 +29,7 @@ class RemoveDonorHandlerSpec extends ObjectBehavior
     function it_removes_donors($commandBus, Donor $donor)
     {
         $commandBus
-            ->handle(new UpdateState($donor->getWrappedObject(), Removed::getStateId(), 'Donor removed'))
+            ->handle(new UpdateState($donor->getWrappedObject(), Transitions::MARK_MANDATE_REMOVED, 'Donor removed'))
             ->shouldBeCalled();
 
         $commandBus->handle(new ForceRemoveDonor($donor->getWrappedObject()))->shouldBeCalled();

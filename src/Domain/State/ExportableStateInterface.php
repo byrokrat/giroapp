@@ -25,8 +25,5 @@ use byrokrat\autogiro\Writer\WriterInterface;
 
 interface ExportableStateInterface
 {
-    /**
-     * @return string Suggested next state id
-     */
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string;
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): void;
 }

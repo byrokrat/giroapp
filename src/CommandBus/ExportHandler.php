@@ -28,6 +28,7 @@ use byrokrat\giroapp\Event\FileExported;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
+use byrokrat\giroapp\Workflow\Transitions;
 use byrokrat\autogiro\Writer\WriterInterface;
 use Psr\Log\LogLevel;
 
@@ -64,13 +65,9 @@ final class ExportHandler
                     new LogEvent("Exporting mandate '{$donor->getMandateKey()}'", [], LogLevel::DEBUG)
                 );
 
-                $this->commandBus->handle(
-                    new UpdateState(
-                        $donor,
-                        $state->exportToAutogiro($donor, $this->autogiroWriter),
-                        'Exported to BGC'
-                    )
-                );
+                $state->exportToAutogiro($donor, $this->autogiroWriter);
+
+                $this->commandBus->handle(new UpdateState($donor, Transitions::EXPORT, 'Exported to BGC'));
 
                 $exported = true;
             }

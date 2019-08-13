@@ -5,7 +5,6 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Domain\State;
 
 use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
-use byrokrat\giroapp\Domain\State\TransactionRegistrationSent;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\State\TransactionDateFactory;
@@ -66,7 +65,7 @@ class AwaitingTransactionRegistrationSpec extends ObjectBehavior
         $date = new \DateTimeImmutable;
         $dateFactory->createNextTransactionDate()->willReturn($date);
 
-        $this->exportToAutogiro($donor, $writer)->shouldReturn(TransactionRegistrationSent::getStateId());
+        $this->exportToAutogiro($donor, $writer);
 
         $writer->addMonthlyPayment('payer_number', $amount, $date, 'mandate_key')->shouldHaveBeenCalled();
     }

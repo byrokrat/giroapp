@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\CommandBus\ForceState;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\Domain\State\StateCollection;
@@ -63,7 +62,6 @@ final class EditStateConsole implements ConsoleInterface
             InputOption::VALUE_REQUIRED,
             'New donor state identifier'
         );
-        $command->addOption('force', 'f', InputOption::VALUE_NONE, 'Force new state');
         $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing state change');
     }
 
@@ -91,10 +89,6 @@ final class EditStateConsole implements ConsoleInterface
         /** @var string $msg */
         $msg = $input->getOption('message') ?: 'Edited by user';
 
-        $command = $input->getOption('force')
-            ? new ForceState($donor, $newStateId, $msg)
-            : new UpdateState($donor, $newStateId, $msg);
-
-        $this->commandBus->handle($command);
+        $this->commandBus->handle(new ForceState($donor, $newStateId, $msg));
     }
 }

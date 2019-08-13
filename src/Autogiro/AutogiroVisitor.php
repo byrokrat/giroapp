@@ -28,13 +28,11 @@ use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Domain\Donor;
-use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\giroapp\Domain\State\Error;
-use byrokrat\giroapp\Domain\State\Paused;
 use byrokrat\giroapp\Domain\State\Revoked;
-use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
 use byrokrat\giroapp\Event\TransactionFailed;
 use byrokrat\giroapp\Event\TransactionPerformed;
+use byrokrat\giroapp\Workflow\Transitions;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\AccountNumber;
@@ -104,7 +102,7 @@ class AutogiroVisitor extends Visitor
         $desc = (string)$node->getChild('Status')->getValueFrom('Text');
 
         if ($node->hasChild('CreatedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, AwaitingTransactionRegistration::getStateId(), $desc));
+            $this->commandBus->handle(new UpdateState($donor, Transitions::MARK_MANDATE_REGISTERED, $desc));
 
             return;
         }
@@ -139,7 +137,11 @@ class AutogiroVisitor extends Visitor
 
         if ($node->hasChild('RevocationFlag')) {
             $this->commandBus->handle(
-                new UpdateState($donor, Paused::getStateId(), 'Transaction paused on ' . $date->format('Y-m-d'))
+                new UpdateState(
+                    $donor,
+                    Transitions::MARK_TRANSACTION_REMOVED,
+                    'Transaction paused on ' . $date->format('Y-m-d')
+                )
             );
         }
     }
@@ -162,7 +164,11 @@ class AutogiroVisitor extends Visitor
         $date = $node->getChild('Date')->getValueFrom('Object');
 
         $this->commandBus->handle(
-            new UpdateState($donor, Active::getStateId(), 'Transaction active on ' . $date->format('Y-m-d'))
+            new UpdateState(
+                $donor,
+                Transitions::MARK_TRANSACTION_ACTIVE,
+                'Transaction active on ' . $date->format('Y-m-d')
+            )
         );
 
         /** @var \byrokrat\amount\Currency\SEK $amount */

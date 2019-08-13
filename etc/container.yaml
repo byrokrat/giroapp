@@ -16,7 +16,7 @@ services:
 
     byrokrat\giroapp\:
         resource: '../src/*'
-        exclude: '../src/Domain/State/*'
+        exclude: '../src/{Domain/State,Workflow}'
 
     Symfony\Component\Console\Application:
         class: ~

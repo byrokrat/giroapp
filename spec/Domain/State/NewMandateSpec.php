@@ -7,7 +7,6 @@ namespace spec\byrokrat\giroapp\Domain\State;
 use byrokrat\giroapp\Domain\State\NewMandate;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Domain\State\StateInterface;
-use byrokrat\giroapp\Domain\State\MandateSent;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
 use byrokrat\banking\AccountNumber;
@@ -47,7 +46,7 @@ class NewMandateSpec extends ObjectBehavior
         $donor->getPayerNumber()->willReturn('foobar');
         $donor->getAccount()->willReturn($account);
         $donor->getDonorId()->willReturn($id);
-        $this->exportToAutogiro($donor, $writer)->shouldReturn(MandateSent::getStateId());
+        $this->exportToAutogiro($donor, $writer);
         $writer->addNewMandate('foobar', $account, $id)->shouldHaveBeenCalled();
     }
 }

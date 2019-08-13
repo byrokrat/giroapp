@@ -12,13 +12,12 @@ use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Domain\Donor;
-use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\Paused;
 use byrokrat\giroapp\Domain\State\Revoked;
-use byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration;
 use byrokrat\giroapp\Event\TransactionFailed;
 use byrokrat\giroapp\Event\TransactionPerformed;
+use byrokrat\giroapp\Workflow\Transitions;
 use byrokrat\amount\Currency\SEK;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Visitor\Visitor;
@@ -202,7 +201,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $statusNode->getValueFrom('Text')->willReturn('desc');
 
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), AwaitingTransactionRegistration::getStateId(), 'desc')
+            new UpdateState($donor->getWrappedObject(), Transitions::MARK_MANDATE_REGISTERED, 'desc')
         )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
@@ -287,7 +286,11 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $parentNode->hasChild('RevocationFlag')->willReturn(true);
 
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), Paused::getStateId(), 'Transaction paused on 2019-08-12')
+            new UpdateState(
+                $donor->getWrappedObject(),
+                Transitions::MARK_TRANSACTION_REMOVED,
+                'Transaction paused on 2019-08-12'
+            )
         )->shouldBeCalled();
 
         $this->beforeSuccessfulIncomingAmendmentResponse($parentNode);
@@ -314,7 +317,11 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $amountNode->getValueFrom('Object')->willReturn(new SEK('100'));
 
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), Active::getStateId(), 'Transaction active on 2019-08-12')
+            new UpdateState(
+                $donor->getWrappedObject(),
+                Transitions::MARK_TRANSACTION_ACTIVE,
+                'Transaction active on 2019-08-12'
+            )
         )->shouldBeCalled();
 
         $dispatcher->dispatch(Argument::type(TransactionPerformed::CLASS))->shouldBeCalled();
@@ -343,7 +350,11 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $amountNode->getValueFrom('Object')->willReturn(new SEK('100'));
 
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), Active::getStateId(), 'Transaction active on 2019-08-12')
+            new UpdateState(
+                $donor->getWrappedObject(),
+                Transitions::MARK_TRANSACTION_ACTIVE,
+                'Transaction active on 2019-08-12'
+            )
         )->shouldBeCalled();
 
         $dispatcher->dispatch(Argument::type(TransactionFailed::CLASS))->shouldBeCalled();

@@ -34,10 +34,8 @@ final class AwaitingRevocation implements StateInterface, ExportableStateInterfa
         return 'Mandate is awaiting revocation';
     }
 
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): void
     {
         $writer->deleteMandate($donor->getPayerNumber());
-
-        return RevocationSent::getStateId();
     }
 }

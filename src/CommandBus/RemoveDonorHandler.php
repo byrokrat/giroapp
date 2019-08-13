@@ -23,7 +23,7 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Domain\State\Removed;
+use byrokrat\giroapp\Workflow\Transitions;
 
 final class RemoveDonorHandler
 {
@@ -33,7 +33,7 @@ final class RemoveDonorHandler
     {
         $donor = $command->getDonor();
 
-        $this->commandBus->handle(new UpdateState($donor, Removed::getStateId(), 'Donor removed'));
+        $this->commandBus->handle(new UpdateState($donor, Transitions::MARK_MANDATE_REMOVED, 'Donor removed'));
 
         $this->commandBus->handle(new ForceRemoveDonor($donor));
     }

@@ -34,10 +34,8 @@ final class NewDigitalMandate implements StateInterface, ExportableStateInterfac
         return 'A digital mandate has been received from the bank';
     }
 
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): void
     {
         $writer->acceptDigitalMandate($donor->getPayerNumber());
-
-        return MandateSent::getStateId();
     }
 }

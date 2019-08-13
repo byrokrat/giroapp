@@ -44,7 +44,7 @@ final class AwaitingTransactionRegistration implements StateInterface, Exportabl
         return 'Transaction is awaiting bank registration';
     }
 
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): void
     {
         if ($donor->getDonationAmount()->isPositive()) {
             $writer->addMonthlyPayment(
@@ -54,7 +54,5 @@ final class AwaitingTransactionRegistration implements StateInterface, Exportabl
                 $donor->getMandateKey()
             );
         }
-
-        return TransactionRegistrationSent::getStateId();
     }
 }

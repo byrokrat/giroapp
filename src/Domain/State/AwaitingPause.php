@@ -34,10 +34,8 @@ final class AwaitingPause implements StateInterface, ExportableStateInterface
         return 'Mandate is awaiting to be paused';
     }
 
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): void
     {
         $writer->deletePayments($donor->getPayerNumber());
-
-        return PauseSent::getStateId();
     }
 }

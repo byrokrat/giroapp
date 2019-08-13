@@ -92,7 +92,7 @@ class FeatureContext implements Context
 
             $this->thereIsNoError();
 
-            $this->iRun(sprintf('edit-state %s --new-state %s -f', $row['payer-number'], $row['state']));
+            $this->iRun(sprintf('edit-state %s --new-state %s', $row['payer-number'], $row['state']));
 
             $this->thereIsNoError();
         }

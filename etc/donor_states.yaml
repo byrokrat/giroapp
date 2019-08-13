@@ -6,6 +6,9 @@ services:
     byrokrat\giroapp\Domain\State\:
         resource: '../src/Domain/State/*'
 
+    byrokrat\giroapp\Workflow\:
+        resource: '../src/Workflow/*'
+
     byrokrat\giroapp\Domain\State\StateCollection:
         class: ~
         arguments:
@@ -24,25 +27,26 @@ services:
             - '@byrokrat\giroapp\Domain\State\Revoked'
             - '@byrokrat\giroapp\Domain\State\TransactionRegistrationSent'
 
-    byrokrat\giroapp\Domain\State\WorkflowConfigurator:
+    byrokrat\giroapp\Workflow\WorkflowConfigurator:
         class: ~
         arguments:
             -
-                - NEW_MANDATE: MANDATE_SENT
-                - NEW_DIGITAL_MANDATE: MANDATE_SENT
-                - MANDATE_SENT: AWAITING_TRANSACTION_REGISTRATION
-                - AWAITING_TRANSACTION_REGISTRATION: TRANSACTION_REGISTRATION_SENT
-                - TRANSACTION_REGISTRATION_SENT: ACTIVE
+                - EXPORT: [NEW_MANDATE, MANDATE_SENT]
+                - EXPORT: [NEW_DIGITAL_MANDATE, MANDATE_SENT]
+                - MARK_MANDATE_REGISTERED: [MANDATE_SENT, AWAITING_TRANSACTION_REGISTRATION]
+                - EXPORT: [AWAITING_TRANSACTION_REGISTRATION, TRANSACTION_REGISTRATION_SENT]
+                - MARK_TRANSACTION_ACTIVE: [TRANSACTION_REGISTRATION_SENT, ACTIVE]
+                - MARK_TRANSACTION_ACTIVE: [ACTIVE, ACTIVE]
 
-                - ACTIVE: AWAITING_REVOCATION
-                - AWAITING_REVOCATION: REVOCATION_SENT
-                - REVOCATION_SENT: REVOKED
-                - REVOKED: REMOVED
+                - INITIATE_REVOCATION: [ACTIVE, AWAITING_REVOCATION]
+                - EXPORT: [AWAITING_REVOCATION, REVOCATION_SENT]
+                - MARK_MANDATE_REVOKED: [REVOCATION_SENT, REVOKED]
+                - MARK_MANDATE_REMOVED: [REVOKED, REMOVED]
 
-                - ACTIVE: AWAITING_PAUSE
-                - AWAITING_PAUSE: PAUSE_SENT
-                - PAUSE_SENT: PAUSED
-                - PAUSED: AWAITING_TRANSACTION_REGISTRATION
+                - INITIATE_PAUSE: [ACTIVE, AWAITING_PAUSE]
+                - EXPORT: [AWAITING_PAUSE, PAUSE_SENT]
+                - MARK_TRANSACTION_REMOVED: [PAUSE_SENT, PAUSED]
+                - INITIATE_RESTART: [PAUSED, AWAITING_TRANSACTION_REGISTRATION]
 
     byrokrat\giroapp\Domain\State\TransactionDateFactory:
         class: ~
@@ -54,7 +58,7 @@ services:
         class: Symfony\Component\Workflow\Workflow
         arguments:
             - '@Symfony\Component\Workflow\Definition'
-            - '@byrokrat\giroapp\Domain\DonorMarkingStore'
+            - '@byrokrat\giroapp\Workflow\MarkingStore'
 
     Symfony\Component\Workflow\Definition:
         class: ~
@@ -63,4 +67,4 @@ services:
     Symfony\Component\Workflow\DefinitionBuilder:
         class: ~
         arguments: ["@=service('byrokrat\\\\giroapp\\\\Domain\\\\State\\\\StateCollection').getItemKeys()"]
-        configurator: 'byrokrat\giroapp\Domain\State\WorkflowConfigurator:configureTransitions'
+        configurator: 'byrokrat\giroapp\Workflow\WorkflowConfigurator:configureTransitions'

@@ -34,10 +34,8 @@ final class NewMandate implements StateInterface, ExportableStateInterface
         return 'A mandate has been received from the donor';
     }
 
-    public function exportToAutogiro(Donor $donor, WriterInterface $writer): string
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): void
     {
         $writer->addNewMandate($donor->getPayerNumber(), $donor->getAccount(), $donor->getDonorId());
-
-        return MandateSent::getStateId();
     }
 }

@@ -20,17 +20,22 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Domain;
+namespace byrokrat\giroapp\Workflow;
 
+use byrokrat\giroapp\CommandBus\ForceState;
+use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use byrokrat\giroapp\Domain\Donor;
 use Symfony\Component\Workflow\MarkingStore\MarkingStoreInterface;
 use Symfony\Component\Workflow\Marking;
 
-final class DonorMarkingStore implements MarkingStoreInterface
+final class MarkingStore implements MarkingStoreInterface
 {
+    use CommandBusProperty;
+
     public function getMarking(object $subject)
     {
         if (!$subject instanceof Donor) {
-            throw new \InvalidArgumentException('DonorMargingStore expects a Donor subject');
+            throw new \InvalidArgumentException('MarkingStore expects a Donor subject');
         }
 
         $stateId = $subject->getState()->getStateId();
@@ -40,5 +45,16 @@ final class DonorMarkingStore implements MarkingStoreInterface
 
     public function setMarking(object $subject, Marking $marking, array $context = [])
     {
+        if (!$subject instanceof Donor) {
+            throw new \InvalidArgumentException('MarkingStore expects a Donor subject');
+        }
+
+        /** @var string $place */
+        $place = array_keys($marking->getPlaces())[0] ?? '';
+
+        /** @var string $desc */
+        $desc = $context['desc'] ?? '';
+
+        $this->commandBus->handle(new ForceState($subject, $place, $desc));
     }
 }

@@ -29,21 +29,21 @@ final class UpdateState
     use Helper\DonorAwareTrait;
 
     /** @var string */
-    private $newStateId;
+    private $transitionId;
 
     /** @var string */
     private $desc;
 
-    public function __construct(Donor $donor, string $newStateId, string $desc)
+    public function __construct(Donor $donor, string $transitionId, string $desc)
     {
         $this->setDonor($donor);
-        $this->newStateId = $newStateId;
+        $this->transitionId = $transitionId;
         $this->desc = $desc;
     }
 
-    public function getNewStateId(): string
+    public function getTransitionId(): string
     {
-        return $this->newStateId;
+        return $this->transitionId;
     }
 
     public function getUpdateDescription(): string
