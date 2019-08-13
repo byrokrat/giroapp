@@ -3,3 +3,4 @@
 /.giroapp
 /giroapp.phar
 /*.local*
+/giroapp.ini

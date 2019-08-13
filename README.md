@@ -18,6 +18,8 @@ Command line app for managing autogiro donations.
 
 5. Optionally specify the location of the configuration file. See below.
 
+6. Simply run `giroapp` to se the list of avaliable commands.
+
 ### Specifying the location of giroapp.ini
 
 By default giroapp looks for configurations in a file called `giroapp.ini` in

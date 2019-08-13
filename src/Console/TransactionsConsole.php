@@ -28,13 +28,14 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class ShowTransactionsConsole implements ConsoleInterface
+final class TransactionsConsole implements ConsoleInterface
 {
     use Helper\DonorArgument, DonorEventStoreProperty;
 
     public function configure(Command $command): void
     {
-        $command->setName('show-trans');
+        $command->setName('transactions');
+        $command->setAliases(['trans']);
         $command->setDescription('List transactions from donor');
         $command->setHelp('Display transactions information from a donor');
         $this->configureDonorArgument($command);

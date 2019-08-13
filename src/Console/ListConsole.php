@@ -33,7 +33,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class LsConsole implements ConsoleInterface
+final class ListConsole implements ConsoleInterface
 {
     use DonorQueryProperty;
 
@@ -58,7 +58,8 @@ final class LsConsole implements ConsoleInterface
 
     public function configure(Command $command): void
     {
-        $command->setName('ls');
+        $command->setName('list');
+        $command->setAliases(['ls']);
         $command->setDescription('List donors');
         $command->setHelp('List donors in database');
 

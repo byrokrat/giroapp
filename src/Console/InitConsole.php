@@ -48,13 +48,19 @@ final class InitConsole implements ConsoleInterface
 
         $iniPath = realpath(self::INI_FILE_NAME);
 
-        $output->writeln("Created configurations at '$iniPath'.");
-        $output->writeln("");
-        $output->writeln("Continue setup by editing configurations using a standard text editor.");
-        $output->writeln("Specifically the 'org_name', 'org_id', 'org_bgc_nr' and 'org_bg' settings");
-        $output->writeln("must be specified.");
-        $output->writeln("");
-        $output->writeln("To access configurations from other directories specify the location of");
-        $output->writeln("the configuration file by defining a GIROAPP_INI environment variable.");
+        $output->writeln(<<<'EOF'
+Created configurations at <info>$iniPath</info>
+
+Continue setup by editing configurations using a standard text editor.
+Specifically the <info>org_name</info>, <info>org_id</info>, <info>org_bgc_nr</info> and <info>org_bg</info> settings
+must be set.
+
+To access configurations from other directories specify the location of
+the configuration file by defining a <info>GIROAPP_INI</info> environment variable.
+
+Simply run <info>giroapp</info> with no command specified to se the list of
+avaliable commands.
+EOF
+        );
     }
 }

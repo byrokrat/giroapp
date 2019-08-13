@@ -11,7 +11,7 @@
 * Renamed `inactive` filter `revoked`.
 * Support the complete pause-restart cycle.
 * Now records transaction reports to `DonorEventStore`.
-* Added the `show-trans` command to inspect recorded transactions.
+* Added the `transactions` command to inspect recorded transactions.
 * The `edit-state` command now always forces new state.
 * Added the possibility to change donation amounts using the `edit-amount` command.
   Note that the `edit` command no longer handles new amounts.

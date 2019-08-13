@@ -8,7 +8,7 @@ Feature: Listing donors in database
     And there are donors:
       | payer-number | name | state       |
       | 11111        | foo  | NEW_MANDATE |
-    When I run "ls"
+    When I run "list"
     Then the output contains "11111"
     And the output contains "foo"
     And the output contains "NEW_MANDATE"
@@ -18,7 +18,7 @@ Feature: Listing donors in database
     And there are donors:
       | payer-number | name | state       |
       | 11111        | foo  | NEW_MANDATE |
-    When I run "ls --filter active"
+    When I run "list --filter active"
     Then the output does not contain "11111"
 
   Scenario: I negate filter

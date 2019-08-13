@@ -23,6 +23,19 @@ services:
         arguments: ['GiroApp', '@byrokrat\giroapp\Plugin\ApiVersion']
         public: true
         configurator: 'byrokrat\giroapp\Plugin\ConfiguringEnvironment:configureApplication'
+        calls:
+            - method: 'add'
+              arguments: ['@default_command']
+            - method: 'setDefaultCommand'
+              arguments: ['default_command']
+
+    default_command:
+        class: Symfony\Component\Console\Command\ListCommand
+        calls:
+            - method: 'setName'
+              arguments: ['default_command']
+            - method: 'setHidden'
+              arguments: [true]
 
     byrokrat\giroapp\Plugin\ApiVersion:
         arguments: ['$app_version$']
