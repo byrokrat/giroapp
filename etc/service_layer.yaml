@@ -41,6 +41,7 @@ services:
                 byrokrat\giroapp\CommandBus\UpdateDonationAmount: '@byrokrat\giroapp\CommandBus\UpdateDonationAmountHandler'
                 byrokrat\giroapp\CommandBus\UpdateEmail: '@byrokrat\giroapp\CommandBus\UpdateEmailHandler'
                 byrokrat\giroapp\CommandBus\UpdateName: '@byrokrat\giroapp\CommandBus\UpdateNameHandler'
+                byrokrat\giroapp\CommandBus\UpdatePayerNumber: '@byrokrat\giroapp\CommandBus\UpdatePayerNumberHandler'
                 byrokrat\giroapp\CommandBus\UpdatePhone: '@byrokrat\giroapp\CommandBus\UpdatePhoneHandler'
                 byrokrat\giroapp\CommandBus\UpdatePostalAddress: '@byrokrat\giroapp\CommandBus\UpdatePostalAddressHandler'
                 byrokrat\giroapp\CommandBus\UpdateState: '@byrokrat\giroapp\CommandBus\UpdateStateHandler'

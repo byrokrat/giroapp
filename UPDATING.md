@@ -15,6 +15,7 @@
 * The `edit-state` command now always forces new state.
 * Added the possibility to change donation amounts using the `edit-amount` command.
   Note that the `edit` command no longer handles new amounts.
+* Added the `edit-payer-number` command to change payer number. Experimental.
 
 ## Updating the database
 

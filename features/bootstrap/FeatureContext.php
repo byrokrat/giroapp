@@ -210,6 +210,19 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then the database contains donor :donor with attribute :attr matching :expected
+     */
+    public function theDatabaseContainsDonorWithAttributeMatching($donor, $attr, $expected): void
+    {
+        $this->theDatabaseContainsDonor($donor);
+        $data = json_decode($this->result->getOutput(), true);
+        $attributes = $data['attributes'] ?? [];
+        if (!isset($attributes[$attr]) || $attributes[$attr] != $expected) {
+            throw new \Exception("Unable to find attribute $attr: $expected in database");
+        }
+    }
+
+    /**
      * @Then the output matches:
      */
     public function theOutputMatches(PyStringNode $string): void

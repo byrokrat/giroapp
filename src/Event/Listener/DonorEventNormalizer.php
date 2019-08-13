@@ -29,6 +29,7 @@ use byrokrat\giroapp\Event\DonorAttributeUpdated;
 use byrokrat\giroapp\Event\DonorCommentUpdated;
 use byrokrat\giroapp\Event\DonorEmailUpdated;
 use byrokrat\giroapp\Event\DonorNameUpdated;
+use byrokrat\giroapp\Event\DonorPayerNumberUpdated;
 use byrokrat\giroapp\Event\DonorPhoneUpdated;
 use byrokrat\giroapp\Event\DonorPostalAddressUpdated;
 use byrokrat\giroapp\Event\DonorRemoved;
@@ -84,6 +85,11 @@ class DonorEventNormalizer
             case $event instanceof DonorNameUpdated:
                 return [
                     'name' => $event->getNewName(),
+                ];
+            case $event instanceof DonorPayerNumberUpdated:
+                return [
+                    'payer_number' => $event->getNewPayerNumber(),
+                    'payer_number_update_description' => $event->getUpdateDescription(),
                 ];
             case $event instanceof DonorPhoneUpdated:
                 return [

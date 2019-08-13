@@ -14,6 +14,8 @@ services:
         arguments:
             - '@byrokrat\giroapp\Domain\State\Active'
             - '@byrokrat\giroapp\Domain\State\AwaitingPause'
+            - '@byrokrat\giroapp\Domain\State\AwaitingPayerNumberChange'
+            - '@byrokrat\giroapp\Domain\State\AwaitingPayerNumberChangeTransactionUpdate'
             - '@byrokrat\giroapp\Domain\State\AwaitingRevocation'
             - '@byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration'
             - '@byrokrat\giroapp\Domain\State\AwaitingTransactionUpdate'
@@ -23,6 +25,8 @@ services:
             - '@byrokrat\giroapp\Domain\State\NewMandate'
             - '@byrokrat\giroapp\Domain\State\PauseSent'
             - '@byrokrat\giroapp\Domain\State\Paused'
+            - '@byrokrat\giroapp\Domain\State\PayerNumberChangeSent'
+            - '@byrokrat\giroapp\Domain\State\PayerNumberChangeTransactionUpdateSent'
             - '@byrokrat\giroapp\Domain\State\Removed'
             - '@byrokrat\giroapp\Domain\State\RevocationSent'
             - '@byrokrat\giroapp\Domain\State\Revoked'
@@ -53,6 +57,12 @@ services:
                 - INITIATE_TRANSACTION_UPDATE: [ACTIVE, AWAITING_TRANSACTION_UPDATE]
                 - EXPORT: [AWAITING_TRANSACTION_UPDATE, TRANSACTION_UPDATE_SENT]
                 - MARK_TRANSACTION_REMOVED: [TRANSACTION_UPDATE_SENT, AWAITING_TRANSACTION_REGISTRATION]
+
+                - INITIATE_PAYER_NUMBER_CHANGE: [ACTIVE, AWAITING_PAYER_NUMBER_CHANGE_TRANSACTION_UPDATE]
+                - EXPORT: [AWAITING_PAYER_NUMBER_CHANGE_TRANSACTION_UPDATE, PAYER_NUMBER_CHANGE_TRANSACTION_UPDATE_SENT]
+                - MARK_TRANSACTION_REMOVED: [PAYER_NUMBER_CHANGE_TRANSACTION_UPDATE_SENT, AWAITING_PAYER_NUMBER_CHANGE]
+                - EXPORT: [AWAITING_PAYER_NUMBER_CHANGE, PAYER_NUMBER_CHANGE_SENT]
+                - MARK_MANDATE_REGISTERED: [PAYER_NUMBER_CHANGE_SENT, AWAITING_TRANSACTION_REGISTRATION]
 
     byrokrat\giroapp\Domain\State\TransactionDateFactory:
         class: ~

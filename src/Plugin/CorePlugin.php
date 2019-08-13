@@ -34,6 +34,7 @@ final class CorePlugin extends Plugin
         Console\AddConsole $addConsole,
         Console\EditConsole $editConsole,
         Console\EditAmountConsole $editAmountConsole,
+        Console\EditPayerNumberConsole $editPayerNumberConsole,
         Console\EditStateConsole $editStateConsole,
         Console\ExportConsole $expotConsole,
         Console\ImportConsole $importConsole,

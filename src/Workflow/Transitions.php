@@ -33,6 +33,11 @@ interface Transitions
     const INITIATE_PAUSE = 'INITIATE_PAUSE';
 
     /**
+     * Start the cycle of a payer number change
+     */
+    const INITIATE_PAYER_NUMBER_CHANGE = 'INITIATE_PAYER_NUMBER_CHANGE';
+
+    /**
      * Start the cycle of restarting a paused mandate
      */
     const INITIATE_RESTART = 'INITIATE_RESTART';
