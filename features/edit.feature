@@ -26,14 +26,13 @@ Feature: Editing donors
   Scenario: I edit a donor and set a lot of values
     Given a fresh installation
     And there are donors:
-      | payer-number | name | email          | phone | amount | comment |
-      | 1            | foo  | foo@host.com   | 123   | 0      | foo     |
-    When I run "edit 1 --name=bar --email=hej@hoj.se --phone=789 --amount=100 --comment=updated"
+      | payer-number | name | email          | phone | comment |
+      | 1            | foo  | foo@host.com   | 123   | foo     |
+    When I run "edit 1 --name=bar --email=hej@hoj.se --phone=789 --comment=updated"
     Then there is no error
     And the database contains donor "1" with "name" matching "bar"
     And the database contains donor "1" with "email" matching "hej@hoj.se"
     And the database contains donor "1" with "phone" matching "789"
-    And the database contains donor "1" with "amount" matching "100"
     And the database contains donor "1" with "comment" matching "updated"
 
   Scenario: I edit a donor and change state

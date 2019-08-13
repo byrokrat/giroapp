@@ -20,35 +20,22 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Domain\State;
 
 use byrokrat\giroapp\Domain\Donor;
-use byrokrat\amount\Currency\SEK;
+use byrokrat\autogiro\Writer\WriterInterface;
 
-final class UpdateDonationAmount
+final class AwaitingTransactionUpdate implements StateInterface, ExportableStateInterface
 {
-    use Helper\DonorAwareTrait;
+    use StateIdTrait;
 
-    /** @var SEK */
-    private $newAmount;
-
-    /** @var string */
-    private $updateDesc;
-
-    public function __construct(Donor $donor, SEK $newAmount, string $updateDesc)
+    public function getDescription(): string
     {
-        $this->setDonor($donor);
-        $this->newAmount = $newAmount;
-        $this->updateDesc = $updateDesc;
+        return 'Awaiting transaction update (new amount)';
     }
 
-    public function getNewAmount(): SEK
+    public function exportToAutogiro(Donor $donor, WriterInterface $writer): void
     {
-        return $this->newAmount;
-    }
-
-    public function getUpdateDescription(): string
-    {
-        return $this->updateDesc;
+        $writer->deletePayments($donor->getPayerNumber());
     }
 }

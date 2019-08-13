@@ -26,7 +26,6 @@ use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Validator;
-use byrokrat\amount\Currency\SEK;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -42,7 +41,6 @@ final class EditConsole implements ConsoleInterface
      */
     private const DESCS = [
         'name' => 'Donor name',
-        'amount' => 'Monthly donation amount',
         'address1' => 'Donor address line 1',
         'address2' => 'Donor address line 2',
         'address3' => 'Donor address line 3',
@@ -94,25 +92,6 @@ final class EditConsole implements ConsoleInterface
                     new Validator\ValidatorCollection(
                         new Validator\StringValidator,
                         new Validator\NotEmptyValidator
-                    )
-                )
-            )
-        );
-
-        $this->commandBus->handle(
-            new CommandBus\UpdateDonationAmount(
-                $donor,
-                new SEK(
-                    $inputReader->readInput(
-                        'amount',
-                        Helper\QuestionFactory::createQuestion(
-                            self::DESCS['amount'],
-                            $donor->getDonationAmount()->getAmount()
-                        ),
-                        new Validator\ValidatorCollection(
-                            new Validator\NotEmptyValidator,
-                            new Validator\NumericValidator
-                        )
                     )
                 )
             )

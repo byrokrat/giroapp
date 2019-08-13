@@ -24,10 +24,12 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorAmountUpdated;
+use byrokrat\giroapp\Workflow\Transitions;
 
 final class UpdateDonationAmountHandler
 {
-    use DependencyInjection\DispatcherProperty,
+    use DependencyInjection\CommandBusProperty,
+        DependencyInjection\DispatcherProperty,
         DependencyInjection\DonorRepositoryProperty;
 
     public function handle(UpdateDonationAmount $command): void
@@ -37,6 +39,10 @@ final class UpdateDonationAmountHandler
         if ($donor->getDonationAmount()->equals($command->getNewAmount())) {
             return;
         }
+
+        $this->commandBus->handle(
+            new UpdateState($donor, Transitions::INITIATE_TRANSACTION_UPDATE, $command->getUpdateDescription())
+        );
 
         $this->donorRepository->updateDonorAmount($donor, $command->getNewAmount());
 

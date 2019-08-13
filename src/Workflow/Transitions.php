@@ -43,6 +43,11 @@ interface Transitions
     const INITIATE_REVOCATION = 'INITIATE_REVOCATION';
 
     /**
+     * Start the cycle of a transaction update (new amount)
+     */
+    const INITIATE_TRANSACTION_UPDATE = 'INITIATE_TRANSACTION_UPDATE';
+
+    /**
      * Mark mandate as registered with the bank
      */
     const MARK_MANDATE_REGISTERED = 'MARK_MANDATE_REGISTERED';

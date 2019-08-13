@@ -20,35 +20,14 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\CommandBus;
+namespace byrokrat\giroapp\Domain\State;
 
-use byrokrat\giroapp\Domain\Donor;
-use byrokrat\amount\Currency\SEK;
-
-final class UpdateDonationAmount
+final class TransactionUpdateSent implements StateInterface, AwaitingResponseStateInterface
 {
-    use Helper\DonorAwareTrait;
+    use StateIdTrait;
 
-    /** @var SEK */
-    private $newAmount;
-
-    /** @var string */
-    private $updateDesc;
-
-    public function __construct(Donor $donor, SEK $newAmount, string $updateDesc)
+    public function getDescription(): string
     {
-        $this->setDonor($donor);
-        $this->newAmount = $newAmount;
-        $this->updateDesc = $updateDesc;
-    }
-
-    public function getNewAmount(): SEK
-    {
-        return $this->newAmount;
-    }
-
-    public function getUpdateDescription(): string
-    {
-        return $this->updateDesc;
+        return 'Request to change amount has been sent to the bank';
     }
 }

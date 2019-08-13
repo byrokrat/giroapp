@@ -16,6 +16,7 @@ services:
             - '@byrokrat\giroapp\Domain\State\AwaitingPause'
             - '@byrokrat\giroapp\Domain\State\AwaitingRevocation'
             - '@byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration'
+            - '@byrokrat\giroapp\Domain\State\AwaitingTransactionUpdate'
             - '@byrokrat\giroapp\Domain\State\Error'
             - '@byrokrat\giroapp\Domain\State\MandateSent'
             - '@byrokrat\giroapp\Domain\State\NewDigitalMandate'
@@ -26,6 +27,7 @@ services:
             - '@byrokrat\giroapp\Domain\State\RevocationSent'
             - '@byrokrat\giroapp\Domain\State\Revoked'
             - '@byrokrat\giroapp\Domain\State\TransactionRegistrationSent'
+            - '@byrokrat\giroapp\Domain\State\TransactionUpdateSent'
 
     byrokrat\giroapp\Workflow\WorkflowConfigurator:
         class: ~
@@ -47,6 +49,10 @@ services:
                 - EXPORT: [AWAITING_PAUSE, PAUSE_SENT]
                 - MARK_TRANSACTION_REMOVED: [PAUSE_SENT, PAUSED]
                 - INITIATE_RESTART: [PAUSED, AWAITING_TRANSACTION_REGISTRATION]
+
+                - INITIATE_TRANSACTION_UPDATE: [ACTIVE, AWAITING_TRANSACTION_UPDATE]
+                - EXPORT: [AWAITING_TRANSACTION_UPDATE, TRANSACTION_UPDATE_SENT]
+                - MARK_TRANSACTION_REMOVED: [TRANSACTION_UPDATE_SENT, AWAITING_TRANSACTION_REGISTRATION]
 
     byrokrat\giroapp\Domain\State\TransactionDateFactory:
         class: ~
