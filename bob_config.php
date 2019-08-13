@@ -14,19 +14,19 @@ desc('Run all tests');
 task('test', ['phpspec', 'behat', 'examples', 'phpstan', 'sniff']);
 
 desc('Run phpspec unit tests');
-task('phpspec', ['update_container'], function() {
+task('phpspec', ['update_on_config_updates'], function() {
     shell('phpspec run');
     println('Phpspec unit tests passed');
 });
 
 desc('Run behat feature tests');
-task('behat', ['update_container'], function() {
+task('behat', ['update_on_config_updates'], function() {
     shell('behat --stop-on-failure --suite=default');
     println('Behat feature tests passed');
 });
 
 desc('Run behat feature tests in debug mode');
-task('behat-debug', ['update_container'], function() {
+task('behat-debug', ['update_on_config_updates'], function() {
     shell('behat --stop-on-failure --suite=debug');
     println('Behat feature tests passed');
 });
@@ -57,6 +57,8 @@ task('sniff', function() {
     println('Syntax checker on spec/ passed');
 });
 
+// *********************************** PHAR ************************************
+
 desc('Build phar');
 task('phar', function() {
     build_phar();
@@ -74,14 +76,14 @@ function build_phar()
     println('Phar generation done');
 }
 
+// ********************************* CONTAINER *********************************
+
 desc('Build dependency injection container');
 task('container', ['load_dependencies'], function () {
     build_container();
 });
 
 define('CONTAINER_PATH', 'src/DependencyInjection/ProjectServiceContainer.php');
-
-task('update_container', ['load_dependencies', CONTAINER_PATH]);
 
 fileTask(CONTAINER_PATH, fileList('*.yaml')->in([__DIR__ . '/etc']), function () {
     build_container();
@@ -103,6 +105,57 @@ function build_container()
 
     println('Generated dependency injection container');
 }
+
+// ***************************** DONOR STATE GRAPH *****************************
+
+define('STATE_GRAPH_PATH', 'docs/states.svg');
+
+fileTask(STATE_GRAPH_PATH, fileList('donor_states.yaml')->in([__DIR__ . '/etc']), function () {
+    build_state_graph();
+});
+
+desc('Dump state graph');
+task('dump_graph', ['load_dependencies'], function() {
+    build_state_graph();
+});
+
+function build_state_graph()
+{
+    $container = new \byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
+
+    $definition = $container->get(\Symfony\Component\Workflow\Definition::CLASS);
+
+    $dumper = new \Symfony\Component\Workflow\Dumper\GraphvizDumper();
+
+    $process = proc_open(
+        'dot -Tsvg -o ' . STATE_GRAPH_PATH,
+        [
+            0 => ["pipe", "r"],
+            1 => ["pipe", "w"],
+            2 => ["pipe", "w"],
+        ],
+        $pipes,
+        __DIR__,
+        []
+    );
+
+    fwrite($pipes[0], $dumper->dump($definition));
+    fclose($pipes[0]);
+
+    $output = stream_get_contents($pipes[1]);
+    fclose($pipes[1]);
+
+    $output .= stream_get_contents($pipes[2]);
+    fclose($pipes[2]);
+
+    $output .= proc_close($process);
+
+    println("Generated state graph. Graphviz said: $output");
+}
+
+// *********************************** MISC ************************************
+
+task('update_on_config_updates', ['load_dependencies', CONTAINER_PATH, STATE_GRAPH_PATH]);
 
 task('load_dependencies', ['vendor/autoload.php'], function () {
     require_once 'vendor/autoload.php';

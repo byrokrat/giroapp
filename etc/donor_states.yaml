@@ -68,6 +68,7 @@ services:
 
     Symfony\Component\Workflow\Definition:
         class: ~
+        public: true
         factory: 'Symfony\Component\Workflow\DefinitionBuilder:build'
 
     Symfony\Component\Workflow\DefinitionBuilder:
