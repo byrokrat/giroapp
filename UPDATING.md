@@ -5,6 +5,7 @@
 * Donors can now be identified by name at command line. Use `--id-payer-number`
   and `--id-mandate-key` flags to force id to be payer number or mandate key..
 * Fixed a bug where transaction reports imported after a state change failed.
+* Fixed a bug where importing removed transactions on revoked donors failed.
 
 ## Updating to beta-1
 

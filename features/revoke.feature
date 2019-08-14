@@ -38,3 +38,15 @@ Feature: Revoking mandates
         092017081799000000001
         """
     Then the database contains donor "12345" with "state" matching "REVOKED"
+
+  Scenario: I import an autogiro file removing transaction for revoked mandate
+    Given there are donors:
+      | payer-number | state   |
+      | 12345        | REVOKED |
+    When I import:
+      """
+      01AUTOGIRO              20190424            MAKULERING/ÄNDRING  1234560058056201
+      2320190429000000000001234582000000020000REFERENS00000000AAAAAAAAAAAAAAAA12
+      09201904249900              000000000000000000000001000000000002000å000000000000
+      """
+    Then there is no error
