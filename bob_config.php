@@ -110,7 +110,7 @@ function build_container()
 
 define('STATE_GRAPH_PATH', 'docs/states.svg');
 
-fileTask(STATE_GRAPH_PATH, fileList('donor_states.yaml')->in([__DIR__ . '/etc']), function () {
+fileTask(STATE_GRAPH_PATH, fileList('workflow.yaml')->in([__DIR__ . '/etc']), function () {
     build_state_graph();
 });
 

@@ -103,7 +103,7 @@ class AutogiroVisitor extends Visitor
         $desc = (string)$node->getChild('Status')->getValueFrom('Text');
 
         if ($node->hasChild('CreatedFlag')) {
-            $this->commandBus->handle(new UpdateState($donor, Transitions::MARK_MANDATE_REGISTERED, $desc));
+            $this->commandBus->handle(new UpdateState($donor, Transitions::IMPORT_MANDATE_REGISTERED, $desc));
 
             return;
         }
@@ -140,7 +140,7 @@ class AutogiroVisitor extends Visitor
             $this->commandBus->handle(
                 new UpdateState(
                     $donor,
-                    Transitions::MARK_TRANSACTION_REMOVED,
+                    Transitions::IMPORT_TRANSACTION_REMOVED,
                     'Transaction paused on ' . $date->format('Y-m-d')
                 )
             );
@@ -167,7 +167,7 @@ class AutogiroVisitor extends Visitor
         $this->commandBus->handle(
             new AttemptState(
                 $donor,
-                Transitions::MARK_TRANSACTION_ACTIVE,
+                Transitions::IMPORT_TRANSACTION_ACTIVE,
                 'Transaction active on ' . $date->format('Y-m-d')
             )
         );

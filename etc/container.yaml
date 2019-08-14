@@ -2,7 +2,7 @@ parameters:
     env(GIROAPP_INI): 'giroapp.ini'
 
 imports:
-    - { resource: donor_states.yaml }
+    - { resource: workflow.yaml }
     - { resource: event_dispatcher.yaml }
     - { resource: fs.yaml }
     - { resource: service_layer.yaml }

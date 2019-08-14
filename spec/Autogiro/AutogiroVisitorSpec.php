@@ -202,7 +202,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $statusNode->getValueFrom('Text')->willReturn('desc');
 
         $commandBus->handle(
-            new UpdateState($donor->getWrappedObject(), Transitions::MARK_MANDATE_REGISTERED, 'desc')
+            new UpdateState($donor->getWrappedObject(), Transitions::IMPORT_MANDATE_REGISTERED, 'desc')
         )->shouldBeCalled();
 
         $this->beforeMandateResponse($parentNode);
@@ -289,7 +289,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $commandBus->handle(
             new UpdateState(
                 $donor->getWrappedObject(),
-                Transitions::MARK_TRANSACTION_REMOVED,
+                Transitions::IMPORT_TRANSACTION_REMOVED,
                 'Transaction paused on 2019-08-12'
             )
         )->shouldBeCalled();
@@ -320,7 +320,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $commandBus->handle(
             new AttemptState(
                 $donor->getWrappedObject(),
-                Transitions::MARK_TRANSACTION_ACTIVE,
+                Transitions::IMPORT_TRANSACTION_ACTIVE,
                 'Transaction active on 2019-08-12'
             )
         )->shouldBeCalled();
@@ -353,7 +353,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $commandBus->handle(
             new AttemptState(
                 $donor->getWrappedObject(),
-                Transitions::MARK_TRANSACTION_ACTIVE,
+                Transitions::IMPORT_TRANSACTION_ACTIVE,
                 'Transaction active on 2019-08-12'
             )
         )->shouldBeCalled();

@@ -55,25 +55,25 @@ interface Transitions
     /**
      * Mark mandate as registered with the bank
      */
-    const MARK_MANDATE_REGISTERED = 'MARK_MANDATE_REGISTERED';
+    const IMPORT_MANDATE_REGISTERED = 'IMPORT_MANDATE_REGISTERED';
 
     /**
      * Mark mandate as revoked
      */
-    const MARK_MANDATE_REVOKED = 'MARK_MANDATE_REVOKED';
-
-    /**
-     * Mark mandate as removed
-     */
-    const MARK_MANDATE_REMOVED = 'MARK_MANDATE_REMOVED';
+    const IMPORT_MANDATE_REVOKED = 'IMPORT_MANDATE_REVOKED';
 
     /**
      * Mark transaction as active
      */
-    const MARK_TRANSACTION_ACTIVE = 'MARK_TRANSACTION_ACTIVE';
+    const IMPORT_TRANSACTION_ACTIVE = 'IMPORT_TRANSACTION_ACTIVE';
 
     /**
      * Mark transaction as removed
      */
-    const MARK_TRANSACTION_REMOVED = 'MARK_TRANSACTION_REMOVED';
+    const IMPORT_TRANSACTION_REMOVED = 'IMPORT_TRANSACTION_REMOVED';
+
+    /**
+     * Mark mandate as removed
+     */
+    const REMOVE = 'REMOVE';
 }

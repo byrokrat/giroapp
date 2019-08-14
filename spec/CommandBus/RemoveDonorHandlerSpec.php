@@ -29,7 +29,7 @@ class RemoveDonorHandlerSpec extends ObjectBehavior
     function it_removes_donors($commandBus, Donor $donor)
     {
         $commandBus
-            ->handle(new UpdateState($donor->getWrappedObject(), Transitions::MARK_MANDATE_REMOVED, 'Donor removed'))
+            ->handle(new UpdateState($donor->getWrappedObject(), Transitions::REMOVE, 'Donor removed'))
             ->shouldBeCalled();
 
         $commandBus->handle(new ForceRemoveDonor($donor->getWrappedObject()))->shouldBeCalled();
