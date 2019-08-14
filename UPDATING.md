@@ -1,9 +1,16 @@
-# Updating to beta-1
+# UPDATING
+
+## Unreleased changes
+
+* Donors can now be identified by name at command line. Use `--id-payer-number`
+  and `--id-mandate-key` flags to force id to be payer number or mandate key..
+
+## Updating to beta-1
 
 > This is the guide for updating from alpha-5 to beta-1. Instructions for updating
 > from alpha-3 or 4 can be fund [here](https://github.com/byrokrat/giroapp/blob/1.0.0-alpha5/UPDATING.md).
 
-## Notable changes in beta-1
+### Notable changes in beta-1
 
 * Added the `log_format` ini setting and fixed broken `log_level` compliance.
 * Added a donor event store database. Please see `Updating the database` below.
@@ -18,7 +25,7 @@
 * Added the `edit-payer-number` command to change payer number. Experimental.
 * Added a `init` command to simplify the installation process.
 
-## Updating the database
+### Updating the database
 
 Beta-1 contains some BC-breaking changes to the database schema. Update your raw
 json databse file using the `update_db.php` script.
