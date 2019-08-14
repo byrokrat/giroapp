@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Autogiro;
 
+use byrokrat\giroapp\CommandBus\AttemptState;
 use byrokrat\giroapp\CommandBus\ForceState;
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection;
@@ -164,7 +165,7 @@ class AutogiroVisitor extends Visitor
         $date = $node->getChild('Date')->getValueFrom('Object');
 
         $this->commandBus->handle(
-            new UpdateState(
+            new AttemptState(
                 $donor,
                 Transitions::MARK_TRANSACTION_ACTIVE,
                 'Transaction active on ' . $date->format('Y-m-d')

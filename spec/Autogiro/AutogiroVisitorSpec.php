@@ -6,6 +6,7 @@ namespace spec\byrokrat\giroapp\Autogiro;
 
 use byrokrat\giroapp\Autogiro\AutogiroVisitor;
 use byrokrat\giroapp\CommandBus\CommandBusInterface;
+use byrokrat\giroapp\CommandBus\AttemptState;
 use byrokrat\giroapp\CommandBus\ForceState;
 use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\Config\ConfigInterface;
@@ -317,7 +318,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $amountNode->getValueFrom('Object')->willReturn(new SEK('100'));
 
         $commandBus->handle(
-            new UpdateState(
+            new AttemptState(
                 $donor->getWrappedObject(),
                 Transitions::MARK_TRANSACTION_ACTIVE,
                 'Transaction active on 2019-08-12'
@@ -350,7 +351,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $amountNode->getValueFrom('Object')->willReturn(new SEK('100'));
 
         $commandBus->handle(
-            new UpdateState(
+            new AttemptState(
                 $donor->getWrappedObject(),
                 Transitions::MARK_TRANSACTION_ACTIVE,
                 'Transaction active on 2019-08-12'

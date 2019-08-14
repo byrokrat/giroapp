@@ -28,6 +28,7 @@ services:
         arguments:
             -
                 byrokrat\giroapp\CommandBus\AddDonor: '@byrokrat\giroapp\CommandBus\AddDonorHandler'
+                byrokrat\giroapp\CommandBus\AttemptState: '@byrokrat\giroapp\CommandBus\AttemptStateHandler'
                 byrokrat\giroapp\CommandBus\Commit: '@byrokrat\giroapp\CommandBus\CommitHandler'
                 byrokrat\giroapp\CommandBus\Export: '@byrokrat\giroapp\CommandBus\ExportHandler'
                 byrokrat\giroapp\CommandBus\ForceRemoveDonor: '@byrokrat\giroapp\CommandBus\ForceRemoveDonorHandler'

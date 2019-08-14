@@ -22,43 +22,32 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
-use Symfony\Component\Workflow\Transition;
 
-class UpdateStateHandler
+final class AttemptStateHandler
 {
+    /** @var UpdateStateHandler */
+    private $updateStateHandler;
+
     /** @var WorkflowInterface */
     private $workflow;
 
-    public function __construct(WorkflowInterface $workflow)
+    public function __construct(UpdateStateHandler $updateStateHandler, WorkflowInterface $workflow)
     {
+        $this->updateStateHandler = $updateStateHandler;
         $this->workflow = $workflow;
     }
 
-    public function handle(UpdateState $command): void
+    public function handle(AttemptState $command): void
     {
         $donor = $command->getDonor();
 
         $transitionId = $command->getTransitionId();
 
-        if (!$this->workflow->can($donor, $transitionId)) {
-            throw new InvalidStateTransitionException(sprintf(
-                "Unable to perform transition '%s' on donor '%s' (possible values: '%s')",
-                $transitionId,
-                $donor->getMandateKey(),
-                implode(
-                    "', '",
-                    array_map(
-                        function (Transition $transition): string {
-                            return $transition->getName();
-                        },
-                        $this->workflow->getEnabledTransitions($donor)
-                    )
-                )
-            ));
+        if ($this->workflow->can($donor, $transitionId)) {
+            $this->updateStateHandler->handle(
+                new UpdateState($donor, $transitionId, $command->getUpdateDescription())
+            );
         }
-
-        $this->workflow->apply($donor, $transitionId, ['desc' => $command->getUpdateDescription()]);
     }
 }

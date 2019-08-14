@@ -84,18 +84,6 @@ Feature: Importing files
         """
     Then the database contains donor "12345" with "state" matching "ERROR"
 
-  Scenario: I import an autogiro file revoking a mandate
-    Given there are donors:
-      | payer-number | state  |
-      | 12345        | ACTIVE |
-    When I import:
-        """
-        01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
-        73005805620100000000000123455000000001111116198203232775     033320170817
-        092017081799000000001
-        """
-    Then the database contains donor "12345" with "state" matching "REVOKED"
-
   Scenario: I import an autogiro file with a succesfull transaction report
     Given there are donors:
       | payer-number | state                         |
@@ -108,3 +96,16 @@ Feature: Importing files
         09201907019900000001000000000001000000000000000000000000000000000000
         """
     Then the database contains donor "12345" with "state" matching "ACTIVE"
+
+  Scenario: I import a transaction report of a newly revoked donor
+    Given there are donors:
+      | payer-number | state           |
+      | 12345        | REVOCATION_SENT |
+    When I import:
+        """
+        01AUTOGIRO              20190701113835820825BET. SPEC & STOPP TK1234560058056201
+        15000000000000000000033000082032327752019070100010000000000000010000   00000002
+        82201907011    00000000000123450000000100000058056201AAAAAAAAAAAAAAAA          0
+        09201907019900000001000000000001000000000000000000000000000000000000
+        """
+    Then there is no error
