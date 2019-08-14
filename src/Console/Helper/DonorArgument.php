@@ -24,8 +24,9 @@ namespace byrokrat\giroapp\Console\Helper;
 
 use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
 use byrokrat\giroapp\Exception\DonorDoesNotExistException;
+use byrokrat\giroapp\Exception\RuntimeException;
 use byrokrat\giroapp\Domain\Donor;
-use byrokrat\giroapp\Validator\DonorKeyValidator;
+use byrokrat\giroapp\Validator\StringValidator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -40,34 +41,59 @@ trait DonorArgument
 
     protected function configureDonorArgument(Command $command, bool $required = true): void
     {
-        $command->addArgument(
-            'donor',
-            $required ? InputArgument::REQUIRED : InputArgument::OPTIONAL,
-            'Donor identified by mandate key or payer number'
-        );
-
-        $command->addOption(
-            'force-payer-number',
-            null,
-            InputOption::VALUE_NONE,
-            'Use donor payer number for identification'
-        );
+        $requiredFlag = $required ? InputArgument::REQUIRED : InputArgument::OPTIONAL;
+        $command->addArgument('donor', $requiredFlag, 'Donor identified by mandate key, payer number or name');
+        $command->addOption('id-payer-number', null, InputOption::VALUE_NONE, 'Only use payer number as donor id');
+        $command->addOption('id-mandate-key', null, InputOption::VALUE_NONE, 'Only use mandate key as donor id');
     }
 
     public function readDonor(InputInterface $input): Donor
     {
-        $taintedKey = $input->getArgument('donor');
+        $taintedId = $input->getArgument('donor');
 
-        if (!is_string($taintedKey)) {
+        if (!is_string($taintedId)) {
             throw new \LogicException('Donor key must be string');
         }
 
-        $key = (new DonorKeyValidator)->validate('donor', $taintedKey);
+        $donorId = (new StringValidator)->validate('donor', $taintedId);
 
-        if (!$input->getOption('force-payer-number') && ($donor = $this->donorQuery->findByMandateKey($key))) {
+        if ($input->getOption('id-payer-number') && $input->getOption('id-mandate-key')) {
+            throw new RuntimeException("Illegal to use the 'id-payer-number' and 'id-mandate-key' flags toghether.");
+        }
+
+        if ($input->getOption('id-payer-number')) {
+            return $this->donorQuery->requireByPayerNumber($donorId);
+        }
+
+        if ($input->getOption('id-mandate-key')) {
+            return $this->donorQuery->requireByMandateKey($donorId);
+        }
+
+        if ($donor = $this->donorQuery->findByPayerNumber($donorId)) {
             return $donor;
         }
 
-        return $this->donorQuery->requireByPayerNumber($key);
+        if ($donor = $this->donorQuery->findByMandateKey($donorId)) {
+            return $donor;
+        }
+
+        $regexp = '/'. preg_quote($donorId, '/') . '/i';
+
+        $matchedDonor = null;
+
+        foreach ($this->donorQuery->findAll() as $donor) {
+            if (preg_match($regexp, $donor->getName())) {
+                if ($matchedDonor) {
+                    throw new DonorDoesNotExistException("Unable to find donor '$donorId', more than one match.");
+                }
+                $matchedDonor = $donor;
+            }
+        }
+
+        if ($matchedDonor) {
+            return $matchedDonor;
+        }
+
+        throw new DonorDoesNotExistException("Unable to find donor '$donorId'");
     }
 }
