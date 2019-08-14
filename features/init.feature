@@ -14,4 +14,4 @@ Feature: Initializing installation
         """
         """
     When I run "init"
-    Then I get a "GENERIC_ERROR" error
+    Then I get a "RUNTIME_EXCEPTION" error

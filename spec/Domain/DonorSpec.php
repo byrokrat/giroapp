@@ -8,6 +8,7 @@ use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\giroapp\Domain\PostalAddress;
+use byrokrat\giroapp\Exception\UnknownIdentifierException;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
 use byrokrat\amount\Currency\SEK;
@@ -141,7 +142,7 @@ class DonorSpec extends ObjectBehavior
 
     function it_throws_exception_if_attribute_does_not_exist()
     {
-        $this->shouldThrow(\RuntimeException::CLASS)->duringGetAttribute('foobar');
+        $this->shouldThrow(UnknownIdentifierException::CLASS)->duringGetAttribute('foobar');
     }
 
     function it_can_show_all_attributes()

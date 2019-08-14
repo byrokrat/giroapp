@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
+use byrokrat\giroapp\Exception\RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -41,7 +42,7 @@ final class InitConsole implements ConsoleInterface
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         if (file_exists(self::INI_FILE_NAME)) {
-            throw new \RuntimeException('Unable to create ' . self::INI_FILE_NAME . ', file already exists.');
+            throw new RuntimeException('Unable to create ' . self::INI_FILE_NAME . ', file already exists.');
         }
 
         copy(self::DIST_INI_PATH, self::INI_FILE_NAME);
