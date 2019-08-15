@@ -30,3 +30,4 @@ deploy:
     on:
         tags: true
         repo: byrokrat/giroapp
+        condition: ${TRAVIS_PHP_VERSION:0:3} == "7.3"
