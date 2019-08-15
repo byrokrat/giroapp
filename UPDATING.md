@@ -2,6 +2,15 @@
 
 ## Unreleased changes
 
+* Nothing
+
+## Updating to beta-2
+
+Beta-2 is generally a bug-fix release and the phar can simply be dumped in place
+of beta-1. When updating from an alpha version se `Updating to beta-1` below..
+
+### Notable changes in beta-2
+
 * Donors can now be identified by name at command line. Use `--id-payer-number`
   and `--id-mandate-key` flags to force id to be payer number or mandate key..
 * Fixed a bug where transaction reports imported after a state change failed.
