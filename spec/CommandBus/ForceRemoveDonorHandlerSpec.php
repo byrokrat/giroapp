@@ -23,7 +23,7 @@ class ForceRemoveDonorHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ForceRemoveDonorHandler::CLASS);
+        $this->shouldHaveType(ForceRemoveDonorHandler::class);
     }
 
     function it_removes_donors($donorRepository, $dispatcher, Donor $donor)
@@ -31,7 +31,7 @@ class ForceRemoveDonorHandlerSpec extends ObjectBehavior
         $donor->getMandateKey()->willReturn('foo');
 
         $donorRepository->deleteDonor($donor)->shouldBeCalled();
-        $dispatcher->dispatch(Argument::type(DonorRemoved::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Argument::type(DonorRemoved::class))->shouldBeCalled();
 
         $this->handle(new ForceRemoveDonor($donor->getWrappedObject()));
     }

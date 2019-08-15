@@ -8,7 +8,6 @@ use byrokrat\giroapp\Db\DriverEnvironment;
 use byrokrat\giroapp\Domain\DonorFactory;
 use byrokrat\giroapp\Utils\SystemClock;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DriverEnvironmentSpec extends ObjectBehavior
 {
@@ -19,7 +18,7 @@ class DriverEnvironmentSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(DriverEnvironment::CLASS);
+        $this->shouldHaveType(DriverEnvironment::class);
     }
 
     function it_contains_a_clock($clock)

@@ -9,7 +9,6 @@ use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\DonorCollection;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DonorQueryDecoratorSpec extends ObjectBehavior
 {
@@ -20,7 +19,7 @@ class DonorQueryDecoratorSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorQueryDecorator::CLASS);
+        $this->shouldHaveType(DonorQueryDecorator::class);
     }
 
     function it_can_find_all($decorated, DonorCollection $collection)

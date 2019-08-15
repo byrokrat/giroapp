@@ -29,7 +29,6 @@ use byrokrat\id\IdInterface;
 use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\OrganizationId;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class XmlMandateProcessorSpec extends ObjectBehavior
 {
@@ -66,21 +65,21 @@ class XmlMandateProcessorSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(XmlMandateProcessor::CLASS);
+        $this->shouldHaveType(XmlMandateProcessor::class);
     }
 
     function it_fails_on_invalid_payee_org_nr($xmlRoot, $xmlMandate)
     {
         $xmlMandate->readElement('/MedgivandeViaHemsida/Organisationsnr', new IdValidator)
             ->willReturn('not-a-valid-org-nr');
-        $this->shouldThrow(InvalidDataException::CLASS)->duringProcess($xmlRoot);
+        $this->shouldThrow(InvalidDataException::class)->duringProcess($xmlRoot);
     }
 
     function it_fails_on_invalid_payee_bankgiro($xmlRoot, $xmlMandate)
     {
         $xmlMandate->readElement('/MedgivandeViaHemsida/Bankgironr', new AccountValidator)
             ->willReturn('not-a-valid-bankgiro');
-        $this->shouldThrow(InvalidDataException::CLASS)->duringProcess($xmlRoot);
+        $this->shouldThrow(InvalidDataException::class)->duringProcess($xmlRoot);
     }
 
     function it_creates_donors(

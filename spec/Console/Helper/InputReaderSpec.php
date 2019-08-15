@@ -11,7 +11,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Question\Question;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class InputReaderSpec extends ObjectBehavior
 {
@@ -22,7 +21,7 @@ class InputReaderSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(InputReader::CLASS);
+        $this->shouldHaveType(InputReader::class);
     }
 
     function it_reads_option_if_set($input, ValidatorInterface $validator)

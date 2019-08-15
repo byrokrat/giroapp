@@ -9,7 +9,6 @@ use byrokrat\giroapp\Db\ImportHistoryInterface;
 use byrokrat\giroapp\Event\FileImported;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ImportHistoryListenerSpec extends ObjectBehavior
 {
@@ -20,7 +19,7 @@ class ImportHistoryListenerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ImportHistoryListener::CLASS);
+        $this->shouldHaveType(ImportHistoryListener::class);
     }
 
     function it_adds_to_hsitory($importHistory, FileImported $event, FileInterface $file)

@@ -22,7 +22,7 @@ class CommitHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(CommitHandler::CLASS);
+        $this->shouldHaveType(CommitHandler::class);
     }
 
     function it_dispatches_on_database_commit($dbDriver, $dispatcher)

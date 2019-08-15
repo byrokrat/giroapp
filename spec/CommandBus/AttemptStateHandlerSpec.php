@@ -8,7 +8,6 @@ use byrokrat\giroapp\CommandBus\AttemptStateHandler;
 use byrokrat\giroapp\CommandBus\AttemptState;
 use byrokrat\giroapp\CommandBus\UpdateStateHandler;
 use byrokrat\giroapp\CommandBus\UpdateState;
-use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
 use byrokrat\giroapp\Domain\Donor;
 use PhpSpec\ObjectBehavior;
@@ -23,7 +22,7 @@ class AttemptStateHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(AttemptStateHandler::CLASS);
+        $this->shouldHaveType(AttemptStateHandler::class);
     }
 
     function it_does_nothing_if_change_is_not_allowed($updateStateHandler, $workflow, Donor $donor)

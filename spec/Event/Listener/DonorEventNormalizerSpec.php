@@ -25,7 +25,6 @@ use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
 use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DonorEventNormalizerSpec extends ObjectBehavior
 {
@@ -36,12 +35,12 @@ class DonorEventNormalizerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorEventNormalizer::CLASS);
+        $this->shouldHaveType(DonorEventNormalizer::class);
     }
 
     function it_throws_on_unknown_event(DonorEvent $event)
     {
-        $this->shouldThrow(\LogicException::CLASS)->duringNormalizeEvent($event);
+        $this->shouldThrow(\LogicException::class)->duringNormalizeEvent($event);
     }
 
     function it_normalizes_donor_added($donor, AccountNumber $account, IdInterface $id)

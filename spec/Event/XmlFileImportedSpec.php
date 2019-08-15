@@ -8,7 +8,6 @@ use byrokrat\giroapp\Event\XmlFileImported;
 use byrokrat\giroapp\Event\FileImported;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class XmlFileImportedSpec extends ObjectBehavior
 {
@@ -20,12 +19,12 @@ class XmlFileImportedSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(XmlFileImported::CLASS);
+        $this->shouldHaveType(XmlFileImported::class);
     }
 
     function it_is_a_file_imported_event()
     {
-        $this->shouldHaveType(FileImported::CLASS);
+        $this->shouldHaveType(FileImported::class);
     }
 
     function it_contains_a_file($file)

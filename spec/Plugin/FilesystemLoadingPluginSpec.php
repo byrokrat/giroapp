@@ -8,9 +8,7 @@ use byrokrat\giroapp\Plugin\FilesystemLoadingPlugin;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Exception\InvalidPluginException;
-use Symfony\Component\Finder\Finder;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class FilesystemLoadingPluginSpec extends ObjectBehavior
 {
@@ -21,14 +19,14 @@ class FilesystemLoadingPluginSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(FilesystemLoadingPlugin::CLASS);
+        $this->shouldHaveType(FilesystemLoadingPlugin::class);
     }
 
     function it_fails_on_broken_plugins($filesystem, EnvironmentInterface $environment)
     {
         $filesystem->getAbsolutePath('')->willReturn(__DIR__ . '/brokenplugindata');
 
-        $this->shouldThrow(InvalidPluginException::CLASS)->during('loadPlugin', [$environment]);
+        $this->shouldThrow(InvalidPluginException::class)->during('loadPlugin', [$environment]);
     }
 
     function it_loads_plugins($filesystem, EnvironmentInterface $environment)

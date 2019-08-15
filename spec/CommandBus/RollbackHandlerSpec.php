@@ -22,7 +22,7 @@ class RollbackHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(RollbackHandler::CLASS);
+        $this->shouldHaveType(RollbackHandler::class);
     }
 
     function it_dispatches_on_database_rollback($dbDriver, $dispatcher)

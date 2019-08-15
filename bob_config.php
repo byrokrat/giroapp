@@ -14,43 +14,46 @@ desc('Run all tests');
 task('test', ['phpspec', 'behat', 'examples', 'phpstan', 'sniff']);
 
 desc('Run phpspec unit tests');
-task('phpspec', ['update_on_config_updates'], function() {
+task('phpspec', ['update_on_config_updates'], function () {
     shell('phpspec run');
     println('Phpspec unit tests passed');
 });
+task('phpspec.yml', ['phpspec']);
 
 desc('Run behat feature tests');
-task('behat', ['update_on_config_updates'], function() {
+task('behat', ['update_on_config_updates'], function () {
     shell('behat --stop-on-failure --suite=default');
     println('Behat feature tests passed');
 });
+task('behat.yml', ['behat']);
 
 desc('Run behat feature tests in debug mode');
-task('behat-debug', ['update_on_config_updates'], function() {
+task('behat-debug', ['update_on_config_updates'], function () {
     shell('behat --stop-on-failure --suite=debug');
     println('Behat feature tests passed');
 });
 
 desc('Run behat feature tests using phar');
-task('behat-phar', ['giroapp.phar'], function() {
+task('behat-phar', ['giroapp.phar'], function () {
     shell('behat --stop-on-failure --suite=phar');
     println('Behat feature tests using PHAR passed');
 });
 
 desc('Tests documentation examples');
-task('examples', function() {
+task('examples', function () {
     shell('readme-tester README.md docs');
     println('Documentation examples valid');
 });
 
 desc('Run statical analysis using phpstan feature tests');
-task('phpstan', function() {
+task('phpstan', function () {
     shell('phpstan analyze -c phpstan.neon -l 7 src');
     println('Phpstan analysis passed');
 });
+task('phpstan.neon', ['phpstan']);
 
 desc('Run php code sniffer');
-task('sniff', function() {
+task('sniff', function () {
     shell('phpcs src --standard=PSR2 --ignore=src/DependencyInjection/ProjectServiceContainer.php');
     println('Syntax checker on src/ passed');
     shell('phpcs spec --standard=spec/ruleset.xml');
@@ -60,7 +63,7 @@ task('sniff', function() {
 // *********************************** PHAR ************************************
 
 desc('Build phar');
-task('phar', function() {
+task('phar', function () {
     build_phar();
 });
 
@@ -115,7 +118,7 @@ fileTask(STATE_GRAPH_PATH, fileList('workflow.yaml')->in([__DIR__ . '/etc']), fu
 });
 
 desc('Dump state graph');
-task('dump_graph', ['load_dependencies'], function() {
+task('dump_graph', ['load_dependencies'], function () {
     build_state_graph();
 });
 
@@ -123,7 +126,7 @@ function build_state_graph()
 {
     $container = new \byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
 
-    $definition = $container->get(\Symfony\Component\Workflow\Definition::CLASS);
+    $definition = $container->get(\Symfony\Component\Workflow\Definition::class);
 
     $dumper = new \Symfony\Component\Workflow\Dumper\GraphvizDumper();
 
@@ -161,12 +164,12 @@ task('load_dependencies', ['vendor/autoload.php'], function () {
     require_once 'vendor/autoload.php';
 });
 
-fileTask('vendor/autoload.php', ['vendor/autoload.php'], function() {
+fileTask('vendor/autoload.php', ['vendor/autoload.php'], function () {
     shell('composer install');
 });
 
 desc('Globally install development tools');
-task('install_dev_tools', function() {
+task('install_dev_tools', function () {
     shell('composer global require consolidation/cgr');
     shell('cgr phpspec/phpspec:^5');
     shell('cgr behat/behat:^3');

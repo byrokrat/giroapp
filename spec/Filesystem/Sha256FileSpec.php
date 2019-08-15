@@ -7,7 +7,6 @@ namespace spec\byrokrat\giroapp\Filesystem;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class Sha256FileSpec extends ObjectBehavior
 {
@@ -21,12 +20,12 @@ class Sha256FileSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(Sha256File::CLASS);
+        $this->shouldHaveType(Sha256File::class);
     }
 
     function it_is_a_file()
     {
-        $this->shouldHaveType(FileInterface::CLASS);
+        $this->shouldHaveType(FileInterface::class);
     }
 
     function it_contains_file_name()

@@ -8,7 +8,6 @@ use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class FileEventSpec extends ObjectBehavior
 {
@@ -19,12 +18,12 @@ class FileEventSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(FileEvent::CLASS);
+        $this->shouldHaveType(FileEvent::class);
     }
 
     function it_is_a_log_event()
     {
-        $this->shouldHaveType(LogEvent::CLASS);
+        $this->shouldHaveType(LogEvent::class);
     }
 
     function it_contains_a_file($file)

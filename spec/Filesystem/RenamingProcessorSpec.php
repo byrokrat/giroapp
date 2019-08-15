@@ -8,7 +8,6 @@ use byrokrat\giroapp\Filesystem\RenamingProcessor;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\giroapp\Utils\SystemClock;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class RenamingProcessorSpec extends ObjectBehavior
 {
@@ -19,7 +18,7 @@ class RenamingProcessorSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(RenamingProcessor::CLASS);
+        $this->shouldHaveType(RenamingProcessor::class);
     }
 
     function it_renames($systemClock, FileInterface $file)

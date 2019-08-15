@@ -8,7 +8,6 @@ use byrokrat\giroapp\Event\Listener\LoggingListener;
 use byrokrat\giroapp\Event\LogEvent;
 use Psr\Log\LoggerInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class LoggingListenerSpec extends ObjectBehavior
 {
@@ -19,7 +18,7 @@ class LoggingListenerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(LoggingListener::CLASS);
+        $this->shouldHaveType(LoggingListener::class);
     }
 
     function it_logs($logger, LogEvent $event)

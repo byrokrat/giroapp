@@ -10,18 +10,17 @@ use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class AwaitingTransactionUpdateSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(AwaitingTransactionUpdate::CLASS);
+        $this->shouldHaveType(AwaitingTransactionUpdate::class);
     }
 
     function it_implements_the_state_interface()
     {
-        $this->shouldHaveType(StateInterface::CLASS);
+        $this->shouldHaveType(StateInterface::class);
     }
 
     function it_contains_an_id()
@@ -36,7 +35,7 @@ class AwaitingTransactionUpdateSpec extends ObjectBehavior
 
     function it_is_exportable()
     {
-        $this->shouldHaveType(ExportableStateInterface::CLASS);
+        $this->shouldHaveType(ExportableStateInterface::class);
     }
 
     function it_can_be_exported(Donor $donor, WriterInterface $writer)

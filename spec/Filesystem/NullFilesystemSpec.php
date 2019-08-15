@@ -8,13 +8,12 @@ use byrokrat\giroapp\Filesystem\NullFilesystem;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\giroapp\Exception\UnableToReadFileException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class NullFilesystemSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(NullFilesystem::CLASS);
+        $this->shouldHaveType(NullFilesystem::class);
     }
 
     function it_returnes_absolute_paths()
@@ -39,7 +38,7 @@ class NullFilesystemSpec extends ObjectBehavior
 
     function it_fails_reading_file()
     {
-        $this->shouldThrow(UnableToReadFileException::CLASS)->during('readFile', ['filename']);
+        $this->shouldThrow(UnableToReadFileException::class)->during('readFile', ['filename']);
     }
 
     function it_can_read_dir()

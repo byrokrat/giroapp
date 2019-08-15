@@ -14,7 +14,7 @@ class FilesystemConfiguratorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(FilesystemConfigurator::CLASS);
+        $this->shouldHaveType(FilesystemConfigurator::class);
     }
 
     function it_creates_directories(FilesystemInterface $filesystem)

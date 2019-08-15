@@ -8,7 +8,6 @@ use byrokrat\giroapp\Db\ImportHistoryInterface;
 use byrokrat\giroapp\Exception\FileAlreadyImportedException;
 use byrokrat\giroapp\Filesystem\HashedFile;
 use byrokrat\giroapp\Domain\FileThatWasImported;
-use Prophecy\Argument;
 
 trait ImportHistorySpecTrait
 {
@@ -16,7 +15,7 @@ trait ImportHistorySpecTrait
 
     function it_is_an_import_history()
     {
-        $this->shouldHaveType(ImportHistoryInterface::CLASS);
+        $this->shouldHaveType(ImportHistoryInterface::class);
     }
 
     function it_returns_null_if_file_was_not_imported()
@@ -28,7 +27,7 @@ trait ImportHistorySpecTrait
     function it_throws_if_the_same_hash_is_added_twice()
     {
         $this->addToImportHistory(new HashedFile('bar', 'bar', 'HASH'));
-        $this->shouldThrow(FileAlreadyImportedException::CLASS)
+        $this->shouldThrow(FileAlreadyImportedException::class)
             ->duringAddToImportHistory(new HashedFile('foo', 'foo', 'HASH'));
     }
 

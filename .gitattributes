@@ -13,8 +13,6 @@ ProjectServiceContainer.php binary
 /CHANGELOG.md export-ignore
 /box.json.dist export-ignore
 /dev_giroapp export-ignore
-/donor_schema.json export-ignore
-/nitpick.json export-ignore
 /phpspec.yml export-ignore
 /phpstan.neon export-ignore
 /README.md export-ignore

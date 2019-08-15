@@ -7,7 +7,6 @@ namespace spec\byrokrat\giroapp\Event;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Domain\Donor;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DonorEventSpec extends ObjectBehavior
 {

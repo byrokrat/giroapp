@@ -8,7 +8,6 @@ use byrokrat\giroapp\Filter\NegatedFilter;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Domain\Donor;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class NegatedFilterSpec extends ObjectBehavior
 {
@@ -19,12 +18,12 @@ class NegatedFilterSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(NegatedFilter::CLASS);
+        $this->shouldHaveType(NegatedFilter::class);
     }
 
     function it_is_a_filter()
     {
-        $this->shouldHaveType(FilterInterface::CLASS);
+        $this->shouldHaveType(FilterInterface::class);
     }
 
     function it_has_a_name()

@@ -10,7 +10,6 @@ use byrokrat\giroapp\Exception\InvalidStateTransitionException;
 use Symfony\Component\Workflow\WorkflowInterface;
 use byrokrat\giroapp\Domain\Donor;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class UpdateStateHandlerSpec extends ObjectBehavior
 {
@@ -21,7 +20,7 @@ class UpdateStateHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(UpdateStateHandler::CLASS);
+        $this->shouldHaveType(UpdateStateHandler::class);
     }
 
     function it_throws_if_change_is_not_allowed($workflow, Donor $donor)
@@ -31,7 +30,7 @@ class UpdateStateHandlerSpec extends ObjectBehavior
         $workflow->can($donor, 'transitionId')->willReturn(false);
         $workflow->getEnabledTransitions($donor)->willReturn([]);
 
-        $this->shouldThrow(InvalidStateTransitionException::CLASS)->duringHandle(new UpdateState(
+        $this->shouldThrow(InvalidStateTransitionException::class)->duringHandle(new UpdateState(
             $donor->getWrappedObject(),
             'transitionId',
             ''

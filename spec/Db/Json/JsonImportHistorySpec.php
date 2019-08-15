@@ -8,7 +8,6 @@ use byrokrat\giroapp\Db\Json\JsonImportHistory;
 use byrokrat\giroapp\Db\Json\JsonDriverFactory;
 use spec\byrokrat\giroapp\Db\ImportHistorySpecTrait;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class JsonImportHistorySpec extends ObjectBehavior
 {
@@ -36,6 +35,6 @@ class JsonImportHistorySpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(JsonImportHistory::CLASS);
+        $this->shouldHaveType(JsonImportHistory::class);
     }
 }

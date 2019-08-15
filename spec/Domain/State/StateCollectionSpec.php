@@ -7,13 +7,12 @@ namespace spec\byrokrat\giroapp\Domain\State;
 use byrokrat\giroapp\Domain\State\StateCollection;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class StateCollectionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(StateCollection::CLASS);
+        $this->shouldHaveType(StateCollection::class);
     }
 
     function it_can_store_states()

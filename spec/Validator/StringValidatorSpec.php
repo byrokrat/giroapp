@@ -5,15 +5,13 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Validator;
 
 use byrokrat\giroapp\Validator\StringValidator;
-use byrokrat\giroapp\Exception\ValidatorException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class StringValidatorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(StringValidator::CLASS);
+        $this->shouldHaveType(StringValidator::class);
     }
 
     function it_returns_valid_content()

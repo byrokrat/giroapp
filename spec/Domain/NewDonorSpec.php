@@ -10,7 +10,6 @@ use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
 use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class NewDonorSpec extends ObjectBehavior
 {
@@ -29,7 +28,7 @@ class NewDonorSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(NewDonor::CLASS);
+        $this->shouldHaveType(NewDonor::class);
     }
 
     function it_contains_mandate_source()

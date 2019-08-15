@@ -175,7 +175,7 @@ class AutogiroVisitor extends Visitor
         /** @var \byrokrat\amount\Currency\SEK $amount */
         $amount = $node->getChild('Amount')->getValueFrom('Object');
 
-        $eventClassName = $success ? TransactionPerformed::CLASS : TransactionFailed::CLASS;
+        $eventClassName = $success ? TransactionPerformed::class : TransactionFailed::class;
 
         $this->dispatcher->dispatch(new $eventClassName($donor, $amount, $date));
     }

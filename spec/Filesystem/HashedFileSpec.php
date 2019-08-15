@@ -7,7 +7,6 @@ namespace spec\byrokrat\giroapp\Filesystem;
 use byrokrat\giroapp\Filesystem\HashedFile;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class HashedFileSpec extends ObjectBehavior
 {
@@ -22,12 +21,12 @@ class HashedFileSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(HashedFile::CLASS);
+        $this->shouldHaveType(HashedFile::class);
     }
 
     function it_is_a_file()
     {
-        $this->shouldHaveType(FileInterface::CLASS);
+        $this->shouldHaveType(FileInterface::class);
     }
 
     function it_contains_file_name()

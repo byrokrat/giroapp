@@ -9,18 +9,17 @@ use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\Active;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ActiveFilterSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(ActiveFilter::CLASS);
+        $this->shouldHaveType(ActiveFilter::class);
     }
 
     function it_is_a_filter()
     {
-        $this->shouldHaveType(FilterInterface::CLASS);
+        $this->shouldHaveType(FilterInterface::class);
     }
 
     function it_has_a_name()

@@ -20,7 +20,7 @@ class OutputtingListenerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(OutputtingListener::CLASS);
+        $this->shouldHaveType(OutputtingListener::class);
     }
 
     function it_writes_error_messages(LogEvent $event, $output)

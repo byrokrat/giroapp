@@ -8,18 +8,17 @@ use byrokrat\giroapp\Sorter\PayerNumberSorter;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\Domain\Donor;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class PayerNumberSorterSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(PayerNumberSorter::CLASS);
+        $this->shouldHaveType(PayerNumberSorter::class);
     }
 
     function it_is_a_sorter()
     {
-        $this->shouldHaveType(SorterInterface::CLASS);
+        $this->shouldHaveType(SorterInterface::class);
     }
 
     function it_contains_a_name()

@@ -14,7 +14,6 @@ use byrokrat\giroapp\Db\DonorQueryInterface;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\Error;
-use byrokrat\giroapp\Domain\State\Paused;
 use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Event\TransactionFailed;
 use byrokrat\giroapp\Event\TransactionPerformed;
@@ -45,12 +44,12 @@ class AutogiroVisitorSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(AutogiroVisitor::CLASS);
+        $this->shouldHaveType(AutogiroVisitor::class);
     }
 
     function it_is_a_visitor()
     {
-        $this->shouldHaveType(Visitor::CLASS);
+        $this->shouldHaveType(Visitor::class);
     }
 
     function it_throws_on_invalid_bg_in_opening_node($orgBgcNr, $orgBg, Node $node, AccountNumber $payeeBg)
@@ -63,7 +62,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $orgBg->getNumber()->willReturn('');
         $payeeBg->equals($orgBg)->willReturn(false);
         $payeeBg->getNumber()->willReturn('');
-        $this->shouldThrow(InvalidAutogiroFileException::CLASS)->during('beforeOpening', [$node]);
+        $this->shouldThrow(InvalidAutogiroFileException::class)->during('beforeOpening', [$node]);
     }
 
     function it_throws_on_invalid_bgc_nr_in_opening_node($orgBgcNr, $orgBg, Node $node, AccountNumber $payeeBg)
@@ -74,7 +73,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $node->getChild('PayeeBankgiro')->willReturn($node);
         $node->getValueFrom('Object')->willReturn($payeeBg);
         $payeeBg->equals($orgBg)->willReturn(true);
-        $this->shouldThrow(InvalidAutogiroFileException::CLASS)->during('beforeOpening', [$node]);
+        $this->shouldThrow(InvalidAutogiroFileException::class)->during('beforeOpening', [$node]);
     }
 
     function it_ignores_missing__bgc_nr_in_opening_node($orgBgcNr, $orgBg, Node $node, AccountNumber $payeeBg)
@@ -118,7 +117,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $nodeId->format('S-sk')->willReturn('foo');
         $donorId->format('S-sk')->willReturn('NOT-foo');
 
-        $this->shouldThrow(InvalidAutogiroFileException::CLASS)->duringBeforeMandateResponse($parentNode);
+        $this->shouldThrow(InvalidAutogiroFileException::class)->duringBeforeMandateResponse($parentNode);
     }
 
     function it_fails_on_mandate_response_if_node_contains_invalid_account(
@@ -146,7 +145,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $donorAccount->getNumber()->willReturn('');
         $nodeAccount->equals($donorAccount)->willReturn(false);
 
-        $this->shouldThrow(InvalidAutogiroFileException::CLASS)->duringBeforeMandateResponse($parentNode);
+        $this->shouldThrow(InvalidAutogiroFileException::class)->duringBeforeMandateResponse($parentNode);
     }
 
     function it_fails_on_mandate_response_if_unknown_response_code(
@@ -175,7 +174,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $statusNode->getValueFrom('Number')->willReturn('');
         $statusNode->getValueFrom('Text')->willReturn('');
 
-        $this->shouldThrow(InvalidAutogiroFileException::CLASS)->duringBeforeMandateResponse($parentNode);
+        $this->shouldThrow(InvalidAutogiroFileException::class)->duringBeforeMandateResponse($parentNode);
     }
 
     function it_handles_on_mandate_response_if_created(
@@ -325,7 +324,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
             )
         )->shouldBeCalled();
 
-        $dispatcher->dispatch(Argument::type(TransactionPerformed::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Argument::type(TransactionPerformed::class))->shouldBeCalled();
 
         $this->beforeSuccessfulIncomingPaymentResponse($parentNode);
     }
@@ -358,7 +357,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
             )
         )->shouldBeCalled();
 
-        $dispatcher->dispatch(Argument::type(TransactionFailed::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Argument::type(TransactionFailed::class))->shouldBeCalled();
 
         $this->beforeFailedIncomingPaymentResponse($parentNode);
     }

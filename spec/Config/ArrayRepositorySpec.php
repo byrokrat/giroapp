@@ -7,7 +7,6 @@ namespace spec\byrokrat\giroapp\Config;
 use byrokrat\giroapp\Config\ArrayRepository;
 use byrokrat\giroapp\Config\RepositoryInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ArrayRepositorySpec extends ObjectBehavior
 {
@@ -18,12 +17,12 @@ class ArrayRepositorySpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ArrayRepository::CLASS);
+        $this->shouldHaveType(ArrayRepository::class);
     }
 
     function it_is_a_repository()
     {
-        $this->shouldHaveType(RepositoryInterface::CLASS);
+        $this->shouldHaveType(RepositoryInterface::class);
     }
 
     function it_contains_configs()

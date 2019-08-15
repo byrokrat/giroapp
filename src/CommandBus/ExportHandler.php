@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\FileExported;
 use byrokrat\giroapp\Event\LogEvent;

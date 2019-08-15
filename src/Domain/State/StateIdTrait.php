@@ -28,6 +28,6 @@ trait StateIdTrait
 {
     public static function getStateId(): string
     {
-        return (string)(new ClassIdExtractor(static::CLASS));
+        return (string)(new ClassIdExtractor(static::class));
     }
 }

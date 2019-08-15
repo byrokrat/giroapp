@@ -8,13 +8,12 @@ use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Config\RepositoryInterface;
 use byrokrat\giroapp\Exception\InvalidConfigException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ConfigManagerSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(ConfigManager::CLASS);
+        $this->shouldHaveType(ConfigManager::class);
     }
 
     function it_can_read_configs(RepositoryInterface $repo)

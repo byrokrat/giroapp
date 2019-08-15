@@ -7,7 +7,6 @@ namespace spec\byrokrat\giroapp\Config;
 use byrokrat\giroapp\Config\SimpleConfig;
 use byrokrat\giroapp\Config\ConfigInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class SimpleConfigSpec extends ObjectBehavior
 {
@@ -18,12 +17,12 @@ class SimpleConfigSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(SimpleConfig::CLASS);
+        $this->shouldHaveType(SimpleConfig::class);
     }
 
     function it_is_a_config()
     {
-        $this->shouldHaveType(ConfigInterface::CLASS);
+        $this->shouldHaveType(ConfigInterface::class);
     }
 
     function it_contains_a_value()

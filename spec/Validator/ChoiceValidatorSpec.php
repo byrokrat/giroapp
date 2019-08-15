@@ -7,14 +7,13 @@ namespace spec\byrokrat\giroapp\Validator;
 use byrokrat\giroapp\Validator\ChoiceValidator;
 use byrokrat\giroapp\Exception\ValidatorException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ChoiceValidatorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
         $this->beConstructedWith([]);
-        $this->shouldHaveType(ChoiceValidator::CLASS);
+        $this->shouldHaveType(ChoiceValidator::class);
     }
 
     function it_returns_valid_value_associated_with_key()
@@ -38,6 +37,6 @@ class ChoiceValidatorSpec extends ObjectBehavior
     function it_throws_on_invalid_content()
     {
         $this->beConstructedWith([]);
-        $this->shouldThrow(ValidatorException::CLASS)->duringValidate('', 'not-defined');
+        $this->shouldThrow(ValidatorException::class)->duringValidate('', 'not-defined');
     }
 }

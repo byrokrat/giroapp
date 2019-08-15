@@ -24,7 +24,7 @@ class UpdatePostalAddressHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(UpdatePostalAddressHandler::CLASS);
+        $this->shouldHaveType(UpdatePostalAddressHandler::class);
     }
 
     function it_ignores_unchanged_data($donorRepository, Donor $donor)
@@ -42,7 +42,7 @@ class UpdatePostalAddressHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorAddress($donor, new PostalAddress('new'))->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Argument::type(Event\DonorPostalAddressUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorPostalAddressUpdated::class))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdatePostalAddress($donor->getWrappedObject(), new PostalAddress('new')));

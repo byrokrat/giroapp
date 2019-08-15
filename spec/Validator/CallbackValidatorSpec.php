@@ -7,14 +7,13 @@ namespace spec\byrokrat\giroapp\Validator;
 use byrokrat\giroapp\Validator\CallbackValidator;
 use byrokrat\giroapp\Exception\ValidatorException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class CallbackValidatorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
         $this->beConstructedWith('ctype_digit');
-        $this->shouldHaveType(CallbackValidator::CLASS);
+        $this->shouldHaveType(CallbackValidator::class);
     }
 
     function it_returns_callback_content()
@@ -38,7 +37,7 @@ class CallbackValidatorSpec extends ObjectBehavior
         $this->beConstructedWith(function (string $value) {
             return [];
         });
-        $this->shouldThrow(\LogicException::CLASS)->duringValidate('', '');
+        $this->shouldThrow(\LogicException::class)->duringValidate('', '');
     }
 
     function it_throws_when_validator_throws()
@@ -46,6 +45,6 @@ class CallbackValidatorSpec extends ObjectBehavior
         $this->beConstructedWith(function (string $value) {
             throw new \Exception;
         });
-        $this->shouldThrow(ValidatorException::CLASS)->duringValidate('', '');
+        $this->shouldThrow(ValidatorException::class)->duringValidate('', '');
     }
 }

@@ -13,7 +13,6 @@ use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Utils\ClassIdExtractor;
 use byrokrat\giroapp\Utils\SystemClock;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DonorEventRecorderSpec extends ObjectBehavior
 {
@@ -27,7 +26,7 @@ class DonorEventRecorderSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorEventRecorder::CLASS);
+        $this->shouldHaveType(DonorEventRecorder::class);
     }
 
     function it_adds_to_history(

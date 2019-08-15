@@ -13,7 +13,6 @@ use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
 use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DonorSpec extends ObjectBehavior
 {
@@ -56,7 +55,7 @@ class DonorSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(Donor::CLASS);
+        $this->shouldHaveType(Donor::class);
     }
 
     function it_contains_a_mandate_key()
@@ -142,7 +141,7 @@ class DonorSpec extends ObjectBehavior
 
     function it_throws_exception_if_attribute_does_not_exist()
     {
-        $this->shouldThrow(UnknownIdentifierException::CLASS)->duringGetAttribute('foobar');
+        $this->shouldThrow(UnknownIdentifierException::class)->duringGetAttribute('foobar');
     }
 
     function it_can_show_all_attributes()

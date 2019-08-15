@@ -12,7 +12,6 @@ use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Workflow\Transitions;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class RemoveDonorHandlerSpec extends ObjectBehavior
 {
@@ -23,7 +22,7 @@ class RemoveDonorHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(RemoveDonorHandler::CLASS);
+        $this->shouldHaveType(RemoveDonorHandler::class);
     }
 
     function it_removes_donors($commandBus, Donor $donor)

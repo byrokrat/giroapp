@@ -8,13 +8,12 @@ use byrokrat\giroapp\Plugin\PluginCollection;
 use byrokrat\giroapp\Plugin\PluginInterface;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class PluginCollectionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(PluginCollection::CLASS);
+        $this->shouldHaveType(PluginCollection::class);
     }
 
     function it_loads_plugins(PluginInterface $plugin, EnvironmentInterface $environment)

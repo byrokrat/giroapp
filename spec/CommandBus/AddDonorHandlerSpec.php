@@ -11,7 +11,6 @@ use byrokrat\giroapp\Event\DonorAdded;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\NewDonorProcessor;
-use byrokrat\giroapp\Domain\State\StateInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -30,7 +29,7 @@ class AddDonorHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(AddDonorHandler::CLASS);
+        $this->shouldHaveType(AddDonorHandler::class);
     }
 
     function it_adds_donors(
@@ -46,7 +45,7 @@ class AddDonorHandlerSpec extends ObjectBehavior
         $donorProcessor->processNewDonor($newDonor)->willReturn($donor);
 
         $donorRepository->addNewDonor($donor)->shouldBeCalled();
-        $dispatcher->dispatch(Argument::type(DonorAdded::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Argument::type(DonorAdded::class))->shouldBeCalled();
 
         $this->handle(new AddDonor($newDonor->getWrappedObject()));
     }

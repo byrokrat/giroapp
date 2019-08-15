@@ -45,7 +45,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(NewDonorProcessor::CLASS);
+        $this->shouldHaveType(NewDonorProcessor::class);
     }
 
     function it_processes_new_donor(
@@ -114,27 +114,27 @@ class NewDonorProcessorSpec extends ObjectBehavior
     function it_throws_if_mandate_source_is_invalid($newDonor)
     {
         $newDonor->getMandateSource()->willReturn('not-a-valid-mandate-source');
-        $this->shouldThrow(\LogicException::CLASS)->duringProcessNewDonor($newDonor);
+        $this->shouldThrow(\LogicException::class)->duringProcessNewDonor($newDonor);
     }
 
     function it_creates_keys_for_short_input($newDonor, $id, $account)
     {
         $id->format('Ss')->shouldBeCalled()->willReturn('1');
         $account->get16()->shouldBeCalled()->willReturn('11');
-        $this->processNewDonor($newDonor)->shouldHaveType(Donor::CLASS);
+        $this->processNewDonor($newDonor)->shouldHaveType(Donor::class);
     }
 
     function it_creates_keys_for_long_input($newDonor, $id, $account)
     {
         $id->format('Ss')->shouldBeCalled()->willReturn('999999999');
         $account->get16()->shouldBeCalled()->willReturn('9999999999999999');
-        $this->processNewDonor($newDonor)->shouldHaveType(Donor::CLASS);
+        $this->processNewDonor($newDonor)->shouldHaveType(Donor::class);
     }
 
     function it_throws_if_key_could_not_be_created($newDonor, $id, $account)
     {
         $id->format('Ss')->willReturn('');
         $account->get16()->willReturn('');
-        $this->shouldThrow(\LogicException::CLASS)->duringProcessNewDonor($newDonor);
+        $this->shouldThrow(\LogicException::class)->duringProcessNewDonor($newDonor);
     }
 }

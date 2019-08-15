@@ -10,18 +10,17 @@ use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ExportableFilterSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(ExportableFilter::CLASS);
+        $this->shouldHaveType(ExportableFilter::class);
     }
 
     function it_is_a_filter()
     {
-        $this->shouldHaveType(FilterInterface::CLASS);
+        $this->shouldHaveType(FilterInterface::class);
     }
 
     function it_has_a_name()
@@ -32,7 +31,7 @@ class ExportableFilterSpec extends ObjectBehavior
     function it_filters_donors(Donor $donor, StateInterface $state)
     {
         $donor->getState()->willReturn($state);
-        $state->implement(ExportableStateInterface::CLASS);
+        $state->implement(ExportableStateInterface::class);
         $this->filterDonor($donor)->shouldReturn(true);
     }
 }

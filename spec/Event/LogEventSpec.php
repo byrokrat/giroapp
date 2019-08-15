@@ -7,7 +7,6 @@ namespace spec\byrokrat\giroapp\Event;
 use byrokrat\giroapp\Event\LogEvent;
 use Psr\Log\LogLevel;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class LogEventSpec extends ObjectBehavior
 {
@@ -18,7 +17,7 @@ class LogEventSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(LogEvent::CLASS);
+        $this->shouldHaveType(LogEvent::class);
     }
 
     function it_contains_a_message()
@@ -42,6 +41,6 @@ class LogEventSpec extends ObjectBehavior
     function it_throws_on_invalid_severity()
     {
         $this->beConstructedWith('', [], 'not-a-valid-severity');
-        $this->shouldThrow(\LogicException::CLASS)->duringInstantiation();
+        $this->shouldThrow(\LogicException::class)->duringInstantiation();
     }
 }

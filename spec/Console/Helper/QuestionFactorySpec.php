@@ -8,13 +8,12 @@ use byrokrat\giroapp\Console\Helper\QuestionFactory;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class QuestionFactorySpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(QuestionFactory::CLASS);
+        $this->shouldHaveType(QuestionFactory::class);
     }
 
     function it_creates_simple_questions()
@@ -40,7 +39,7 @@ class QuestionFactorySpec extends ObjectBehavior
 
     function it_fails_on_invalid_default_choice()
     {
-        $this->shouldThrow(\LogicException::CLASS)->duringCreateChoiceQuestion('', [], 'does-not-exist');
+        $this->shouldThrow(\LogicException::class)->duringCreateChoiceQuestion('', [], 'does-not-exist');
     }
 
     public function getMatchers(): array

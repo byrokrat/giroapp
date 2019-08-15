@@ -6,7 +6,6 @@ namespace spec\byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Db\DonorEventStoreInterface;
 use byrokrat\giroapp\Db\DonorEventEntry;
-use Prophecy\Argument;
 
 trait DonorEventStoreSpecTrait
 {
@@ -14,7 +13,7 @@ trait DonorEventStoreSpecTrait
 
     function it_is_an_event_store()
     {
-        $this->shouldHaveType(DonorEventStoreInterface::CLASS);
+        $this->shouldHaveType(DonorEventStoreInterface::class);
     }
 
     function it_returns_empty_iterator_if_no_entries()

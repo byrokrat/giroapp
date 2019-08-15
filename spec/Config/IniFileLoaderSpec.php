@@ -17,7 +17,7 @@ class IniFileLoaderSpec extends ObjectBehavior
     function it_is_initializable(FilesystemInterface $fs)
     {
         $this->beConstructedWith('', $fs);
-        $this->shouldHaveType(IniFileLoader::CLASS);
+        $this->shouldHaveType(IniFileLoader::class);
     }
 
     function it_loads_configs(FilesystemInterface $fs, FileInterface $file, ConfigManager $manager)
@@ -37,10 +37,10 @@ class IniFileLoaderSpec extends ObjectBehavior
     {
         $this->beConstructedWith('foobar', $fs);
 
-        $fs->readFile('foobar')->willThrow(\Exception::CLASS);
+        $fs->readFile('foobar')->willThrow(\Exception::class);
 
         $manager->loadRepository(Argument::any())->shouldNotBeCalled();
 
-        $this->shouldThrow(\Exception::CLASS)->during('loadIniFile', [$manager]);
+        $this->shouldThrow(\Exception::class)->during('loadIniFile', [$manager]);
     }
 }

@@ -22,8 +22,6 @@ namespace byrokrat\giroapp;
 
 /**
  * Exception flag interface and collection of app error codes
- *
- * NOTE that error codes and exceptions may change without warning before version 1.0.0
  */
 interface Exception
 {
@@ -43,4 +41,10 @@ interface Exception
     const UNKNOWN_IDENTIFIER_EXCEPTION = 139;
     const UNSUPPORTED_VERSION_EXCEPTION = 140;
     const VALIDATOR_EXCEPTION = 101;
+
+    /** @return string */
+    public function getMessage();
+
+    /** @return mixed */
+    public function getCode();
 }

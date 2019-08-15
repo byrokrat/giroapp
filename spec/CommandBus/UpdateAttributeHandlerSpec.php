@@ -23,7 +23,7 @@ class UpdateAttributeHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(UpdateAttributeHandler::CLASS);
+        $this->shouldHaveType(UpdateAttributeHandler::class);
     }
 
     function it_ignores_unchanged_data($donorRepository, Donor $donor)
@@ -43,7 +43,7 @@ class UpdateAttributeHandlerSpec extends ObjectBehavior
         $donorRepository->setDonorAttribute($donor, 'key', 'new')->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Argument::type(Event\DonorAttributeUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorAttributeUpdated::class))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdateAttribute($donor->getWrappedObject(), 'key', 'new'));

@@ -15,13 +15,12 @@ use byrokrat\giroapp\Event\Listener\ListenerInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class PluginSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(Plugin::CLASS);
+        $this->shouldHaveType(Plugin::class);
     }
 
     function it_registers_console_commands(ConsoleInterface $console, EnvironmentInterface $env)
@@ -41,7 +40,7 @@ class PluginSpec extends ObjectBehavior
     function it_throws_on_non_callable_listeners(ListenerInterface $listener, EnvironmentInterface $env)
     {
         $this->beConstructedWith($listener);
-        $this->shouldThrow(\LogicException::CLASS)->duringLoadPlugin($env);
+        $this->shouldThrow(\LogicException::class)->duringLoadPlugin($env);
     }
 
     function it_registers_listeners(EnvironmentInterface $env)
@@ -103,6 +102,6 @@ class PluginSpec extends ObjectBehavior
     function it_throws_on_unknowns(EnvironmentInterface $env)
     {
         $this->beConstructedWith('this-is-not-known');
-        $this->shouldThrow(\InvalidArgumentException::CLASS)->duringLoadPlugin($env);
+        $this->shouldThrow(\InvalidArgumentException::class)->duringLoadPlugin($env);
     }
 }

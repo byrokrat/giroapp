@@ -9,7 +9,6 @@ use byrokrat\giroapp\Filesystem\NullFilesystem;
 use byrokrat\giroapp\Filesystem\StdFilesystem;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class FilesystemFactorySpec extends ObjectBehavior
 {
@@ -20,7 +19,7 @@ class FilesystemFactorySpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(FilesystemFactory::CLASS);
+        $this->shouldHaveType(FilesystemFactory::class);
     }
 
     function it_can_create_null_filesystems()

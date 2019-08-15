@@ -7,13 +7,12 @@ namespace spec\byrokrat\giroapp\Validator;
 use byrokrat\giroapp\Validator\PayerNumberValidator;
 use byrokrat\giroapp\Exception\ValidatorException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class PayerNumberValidatorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(PayerNumberValidator::CLASS);
+        $this->shouldHaveType(PayerNumberValidator::class);
     }
 
     function it_returns_valid_content()
@@ -23,7 +22,7 @@ class PayerNumberValidatorSpec extends ObjectBehavior
 
     function it_throws_on_invalid_content()
     {
-        $this->shouldThrow(ValidatorException::CLASS)->duringValidate('', '12345678901234567');
-        $this->shouldThrow(ValidatorException::CLASS)->duringValidate('', 'qwerty');
+        $this->shouldThrow(ValidatorException::class)->duringValidate('', '12345678901234567');
+        $this->shouldThrow(ValidatorException::class)->duringValidate('', 'qwerty');
     }
 }

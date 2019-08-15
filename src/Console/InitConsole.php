@@ -49,7 +49,8 @@ final class InitConsole implements ConsoleInterface
 
         $iniPath = realpath(self::INI_FILE_NAME);
 
-        $output->writeln(<<<EOF
+        $output->writeln(
+            <<<EOF
 Created configurations at <info>$iniPath</info>
 
 Continue setup by editing configurations using a standard text editor.

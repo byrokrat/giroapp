@@ -7,13 +7,12 @@ namespace spec\byrokrat\giroapp\Formatter;
 use byrokrat\giroapp\Formatter\FormatterCollection;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class FormatterCollectionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(FormatterCollection::CLASS);
+        $this->shouldHaveType(FormatterCollection::class);
     }
 
     function it_can_add_formatter(FormatterInterface $formatter)

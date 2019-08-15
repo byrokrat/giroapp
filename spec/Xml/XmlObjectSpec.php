@@ -9,20 +9,19 @@ use byrokrat\giroapp\Exception\InvalidXmlException;
 use byrokrat\giroapp\Validator\ValidatorInterface;
 use PhpSpec\ObjectBehavior;
 use PhpSpec\Exception\Example\FailureException;
-use Prophecy\Argument;
 
 class XmlObjectSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
         $this->beConstructedWith('<xml></xml>');
-        $this->shouldHaveType(XmlObject::CLASS);
+        $this->shouldHaveType(XmlObject::class);
     }
 
     function it_fails_if_content_is_not_xml()
     {
         $this->beConstructedWith('this is not valid xml...');
-        $this->shouldThrow(InvalidXmlException::CLASS)->duringInstantiation();
+        $this->shouldThrow(InvalidXmlException::class)->duringInstantiation();
     }
 
     function it_can_be_cast_to_string()
@@ -55,7 +54,7 @@ class XmlObjectSpec extends ObjectBehavior
     function it_fails_if_element_is_not_found(ValidatorInterface $validator)
     {
         $this->beConstructedWith('<xml></xml>');
-        $this->shouldThrow(InvalidXmlException::CLASS)->duringReadElement('/xml/does/not/exist', $validator);
+        $this->shouldThrow(InvalidXmlException::class)->duringReadElement('/xml/does/not/exist', $validator);
     }
 
     function it_can_iterate_over_elements()

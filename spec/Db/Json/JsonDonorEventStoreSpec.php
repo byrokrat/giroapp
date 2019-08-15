@@ -8,7 +8,6 @@ use byrokrat\giroapp\Db\Json\JsonDonorEventStore;
 use byrokrat\giroapp\Db\Json\JsonDriverFactory;
 use spec\byrokrat\giroapp\Db\DonorEventStoreSpecTrait;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class JsonDonorEventStoreSpec extends ObjectBehavior
 {
@@ -36,6 +35,6 @@ class JsonDonorEventStoreSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(JsonDonorEventStore::CLASS);
+        $this->shouldHaveType(JsonDonorEventStore::class);
     }
 }

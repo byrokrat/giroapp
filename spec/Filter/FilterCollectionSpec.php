@@ -8,13 +8,12 @@ use byrokrat\giroapp\Filter\FilterCollection;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Filter\NegatedFilter;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class FilterCollectionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(FilterCollection::CLASS);
+        $this->shouldHaveType(FilterCollection::class);
     }
 
     function it_can_add_filter(FilterInterface $filter)

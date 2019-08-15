@@ -24,7 +24,7 @@ class ImportXmlFileHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ImportXmlFileHandler::CLASS);
+        $this->shouldHaveType(ImportXmlFileHandler::class);
     }
 
     function it_imports_xml_objects($xmlProcessor, $dispatcher, FileInterface $file, XmlObject $xml)
@@ -32,7 +32,7 @@ class ImportXmlFileHandlerSpec extends ObjectBehavior
         $file->getFilename()->wilLReturn('');
 
         $xmlProcessor->process($xml)->shouldBeCalled();
-        $dispatcher->dispatch(Argument::type(XmlFileImported::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Argument::type(XmlFileImported::class))->shouldBeCalled();
 
         $this->handle(new ImportXmlFile($file->getWrappedObject(), $xml->getWrappedObject()));
     }

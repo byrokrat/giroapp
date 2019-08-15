@@ -8,18 +8,17 @@ use byrokrat\giroapp\Filter\CombinedFilter;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Domain\Donor;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class CombinedFilterSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(CombinedFilter::CLASS);
+        $this->shouldHaveType(CombinedFilter::class);
     }
 
     function it_is_a_filter()
     {
-        $this->shouldHaveType(FilterInterface::CLASS);
+        $this->shouldHaveType(FilterInterface::class);
     }
 
     function it_has_a_name()

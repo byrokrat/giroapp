@@ -9,7 +9,6 @@ use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DonorCollectionSpec extends ObjectBehavior
 {
@@ -20,13 +19,13 @@ class DonorCollectionSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorCollection::CLASS);
+        $this->shouldHaveType(DonorCollection::class);
     }
 
     function it_throws_on_invalid_argument()
     {
         $this->beConstructedWith('this-is-not-callable-or-iterable');
-        $this->shouldThrow(\InvalidArgumentException::CLASS)->duringInstantiation();
+        $this->shouldThrow(\InvalidArgumentException::class)->duringInstantiation();
     }
 
     function it_is_iterable($donorA, $donorB)

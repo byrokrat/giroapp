@@ -23,7 +23,7 @@ class UpdateNameHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(UpdateNameHandler::CLASS);
+        $this->shouldHaveType(UpdateNameHandler::class);
     }
 
     function it_ignores_unchanged_data($donorRepository, Donor $donor)
@@ -41,7 +41,7 @@ class UpdateNameHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorName($donor, 'new')->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Argument::type(Event\DonorNameUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorNameUpdated::class))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdateName($donor->getWrappedObject(), 'new'));

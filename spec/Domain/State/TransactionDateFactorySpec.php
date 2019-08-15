@@ -8,7 +8,6 @@ use byrokrat\giroapp\Domain\State\TransactionDateFactory;
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Utils\SystemClock;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class TransactionDateFactorySpec extends ObjectBehavior
 {
@@ -20,7 +19,7 @@ class TransactionDateFactorySpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(TransactionDateFactory::CLASS);
+        $this->shouldHaveType(TransactionDateFactory::class);
     }
 
     function it_finds_date_in_current_month($systemClock, $dayOfMonth)

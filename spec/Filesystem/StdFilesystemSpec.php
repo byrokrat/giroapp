@@ -10,7 +10,6 @@ use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\giroapp\Exception\UnableToReadFileException;
 use Symfony\Component\Filesystem\Filesystem as SymfonyFilesystem;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class StdFilesystemSpec extends ObjectBehavior
 {
@@ -21,7 +20,7 @@ class StdFilesystemSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(StdFilesystem::CLASS);
+        $this->shouldHaveType(StdFilesystem::class);
     }
 
     function it_recognizes_absolute_paths($fs)
@@ -69,7 +68,7 @@ class StdFilesystemSpec extends ObjectBehavior
     {
         $fs->exists('filename')->willReturn(false);
         $fs->isAbsolutePath('filename')->willReturn(true)->shouldBeCalled();
-        $this->shouldThrow(UnableToReadFileException::CLASS)->during('readFile', ['filename']);
+        $this->shouldThrow(UnableToReadFileException::class)->during('readFile', ['filename']);
     }
 
     function it_can_read_absolute_paths($fs)

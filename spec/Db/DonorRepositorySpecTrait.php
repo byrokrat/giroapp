@@ -10,11 +10,9 @@ use byrokrat\giroapp\Exception\DonorAlreadyExistsException;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\DonorCollection;
 use byrokrat\giroapp\Domain\PostalAddress;
-use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\amount\Currency\SEK;
-use Prophecy\Argument;
 
 trait DonorRepositorySpecTrait
 {
@@ -30,7 +28,7 @@ trait DonorRepositorySpecTrait
 
     function it_is_a_donor_repository()
     {
-        $this->shouldHaveType(DonorRepositoryInterface::CLASS);
+        $this->shouldHaveType(DonorRepositoryInterface::class);
     }
 
     function it_returns_null_on_find_missing_mandate_key()
@@ -40,7 +38,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_require_missing_mandate_key()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringRequireByMandateKey('does-not-exist');
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringRequireByMandateKey('does-not-exist');
     }
 
     function it_returns_null_on_find_missing_payer_number()
@@ -50,7 +48,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_require_missing_payer_number()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringRequireByPayerNumber('does-not-exist');
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringRequireByPayerNumber('does-not-exist');
     }
 
     function it_can_add_a_donor()
@@ -62,7 +60,7 @@ trait DonorRepositorySpecTrait
     function it_throws_on_adding_a_mandate_key_duplicate()
     {
         $this->addNewDonor($this->createDonor('m-key', Active::getStateId(), '', 'A', '50001111116', '820323-2775'));
-        $this->shouldThrow(DonorAlreadyExistsException::CLASS)->duringAddNewDonor(
+        $this->shouldThrow(DonorAlreadyExistsException::class)->duringAddNewDonor(
             $this->createDonor('m-key', Active::getStateId(), '', 'B', '50001111116', '820323-2783')
         );
     }
@@ -70,7 +68,7 @@ trait DonorRepositorySpecTrait
     function it_throws_on_adding_a_personal_id_duplicate()
     {
         $this->addNewDonor($this->createDonor('A', Active::getStateId(), '', 'A', '50001111116', '820323-2783'));
-        $this->shouldThrow(DonorAlreadyExistsException::CLASS)->duringAddNewDonor(
+        $this->shouldThrow(DonorAlreadyExistsException::class)->duringAddNewDonor(
             $this->createDonor('B', Active::getStateId(), '', 'B', '50001111116', '820323-2783')
         );
     }
@@ -78,7 +76,7 @@ trait DonorRepositorySpecTrait
     function it_throws_on_adding_a_payer_number_duplicate()
     {
         $this->addNewDonor($this->createDonor('A', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'));
-        $this->shouldThrow(DonorAlreadyExistsException::CLASS)->duringAddNewDonor(
+        $this->shouldThrow(DonorAlreadyExistsException::class)->duringAddNewDonor(
             $this->createDonor('B', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2783')
         );
     }
@@ -92,7 +90,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_delete_missing_donor()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringDeleteDonor(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringDeleteDonor(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775')
         );
     }
@@ -107,7 +105,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_missing_updateDonorName()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorName(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorName(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
@@ -123,7 +121,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_missing_updateDonorState()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorState(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorState(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             new Error,
             ''
@@ -141,7 +139,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_missing_updateDonorPayerNumber()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorPayerNumber(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorPayerNumber(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
@@ -161,12 +159,12 @@ trait DonorRepositorySpecTrait
         $donorB = $this->createDonor('B', Active::getStateId(), '', 'B', '50001111116', '820323-2783');
         $this->addNewDonor($donorA);
         $this->addNewDonor($donorB);
-        $this->shouldThrow(DonorAlreadyExistsException::CLASS)->duringUpdateDonorPayerNumber($donorA, 'B');
+        $this->shouldThrow(DonorAlreadyExistsException::class)->duringUpdateDonorPayerNumber($donorA, 'B');
     }
 
     function it_throws_on_missing_updateDonorAmount()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorAmount(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorAmount(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             new SEK('0')
         );
@@ -183,7 +181,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_missing_updateDonorAddress()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorAddress(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorAddress(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             new PostalAddress
         );
@@ -200,7 +198,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_missing_updateDonorEmail()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorEmail(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorEmail(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
@@ -216,7 +214,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_missing_updateDonorPhone()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorPhone(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorPhone(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
@@ -232,7 +230,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_missing_updateDonorComment()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringUpdateDonorComment(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorComment(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );
@@ -248,7 +246,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_missing_setDonorAttribute()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringSetDonorAttribute(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringSetDonorAttribute(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             '',
             ''
@@ -275,7 +273,7 @@ trait DonorRepositorySpecTrait
 
     function it_throws_on_missing_deleteDonorAttribute()
     {
-        $this->shouldThrow(DonorDoesNotExistException::CLASS)->duringDeleteDonorAttribute(
+        $this->shouldThrow(DonorDoesNotExistException::class)->duringDeleteDonorAttribute(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
             ''
         );

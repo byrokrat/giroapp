@@ -23,12 +23,12 @@ class AwaitingTransactionRegistrationSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(AwaitingTransactionRegistration::CLASS);
+        $this->shouldHaveType(AwaitingTransactionRegistration::class);
     }
 
     function it_implements_the_state_interface()
     {
-        $this->shouldHaveType(StateInterface::CLASS);
+        $this->shouldHaveType(StateInterface::class);
     }
 
     function it_contains_an_id()
@@ -43,7 +43,7 @@ class AwaitingTransactionRegistrationSpec extends ObjectBehavior
 
     function it_is_exportable()
     {
-        $this->shouldHaveType(ExportableStateInterface::CLASS);
+        $this->shouldHaveType(ExportableStateInterface::class);
     }
 
     function it_does_not_export_without_an_amount(Donor $donor, WriterInterface $writer, SEK $amount)

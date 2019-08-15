@@ -24,7 +24,6 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorRemoved;
-use byrokrat\giroapp\Domain\State\Removed;
 
 final class ForceRemoveDonorHandler
 {

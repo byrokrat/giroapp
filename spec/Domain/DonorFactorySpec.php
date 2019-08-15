@@ -15,7 +15,6 @@ use byrokrat\amount\Currency\SEK;
 use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\IdInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DonorFactorySpec extends ObjectBehavior
 {
@@ -29,7 +28,7 @@ class DonorFactorySpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorFactory::CLASS);
+        $this->shouldHaveType(DonorFactory::class);
     }
 
     function it_creates_minimal_donor(
@@ -43,7 +42,7 @@ class DonorFactorySpec extends ObjectBehavior
         $stateCollection->getState('')->willReturn($state);
         $accountFactory->createAccount('')->willReturn($account);
         $idFactory->createId('')->willReturn($id);
-        $this->createDonor()->shouldHaveType(Donor::CLASS);
+        $this->createDonor()->shouldHaveType(Donor::class);
     }
 
     function it_reads_values(

@@ -7,13 +7,12 @@ namespace spec\byrokrat\giroapp\Validator;
 use byrokrat\giroapp\Validator\EmailValidator;
 use byrokrat\giroapp\Exception\ValidatorException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class EmailValidatorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(EmailValidator::CLASS);
+        $this->shouldHaveType(EmailValidator::class);
     }
 
     function it_returns_valid_content()
@@ -24,6 +23,6 @@ class EmailValidatorSpec extends ObjectBehavior
 
     function it_throws_on_invalid_content()
     {
-        $this->shouldThrow(ValidatorException::CLASS)->duringValidate('', 'not-an-address');
+        $this->shouldThrow(ValidatorException::class)->duringValidate('', 'not-an-address');
     }
 }

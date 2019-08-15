@@ -7,13 +7,12 @@ namespace spec\byrokrat\giroapp\Db;
 use byrokrat\giroapp\Db\DriverFactoryCollection;
 use byrokrat\giroapp\Db\DriverFactoryInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DriverFactoryCollectionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(DriverFactoryCollection::CLASS);
+        $this->shouldHaveType(DriverFactoryCollection::class);
     }
 
     function it_can_add_driver_factories(DriverFactoryInterface $driverFactory)

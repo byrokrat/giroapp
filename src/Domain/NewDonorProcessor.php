@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Domain;
 
-use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\giroapp\Domain\State\NewMandate;
 use byrokrat\giroapp\Domain\State\NewDigitalMandate;
 use byrokrat\giroapp\Domain\State\StateInterface;

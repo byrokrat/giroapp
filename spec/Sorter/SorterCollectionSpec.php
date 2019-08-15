@@ -7,13 +7,12 @@ namespace spec\byrokrat\giroapp\Sorter;
 use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class SorterCollectionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(SorterCollection::CLASS);
+        $this->shouldHaveType(SorterCollection::class);
     }
 
     function it_contains_sorter(SorterInterface $sorter)

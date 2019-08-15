@@ -9,18 +9,17 @@ use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\amount\Currency\SEK;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class AmountSorterSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(AmountSorter::CLASS);
+        $this->shouldHaveType(AmountSorter::class);
     }
 
     function it_is_a_sorter()
     {
-        $this->shouldHaveType(SorterInterface::CLASS);
+        $this->shouldHaveType(SorterInterface::class);
     }
 
     function it_contains_a_name()

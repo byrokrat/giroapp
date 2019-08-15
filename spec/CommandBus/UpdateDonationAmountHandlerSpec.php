@@ -30,7 +30,7 @@ class UpdateDonationAmountHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(UpdateDonationAmountHandler::CLASS);
+        $this->shouldHaveType(UpdateDonationAmountHandler::class);
     }
 
     function it_ignores_unchanged_data($donorRepository, Donor $donor)
@@ -56,7 +56,7 @@ class UpdateDonationAmountHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorAmount($donor, new SEK('200'))->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Argument::type(Event\DonorAmountUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorAmountUpdated::class))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdateDonationAmount($donor->getWrappedObject(), new SEK('200'), 'desc'));

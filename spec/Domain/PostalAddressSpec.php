@@ -6,14 +6,13 @@ namespace spec\byrokrat\giroapp\Domain;
 
 use byrokrat\giroapp\Domain\PostalAddress;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class PostalAddressSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
         $this->beConstructedWith('', '', '', '', '');
-        $this->shouldHaveType(PostalAddress::CLASS);
+        $this->shouldHaveType(PostalAddress::class);
     }
 
     function it_contains_line_1()

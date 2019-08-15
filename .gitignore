@@ -4,3 +4,5 @@
 /giroapp.phar
 /*.local*
 /giroapp.ini
+/.php_cs.cache
+/.php_cs

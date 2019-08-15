@@ -10,18 +10,17 @@ use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\AwaitingResponseStateInterface;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class AwaitingResponseFilterSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(AwaitingResponseFilter::CLASS);
+        $this->shouldHaveType(AwaitingResponseFilter::class);
     }
 
     function it_is_a_filter()
     {
-        $this->shouldHaveType(FilterInterface::CLASS);
+        $this->shouldHaveType(FilterInterface::class);
     }
 
     function it_has_a_name()
@@ -32,7 +31,7 @@ class AwaitingResponseFilterSpec extends ObjectBehavior
     function it_filters_donors(Donor $donor, AwaitingResponseStateInterface $state)
     {
         $donor->getState()->willReturn($state);
-        $state->implement(StateInterface::CLASS);
+        $state->implement(StateInterface::class);
         $this->filterDonor($donor)->shouldReturn(true);
     }
 }

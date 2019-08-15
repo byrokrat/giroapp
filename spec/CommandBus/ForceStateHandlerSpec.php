@@ -29,7 +29,7 @@ class ForceStateHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ForceStateHandler::CLASS);
+        $this->shouldHaveType(ForceStateHandler::class);
     }
 
     function it_can_change_donor_state($stateCollection, $donorRepository, $dispatcher, Donor $donor)
@@ -62,7 +62,7 @@ class ForceStateHandlerSpec extends ObjectBehavior
         $stateCollection->getState('new-state')->willReturn($newState);
 
         $donorRepository->updateDonorState($donor, $newState)->shouldBeCalled();
-        $dispatcher->dispatch(Argument::type(DonorStateUpdated::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Argument::type(DonorStateUpdated::class))->shouldBeCalled();
 
         $this->handle(new ForceState($donor->getWrappedObject(), 'new-state', 'desc'));
     }

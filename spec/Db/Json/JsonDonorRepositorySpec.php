@@ -8,7 +8,6 @@ use byrokrat\giroapp\Db\Json\JsonDonorRepository;
 use byrokrat\giroapp\Db\Json\JsonDriverFactory;
 use spec\byrokrat\giroapp\Db\DonorRepositorySpecTrait;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class JsonDonorRepositorySpec extends ObjectBehavior
 {
@@ -36,6 +35,6 @@ class JsonDonorRepositorySpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(JsonDonorRepository::CLASS);
+        $this->shouldHaveType(JsonDonorRepository::class);
     }
 }

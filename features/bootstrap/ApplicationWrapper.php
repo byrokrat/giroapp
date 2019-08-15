@@ -65,7 +65,7 @@ class ApplicationWrapper
         }
     }
 
-    public function __call(string $command , array $arguments): Result
+    public function __call(string $command, array $arguments): Result
     {
         return $this->execute("$command " . implode(' ', $arguments));
     }

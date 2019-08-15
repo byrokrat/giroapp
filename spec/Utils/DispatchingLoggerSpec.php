@@ -10,7 +10,6 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DispatchingLoggerSpec extends ObjectBehavior
 {
@@ -21,22 +20,22 @@ class DispatchingLoggerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(DispatchingLogger::CLASS);
+        $this->shouldHaveType(DispatchingLogger::class);
     }
 
     function it_is_a_logger()
     {
-        $this->shouldHaveType(LoggerInterface::CLASS);
+        $this->shouldHaveType(LoggerInterface::class);
     }
 
     function it_throws_on_non_scalar_level()
     {
-        $this->shouldThrow(\InvalidArgumentException::CLASS)->duringLog(null, 'message', []);
+        $this->shouldThrow(\InvalidArgumentException::class)->duringLog(null, 'message', []);
     }
 
     function it_throws_on_non_scalar_message()
     {
-        $this->shouldThrow(\InvalidArgumentException::CLASS)->duringLog('level', null, []);
+        $this->shouldThrow(\InvalidArgumentException::class)->duringLog('level', null, []);
     }
 
     function it_dispatches_log_events($dispatcher)

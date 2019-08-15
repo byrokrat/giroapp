@@ -6,13 +6,12 @@ namespace spec\byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Plugin\ApiVersion;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ApiVersionSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(ApiVersion::CLASS);
+        $this->shouldHaveType(ApiVersion::class);
     }
 
     function it_defaults_to_dev_master()

@@ -23,7 +23,7 @@ class UpdateEmailHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(UpdateEmailHandler::CLASS);
+        $this->shouldHaveType(UpdateEmailHandler::class);
     }
 
     function it_ignores_unchanged_data($donorRepository, Donor $donor)
@@ -41,7 +41,7 @@ class UpdateEmailHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorEmail($donor, 'new')->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Argument::type(Event\DonorEmailUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorEmailUpdated::class))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdateEmail($donor->getWrappedObject(), 'new'));

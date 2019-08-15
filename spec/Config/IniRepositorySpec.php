@@ -8,7 +8,6 @@ use byrokrat\giroapp\Config\IniRepository;
 use byrokrat\giroapp\Config\RepositoryInterface;
 use byrokrat\giroapp\Exception\InvalidConfigException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class IniRepositorySpec extends ObjectBehavior
 {
@@ -19,12 +18,12 @@ class IniRepositorySpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(IniRepository::CLASS);
+        $this->shouldHaveType(IniRepository::class);
     }
 
     function it_is_a_repository()
     {
-        $this->shouldHaveType(RepositoryInterface::CLASS);
+        $this->shouldHaveType(RepositoryInterface::class);
     }
 
     function it_contains_configs()
@@ -36,6 +35,6 @@ class IniRepositorySpec extends ObjectBehavior
     function it_fails_on_invalid_ini_string()
     {
         $this->beConstructedWith('null = null');
-        $this->shouldThrow(InvalidConfigException::CLASS)->duringInstantiation();
+        $this->shouldThrow(InvalidConfigException::class)->duringInstantiation();
     }
 }

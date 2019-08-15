@@ -23,7 +23,7 @@ class UpdatePhoneHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(UpdatePhoneHandler::CLASS);
+        $this->shouldHaveType(UpdatePhoneHandler::class);
     }
 
     function it_ignores_unchanged_data($donorRepository, Donor $donor)
@@ -41,7 +41,7 @@ class UpdatePhoneHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorPhone($donor, 'new')->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Argument::type(Event\DonorPhoneUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorPhoneUpdated::class))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdatePhone($donor->getWrappedObject(), 'new'));

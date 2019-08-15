@@ -23,7 +23,7 @@ class UpdateCommentHandlerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(UpdateCommentHandler::CLASS);
+        $this->shouldHaveType(UpdateCommentHandler::class);
     }
 
     function it_ignores_unchanged_data($donorRepository, Donor $donor)
@@ -41,7 +41,7 @@ class UpdateCommentHandlerSpec extends ObjectBehavior
         $donorRepository->updateDonorComment($donor, 'new')->shouldBeCalled();
 
         $dispatcher
-            ->dispatch(Argument::type(Event\DonorCommentUpdated::CLASS))
+            ->dispatch(Argument::type(Event\DonorCommentUpdated::class))
             ->shouldBeCalled();
 
         $this->handle(new CommandBus\UpdateComment($donor->getWrappedObject(), 'new'));

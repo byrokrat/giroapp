@@ -8,14 +8,13 @@ use byrokrat\giroapp\Event\Listener\DonorStateListener;
 use byrokrat\giroapp\Event\DonorStateUpdated;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DonorStateListenerSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
         $this->beConstructedWith('state-id', 'is_string');
-        $this->shouldHaveType(DonorStateListener::CLASS);
+        $this->shouldHaveType(DonorStateListener::class);
     }
 
     function it_ignores_unknown_states(DonorStateUpdated $event)
@@ -88,7 +87,7 @@ class DonorStateListenerSpec extends ObjectBehavior
         $event->getNewState()->willReturn($state);
 
         $called = false;
-        $this->beConstructedWith(StateInterface::CLASS, function () use (&$called) {
+        $this->beConstructedWith(StateInterface::class, function () use (&$called) {
             $called = true;
         });
 

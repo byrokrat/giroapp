@@ -7,7 +7,6 @@ namespace spec\byrokrat\giroapp\Config;
 use byrokrat\giroapp\Config\LazyConfig;
 use byrokrat\giroapp\Config\ConfigInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class LazyConfigSpec extends ObjectBehavior
 {
@@ -19,12 +18,12 @@ class LazyConfigSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(LazyConfig::CLASS);
+        $this->shouldHaveType(LazyConfig::class);
     }
 
     function it_is_a_config()
     {
-        $this->shouldHaveType(ConfigInterface::CLASS);
+        $this->shouldHaveType(ConfigInterface::class);
     }
 
     function it_contains_a_value()
@@ -40,6 +39,6 @@ class LazyConfigSpec extends ObjectBehavior
         $this->beConstructedWith(function () {
             return 123;
         });
-        $this->shouldThrow(\LogicException::CLASS)->during('getValue');
+        $this->shouldThrow(\LogicException::class)->during('getValue');
     }
 }

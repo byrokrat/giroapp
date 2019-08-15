@@ -7,13 +7,12 @@ namespace spec\byrokrat\giroapp\Validator;
 use byrokrat\giroapp\Validator\DonorKeyValidator;
 use byrokrat\giroapp\Exception\ValidatorException;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class DonorKeyValidatorSpec extends ObjectBehavior
 {
     function it_is_initializable()
     {
-        $this->shouldHaveType(DonorKeyValidator::CLASS);
+        $this->shouldHaveType(DonorKeyValidator::class);
     }
 
     function it_returns_valid_content()
@@ -23,6 +22,6 @@ class DonorKeyValidatorSpec extends ObjectBehavior
 
     function it_throws_on_invalid_content()
     {
-        $this->shouldThrow(ValidatorException::CLASS)->duringValidate('key', 'a.a');
+        $this->shouldThrow(ValidatorException::class)->duringValidate('key', 'a.a');
     }
 }

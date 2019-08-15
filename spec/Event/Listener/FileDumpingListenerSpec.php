@@ -25,7 +25,7 @@ class FileDumpingListenerSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(FileDumpingListener::CLASS);
+        $this->shouldHaveType(FileDumpingListener::class);
     }
 
     function it_writes_imports_to_filesystem(
@@ -43,7 +43,7 @@ class FileDumpingListenerSpec extends ObjectBehavior
 
         $fs->writeFile($processedFile)->shouldBeCalled();
 
-        $dispatcher->dispatch(Argument::type(LogEvent::CLASS))->shouldBeCalled();
+        $dispatcher->dispatch(Argument::type(LogEvent::class))->shouldBeCalled();
 
         $this->onFileEvent($event);
         $this->onExecutionStopped(new ExecutionStopped);

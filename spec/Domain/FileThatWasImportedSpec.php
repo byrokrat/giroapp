@@ -6,7 +6,6 @@ namespace spec\byrokrat\giroapp\Domain;
 
 use byrokrat\giroapp\Domain\FileThatWasImported;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class FileThatWasImportedSpec extends ObjectBehavior
 {
@@ -20,7 +19,7 @@ class FileThatWasImportedSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(FileThatWasImported::CLASS);
+        $this->shouldHaveType(FileThatWasImported::class);
     }
 
     function it_contains_a_filename()

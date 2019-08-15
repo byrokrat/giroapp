@@ -31,7 +31,6 @@ use Fig\EventDispatcher\AggregateProvider;
 use Crell\Tukio\OrderedProviderInterface;
 use Psr\Log\LoggerInterface;
 use PhpSpec\ObjectBehavior;
-use Prophecy\Argument;
 
 class ConfiguringEnvironmentSpec extends ObjectBehavior
 {
@@ -67,12 +66,12 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
 
     function it_is_initializable()
     {
-        $this->shouldHaveType(ConfiguringEnvironment::CLASS);
+        $this->shouldHaveType(ConfiguringEnvironment::class);
     }
 
     function it_is_an_environment()
     {
-        $this->shouldHaveType(EnvironmentInterface::CLASS);
+        $this->shouldHaveType(EnvironmentInterface::class);
     }
 
     function it_can_validate_version_constraints()
@@ -82,7 +81,7 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
 
     function it_fails_if_version_is_not_supported()
     {
-        $this->shouldThrow(UnsupportedVersionException::CLASS)
+        $this->shouldThrow(UnsupportedVersionException::class)
             ->duringAssertApiVersion(new ApiVersionConstraint('', '^2'));
     }
 

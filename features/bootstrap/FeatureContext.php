@@ -5,7 +5,6 @@ declare(strict_types = 1);
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-use Behat\Behat\Tester\Exception\PendingException;
 use byrokrat\giroapp\Domain\MandateSources;
 
 class FeatureContext implements Context
