@@ -2,7 +2,7 @@
 
 ## Unreleased changes
 
-* Nothing
+* Prints a trace on foreign errors when in verbose mode.
 
 ## Updating to beta-2
 

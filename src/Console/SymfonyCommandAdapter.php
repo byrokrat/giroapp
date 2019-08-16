@@ -107,6 +107,10 @@ final class SymfonyCommandAdapter extends Command
                 )
             );
 
+            if ($output->isVerbose()) {
+                $output->writeln($e->getTraceAsString());
+            }
+
             $commandBus->handle(new Rollback);
 
             return $e->getCode() ?: GiroappException::GENERIC_ERROR;
