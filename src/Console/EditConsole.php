@@ -79,115 +79,105 @@ final class EditConsole implements ConsoleInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
+        $commandQueue = [];
+
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 
         $donor = $this->readDonor($input);
 
-        $this->commandBus->handle(
-            new CommandBus\UpdateName(
-                $donor,
-                $inputReader->readInput(
-                    'name',
-                    Helper\QuestionFactory::createQuestion(self::DESCS['name'], $donor->getName()),
-                    new Validator\ValidatorCollection(
-                        new Validator\StringValidator,
-                        new Validator\NotEmptyValidator
-                    )
+        $commandQueue[] = new CommandBus\UpdateName(
+            $donor,
+            $inputReader->readInput(
+                'name',
+                Helper\QuestionFactory::createQuestion(self::DESCS['name'], $donor->getName()),
+                new Validator\ValidatorCollection(
+                    new Validator\StringValidator,
+                    new Validator\NotEmptyValidator
                 )
             )
         );
 
-        $this->commandBus->handle(
-            new CommandBus\UpdatePostalAddress(
-                $donor,
-                new PostalAddress(
-                    $inputReader->readInput(
-                        'address1',
-                        Helper\QuestionFactory::createQuestion(
-                            self::DESCS['address1'],
-                            $donor->getPostalAddress()->getLine1()
-                        ),
-                        new Validator\StringValidator
-                    ),
-                    $inputReader->readInput(
-                        'address2',
-                        Helper\QuestionFactory::createQuestion(
-                            self::DESCS['address2'],
-                            $donor->getPostalAddress()->getLine2()
-                        ),
-                        new Validator\StringValidator
-                    ),
-                    $inputReader->readInput(
-                        'address3',
-                        Helper\QuestionFactory::createQuestion(
-                            self::DESCS['address3'],
-                            $donor->getPostalAddress()->getLine3()
-                        ),
-                        new Validator\StringValidator
-                    ),
-                    $inputReader->readInput(
-                        'postal-code',
-                        Helper\QuestionFactory::createQuestion(
-                            self::DESCS['postal-code'],
-                            $donor->getPostalAddress()->getPostalCode()
-                        ),
-                        new Validator\PostalCodeValidator
-                    ),
-                    $inputReader->readInput(
-                        'postal-city',
-                        Helper\QuestionFactory::createQuestion(
-                            self::DESCS['postal-city'],
-                            $donor->getPostalAddress()->getPostalCity()
-                        ),
-                        new Validator\StringValidator
-                    )
-                )
-            )
-        );
-
-        $this->commandBus->handle(
-            new CommandBus\UpdateEmail(
-                $donor,
+        $commandQueue[] = new CommandBus\UpdatePostalAddress(
+            $donor,
+            new PostalAddress(
                 $inputReader->readInput(
-                    'email',
-                    Helper\QuestionFactory::createQuestion(self::DESCS['email'], $donor->getEmail()),
-                    new Validator\EmailValidator
-                )
-            )
-        );
-
-        $this->commandBus->handle(
-            new CommandBus\UpdatePhone(
-                $donor,
+                    'address1',
+                    Helper\QuestionFactory::createQuestion(
+                        self::DESCS['address1'],
+                        $donor->getPostalAddress()->getLine1()
+                    ),
+                    new Validator\StringValidator
+                ),
                 $inputReader->readInput(
-                    'phone',
-                    Helper\QuestionFactory::createQuestion(self::DESCS['phone'], $donor->getPhone()),
-                    new Validator\PhoneValidator
-                )
-            )
-        );
-
-        $this->commandBus->handle(
-            new CommandBus\UpdateComment(
-                $donor,
+                    'address2',
+                    Helper\QuestionFactory::createQuestion(
+                        self::DESCS['address2'],
+                        $donor->getPostalAddress()->getLine2()
+                    ),
+                    new Validator\StringValidator
+                ),
                 $inputReader->readInput(
-                    'comment',
-                    Helper\QuestionFactory::createQuestion(self::DESCS['comment'], $donor->getComment()),
+                    'address3',
+                    Helper\QuestionFactory::createQuestion(
+                        self::DESCS['address3'],
+                        $donor->getPostalAddress()->getLine3()
+                    ),
+                    new Validator\StringValidator
+                ),
+                $inputReader->readInput(
+                    'postal-code',
+                    Helper\QuestionFactory::createQuestion(
+                        self::DESCS['postal-code'],
+                        $donor->getPostalAddress()->getPostalCode()
+                    ),
+                    new Validator\PostalCodeValidator
+                ),
+                $inputReader->readInput(
+                    'postal-city',
+                    Helper\QuestionFactory::createQuestion(
+                        self::DESCS['postal-city'],
+                        $donor->getPostalAddress()->getPostalCity()
+                    ),
                     new Validator\StringValidator
                 )
             )
         );
 
+        $commandQueue[] = new CommandBus\UpdateEmail(
+            $donor,
+            $inputReader->readInput(
+                'email',
+                Helper\QuestionFactory::createQuestion(self::DESCS['email'], $donor->getEmail()),
+                new Validator\EmailValidator
+            )
+        );
+
+        $commandQueue[] = new CommandBus\UpdatePhone(
+            $donor,
+            $inputReader->readInput(
+                'phone',
+                Helper\QuestionFactory::createQuestion(self::DESCS['phone'], $donor->getPhone()),
+                new Validator\PhoneValidator
+            )
+        );
+
+        $commandQueue[] = new CommandBus\UpdateComment(
+            $donor,
+            $inputReader->readInput(
+                'comment',
+                Helper\QuestionFactory::createQuestion(self::DESCS['comment'], $donor->getComment()),
+                new Validator\StringValidator
+            )
+        );
+
         foreach ($donor->getAttributes() as $attrKey => $attrValue) {
-            $this->commandBus->handle(
-                new CommandBus\UpdateAttribute(
-                    $donor,
-                    $attrKey,
-                    $inputReader->readInput(
-                        '',
-                        Helper\QuestionFactory::createQuestion("Attribute <info>$attrKey</info>", $attrValue),
-                        new Validator\StringValidator
-                    )
+            $commandQueue[] = new CommandBus\UpdateAttribute(
+                $donor,
+                $attrKey,
+                $inputReader->readInput(
+                    '',
+                    Helper\QuestionFactory::createQuestion("Attribute <info>$attrKey</info>", $attrValue),
+                    new Validator\StringValidator
                 )
             );
         }
@@ -209,17 +199,19 @@ final class EditConsole implements ConsoleInterface
                 break;
             }
 
-            $this->commandBus->handle(
-                new CommandBus\UpdateAttribute(
-                    $donor,
-                    $attrKey,
-                    $inputReader->readInput(
-                        '',
-                        Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
-                        new Validator\StringValidator
-                    )
+            $commandQueue[] = new CommandBus\UpdateAttribute(
+                $donor,
+                $attrKey,
+                $inputReader->readInput(
+                    '',
+                    Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
+                    new Validator\StringValidator
                 )
             );
+        }
+
+        foreach ($commandQueue as $command) {
+            $this->commandBus->handle($command);
         }
     }
 }

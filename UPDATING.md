@@ -3,6 +3,7 @@
 ## Unreleased changes
 
 * Prints a trace on foreign errors when in verbose mode.
+* Run all commands after input is read to avoid confusion in plugins on SIGTERM.
 
 ## Updating to beta-2
 
