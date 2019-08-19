@@ -4,6 +4,7 @@
 
 * Prints a trace on foreign errors when in verbose mode.
 * Run all commands after input is read to avoid confusion in plugins on SIGTERM.
+* Add `rm` as an alias for `remove`.
 
 ## Updating to beta-2
 

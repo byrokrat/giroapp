@@ -37,6 +37,7 @@ final class RemoveConsole implements ConsoleInterface
 
     public function configure(Command $command): void
     {
+        $command->setAliases(['rm']);
         $command->setName('remove');
         $command->setDescription('Completely remove donors');
         $command->setHelp('Completely remove donors from the database');
