@@ -1,4 +1,5 @@
 /vendor
+/vendor-bin
 /composer.phar
 /.giroapp
 /giroapp.phar

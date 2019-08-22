@@ -34,30 +34,8 @@ Giroapp supports dynamic [plugins](docs/plugins.md). Officially supported plugin
 
 ## Building
 
-Giroapp uses [bob](https://github.com/CHH/bob) to run tests and build artifacts.
-
-To complete a build you must first install some dependencies.
+To build you need `make` and composer installed as `composer`.
 
 ```shell
-composer global require chh/bob:^1.0@alpha
-bob install_dev_tools
-composer install
-```
-
-Make sure to have the global composer bin directory in your include path.
-
-```shell
-export PATH=$PATH:~/.composer/vendor/bin/
-```
-
-Build project from within the project directory tree
-
-```shell
-bob
-```
-
-Or for more information run
-
-```shell
-bob --tasks
+make
 ```

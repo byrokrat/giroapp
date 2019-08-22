@@ -1,0 +1,18 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types = 1);
+
+require __DIR__ . '/../vendor/autoload.php';
+
+use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
+use Symfony\Component\Workflow\Definition;
+use Symfony\Component\Workflow\Dumper\GraphvizDumper;
+
+$container = new ProjectServiceContainer;
+
+$definition = $container->get(Definition::class);
+
+$dumper = new GraphvizDumper;
+
+echo $dumper->dump($definition);

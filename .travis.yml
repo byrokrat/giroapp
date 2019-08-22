@@ -8,18 +8,14 @@ php:
 
 install:
     - composer install
-    - export PATH=$PATH:$HOME/.config/composer/vendor/bin/
-    - composer global require consolidation/cgr
-    - cgr chh/bob:^1@alpha
-    - cgr phpspec/phpspec:^5
-    - cgr behat/behat:^3
-    - cgr humbug/box:^3
+    - make vendor/bin/phpspec
+    - make vendor/bin/behat
 
 script:
-    - phpspec run --verbose
-    - behat --suite=debug
-    - bob phar
-    - behat --suite=phar
+    - vendor/bin/phpspec run --verbose
+    - make build
+    - vendor/bin/behat --suite=debug
+    - vendor/bin/behat --suite=phar
 
 deploy:
     provider: releases

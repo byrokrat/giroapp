@@ -1,6 +1,8 @@
 /composer.lock binary
 ProjectServiceContainer.php binary
 /docs/states.svg binary
+/bin/build_container export-ignore
+/bin/build_state_graph export-ignore
 /docs export-ignore
 /etc export-ignore
 /features export-ignore
@@ -10,7 +12,6 @@ ProjectServiceContainer.php binary
 /.travis.yml export-ignore
 /.php_cs.dist export-ignore
 /behat.yml export-ignore
-/bob_config.php export-ignore
 /CHANGELOG.md export-ignore
 /box.json.dist export-ignore
 /dev_giroapp export-ignore
@@ -18,3 +19,4 @@ ProjectServiceContainer.php binary
 /phpstan.neon export-ignore
 /README.md export-ignore
 /UPDATING.md export-ignore
+/Makefile

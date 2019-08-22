@@ -16,7 +16,7 @@ services:
 
     byrokrat\giroapp\:
         resource: '../src/*'
-        exclude: '../src/{Domain/State,Workflow}'
+        exclude: '../src/{DependencyInjection/ProjectServiceContainer.php,Domain/State,Workflow}'
 
     Symfony\Component\Console\Application:
         class: ~
