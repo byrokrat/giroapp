@@ -20,24 +20,30 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\Money;
 
-use byrokrat\giroapp\Domain\Donor;
 use Money\Money;
+use Money\MoneyFormatter;
 
-final class DonorAmountUpdated extends DonorEvent
+final class SekNoSubunitMoneyFormatter implements MoneyFormatter
 {
-    /** @var Money */
-    private $newAmount;
-
-    public function __construct(Donor $donor, Money $newAmount)
+    /**
+     * @return string
+     */
+    public function format(Money $money)
     {
-        parent::__construct("Changed amount on mandate '{$donor->getMandateKey()}'", $donor);
-        $this->newAmount = $newAmount;
-    }
+        if ($money->getCurrency()->getCode() != 'SEK') {
+            throw new \InvalidArgumentException('SekNoSubunitMoneyFormatter can only work with SEK');
+        }
 
-    public function getNewAmount(): Money
-    {
-        return $this->newAmount;
+        $amount = $money->getAmount();
+
+        $subunits = substr($amount, -2);
+
+        if ($subunits != '00') {
+            throw new \InvalidArgumentException('Money subunits not allowed');
+        }
+
+        return substr($amount, 0, -2) ?: '0';
     }
 }

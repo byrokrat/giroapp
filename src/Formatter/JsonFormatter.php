@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Formatter;
 
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Domain\Donor;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -30,6 +31,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class JsonFormatter implements FormatterInterface
 {
+    use DependencyInjection\MoneyFormatterProperty;
+
     /**
      * @var OutputInterface
      */
@@ -70,7 +73,7 @@ final class JsonFormatter implements FormatterInterface
             ],
             'email' => $donor->getEmail(),
             'phone' => $donor->getPhone(),
-            'amount' => $donor->getDonationAmount()->getAmount(),
+            'amount' => $this->moneyFormatter->format($donor->getDonationAmount()),
             'comment' => $donor->getComment(),
             'created' => $donor->getCreated()->format(\DateTime::W3C),
             'updated' => $donor->getUpdated()->format(\DateTime::W3C),

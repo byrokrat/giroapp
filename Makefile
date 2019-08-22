@@ -51,8 +51,8 @@ maintainer-clean: clean
 preconds: dependency_check security_check
 
 dependency_check: vendor
-	#$(COMPOSER) validate --strict
-	#$(COMPOSER) outdated --strict --minor-only
+	$(COMPOSER) validate --strict
+	$(COMPOSER) outdated --strict --minor-only
 
 security_check: vendor $(SECURITY_CHECKER)
 	$(SECURITY_CHECKER) security:check composer.lock

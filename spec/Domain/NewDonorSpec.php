@@ -8,21 +8,22 @@ use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 use PhpSpec\ObjectBehavior;
 
 class NewDonorSpec extends ObjectBehavior
 {
     const PAYER_NUMBER = 'payer-number';
+    const DONATION_AMOUNT = 100;
 
-    function let(AccountNumber $account, PersonalId $donorId, SEK $donationAmount)
+    function let(AccountNumber $account, PersonalId $donorId)
     {
         $this->beConstructedWith(
             MandateSources::MANDATE_SOURCE_PAPER,
             self::PAYER_NUMBER,
             $account,
             $donorId,
-            $donationAmount
+            Money::SEK(self::DONATION_AMOUNT)
         );
     }
 
@@ -51,8 +52,8 @@ class NewDonorSpec extends ObjectBehavior
         $this->getDonorId()->shouldEqual($donorId);
     }
 
-    function it_contains_an_amount($donationAmount)
+    function it_contains_an_amount()
     {
-        $this->getDonationAmount()->shouldEqual($donationAmount);
+        $this->getDonationAmount()->shouldBeLike(Money::SEK(self::DONATION_AMOUNT));
     }
 }

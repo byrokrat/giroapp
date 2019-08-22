@@ -32,7 +32,7 @@ Giroapp supports dynamic [plugins](docs/plugins.md). Officially supported plugin
 
 * [Mailer](https://github.com/byrokrat/giroapp-mailer-plugin): send mails on giroapp events.
 
-## Building
+## Building from source
 
 To build you need `make` and composer installed as `composer`.
 

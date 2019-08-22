@@ -12,14 +12,11 @@ use byrokrat\giroapp\Domain\DonorCollection;
 use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\Active;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 
 trait DonorRepositorySpecTrait
 {
     use DriverTestEnvironmentTrait;
-
-    /** @var DriverEnvironment */
-    private $driverEnvironment;
 
     protected function createDonor(...$args): Donor
     {
@@ -166,7 +163,7 @@ trait DonorRepositorySpecTrait
     {
         $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorAmount(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
-            new SEK('0')
+            Money::SEK('0')
         );
     }
 
@@ -174,7 +171,7 @@ trait DonorRepositorySpecTrait
     {
         $donor = $this->createDonor('m-key', Active::getStateId(), '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
-        $newAmount = new SEK('666');
+        $newAmount = Money::SEK('66600');
         $this->updateDonorAmount($donor, $newAmount);
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getDonationAmount', $newAmount);
     }

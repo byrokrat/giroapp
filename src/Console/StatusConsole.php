@@ -22,14 +22,15 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\DonorQueryProperty;
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Domain\State\AwaitingResponseStateInterface;
 use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Domain\State\Paused;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
+use Money\MoneyFormatter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -40,7 +41,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class StatusConsole implements ConsoleInterface
 {
-    use DonorQueryProperty;
+    use DependencyInjection\DonorQueryProperty,
+        DependencyInjection\MoneyFormatterProperty;
 
     public function configure(Command $command): void
     {
@@ -60,7 +62,7 @@ final class StatusConsole implements ConsoleInterface
     {
         $counts = [
             'donor-count' => 0,
-            'monthly-amount' => new SEK('0'),
+            'monthly-amount' => Money::SEK('0'),
             'exportable-count' => 0,
             'waiting-count' => 0,
             'error-count' => 0,
@@ -95,6 +97,8 @@ final class StatusConsole implements ConsoleInterface
             }
         }
 
+        $counts['monthly-amount'] = $this->moneyFormatter->format($counts['monthly-amount']);
+
         foreach (array_keys($counts) as $key) {
             if ($input->getOption($key)) {
                 $output->writeln((string)$counts[$key]);
@@ -102,10 +106,8 @@ final class StatusConsole implements ConsoleInterface
             }
         }
 
-        $amount = number_format($counts['monthly-amount']->getFloat(), 0, ',', ' ');
-
         $output->writeln("<comment>Donors: {$counts['donor-count']}</comment>");
-        $output->writeln("<comment>Monthly amount: $amount kr</comment>");
+        $output->writeln("<comment>Monthly amount: {$counts['monthly-amount']} kr</comment>");
         $output->writeln($this->format('Exportables', $counts['exportable-count']));
         $output->writeln($this->format('Awaiting response', $counts['waiting-count']));
         $output->writeln($this->format('Errors', $counts['error-count']));

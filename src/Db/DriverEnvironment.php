@@ -24,6 +24,7 @@ namespace byrokrat\giroapp\Db;
 
 use byrokrat\giroapp\Domain\DonorFactory;
 use byrokrat\giroapp\Utils\SystemClock;
+use Money\MoneyFormatter;
 
 /**
  * The environment in which a database driver is invoked
@@ -36,10 +37,14 @@ class DriverEnvironment
     /** @var DonorFactory */
     private $donorFactory;
 
-    public function __construct(SystemClock $clock, DonorFactory $donorFactory)
+    /** @var MoneyFormatter */
+    private $moneyFormatter;
+
+    public function __construct(SystemClock $clock, DonorFactory $donorFactory, MoneyFormatter $moneyFormatter)
     {
         $this->clock = $clock;
         $this->donorFactory = $donorFactory;
+        $this->moneyFormatter = $moneyFormatter;
     }
 
     public function getClock(): SystemClock
@@ -50,5 +55,10 @@ class DriverEnvironment
     public function getDonorFactory(): DonorFactory
     {
         return $this->donorFactory;
+    }
+
+    public function getMoneyFormatter(): MoneyFormatter
+    {
+        return $this->moneyFormatter;
     }
 }

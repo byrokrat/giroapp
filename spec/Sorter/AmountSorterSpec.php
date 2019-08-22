@@ -7,7 +7,7 @@ namespace spec\byrokrat\giroapp\Sorter;
 use byrokrat\giroapp\Sorter\AmountSorter;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\Domain\Donor;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 use PhpSpec\ObjectBehavior;
 
 class AmountSorterSpec extends ObjectBehavior
@@ -29,8 +29,8 @@ class AmountSorterSpec extends ObjectBehavior
 
     function it_equals_donors(Donor $left, Donor $right)
     {
-        $left->getDonationAmount()->willReturn(new SEK('1'));
-        $right->getDonationAmount()->willReturn(new SEK('2'));
+        $left->getDonationAmount()->willReturn(Money::SEK('1'));
+        $right->getDonationAmount()->willReturn(Money::SEK('2'));
         $this->compareDonors($left, $right)->shouldReturn(-1);
     }
 }

@@ -20,24 +20,23 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\DependencyInjection;
 
-use byrokrat\giroapp\Domain\Donor;
-use Money\Money;
+use Money\MoneyParser;
 
-final class DonorAmountUpdated extends DonorEvent
+/**
+ * Use this trait to automatically inject a money parser
+ */
+trait MoneyParserProperty
 {
-    /** @var Money */
-    private $newAmount;
+    /** @var MoneyParser */
+    protected $moneyParser;
 
-    public function __construct(Donor $donor, Money $newAmount)
+    /**
+     * @required
+     */
+    public function setMoneyParser(MoneyParser $moneyParser): void
     {
-        parent::__construct("Changed amount on mandate '{$donor->getMandateKey()}'", $donor);
-        $this->newAmount = $newAmount;
-    }
-
-    public function getNewAmount(): Money
-    {
-        return $this->newAmount;
+        $this->moneyParser = $moneyParser;
     }
 }

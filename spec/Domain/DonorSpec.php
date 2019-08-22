@@ -11,7 +11,7 @@ use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Exception\UnknownIdentifierException;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\PersonalId;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 use PhpSpec\ObjectBehavior;
 
 class DonorSpec extends ObjectBehavior
@@ -24,13 +24,13 @@ class DonorSpec extends ObjectBehavior
     const COMMENT = 'comment';
     const ATTR_KEY = 'ATTR_KEY';
     const ATTR_VALUE = 'ATTR_VALUE';
+    const DONATION_AMOUNT = 100;
 
     function let(
         StateInterface $state,
         AccountNumber $account,
         PersonalId $donorId,
         PostalAddress $address,
-        SEK $donationAmount,
         \DateTimeImmutable $created,
         \DateTimeImmutable $updated
     ) {
@@ -45,7 +45,7 @@ class DonorSpec extends ObjectBehavior
             $address,
             self::EMAIL,
             self::PHONE,
-            $donationAmount,
+            Money::SEK(self::DONATION_AMOUNT),
             self::COMMENT,
             $created,
             $updated,
@@ -108,9 +108,9 @@ class DonorSpec extends ObjectBehavior
         $this->getPhone()->shouldEqual(self::PHONE);
     }
 
-    function it_contains_an_amount($donationAmount)
+    function it_contains_an_amount()
     {
-        $this->getDonationAmount()->shouldEqual($donationAmount);
+        $this->getDonationAmount()->shouldBeLike(Money::SEK(self::DONATION_AMOUNT));
     }
 
     function it_contains_a_comment()

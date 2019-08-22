@@ -37,9 +37,9 @@ use byrokrat\giroapp\Validator\IdValidator;
 use byrokrat\giroapp\Validator\PayerNumberValidator;
 use byrokrat\giroapp\Validator\PostalCodeValidator;
 use byrokrat\giroapp\Validator\StringValidator;
-use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\OrganizationId;
+use Money\Money;
 
 class XmlMandateProcessor
 {
@@ -117,7 +117,7 @@ class XmlMandateProcessor
                             $mandate->readElement('/MedgivandeViaHemsida/Kontonr', new AccountValidator)
                         ),
                         $donorId,
-                        new SEK('0')
+                        Money::SEK('0')
                     )
                 )
             );

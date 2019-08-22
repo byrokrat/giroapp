@@ -23,26 +23,26 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Domain\Donor;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 
 final class UpdateDonationAmount
 {
     use Helper\DonorAwareTrait;
 
-    /** @var SEK */
+    /** @var Money */
     private $newAmount;
 
     /** @var string */
     private $updateDesc;
 
-    public function __construct(Donor $donor, SEK $newAmount, string $updateDesc)
+    public function __construct(Donor $donor, Money $newAmount, string $updateDesc)
     {
         $this->setDonor($donor);
         $this->newAmount = $newAmount;
         $this->updateDesc = $updateDesc;
     }
 
-    public function getNewAmount(): SEK
+    public function getNewAmount(): Money
     {
         return $this->newAmount;
     }

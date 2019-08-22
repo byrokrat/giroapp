@@ -154,6 +154,12 @@ services:
         class: ~
         autowire: false
 
+    Money\MoneyFormatter:
+        class: byrokrat\giroapp\Money\SekNoSubunitMoneyFormatter
+
+    Money\MoneyParser:
+        class: byrokrat\giroapp\Money\SekNoSubunitMoneyParser
+
     Psr\Log\LoggerInterface:
         factory: byrokrat\giroapp\Utils\LoggerFactory:createLogger
         arguments:

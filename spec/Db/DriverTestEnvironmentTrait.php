@@ -10,6 +10,8 @@ use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\giroapp\Domain\State\StateCollection;
 use byrokrat\giroapp\Domain\State\Active;
 use byrokrat\giroapp\Domain\State\Error;
+use byrokrat\giroapp\Money\SekNoSubunitMoneyFormatter;
+use byrokrat\giroapp\Money\SekNoSubunitMoneyParser;
 use byrokrat\banking\AccountFactory;
 use byrokrat\id\PersonalIdFactory;
 
@@ -20,18 +22,20 @@ trait DriverTestEnvironmentTrait
 
     protected function getDriverEnvironment(): DriverEnvironment
     {
-        $stateCollection = new StateCollection;
-        $stateCollection->addState(new Active);
-        $stateCollection->addState(new Error);
-
         if (!isset($this->driverEnvironment)) {
+            $stateCollection = new StateCollection;
+            $stateCollection->addState(new Active);
+            $stateCollection->addState(new Error);
+
             $this->driverEnvironment = new DriverEnvironment(
                 new SystemClock,
                 new DonorFactory(
                     $stateCollection,
                     new AccountFactory,
-                    new PersonalIdFactory
-                )
+                    new PersonalIdFactory,
+                    new SekNoSubunitMoneyParser
+                ),
+                new SekNoSubunitMoneyFormatter
             );
         }
 

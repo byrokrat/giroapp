@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Domain;
 
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 
 class NewDonor
 {
@@ -40,7 +40,7 @@ class NewDonor
     /** @var IdInterface */
     private $donorId;
 
-    /** @var SEK */
+    /** @var Money */
     private $donationAmount;
 
     public function __construct(
@@ -48,7 +48,7 @@ class NewDonor
         string $payerNumber,
         AccountNumber $account,
         IdInterface $donorId,
-        SEK $donationAmount
+        Money $donationAmount
     ) {
         $this->mandateSource = $mandateSource;
         $this->payerNumber = $payerNumber;
@@ -77,7 +77,7 @@ class NewDonor
         return $this->donorId;
     }
 
-    public function getDonationAmount(): SEK
+    public function getDonationAmount(): Money
     {
         return $this->donationAmount;
     }

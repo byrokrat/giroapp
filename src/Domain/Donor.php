@@ -26,7 +26,7 @@ use byrokrat\giroapp\Exception\UnknownIdentifierException;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 
 /**
  * Models an individual donor
@@ -84,7 +84,7 @@ class Donor
     private $phone;
 
     /**
-     * @var SEK
+     * @var Money
      */
     private $donationAmount;
 
@@ -122,7 +122,7 @@ class Donor
         PostalAddress $address,
         string $email,
         string $phone,
-        SEK $donationAmount,
+        Money $donationAmount,
         string $comment,
         \DateTimeImmutable $created,
         \DateTimeImmutable $updated,
@@ -195,7 +195,7 @@ class Donor
         return $this->phone;
     }
 
-    public function getDonationAmount(): SEK
+    public function getDonationAmount(): Money
     {
         return $this->donationAmount;
     }

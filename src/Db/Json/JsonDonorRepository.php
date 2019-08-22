@@ -31,9 +31,10 @@ use byrokrat\giroapp\Domain\DonorFactory;
 use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Utils\SystemClock;
 use byrokrat\giroapp\Domain\State\StateInterface;
-use byrokrat\amount\Currency\SEK;
 use hanneskod\yaysondb\CollectionInterface;
 use hanneskod\yaysondb\Operators as y;
+use Money\Money;
+use Money\MoneyFormatter;
 
 final class JsonDonorRepository implements DonorRepositoryInterface
 {
@@ -48,14 +49,19 @@ final class JsonDonorRepository implements DonorRepositoryInterface
     /** @var SystemClock */
     private $systemClock;
 
+    /** @var MoneyFormatter */
+    private $moneyFormatter;
+
     public function __construct(
         CollectionInterface $collection,
         DonorFactory $donorFactory,
-        SystemClock $systemClock
+        SystemClock $systemClock,
+        MoneyFormatter $moneyFormatter
     ) {
         $this->collection = $collection;
         $this->donorFactory = $donorFactory;
         $this->systemClock = $systemClock;
+        $this->moneyFormatter = $moneyFormatter;
     }
 
     public function findAll(): DonorCollection
@@ -167,9 +173,9 @@ final class JsonDonorRepository implements DonorRepositoryInterface
         $this->updateDonor($donor, ['payer_number' => $newPayerNumber]);
     }
 
-    public function updateDonorAmount(Donor $donor, SEK $newAmount): void
+    public function updateDonorAmount(Donor $donor, Money $newAmount): void
     {
-        $this->updateDonor($donor, ['donation_amount' => $newAmount->getAmount()]);
+        $this->updateDonor($donor, ['donation_amount' => $this->moneyFormatter->format($newAmount)]);
     }
 
     public function updateDonorAddress(Donor $donor, PostalAddress $newAddress): void
@@ -245,7 +251,7 @@ final class JsonDonorRepository implements DonorRepositoryInterface
             ],
             'email' => $donor->getEmail(),
             'phone' => $donor->getPhone(),
-            'donation_amount' => $donor->getDonationAmount()->getAmount(),
+            'donation_amount' => $this->moneyFormatter->format($donor->getDonationAmount()),
             'comment' => $donor->getComment(),
             'created' => $donor->getCreated()->format(\DateTime::W3C),
             'updated' => $donor->getUpdated()->format(\DateTime::W3C),

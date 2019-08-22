@@ -10,7 +10,7 @@ use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\State\TransactionDateFactory;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\autogiro\Writer\WriterInterface;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -46,17 +46,17 @@ class AwaitingTransactionRegistrationSpec extends ObjectBehavior
         $this->shouldHaveType(ExportableStateInterface::class);
     }
 
-    function it_does_not_export_without_an_amount(Donor $donor, WriterInterface $writer, SEK $amount)
+    function it_does_not_export_without_an_amount(Donor $donor, WriterInterface $writer)
     {
-        $amount->isPositive()->willReturn(false);
+        $amount = Money::SEK(-100);
         $donor->getDonationAmount()->willReturn($amount);
         $writer->addMonthlyPayment(Argument::cetera())->shouldNotBeCalled();
         $this->exportToAutogiro($donor, $writer);
     }
 
-    function it_can_be_exported($dateFactory, Donor $donor, WriterInterface $writer, SEK $amount)
+    function it_can_be_exported($dateFactory, Donor $donor, WriterInterface $writer)
     {
-        $amount->isPositive()->willReturn(true);
+        $amount = Money::SEK(100);
 
         $donor->getDonationAmount()->willReturn($amount);
         $donor->getPayerNumber()->willReturn('payer_number');

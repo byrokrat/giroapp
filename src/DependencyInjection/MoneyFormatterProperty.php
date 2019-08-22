@@ -20,24 +20,23 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\DependencyInjection;
 
-use byrokrat\giroapp\Domain\Donor;
-use Money\Money;
+use Money\MoneyFormatter;
 
-final class DonorAmountUpdated extends DonorEvent
+/**
+ * Use this trait to automatically inject a money formatter
+ */
+trait MoneyFormatterProperty
 {
-    /** @var Money */
-    private $newAmount;
+    /** @var MoneyFormatter */
+    protected $moneyFormatter;
 
-    public function __construct(Donor $donor, Money $newAmount)
+    /**
+     * @required
+     */
+    public function setMoneyFormatter(MoneyFormatter $moneyFormatter): void
     {
-        parent::__construct("Changed amount on mandate '{$donor->getMandateKey()}'", $donor);
-        $this->newAmount = $newAmount;
-    }
-
-    public function getNewAmount(): Money
-    {
-        return $this->newAmount;
+        $this->moneyFormatter = $moneyFormatter;
     }
 }

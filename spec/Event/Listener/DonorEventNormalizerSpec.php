@@ -23,14 +23,16 @@ use byrokrat\giroapp\Event\TransactionPerformed;
 use byrokrat\giroapp\Event\TransactionFailed;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
+use Money\MoneyFormatter;
 use PhpSpec\ObjectBehavior;
 
 class DonorEventNormalizerSpec extends ObjectBehavior
 {
-    function let(Donor $donor)
+    function let(Donor $donor, MoneyFormatter $moneyFormatter)
     {
         $donor->getMandateKey()->willReturn('mandate_key');
+        $this->setMoneyFormatter($moneyFormatter);
     }
 
     function it_is_initializable()
@@ -43,7 +45,7 @@ class DonorEventNormalizerSpec extends ObjectBehavior
         $this->shouldThrow(\LogicException::class)->duringNormalizeEvent($event);
     }
 
-    function it_normalizes_donor_added($donor, AccountNumber $account, IdInterface $id)
+    function it_normalizes_donor_added($donor, $moneyFormatter, AccountNumber $account, IdInterface $id)
     {
         $donor->getMandateKey()->willReturn('mandate_key');
         $donor->getPayerNumber()->willReturn('payer_number');
@@ -72,9 +74,12 @@ class DonorEventNormalizerSpec extends ObjectBehavior
         $donor->getPostalAddress()->willReturn(new PostalAddress('foo', 'bar', 'baz', '12345', 'city'));
         $donor->getEmail()->willReturn('email');
         $donor->getPhone()->willReturn('phone');
-        $donor->getDonationAmount()->willReturn(new SEK('666'));
         $donor->getComment()->willReturn('comment');
         $donor->getAttributes()->willReturn(['key' => 'value']);
+
+        $money = Money::SEK('666');
+        $donor->getDonationAmount()->willReturn($money);
+        $moneyFormatter->format($money)->willReturn('666');
 
         $this->normalizeEvent(new DonorAdded($donor->getWrappedObject()))->shouldReturn([
             'mandate_key' => 'mandate_key',
@@ -101,9 +106,11 @@ class DonorEventNormalizerSpec extends ObjectBehavior
         ]);
     }
 
-    function it_normalizes_amount_updated($donor)
+    function it_normalizes_amount_updated($donor, $moneyFormatter)
     {
-        $this->normalizeEvent(new DonorAmountUpdated($donor->getWrappedObject(), new SEK('666')))->shouldReturn([
+        $money = Money::SEK('1');
+        $moneyFormatter->format($money)->willReturn('666');
+        $this->normalizeEvent(new DonorAmountUpdated($donor->getWrappedObject(), $money))->shouldReturn([
             'donation_amount' => '666'
         ]);
     }
@@ -182,22 +189,26 @@ class DonorEventNormalizerSpec extends ObjectBehavior
         ]);
     }
 
-    function it_normalizes_transaction_performed($donor)
+    function it_normalizes_transaction_performed($donor, $moneyFormatter)
     {
+        $money = Money::SEK('100');
+        $moneyFormatter->format($money)->willReturn('100');
         $this->normalizeEvent(
-            new TransactionPerformed($donor->getWrappedObject(), new SEK('100'), new \DateTimeImmutable('20190812'))
+            new TransactionPerformed($donor->getWrappedObject(), $money, new \DateTimeImmutable('20190812'))
         )->shouldReturn([
-            'transaction_amount' => '100.00',
+            'transaction_amount' => '100',
             'transaction_date' => '2019-08-12'
         ]);
     }
 
-    function it_normalizes_transaction_failed($donor)
+    function it_normalizes_transaction_failed($donor, $moneyFormatter)
     {
+        $money = Money::SEK('100');
+        $moneyFormatter->format($money)->willReturn('100');
         $this->normalizeEvent(
-            new TransactionFailed($donor->getWrappedObject(), new SEK('100'), new \DateTimeImmutable('20190812'))
+            new TransactionFailed($donor->getWrappedObject(), $money, new \DateTimeImmutable('20190812'))
         )->shouldReturn([
-            'transaction_amount' => '100.00',
+            'transaction_amount' => '100',
             'transaction_date' => '2019-08-12'
         ]);
     }

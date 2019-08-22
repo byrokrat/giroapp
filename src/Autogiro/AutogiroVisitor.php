@@ -172,7 +172,7 @@ class AutogiroVisitor extends Visitor
             )
         );
 
-        /** @var \byrokrat\amount\Currency\SEK $amount */
+        /** @var \Money\Money $amount */
         $amount = $node->getChild('Amount')->getValueFrom('Object');
 
         $eventClassName = $success ? TransactionPerformed::class : TransactionFailed::class;

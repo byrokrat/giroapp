@@ -25,7 +25,7 @@ use byrokrat\giroapp\Exception\DonorAlreadyExistsException;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Domain\State\StateInterface;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 
 /**
  * Defines the interface for manipulating the donor repository
@@ -65,7 +65,7 @@ interface DonorRepositoryInterface extends DonorQueryInterface
     /**
      * @throws DonorDoesNotExistException If donor does not exist in repository
      */
-    public function updateDonorAmount(Donor $donor, SEK $newAmount): void;
+    public function updateDonorAmount(Donor $donor, Money $newAmount): void;
 
     /**
      * @throws DonorDoesNotExistException If donor does not exist in repository

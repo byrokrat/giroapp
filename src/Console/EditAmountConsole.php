@@ -22,10 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\CommandBus\UpdateDonationAmount;
 use byrokrat\giroapp\Validator;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -34,7 +34,10 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class EditAmountConsole implements ConsoleInterface
 {
-    use CommandBusProperty, Helper\DonorArgument;
+    use DependencyInjection\CommandBusProperty,
+        DependencyInjection\MoneyFormatterProperty,
+        DependencyInjection\MoneyParserProperty,
+        Helper\DonorArgument;
 
     public function configure(Command $command): void
     {
@@ -57,21 +60,23 @@ final class EditAmountConsole implements ConsoleInterface
 
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 
-        $rawAmount = $inputReader->readInput(
-            'new-amount',
-            Helper\QuestionFactory::createQuestion(
-                'New monthly donation amount',
-                $donor->getDonationAmount()->getAmount()
-            ),
-            new Validator\ValidatorCollection(
-                new Validator\NotEmptyValidator,
-                new Validator\NumericValidator
+        $amount = $this->moneyParser->parse(
+            $inputReader->readInput(
+                'new-amount',
+                Helper\QuestionFactory::createQuestion(
+                    'New monthly donation amount',
+                    $this->moneyFormatter->format($donor->getDonationAmount())
+                ),
+                new Validator\ValidatorCollection(
+                    new Validator\NotEmptyValidator,
+                    new Validator\NumericValidator
+                )
             )
         );
 
         /** @var string $msg */
         $msg = $input->getOption('message') ?: 'Amount edited by user';
 
-        $this->commandBus->handle(new UpdateDonationAmount($donor, new SEK($rawAmount), $msg));
+        $this->commandBus->handle(new UpdateDonationAmount($donor, $amount, $msg));
     }
 }

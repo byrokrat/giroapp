@@ -11,9 +11,10 @@ use byrokrat\giroapp\Domain\State\StateCollection;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
-use byrokrat\amount\Currency\SEK;
 use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\IdInterface;
+use Money\Money;
+use Money\MoneyParser;
 use PhpSpec\ObjectBehavior;
 
 class DonorFactorySpec extends ObjectBehavior
@@ -21,9 +22,10 @@ class DonorFactorySpec extends ObjectBehavior
     function let(
         StateCollection $stateCollection,
         AccountFactoryInterface $accountFactory,
-        IdFactoryInterface $idFactory
+        IdFactoryInterface $idFactory,
+        MoneyParser $moneyParser
     ) {
-        $this->beConstructedWith($stateCollection, $accountFactory, $idFactory);
+        $this->beConstructedWith($stateCollection, $accountFactory, $idFactory, $moneyParser);
     }
 
     function it_is_initializable()
@@ -35,6 +37,7 @@ class DonorFactorySpec extends ObjectBehavior
         $stateCollection,
         $accountFactory,
         $idFactory,
+        $moneyParser,
         StateInterface $state,
         AccountNumber $account,
         IdInterface $id
@@ -42,6 +45,7 @@ class DonorFactorySpec extends ObjectBehavior
         $stateCollection->getState('')->willReturn($state);
         $accountFactory->createAccount('')->willReturn($account);
         $idFactory->createId('')->willReturn($id);
+        $moneyParser->parse('0')->willReturn(Money::SEK('0'));
         $this->createDonor()->shouldHaveType(Donor::class);
     }
 
@@ -49,6 +53,7 @@ class DonorFactorySpec extends ObjectBehavior
         $stateCollection,
         $accountFactory,
         $idFactory,
+        $moneyParser,
         StateInterface $state,
         AccountNumber $account,
         IdInterface $id
@@ -56,6 +61,8 @@ class DonorFactorySpec extends ObjectBehavior
         $stateCollection->getState('state')->willReturn($state);
         $accountFactory->createAccount('account')->willReturn($account);
         $idFactory->createId('id')->willReturn($id);
+        $money = Money::SEK('100');
+        $moneyParser->parse('100')->willReturn($money);
 
         $this->createDonor(
             'key',
@@ -84,7 +91,7 @@ class DonorFactorySpec extends ObjectBehavior
             new PostalAddress('address'),
             'email',
             'phone',
-            new SEK('100'),
+            $money,
             'comment',
             new \DateTimeImmutable('2017-11-04T13:25:19+01:00'),
             new \DateTimeImmutable('2018-11-04T13:25:19+01:00'),

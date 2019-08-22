@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Formatter;
 
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Domain\Donor;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -30,6 +31,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class HumanFormatter implements FormatterInterface
 {
+    use DependencyInjection\MoneyFormatterProperty;
+
     /**
      * @var OutputInterface
      */
@@ -77,7 +80,7 @@ final class HumanFormatter implements FormatterInterface
         $this->output->writeln("address: <info>" . implode(", ", $address) . "</info>");
         $this->output->writeln("email: <info>{$donor->getEmail()}</info>");
         $this->output->writeln("phone: <info>{$donor->getPhone()}</info>");
-        $this->output->writeln("amount: <info>{$donor->getDonationAmount()->getAmount()}</info>");
+        $this->output->writeln("amount: <info>{$this->moneyFormatter->format($donor->getDonationAmount())}</info>");
         $this->output->writeln("comment: <info>{$donor->getComment()}</info>");
         $this->output->writeln("created: <info>{$donor->getCreated()->format('Y-m-d')}</info>");
         $this->output->writeln("updated: <info>{$donor->getUpdated()->format('Y-m-d')}</info>");

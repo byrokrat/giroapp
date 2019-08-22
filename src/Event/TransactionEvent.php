@@ -24,24 +24,23 @@ namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Utils\ClassIdExtractor;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 use Psr\Log\LogLevel;
 
 abstract class TransactionEvent extends DonorEvent
 {
-    /** @var SEK */
+    /** @var Money */
     private $amount;
 
     /** @var \DateTimeImmutable */
     private $date;
 
-    public function __construct(Donor $donor, SEK $amount, \DateTimeImmutable $date)
+    public function __construct(Donor $donor, Money $amount, \DateTimeImmutable $date)
     {
         parent::__construct(
             sprintf(
-                '%s: SEK %s from %s on %s',
+                '%s from %s on %s',
                 new ClassIdExtractor($this),
-                $amount,
                 $donor->getMandateKey(),
                 $date->format('Y-m-d')
             ),
@@ -53,7 +52,7 @@ abstract class TransactionEvent extends DonorEvent
         $this->date = $date;
     }
 
-    public function getAmount(): SEK
+    public function getTransactionAmount(): Money
     {
         return $this->amount;
     }

@@ -49,7 +49,8 @@ final class JsonDriver implements DriverInterface
         return new JsonDonorRepository(
             $this->db->collection('donors'),
             $environment->getDonorFactory(),
-            $environment->getClock()
+            $environment->getClock(),
+            $environment->getMoneyFormatter()
         );
     }
 

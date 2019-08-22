@@ -14,9 +14,9 @@ use byrokrat\giroapp\Domain\State\NewDigitalMandate;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\State\StateCollection;
 use byrokrat\giroapp\Utils\SystemClock;
-use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
+use Money\Money;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
@@ -40,7 +40,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
         $newDonor->getAccount()->willReturn($account);
         $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_PAPER);
         $newDonor->getPayerNumber()->willReturn('');
-        $newDonor->getDonationAmount()->willReturn(new SEK('1'));
+        $newDonor->getDonationAmount()->willReturn(Money::SEK('1'));
     }
 
     function it_is_initializable()
@@ -60,7 +60,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
 
         $stateCollection->getState(NewMandate::getStateId())->willReturn($state);
 
-        $amount = new SEK('1');
+        $amount = Money::SEK('1');
 
         $id->format('Ss')->willReturn('1');
         $account->get16()->willReturn('11');

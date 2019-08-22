@@ -33,6 +33,6 @@ final class AmountSorter implements SorterInterface
 
     public function compareDonors(Donor $left, Donor $right): int
     {
-        return $left->getDonationAmount()->compareTo($right->getDonationAmount());
+        return $left->getDonationAmount()->compare($right->getDonationAmount());
     }
 }

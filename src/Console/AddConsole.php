@@ -34,7 +34,7 @@ use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Validator;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
@@ -46,6 +46,7 @@ final class AddConsole implements ConsoleInterface
     use DependencyInjection\AccountFactoryProperty,
         DependencyInjection\CommandBusProperty,
         DependencyInjection\DonorRepositoryProperty,
+        DependencyInjection\MoneyParserProperty,
         DependencyInjection\IdFactoryProperty;
 
     /**
@@ -147,7 +148,7 @@ final class AddConsole implements ConsoleInterface
             )
         );
 
-        $donationAmount = new SEK(
+        $donationAmount = $this->moneyParser->parse(
             $inputReader->readInput(
                 'amount',
                 Helper\QuestionFactory::createQuestion($descs['amount']),

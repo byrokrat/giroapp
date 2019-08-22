@@ -18,11 +18,11 @@ use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Event\TransactionFailed;
 use byrokrat\giroapp\Event\TransactionPerformed;
 use byrokrat\giroapp\Workflow\Transitions;
-use byrokrat\amount\Currency\SEK;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
+use Money\Money;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -314,7 +314,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $dateNode->getValueFrom('Object')->willReturn(new \DateTimeImmutable('20190812'));
 
         $parentNode->getChild('Amount')->willReturn($amountNode);
-        $amountNode->getValueFrom('Object')->willReturn(new SEK('100'));
+        $amountNode->getValueFrom('Object')->willReturn(Money::SEK('100'));
 
         $commandBus->handle(
             new AttemptState(
@@ -347,7 +347,7 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $dateNode->getValueFrom('Object')->willReturn(new \DateTimeImmutable('20190812'));
 
         $parentNode->getChild('Amount')->willReturn($amountNode);
-        $amountNode->getValueFrom('Object')->willReturn(new SEK('100'));
+        $amountNode->getValueFrom('Object')->willReturn(Money::SEK('100'));
 
         $commandBus->handle(
             new AttemptState(

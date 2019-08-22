@@ -4,76 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f980cbc2e6b1c89da3fd7fb8ed475598",
+    "content-hash": "33e454e3b6ed3a3ad0f9b9c161d05e4c",
     "packages": [
         {
-            "name": "byrokrat/amount",
-            "version": "2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/byrokrat/amount.git",
-                "reference": "d9437c54308fbf75f764592b3176ed17df999078"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/byrokrat/amount/zipball/d9437c54308fbf75f764592b3176ed17df999078",
-                "reference": "d9437c54308fbf75f764592b3176ed17df999078",
-                "shasum": ""
-            },
-            "require": {
-                "ext-bcmath": "*",
-                "php": ">=7.0"
-            },
-            "require-dev": {
-                "alcohol/iso4217": "^3",
-                "ext-intl": "*",
-                "phpunit/phpunit": "^6"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "byrokrat\\amount\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "Unlicense"
-            ],
-            "authors": [
-                {
-                    "name": "Hannes Forsgård",
-                    "email": "hannes.forsgard@fripost.org"
-                }
-            ],
-            "description": "Value objects for monetary amounts",
-            "homepage": "https://github.com/byrokrat/amount",
-            "keywords": [
-                "currency",
-                "economics",
-                "monetary amount",
-                "money"
-            ],
-            "time": "2019-08-20T11:11:43+00:00"
-        },
-        {
             "name": "byrokrat/autogiro",
-            "version": "1.0.0-beta6",
+            "version": "1.0.0-beta8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/byrokrat/autogiro.git",
-                "reference": "7035467af18e991c0c130d83294b0779aa3e1583"
+                "reference": "20e937cfe00dd89e2cc067bbb6f1a3027e50d274"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/byrokrat/autogiro/zipball/7035467af18e991c0c130d83294b0779aa3e1583",
-                "reference": "7035467af18e991c0c130d83294b0779aa3e1583",
+                "url": "https://api.github.com/repos/byrokrat/autogiro/zipball/20e937cfe00dd89e2cc067bbb6f1a3027e50d274",
+                "reference": "20e937cfe00dd89e2cc067bbb6f1a3027e50d274",
                 "shasum": ""
             },
             "require": {
-                "byrokrat/amount": "^2",
                 "byrokrat/banking": "^2.1",
                 "byrokrat/id": "^2",
                 "ext-mbstring": "*",
+                "moneyphp/money": "^3",
                 "neitanod/forceutf8": "~2.0",
                 "php": ">=7.1"
             },
@@ -100,7 +51,7 @@
             "keywords": [
                 "autogiro"
             ],
-            "time": "2019-02-06T08:45:24+00:00"
+            "time": "2019-08-21T13:17:13+00:00"
         },
         {
             "name": "byrokrat/banking",
@@ -740,6 +691,88 @@
                 "service layer"
             ],
             "time": "2017-11-30T09:17:20+00:00"
+        },
+        {
+            "name": "moneyphp/money",
+            "version": "v3.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/moneyphp/money.git",
+                "reference": "f6085de6c565e98d2f9a7311a605987b54e06d5e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/moneyphp/money/zipball/f6085de6c565e98d2f9a7311a605987b54e06d5e",
+                "reference": "f6085de6c565e98d2f9a7311a605987b54e06d5e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "cache/taggable-cache": "^0.4.0",
+                "doctrine/instantiator": "^1.0.5",
+                "ext-bcmath": "*",
+                "ext-gmp": "*",
+                "ext-intl": "*",
+                "florianv/exchanger": "^1.0",
+                "florianv/swap": "^3.0",
+                "leanphp/phpspec-code-coverage": "^3.0 || ^4.0",
+                "moneyphp/iso-currencies": "^3.0",
+                "php-http/message": "^1.4",
+                "php-http/mock-client": "^1.0.0",
+                "phpspec/phpspec": "^3.0",
+                "phpunit/phpunit": "^5.7 || ^6.4 || ^7.0",
+                "psr/cache": "^1.0",
+                "symfony/phpunit-bridge": "^4"
+            },
+            "suggest": {
+                "ext-bcmath": "Calculate without integer limits",
+                "ext-gmp": "Calculate without integer limits",
+                "ext-intl": "Format Money objects with intl",
+                "florianv/exchanger": "Exchange rates library for PHP",
+                "florianv/swap": "Exchange rates library for PHP",
+                "psr/cache-implementation": "Used for Currency caching"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Money\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Márk Sági-Kazár",
+                    "email": "mark.sagikazar@gmail.com"
+                },
+                {
+                    "name": "Mathias Verraes",
+                    "email": "mathias@verraes.net",
+                    "homepage": "http://verraes.net"
+                },
+                {
+                    "name": "Frederik Bosch",
+                    "email": "f.bosch@genkgo.nl"
+                }
+            ],
+            "description": "PHP implementation of Fowler's Money pattern",
+            "homepage": "http://moneyphp.org",
+            "keywords": [
+                "Value Object",
+                "money",
+                "vo"
+            ],
+            "time": "2019-02-07T18:01:35+00:00"
         },
         {
             "name": "neitanod/forceutf8",

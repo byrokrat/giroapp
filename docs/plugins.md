@@ -46,7 +46,7 @@ least 100 SEK:
 use byrokrat\giroapp\Plugin\Plugin;
 use byrokrat\giroapp\Event\DonorAdded;
 use byrokrat\giroapp\Event\Listener\ListenerInterface;
-use byrokrat\amount\Currency\SEK;
+use Money\Money;
 
 return new Plugin(
     new class() implements ListenerInterface
@@ -55,7 +55,7 @@ return new Plugin(
         {
             $donor = $event->getDonor();
 
-            if (!$donor->getDonationAmount()->isGreaterThanOrEquals(new SEK('100'))) {
+            if (!$donor->getDonationAmount()->greaterThanOrEqual(Money::SEK('10000'))) {
                 throw new \RuntimeException('Donation amount must be at least 100');
             }
         }

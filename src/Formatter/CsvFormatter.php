@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Formatter;
 
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Domain\Donor;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -30,6 +31,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class CsvFormatter implements FormatterInterface
 {
+    use DependencyInjection\MoneyFormatterProperty;
+
     /**
      * @var OutputInterface
      */
@@ -92,7 +95,7 @@ final class CsvFormatter implements FormatterInterface
             $donor->getPostalAddress()->getPostalCity(),
             $donor->getEmail(),
             $donor->getPhone(),
-            $donor->getDonationAmount()->getAmount(),
+            $this->moneyFormatter->format($donor->getDonationAmount()),
             $donor->getComment(),
             $donor->getCreated()->format(\DateTime::W3C),
             $donor->getUpdated()->format(\DateTime::W3C),

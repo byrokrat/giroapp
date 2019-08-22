@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event\Listener;
 
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\DonorAdded;
 use byrokrat\giroapp\Event\DonorAmountUpdated;
@@ -38,6 +39,8 @@ use byrokrat\giroapp\Event\TransactionEvent;
 
 class DonorEventNormalizer
 {
+    use DependencyInjection\MoneyFormatterProperty;
+
     public function normalizeEvent(DonorEvent $event): array
     {
         switch (true) {
@@ -60,13 +63,13 @@ class DonorEventNormalizer
                     ],
                     'email' => $donor->getEmail(),
                     'phone' => $donor->getPhone(),
-                    'donation_amount' => $donor->getDonationAmount()->getAmount(),
+                    'donation_amount' => $this->moneyFormatter->format($donor->getDonationAmount()),
                     'comment' => $donor->getComment(),
                     'attributes' => $donor->getAttributes(),
                 ];
             case $event instanceof DonorAmountUpdated:
                 return [
-                    'donation_amount' => $event->getNewAmount()->getAmount(),
+                    'donation_amount' => $this->moneyFormatter->format($event->getNewAmount()),
                 ];
             case $event instanceof DonorAttributeUpdated:
                 return [
@@ -115,7 +118,7 @@ class DonorEventNormalizer
                 ];
             case $event instanceof TransactionEvent:
                 return [
-                    'transaction_amount' => $event->getAmount()->getString(),
+                    'transaction_amount' => $this->moneyFormatter->format($event->getTransactionAmount()),
                     'transaction_date' => $event->getDate()->format('Y-m-d'),
                 ];
         }

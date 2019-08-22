@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Domain;
 use byrokrat\giroapp\Domain\State\StateCollection;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\id\IdFactoryInterface;
-use byrokrat\amount\Currency\SEK;
+use Money\MoneyParser;
 
 class DonorFactory
 {
@@ -38,14 +38,19 @@ class DonorFactory
     /** @var IdFactoryInterface */
     private $idFactory;
 
+    /** @var MoneyParser */
+    private $moneyParser;
+
     public function __construct(
         StateCollection $stateCollection,
         AccountFactoryInterface $accountFactory,
-        IdFactoryInterface $idFactory
+        IdFactoryInterface $idFactory,
+        MoneyParser $moneyParser
     ) {
         $this->stateCollection = $stateCollection;
         $this->accountFactory = $accountFactory;
         $this->idFactory = $idFactory;
+        $this->moneyParser = $moneyParser;
     }
 
     /**
@@ -80,7 +85,7 @@ class DonorFactory
             new PostalAddress(...$address),
             $email,
             $phone,
-            new SEK($donationAmount),
+            $this->moneyParser->parse($donationAmount),
             $comment,
             new \DateTimeImmutable($created),
             new \DateTimeImmutable($updated),

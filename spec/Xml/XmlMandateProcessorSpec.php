@@ -22,12 +22,12 @@ use byrokrat\giroapp\Validator\IdValidator;
 use byrokrat\giroapp\Validator\PayerNumberValidator;
 use byrokrat\giroapp\Validator\PostalCodeValidator;
 use byrokrat\giroapp\Validator\StringValidator;
-use byrokrat\amount\Currency\SEK;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
 use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\OrganizationId;
+use Money\Money;
 use PhpSpec\ObjectBehavior;
 
 class XmlMandateProcessorSpec extends ObjectBehavior
@@ -118,7 +118,7 @@ class XmlMandateProcessorSpec extends ObjectBehavior
                 'payer-number',
                 $account->getWrappedObject(),
                 $donorId->getWrappedObject(),
-                new SEK('0')
+                Money::SEK('0')
             )
         ))->shouldBeCalled();
 
