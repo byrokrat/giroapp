@@ -24,8 +24,14 @@
             "spec\\byrokrat\\giroapp\\": ["spec/"]
         }
     },
+    "config": {
+        "platform": {
+            "php": "7.2.20"
+        }
+    },
     "require": {
         "php": ">=7.2",
+        "ext-bcmath": "*",
         "ext-mbstring": "*",
         "ext-simplexml": "*",
         "byrokrat/autogiro": "^1.0.0@beta",

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0d09ac5b1647fb9931bd206f393400a4",
+    "content-hash": "1993cf24ad0278934e873fa9ac61b212",
     "packages": [
         {
             "name": "byrokrat/autogiro",
@@ -2255,8 +2255,12 @@
     "prefer-lowest": false,
     "platform": {
         "php": ">=7.2",
+        "ext-bcmath": "*",
         "ext-mbstring": "*",
         "ext-simplexml": "*"
     },
-    "platform-dev": []
+    "platform-dev": [],
+    "platform-overrides": {
+        "php": "7.2.20"
+    }
 }
