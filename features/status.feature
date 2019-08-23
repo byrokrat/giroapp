@@ -19,7 +19,7 @@ Feature: Examine database status
 
   Scenario: I check the amount count
     When I run "status --monthly-amount"
-    Then the output contains a line like "/^100$/"
+    Then the output contains a line like "/^100.00$/"
 
   Scenario: I check the exportable count
     When I run "status --exportable-count"

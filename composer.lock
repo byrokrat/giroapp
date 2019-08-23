@@ -1617,12 +1617,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/workflow.git",
-                "reference": "2c7b1068c7417048adbbb3b050098cb58f3c387f"
+                "reference": "8105503a92fdae87a2f84c676f838dce39d3f631"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/workflow/zipball/2c7b1068c7417048adbbb3b050098cb58f3c387f",
-                "reference": "2c7b1068c7417048adbbb3b050098cb58f3c387f",
+                "url": "https://api.github.com/repos/symfony/workflow/zipball/8105503a92fdae87a2f84c676f838dce39d3f631",
+                "reference": "8105503a92fdae87a2f84c676f838dce39d3f631",
                 "shasum": ""
             },
             "require": {
@@ -1678,7 +1678,7 @@
                 "transition",
                 "workflow"
             ],
-            "time": "2019-08-21T15:56:53+00:00"
+            "time": "2019-08-23T12:18:57+00:00"
         },
         {
             "name": "zendframework/zend-code",

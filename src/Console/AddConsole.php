@@ -156,7 +156,8 @@ final class AddConsole implements ConsoleInterface
                     new Validator\NotEmptyValidator,
                     new Validator\NumericValidator
                 )
-            )
+            ),
+            'SEK'
         );
 
         $name = $inputReader->readInput(

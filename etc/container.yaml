@@ -155,10 +155,13 @@ services:
         autowire: false
 
     Money\MoneyFormatter:
-        class: byrokrat\giroapp\Money\SekNoSubunitMoneyFormatter
+        class: Money\Formatter\DecimalMoneyFormatter
 
     Money\MoneyParser:
-        class: byrokrat\giroapp\Money\SekNoSubunitMoneyParser
+        class: Money\Parser\DecimalMoneyParser
+
+    Money\Currencies:
+        class: Money\Currencies\ISOCurrencies
 
     Psr\Log\LoggerInterface:
         factory: byrokrat\giroapp\Utils\LoggerFactory:createLogger

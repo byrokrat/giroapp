@@ -71,7 +71,8 @@ final class EditAmountConsole implements ConsoleInterface
                     new Validator\NotEmptyValidator,
                     new Validator\NumericValidator
                 )
-            )
+            ),
+            'SEK'
         );
 
         /** @var string $msg */

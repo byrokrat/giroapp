@@ -85,7 +85,7 @@ class DonorFactory
             new PostalAddress(...$address),
             $email,
             $phone,
-            $this->moneyParser->parse($donationAmount),
+            $this->moneyParser->parse($donationAmount, 'SEK'),
             $comment,
             new \DateTimeImmutable($created),
             new \DateTimeImmutable($updated),

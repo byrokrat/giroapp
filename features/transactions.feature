@@ -24,7 +24,7 @@ Feature: Display transaction information
         09201907019900000001000000000001000000000000000000000000000000000000
         """
     And I run "transactions 12345"
-    Then the output contains a line like "/[^0-9]+100[^0-9]+2019-07-01/"
+    Then the output contains a line like "/[^0-9]+100\.00[^0-9]+2019-07-01/"
 
   Scenario: I display failed transactions from a donor
     Given there are donors:
@@ -38,4 +38,4 @@ Feature: Display transaction information
         09201907019900000001000000000000000000000000000000000000000000000000
         """
     And I run "trans 12345 --failed"
-    Then the output contains a line like "/[^0-9]+100[^0-9]+2019-07-01/"
+    Then the output contains a line like "/[^0-9]+100\.00[^0-9]+2019-07-01/"
