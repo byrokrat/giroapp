@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1993cf24ad0278934e873fa9ac61b212",
+    "content-hash": "24b7cce8771ee5f2ece810a1827a980c",
     "packages": [
         {
             "name": "byrokrat/autogiro",
@@ -560,16 +560,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.53",
+            "version": "1.0.54",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "08e12b7628f035600634a5e76d95b5eb66cea674"
+                "reference": "c681ed22508947a941f113d6cf51bdcf4b84faf9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/08e12b7628f035600634a5e76d95b5eb66cea674",
-                "reference": "08e12b7628f035600634a5e76d95b5eb66cea674",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/c681ed22508947a941f113d6cf51bdcf4b84faf9",
+                "reference": "c681ed22508947a941f113d6cf51bdcf4b84faf9",
                 "shasum": ""
             },
             "require": {
@@ -640,7 +640,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2019-06-18T20:09:29+00:00"
+            "time": "2019-08-23T21:50:05+00:00"
         },
         {
             "name": "league/tactician",
@@ -2254,13 +2254,13 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "php": ">=7.2",
+        "php": ">=7.2.9",
         "ext-bcmath": "*",
         "ext-mbstring": "*",
         "ext-simplexml": "*"
     },
     "platform-dev": [],
     "platform-overrides": {
-        "php": "7.2.20"
+        "php": "7.2.9"
     }
 }

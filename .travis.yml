@@ -7,9 +7,7 @@ php:
     - 7.2
 
 install:
-    - composer install
-    - make vendor/bin/phpspec
-    - make vendor/bin/behat
+    - make vendor-bin/installed
 
 script:
     - vendor/bin/phpspec run --verbose

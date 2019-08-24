@@ -6,6 +6,7 @@
 * Run all commands after input is read to avoid confusion in plugins on SIGTERM.
 * Add `rm` as an alias for `remove`.
 * Using `moneyphp\money` for monetary amounts.
+* Make sure that releases are built using the lowest supported php version.
 
 ## Updating to beta-2
 

@@ -14,5 +14,5 @@
     "replacement-sigil": "$",
     "git": "app_version",
     "algorithm": "SHA512",
-    "chmod": "0550"
+    "chmod": "0555"
 }

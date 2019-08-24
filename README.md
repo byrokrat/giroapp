@@ -8,34 +8,49 @@ Command line app for managing autogiro donations.
 
 ## Installation
 
-1. Download the latest phar archive from the [releases](https://github.com/byrokrat/giroapp/releases) tab.
+### As a phar archive (recommended)
 
-2. Optionally drop the `.phar` extension.
+Download the latest phar archive from the
+[releases](https://github.com/byrokrat/giroapp/releases) tab.
 
-3. Run `giroapp init` to create a default `giroapp.ini` in the current directory.
+Optionally rename `giroapp.phar` to `giroapp` for a smoother experience.
 
-4. Edit `giroapp.ini` using a standard text editor.
+### Through composer
 
-5. Optionally specify the location of the configuration file. See below.
+```shell
+composer require byrokrat/giroapp
+```
 
-6. Simply run `giroapp` to se the list of avaliable commands.
+This will make `giroapp` avaliable as `vendor/bin/giroapp`.
 
-### Specifying the location of giroapp.ini
+### From source
+
+To build you need `make`
+
+```shell
+make
+sudo make install
+```
+
+If composer is not installed as `composer` you can use something like
+
+```shell
+make COMPOSER_CMD=./composer.phar
+```
+
+## Getting started
 
 By default giroapp looks for configurations in a file called `giroapp.ini` in
 the current working directory. Tell giroapp where to look for configurations
 be defining a `GIROAPP_INI` environment variable.
+
+Run `giroapp init` to create a default `giroapp.ini` in the current working
+directory. Edit using a standard text editor.
+
+Simply run `giroapp` to se the list of avaliable commands.
 
 ## Plugins
 
 Giroapp supports dynamic [plugins](docs/plugins.md). Officially supported plugins:
 
 * [Mailer](https://github.com/byrokrat/giroapp-mailer-plugin): send mails on giroapp events.
-
-## Building from source
-
-To build you need `make` and composer installed as `composer`.
-
-```shell
-make
-```
