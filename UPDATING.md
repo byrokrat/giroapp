@@ -2,16 +2,25 @@
 
 ## Unreleased changes
 
+...
+
+## Beta-3
+
+Beta-3 is generally a bug-fix release and the phar can simply be dumped in place
+of beta-1 or beta-2. When updating from an alpha version se `Beta-1` below..
+
+### Notable changes in beta-3
+
 * Prints a trace on foreign errors when in verbose mode.
 * Run all commands after input is read to avoid confusion in plugins on SIGTERM.
 * Add `rm` as an alias for `remove`.
 * Using `moneyphp\money` for monetary amounts.
 * Make sure that releases are built using the lowest supported php version.
 
-## Updating to beta-2
+## Beta-2
 
 Beta-2 is generally a bug-fix release and the phar can simply be dumped in place
-of beta-1. When updating from an alpha version se `Updating to beta-1` below..
+of beta-1. When updating from an alpha version se `Beta-1` below..
 
 ### Notable changes in beta-2
 
@@ -20,7 +29,7 @@ of beta-1. When updating from an alpha version se `Updating to beta-1` below..
 * Fixed a bug where transaction reports imported after a state change failed.
 * Fixed a bug where importing removed transactions on revoked donors failed.
 
-## Updating to beta-1
+## Beta-1
 
 > This is the guide for updating from alpha-5 to beta-1. Instructions for updating
 > from alpha-3 or 4 can be fund [here](https://github.com/byrokrat/giroapp/blob/1.0.0-alpha5/UPDATING.md).
