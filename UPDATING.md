@@ -2,7 +2,7 @@
 
 ## Unreleased changes
 
-...
+* Added the `conf` command to programmatically access configurations.
 
 ## Beta-3
 
