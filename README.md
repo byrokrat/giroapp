@@ -38,6 +38,14 @@ If composer is not installed as `composer` you can use something like
 make COMPOSER_CMD=./composer.phar
 ```
 
+### Enabling bash autocompletion
+
+Add the following to `.bashrc` (requires giroapp to be installed as `giroapp`).
+
+```shell
+source $(giroapp _complete --generate-bash-script --app-name=giroapp)
+```
+
 ## Getting started
 
 By default giroapp looks for configurations in a file called `giroapp.ini` in

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "24b7cce8771ee5f2ece810a1827a980c",
+    "content-hash": "98818f3eb2d45dd21164b95c3cfa1afc",
     "packages": [
         {
             "name": "byrokrat/autogiro",
@@ -393,6 +393,55 @@
                 "validator"
             ],
             "time": "2017-10-15T08:07:42+00:00"
+        },
+        {
+            "name": "hanneskod/comphlete",
+            "version": "1.0.0-beta2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hanneskod/comphlete.git",
+                "reference": "691a7089e2b47f29564c1e2a672b1933fa549632"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hanneskod/comphlete/zipball/691a7089e2b47f29564c1e2a672b1933fa549632",
+                "reference": "691a7089e2b47f29564c1e2a672b1933fa549632",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7"
+            },
+            "require-dev": {
+                "symfony/console": "^3.2|^4"
+            },
+            "suggest": {
+                "symfony/console": "Generates completions for symfony apps with no hassle"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "hanneskod\\comphlete\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Unlicense"
+            ],
+            "authors": [
+                {
+                    "name": "Hannes Forsgård",
+                    "email": "hannes.forsgard@fripost.org"
+                }
+            ],
+            "description": "PHP completer",
+            "homepage": "https://github.com/hanneskod/comphlete",
+            "keywords": [
+                "autocomplete",
+                "complete"
+            ],
+            "time": "2019-09-11T07:48:05+00:00"
         },
         {
             "name": "hanneskod/yaysondb",
@@ -1685,16 +1734,16 @@
         },
         {
             "name": "zendframework/zend-code",
-            "version": "3.3.1",
+            "version": "3.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-code.git",
-                "reference": "c21db169075c6ec4b342149f446e7b7b724f95eb"
+                "reference": "936fa7ad4d53897ea3e3eb41b5b760828246a20b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-code/zipball/c21db169075c6ec4b342149f446e7b7b724f95eb",
-                "reference": "c21db169075c6ec4b342149f446e7b7b724f95eb",
+                "url": "https://api.github.com/repos/zendframework/zend-code/zipball/936fa7ad4d53897ea3e3eb41b5b760828246a20b",
+                "reference": "936fa7ad4d53897ea3e3eb41b5b760828246a20b",
                 "shasum": ""
             },
             "require": {
@@ -1702,10 +1751,10 @@
                 "zendframework/zend-eventmanager": "^2.6 || ^3.0"
             },
             "require-dev": {
-                "doctrine/annotations": "~1.0",
+                "doctrine/annotations": "^1.0",
                 "ext-phar": "*",
-                "phpunit/phpunit": "^6.2.3",
-                "zendframework/zend-coding-standard": "^1.0.0",
+                "phpunit/phpunit": "^7.5.15",
+                "zendframework/zend-coding-standard": "^1.0",
                 "zendframework/zend-stdlib": "^2.7 || ^3.0"
             },
             "suggest": {
@@ -1728,13 +1777,13 @@
             "license": [
                 "BSD-3-Clause"
             ],
-            "description": "provides facilities to generate arbitrary code using an object oriented interface",
-            "homepage": "https://github.com/zendframework/zend-code",
+            "description": "Extensions to the PHP Reflection API, static code scanning, and code generation",
             "keywords": [
+                "ZendFramework",
                 "code",
-                "zf2"
+                "zf"
             ],
-            "time": "2018-08-13T20:36:59+00:00"
+            "time": "2019-08-31T14:14:34+00:00"
         },
         {
             "name": "zendframework/zend-eventmanager",
@@ -2252,6 +2301,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "byrokrat/autogiro": 10,
+        "hanneskod/comphlete": 10,
         "symfony/workflow": 20
     },
     "prefer-stable": false,

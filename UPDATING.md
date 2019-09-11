@@ -2,7 +2,17 @@
 
 ## Unreleased changes
 
+...
+
+## Beta-4
+
+Beta-4 adds a few minor features and can simply be dumped in place of beta-1, 2
+or 3. When updating from an alpha version se `Beta-1` below..
+
+### Notable changes in beta-4
+
 * Added the `conf` command to programmatically access configurations.
+* Added support for bash autocompletion.
 
 ## Beta-3
 

@@ -28,6 +28,8 @@ services:
               arguments: ['@default_command']
             - method: 'setDefaultCommand'
               arguments: ['default_command']
+            - method: 'add'
+              arguments: ['@hanneskod\comphlete\Symfony\ComphleteCommand']
 
     default_command:
         class: Symfony\Component\Console\Command\ListCommand
@@ -36,6 +38,9 @@ services:
               arguments: ['default_command']
             - method: 'setHidden'
               arguments: [true]
+
+    hanneskod\comphlete\Symfony\ComphleteCommand:
+        class: ~
 
     byrokrat\giroapp\Plugin\ApiVersion:
         arguments: ['$app_version$']
