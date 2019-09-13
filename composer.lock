@@ -396,16 +396,16 @@
         },
         {
             "name": "hanneskod/comphlete",
-            "version": "1.0.0-beta2",
+            "version": "1.0.0-beta4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hanneskod/comphlete.git",
-                "reference": "691a7089e2b47f29564c1e2a672b1933fa549632"
+                "reference": "d7bcedb783dad0f3ad26cbbe346b441d8dc6e55c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hanneskod/comphlete/zipball/691a7089e2b47f29564c1e2a672b1933fa549632",
-                "reference": "691a7089e2b47f29564c1e2a672b1933fa549632",
+                "url": "https://api.github.com/repos/hanneskod/comphlete/zipball/d7bcedb783dad0f3ad26cbbe346b441d8dc6e55c",
+                "reference": "d7bcedb783dad0f3ad26cbbe346b441d8dc6e55c",
                 "shasum": ""
             },
             "require": {
@@ -435,13 +435,13 @@
                     "email": "hannes.forsgard@fripost.org"
                 }
             ],
-            "description": "PHP completer",
+            "description": "Dynamic bash completion from PHP",
             "homepage": "https://github.com/hanneskod/comphlete",
             "keywords": [
                 "autocomplete",
                 "complete"
             ],
-            "time": "2019-09-11T07:48:05+00:00"
+            "time": "2019-09-13T09:49:46+00:00"
         },
         {
             "name": "hanneskod/yaysondb",
@@ -1669,12 +1669,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/workflow.git",
-                "reference": "e9b60ed942d1488999987cb8d5cfe4b5c02569f4"
+                "reference": "9848c176473ca0cc2422d80bb635be4b06e4c8dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/workflow/zipball/e9b60ed942d1488999987cb8d5cfe4b5c02569f4",
-                "reference": "e9b60ed942d1488999987cb8d5cfe4b5c02569f4",
+                "url": "https://api.github.com/repos/symfony/workflow/zipball/9848c176473ca0cc2422d80bb635be4b06e4c8dd",
+                "reference": "9848c176473ca0cc2422d80bb635be4b06e4c8dd",
                 "shasum": ""
             },
             "require": {
@@ -1730,7 +1730,7 @@
                 "transition",
                 "workflow"
             ],
-            "time": "2019-08-26T09:05:36+00:00"
+            "time": "2019-09-13T09:01:25+00:00"
         },
         {
             "name": "zendframework/zend-code",
