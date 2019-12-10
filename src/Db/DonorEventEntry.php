@@ -36,6 +36,9 @@ class DonorEventEntry
     /** @var string[] */
     private $data;
 
+    /**
+     * @param string[] $data
+     */
     public function __construct(string $mandateKey, string $type, \DateTimeImmutable $datetime, array $data)
     {
         $this->mandateKey = $mandateKey;

@@ -30,7 +30,7 @@ final class ClassIdExtractor
     /**
      * Extract an upper snake cased id from a fully qualified class name or object
      *
-     * @var string|object $obj
+     * @param mixed $obj
      */
     public function __construct($obj)
     {

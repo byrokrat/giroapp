@@ -27,9 +27,12 @@ use Symfony\Component\Workflow\Transition;
 
 final class WorkflowConfigurator
 {
-    /** @var array */
+    /** @var array[] */
     private $transitions;
 
+    /**
+     * @param array[] $transitions
+     */
     public function __construct(array $transitions)
     {
         $this->transitions = $transitions;

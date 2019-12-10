@@ -90,6 +90,8 @@ class XmlObject
 
     /**
      * Generator that yields XmlObject instances with xml subsets
+     *
+     * @return XmlObject[]
      */
     public function getElements(string $path): iterable
     {

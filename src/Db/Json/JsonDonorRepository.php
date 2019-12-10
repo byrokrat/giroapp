@@ -40,7 +40,7 @@ final class JsonDonorRepository implements DonorRepositoryInterface
 {
     const TYPE = 'giroapp/donor:alpha5';
 
-    /** @var CollectionInterface */
+    /** @var CollectionInterface&iterable<array> */
     private $collection;
 
     /** @var DonorFactory */
@@ -52,6 +52,9 @@ final class JsonDonorRepository implements DonorRepositoryInterface
     /** @var MoneyFormatter */
     private $moneyFormatter;
 
+    /**
+     * @param CollectionInterface&iterable<array> $collection
+     */
     public function __construct(
         CollectionInterface $collection,
         DonorFactory $donorFactory,
@@ -220,6 +223,9 @@ final class JsonDonorRepository implements DonorRepositoryInterface
         $this->updateDonor($donor, ['attributes' => $attributes]);
     }
 
+    /**
+     * @param array<string, mixed> $updatedValues
+     */
     private function updateDonor(Donor $donor, array $updatedValues): void
     {
         $currentValues = $this->createDoc($this->requireByMandateKey($donor->getMandateKey()));
@@ -231,6 +237,9 @@ final class JsonDonorRepository implements DonorRepositoryInterface
         $this->collection->insert($doc, $donor->getMandateKey());
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     private function createDoc(Donor $donor): array
     {
         return [
@@ -259,6 +268,9 @@ final class JsonDonorRepository implements DonorRepositoryInterface
         ];
     }
 
+    /**
+     * @param mixed[] $doc
+     */
     private function createDonor(array $doc): Donor
     {
         return $this->donorFactory->createDonor(

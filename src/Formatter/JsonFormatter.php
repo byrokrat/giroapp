@@ -39,7 +39,7 @@ final class JsonFormatter implements FormatterInterface
     private $output;
 
     /**
-     * @var array
+     * @var array[]
      */
     private $data;
 

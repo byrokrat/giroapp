@@ -27,6 +27,9 @@ use Symfony\Component\Console\Question\Question;
 
 final class QuestionFactory
 {
+    /**
+     * @param mixed $default
+     */
     public static function createQuestion(string $question, $default = null): Question
     {
         return is_null($default)
@@ -34,6 +37,9 @@ final class QuestionFactory
             : new Question("$question [<info>$default</info>]: ", $default);
     }
 
+    /**
+     * @param mixed[] $choices
+     */
     public static function createChoiceQuestion(string $question, array $choices, string $default): ChoiceQuestion
     {
         $defaultKey = array_search($default, $choices);

@@ -33,12 +33,15 @@ final class JsonImportHistory implements ImportHistoryInterface
 {
     const TYPE = 'giroapp/import_history:alpha5';
 
-    /** @var CollectionInterface */
+    /** @var CollectionInterface&iterable<array> */
     private $collection;
 
     /** @var SystemClock */
     private $systemClock;
 
+    /**
+     * @param CollectionInterface&iterable<array> $collection
+     */
     public function __construct(CollectionInterface $collection, SystemClock $systemClock)
     {
         $this->collection = $collection;

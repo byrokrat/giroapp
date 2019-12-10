@@ -26,11 +26,14 @@ use byrokrat\giroapp\Exception\UnknownIdentifierException;
 
 trait CollectionTrait
 {
-    /** @var array */
+    /** @var array<string, mixed> */
     private $items = [];
 
     abstract protected function describeItem(): string;
 
+    /**
+     * @param mixed $item
+     */
     protected function addItem(string $key, $item): void
     {
         $this->items[$key] = $item;
@@ -41,6 +44,9 @@ trait CollectionTrait
         return isset($this->items[$key]);
     }
 
+    /**
+     * @return mixed
+     */
     protected function getItem(string $key)
     {
         if (!$this->hasItem($key)) {
@@ -54,11 +60,17 @@ trait CollectionTrait
         return $this->items[$key];
     }
 
+    /**
+     * @return string[]
+     */
     public function getItemKeys(): array
     {
         return array_filter(array_keys($this->items));
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getItems(): array
     {
         return $this->items;

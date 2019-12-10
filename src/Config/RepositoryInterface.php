@@ -26,6 +26,8 @@ interface RepositoryInterface
 {
     /**
      * Get mixed configurations loaded in repository
+     *
+     * @return array<string, string>
      */
     public function getConfigs(): array;
 }

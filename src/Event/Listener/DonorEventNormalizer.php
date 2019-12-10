@@ -41,6 +41,9 @@ class DonorEventNormalizer
 {
     use DependencyInjection\MoneyFormatterProperty;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function normalizeEvent(DonorEvent $event): array
     {
         switch (true) {

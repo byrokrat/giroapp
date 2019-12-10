@@ -25,10 +25,13 @@ namespace byrokrat\giroapp\Config;
 final class ArrayRepository implements RepositoryInterface
 {
     /**
-     * @var array
+     * @var array<string, string>
      */
     private $configs;
 
+    /**
+     * @param array<string, string> $configs
+     */
     public function __construct(array $configs)
     {
         $this->configs = $configs;

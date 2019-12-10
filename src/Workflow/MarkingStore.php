@@ -43,6 +43,10 @@ final class MarkingStore implements MarkingStoreInterface
         return new Marking([$stateId => 1]);
     }
 
+    /**
+     * @param string[] $context
+     * @return void
+     */
     public function setMarking(object $subject, Marking $marking, array $context = [])
     {
         if (!$subject instanceof Donor) {

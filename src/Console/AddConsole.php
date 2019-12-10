@@ -217,10 +217,10 @@ final class AddConsole implements ConsoleInterface
 
         $attributes = [];
 
-        /** @var array */
+        /** @var array<string> */
         $attrKeys = $input->getOption('attr-key');
 
-        /** @var array */
+        /** @var array<string> */
         $attrValues = $input->getOption('attr-value');
 
         for ($count = 0;; $count++) {

@@ -35,7 +35,7 @@ class DonorCollection implements \IteratorAggregate
     /**
      * If created with a callable it must itself return a donor iterator
      *
-     * @param iterable<Donor>|callable $donors
+     * @param iterable<Donor>|callable|mixed $donors
      */
     public function __construct($donors)
     {

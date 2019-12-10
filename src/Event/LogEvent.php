@@ -46,6 +46,9 @@ class LogEvent
     /** @var string */
     private $severity;
 
+    /**
+     * @param mixed[] $context
+     */
     public function __construct(string $message, array $context = [], string $severity = LogLevel::NOTICE)
     {
         if (!isset(self::LOG_LEVEL_MAP[$severity])) {
@@ -62,6 +65,9 @@ class LogEvent
         return $this->message;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getContext(): array
     {
         return $this->context;

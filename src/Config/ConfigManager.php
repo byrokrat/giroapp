@@ -27,7 +27,7 @@ use byrokrat\giroapp\Exception\InvalidConfigException;
 class ConfigManager
 {
     /**
-     * @var array
+     * @var array<string, string>
      */
     private $configs = [];
 

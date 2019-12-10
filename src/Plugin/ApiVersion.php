@@ -29,7 +29,7 @@ final class ApiVersion
      */
     private $version;
 
-    public function __construct($version = '$app_version$')
+    public function __construct(string $version = '$app_version$')
     {
         $this->version = $this->parseVersion($version);
     }

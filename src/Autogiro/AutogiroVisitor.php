@@ -91,12 +91,16 @@ class AutogiroVisitor extends Visitor
         $donor = $this->donorQuery->requireByPayerNumber($node->getValueFrom('PayerNumber'));
 
         /** @var ?IdInterface $nodeId */
-        if ($nodeId = $node->getChild('StateId')->getValueFrom('Object')) {
+        $nodeId = $node->getChild('StateId')->getValueFrom('Object');
+
+        if ($nodeId) {
             $this->validateDonorId($nodeId, $donor);
         }
 
         /** @var ?AccountNumber $nodeAccount */
-        if ($nodeAccount = $node->getChild('Account')->getValueFrom('Object')) {
+        $nodeAccount = $node->getChild('Account')->getValueFrom('Object');
+
+        if ($nodeAccount) {
             $this->validateDonorAccountNumber($nodeAccount, $donor);
         }
 

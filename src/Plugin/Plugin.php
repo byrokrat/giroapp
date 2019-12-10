@@ -32,12 +32,15 @@ use Psr\EventDispatcher\ListenerProviderInterface;
 
 class Plugin implements PluginInterface
 {
-    /** @var array */
+    /** @var array<int, mixed> */
     private $objects;
 
     /** @var string */
     private $pluginName = '';
 
+    /**
+     * @param array<int, mixed> $objects
+     */
     public function __construct(...$objects)
     {
         $this->objects = $objects;

@@ -29,9 +29,12 @@ use hanneskod\yaysondb\Operators as y;
 
 final class JsonDonorEventStore implements DonorEventStoreInterface
 {
-    /** @var CollectionInterface */
+    /** @var CollectionInterface&iterable<array> */
     private $collection;
 
+    /**
+     * @param CollectionInterface&iterable<array> $collection
+     */
     public function __construct(CollectionInterface $collection)
     {
         $this->collection = $collection;

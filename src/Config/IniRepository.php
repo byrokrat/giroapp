@@ -27,7 +27,7 @@ use byrokrat\giroapp\Exception\InvalidConfigException;
 final class IniRepository implements RepositoryInterface
 {
     /**
-     * @var array
+     * @var array<string, string>
      */
     private $configs;
 
