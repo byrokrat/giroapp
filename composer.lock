@@ -4,29 +4,33 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "62d404889ed84cd0f49e196984e61f01",
+    "content-hash": "d718a6704b1dc2e214998f230ef46a6a",
     "packages": [
         {
             "name": "byrokrat/autogiro",
-            "version": "1.0.0-beta8",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/byrokrat/autogiro.git",
-                "reference": "20e937cfe00dd89e2cc067bbb6f1a3027e50d274"
+                "reference": "632ffccbd52c17736b6df33efe719930d8402e50"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/byrokrat/autogiro/zipball/20e937cfe00dd89e2cc067bbb6f1a3027e50d274",
-                "reference": "20e937cfe00dd89e2cc067bbb6f1a3027e50d274",
+                "url": "https://api.github.com/repos/byrokrat/autogiro/zipball/632ffccbd52c17736b6df33efe719930d8402e50",
+                "reference": "632ffccbd52c17736b6df33efe719930d8402e50",
                 "shasum": ""
             },
             "require": {
                 "byrokrat/banking": "^2.1",
                 "byrokrat/id": "^2",
+                "ext-bcmath": "*",
                 "ext-mbstring": "*",
                 "moneyphp/money": "^3",
                 "neitanod/forceutf8": "~2.0",
                 "php": ">=7.1"
+            },
+            "require-dev": {
+                "bamarni/composer-bin-plugin": "^1.3"
             },
             "type": "library",
             "autoload": {
@@ -51,7 +55,7 @@
             "keywords": [
                 "autogiro"
             ],
-            "time": "2019-08-21T13:17:13+00:00"
+            "time": "2019-12-10T13:01:43+00:00"
         },
         {
             "name": "byrokrat/banking",
@@ -2299,7 +2303,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "byrokrat/autogiro": 10,
         "hanneskod/comphlete": 10
     },
     "prefer-stable": false,
