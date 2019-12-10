@@ -2,7 +2,7 @@
 
 ## Unreleased changes
 
-...
+* Fix a bug to allow active donors to remov specific transactions.
 
 ## Beta-4
 

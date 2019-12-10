@@ -109,3 +109,16 @@ Feature: Importing files
         09201907019900000001000000000001000000000000000000000000000000000000
         """
     Then there is no error
+
+  Scenario: I import a removed transaction from an active donor
+    Given there are donors:
+      | payer-number | state  |
+      | 12345        | ACTIVE |
+    When I import:
+        """
+        01AUTOGIRO              20191025            MAKULERING/ÄNDRING  1234560058056201
+        1120191028000000000001234582000000010000REFERENS00000000AAAAAAAAAAAAAAAA12
+        09201910259900              000000000000000000000001000000000001000å000000000000
+        """
+    Then there is no error
+    And the database contains donor "12345" with "state" matching "ACTIVE"
