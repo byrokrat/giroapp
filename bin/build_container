@@ -38,7 +38,7 @@ $dumper->setProxyDumper(new ProxyDumper);
 
 $targetParts = explode('\\', $target);
 
-echo $dumper->dump([
+echo @$dumper->dump([
     'class' => array_pop($targetParts),
     'namespace' => implode('\\', $targetParts),
 ]);
