@@ -124,7 +124,7 @@ vendor/installed: composer.lock
 	touch $@
 
 vendor-bin/installed: vendor/installed
-	$(COMPOSER_CMD) bin phpspec require phpspec/phpspec:^5
+	$(COMPOSER_CMD) bin phpspec require phpspec/phpspec:">=5"
 	$(COMPOSER_CMD) bin behat require behat/behat:^3
 	$(COMPOSER_CMD) bin readme-tester require hanneskod/readme-tester:^1.0@beta
 	$(COMPOSER_CMD) bin phpstan require "phpstan/phpstan:<2"
