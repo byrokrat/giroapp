@@ -22,7 +22,7 @@ services:
         class: ~
         arguments: ['GiroApp', '@byrokrat\giroapp\Plugin\ApiVersion']
         public: true
-        configurator: 'byrokrat\giroapp\Plugin\ConfiguringEnvironment:configureApplication'
+        configurator: ['@byrokrat\giroapp\Plugin\ConfiguringEnvironment', 'configureApplication']
         calls:
             - method: 'add'
               arguments: ['@default_command']
@@ -52,7 +52,7 @@ services:
     byrokrat\giroapp\Plugin\ConfiguringEnvironment:
         class: ~
         arguments: ['@byrokrat\giroapp\Utils\DispatchingLogger']
-        configurator: 'plugins:loadPlugin'
+        configurator: ['@plugins', 'loadPlugin']
 
     plugins:
         class: byrokrat\giroapp\Plugin\PluginCollection
@@ -71,7 +71,7 @@ services:
     byrokrat\giroapp\Config\ConfigManager:
         class: ~
         arguments: ['@base_dir_repository']
-        configurator: 'byrokrat\giroapp\Config\IniFileLoader:loadIniFile'
+        configurator: ['@byrokrat\giroapp\Config\IniFileLoader', 'loadIniFile']
 
     base_dir_repository:
         class: byrokrat\giroapp\Config\ArrayRepository
@@ -87,29 +87,29 @@ services:
 
     organization_id:
         class: byrokrat\id\IdInterface
-        factory: 'byrokrat\id\IdFactoryInterface:createId'
+        factory: ['@byrokrat\id\IdFactoryInterface', 'createId']
         arguments: ["@=service('ini').getConfigValue('org_id')"]
 
     organization_bg:
         class: byrokrat\banking\AccountNumber
-        factory: 'byrokrat\banking\BankgiroFactory:createAccount'
+        factory: ['@byrokrat\banking\BankgiroFactory', 'createAccount']
         arguments: ["@=service('ini').getConfigValue('org_bg')"]
 
     byrokrat\giroapp\Db\DriverFactoryInterface:
-        factory: 'byrokrat\giroapp\Db\DriverFactoryCollection:getDriverFactory'
+        factory: ['@byrokrat\giroapp\Db\DriverFactoryCollection', 'getDriverFactory']
         arguments: ["@=service('ini').getConfigValue('db_driver')"]
 
     byrokrat\giroapp\Db\DriverInterface:
-        factory: 'byrokrat\giroapp\Db\DriverFactoryInterface:createDriver'
+        factory: ['@byrokrat\giroapp\Db\DriverFactoryInterface', 'createDriver']
         arguments: ["@=service('ini').getConfigValue('db_dsn')"]
         lazy: true
 
     byrokrat\giroapp\Db\DonorEventStoreInterface:
-        factory: 'byrokrat\giroapp\Db\DriverInterface:getDonorEventStore'
+        factory: ['@byrokrat\giroapp\Db\DriverInterface', 'getDonorEventStore']
         lazy: true
 
     byrokrat\giroapp\Db\DonorRepositoryInterface:
-        factory: 'byrokrat\giroapp\Db\DriverInterface:getDonorRepository'
+        factory: ['@byrokrat\giroapp\Db\DriverInterface', 'getDonorRepository']
         lazy: true
 
     byrokrat\giroapp\Db\DonorQueryInterface:
@@ -118,7 +118,7 @@ services:
         lazy: true
 
     byrokrat\giroapp\Db\ImportHistoryInterface:
-        factory: 'byrokrat\giroapp\Db\DriverInterface:getImportHistory'
+        factory: ['@byrokrat\giroapp\Db\DriverInterface', 'getImportHistory']
         lazy: true
 
     byrokrat\giroapp\Xml\XmlMandateProcessor:
@@ -132,7 +132,7 @@ services:
             - '@organization_bg'
 
     byrokrat\autogiro\Writer\WriterInterface:
-        factory: 'byrokrat\giroapp\Autogiro\AutogiroWriterFactory:createWriter'
+        factory: ['@byrokrat\giroapp\Autogiro\AutogiroWriterFactory', 'createWriter']
         arguments:
             - "@=service('ini').getConfig('org_bgc_nr')"
             - '@organization_bg'
@@ -140,7 +140,7 @@ services:
     byrokrat\autogiro\Writer\WriterFactory: ~
 
     byrokrat\autogiro\Parser\ParserInterface:
-        factory: 'byrokrat\autogiro\Parser\ParserFactory:createParser'
+        factory: ['@byrokrat\autogiro\Parser\ParserFactory', 'createParser']
 
     byrokrat\autogiro\Parser\ParserFactory: ~
 
@@ -169,7 +169,7 @@ services:
         class: Money\Currencies\ISOCurrencies
 
     Psr\Log\LoggerInterface:
-        factory: byrokrat\giroapp\Utils\LoggerFactory:createLogger
+        factory: ['@byrokrat\giroapp\Utils\LoggerFactory', 'createLogger']
         arguments:
             - "@=service('ini').getConfigValue('log_file')"
             - "@=service('ini').getConfigValue('log_level')"

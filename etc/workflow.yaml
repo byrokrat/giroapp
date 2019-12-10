@@ -80,9 +80,9 @@ services:
     Symfony\Component\Workflow\Definition:
         class: ~
         public: true
-        factory: 'Symfony\Component\Workflow\DefinitionBuilder:build'
+        factory: ['@Symfony\Component\Workflow\DefinitionBuilder', 'build']
 
     Symfony\Component\Workflow\DefinitionBuilder:
         class: ~
         arguments: ["@=service('byrokrat\\\\giroapp\\\\Domain\\\\State\\\\StateCollection').getItemKeys()"]
-        configurator: 'byrokrat\giroapp\Workflow\WorkflowConfigurator:configureTransitions'
+        configurator: ['@byrokrat\giroapp\Workflow\WorkflowConfigurator', 'configureTransitions']

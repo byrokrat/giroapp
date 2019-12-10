@@ -9,20 +9,20 @@ services:
 
     fs_imports:
         class: byrokrat\giroapp\Filesystem\FilesystemInterface
-        factory: 'byrokrat\giroapp\Filesystem\FilesystemFactory:createFilesystem'
+        factory: ['@byrokrat\giroapp\Filesystem\FilesystemFactory', 'createFilesystem']
         arguments: ["@=service('ini').getConfigValue('imports_dir')"]
-        configurator: 'setup_mkdir:createFiles'
+        configurator: ['@setup_mkdir', 'createFiles']
 
     fs_exports:
         class: byrokrat\giroapp\Filesystem\FilesystemInterface
-        factory: 'byrokrat\giroapp\Filesystem\FilesystemFactory:createFilesystem'
+        factory: ['@byrokrat\giroapp\Filesystem\FilesystemFactory', 'createFilesystem']
         arguments: ["@=service('ini').getConfigValue('exports_dir')"]
-        configurator: 'setup_mkdir:createFiles'
+        configurator: ['@setup_mkdir', 'createFiles']
 
     fs_plugins:
         class: byrokrat\giroapp\Filesystem\StdFilesystem
         arguments: ["@=service('ini').getConfigValue('plugins_dir')"]
-        configurator: 'setup_mkdir:createFiles'
+        configurator: ['@setup_mkdir', 'createFiles']
 
     setup_mkdir:
         class: byrokrat\giroapp\Filesystem\FilesystemConfigurator
