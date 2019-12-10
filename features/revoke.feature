@@ -32,11 +32,11 @@ Feature: Revoking mandates
       | payer-number | state  |
       | 12345        | ACTIVE |
     When I import:
-        """
-        01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
-        73005805620100000000000123455000000001111116198203232775     033320170817
-        092017081799000000001
-        """
+      """
+      01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
+      73005805620100000000000123455000000001111116198203232775     033320170817
+      092017081799000000001
+      """
     Then the database contains donor "12345" with "state" matching "REVOKED"
 
   Scenario: I import an autogiro file removing transaction for revoked mandate
@@ -50,3 +50,23 @@ Feature: Revoking mandates
       09201904249900              000000000000000000000001000000000002000å000000000000
       """
     Then there is no error
+    And the database contains donor "12345" with "state" matching "REVOKED"
+
+  Scenario: I import transaction and mandate revocation in backwards order
+    Given there are donors:
+      | payer-number | state  |
+      | 12345        | ACTIVE |
+    When I import:
+      """
+      01AUTOGIRO              20190424            MAKULERING/ÄNDRING  1234560058056201
+      2320190429000000000001234582000000020000REFERENS00000000AAAAAAAAAAAAAAAA12
+      09201904249900              000000000000000000000001000000000002000å000000000000
+      """
+    And I import:
+      """
+      01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
+      73005805620100000000000123455000000001111116198203232775     033320170817
+      092017081799000000001
+      """
+    Then there is no error
+    And the database contains donor "12345" with "state" matching "REVOKED"
