@@ -30,6 +30,9 @@ abstract class DonorEvent extends LogEvent
     /** @var Donor */
     private $donor;
 
+    /**
+     * @param mixed[] $context
+     */
     public function __construct(string $message, Donor $donor, string $severity = LogLevel::INFO, array $context = [])
     {
         $context['mandate_key'] = $donor->getMandateKey();

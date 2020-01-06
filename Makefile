@@ -66,7 +66,6 @@ preconds: dependency_check security_check
 
 dependency_check: vendor/installed
 	$(COMPOSER_CMD) validate --strict
-	$(COMPOSER_CMD) outdated --strict --minor-only
 
 security_check: vendor/installed $(SECURITY_CHECKER)
 	$(SECURITY_CHECKER) security:check composer.lock
