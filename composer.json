@@ -40,7 +40,6 @@
         "composer/semver": "^1",
         "hanneskod/clean": "^2",
         "hanneskod/yaysondb": "^2.2",
-        "hanneskod/comphlete": "^1@beta",
         "hashids/hashids": "^4",
         "league/tactician": "^1",
         "moneyphp/money": "^3",

@@ -38,14 +38,6 @@ If composer is not installed as `composer` you can use something like
 make COMPOSER_CMD=./composer.phar
 ```
 
-### Enabling bash autocompletion
-
-Add the following to `.bashrc` (requires giroapp to be installed as `giroapp`).
-
-```shell
-source $(giroapp _complete --generate-bash-script --app-name=giroapp)
-```
-
 ## Getting started
 
 By default giroapp looks for configurations in a file called `giroapp.ini` in
@@ -61,4 +53,5 @@ Simply run `giroapp` to se the list of avaliable commands.
 
 Giroapp supports dynamic [plugins](docs/plugins.md). Officially supported plugins:
 
-* [Mailer](https://github.com/byrokrat/giroapp-mailer-plugin): send mails on giroapp events.
+* [giroapp-completion-plugin](https://github.com/byrokrat/giroapp-completion-plugin): shell completion.
+* [giroapp-mailer-plugin](https://github.com/byrokrat/giroapp-mailer-plugin): send mails on giroapp events.
