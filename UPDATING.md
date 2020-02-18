@@ -2,6 +2,10 @@
 
 ## Unreleased changes
 
+...
+
+## Beta-6
+
 * Moved shell completion to plugin.
 
 ## Beta-5
