@@ -2,7 +2,7 @@
 
 ## Unreleased changes
 
-...
+* Added the `mailstr` formatter.
 
 ## Beta-6
 

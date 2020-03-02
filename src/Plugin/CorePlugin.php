@@ -58,6 +58,7 @@ final class CorePlugin extends Plugin
         Formatter\CsvFormatter $csvFormatter,
         Formatter\HumanFormatter $humanFormatter,
         Formatter\JsonFormatter $jsonFormatter,
+        Formatter\MailStringFormatter $mailStringFormatter,
         Sorter\NullSorter $nullSorter,
         Sorter\NameSorter $nameSorter,
         Sorter\StateSorter $stateSorter,

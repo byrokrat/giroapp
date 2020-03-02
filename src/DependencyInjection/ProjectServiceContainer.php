@@ -254,6 +254,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Formatter\\HumanFormatter' => true,
             'byrokrat\\giroapp\\Formatter\\JsonFormatter' => true,
             'byrokrat\\giroapp\\Formatter\\ListFormatter' => true,
+            'byrokrat\\giroapp\\Formatter\\MailStringFormatter' => true,
             'byrokrat\\giroapp\\Plugin\\ApiVersion' => true,
             'byrokrat\\giroapp\\Plugin\\ApiVersionConstraint' => true,
             'byrokrat\\giroapp\\Plugin\\ConfiguringEnvironment' => true,
@@ -429,7 +430,7 @@ class ProjectServiceContainer extends Container
 
         $instance->setCommandBus($h);
         $instance->setEventDispatcher($b);
-        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\CorePlugin($i, new \byrokrat\giroapp\Console\ConfConsole($g), $k, $l, $n, $o, $p, $q, new \byrokrat\giroapp\Console\InitConsole(), $r, $s, $t, $u, $v, $w, $x, new \byrokrat\giroapp\Db\Json\JsonDriverFactory(), new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\RevokedFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), $y, $z, $aa, new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter()), new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($ba)))->loadPlugin($instance);
+        (new \byrokrat\giroapp\Plugin\PluginCollection(new \byrokrat\giroapp\Plugin\CorePlugin($i, new \byrokrat\giroapp\Console\ConfConsole($g), $k, $l, $n, $o, $p, $q, new \byrokrat\giroapp\Console\InitConsole(), $r, $s, $t, $u, $v, $w, $x, new \byrokrat\giroapp\Db\Json\JsonDriverFactory(), new \byrokrat\giroapp\Filter\ActiveFilter(), new \byrokrat\giroapp\Filter\RevokedFilter(), new \byrokrat\giroapp\Filter\ExportableFilter(), new \byrokrat\giroapp\Filter\ErrorFilter(), new \byrokrat\giroapp\Filter\PausedFilter(), new \byrokrat\giroapp\Filter\AwaitingResponseFilter(), new \byrokrat\giroapp\Formatter\ListFormatter(), $y, $z, $aa, new \byrokrat\giroapp\Formatter\MailStringFormatter(), new \byrokrat\giroapp\Sorter\NullSorter(), new \byrokrat\giroapp\Sorter\NameSorter(), new \byrokrat\giroapp\Sorter\StateSorter(), new \byrokrat\giroapp\Sorter\PayerNumberSorter(), new \byrokrat\giroapp\Sorter\AmountSorter(), new \byrokrat\giroapp\Sorter\CreatedSorter(), new \byrokrat\giroapp\Sorter\UpdatedSorter()), new \byrokrat\giroapp\Plugin\FilesystemLoadingPlugin($ba)))->loadPlugin($instance);
 
         return $instance;
     }
