@@ -76,6 +76,10 @@ class ApplicationWrapper
 
         $command = str_replace(self::EXECUTABLE_PLACEHOLDER, $this->executable, $command);
 
+        $env = $_ENV;
+        $env['GIROAPP_INI'] = $this->iniFilename;
+        $env['GIROAPP_INSTALL_PATH'] = self::GIROAPP_INSTALL_PATH;
+
         $process = proc_open(
             "$command -v --no-interaction --no-ansi",
             [
@@ -84,10 +88,7 @@ class ApplicationWrapper
             ],
             $pipes,
             $this->cwd,
-            [
-                'GIROAPP_INI' => $this->iniFilename,
-                'GIROAPP_INSTALL_PATH' => self::GIROAPP_INSTALL_PATH,
-            ]
+            $env
         );
 
         $output = stream_get_contents($pipes[1]);
