@@ -9,6 +9,7 @@ use byrokrat\giroapp\Config\IniRepository;
 class ApplicationWrapper
 {
     const EXECUTABLE_PLACEHOLDER = '@giroapp@';
+    const GIROAPP_INSTALL_PATH =  __DIR__ . '/../../';
 
     /** @var string */
     private $cwd;
@@ -27,20 +28,14 @@ class ApplicationWrapper
 
     public function __construct(string $executable, bool $debug)
     {
-        putenv("GIROAPP_INSTALL_PATH=" . __DIR__ . '/../../');
-
         $this->cwd = sys_get_temp_dir() . '/giroapp_test_' . microtime();
         mkdir($this->cwd);
+
         $baseDir = "{$this->cwd}/giroapp";
         mkdir($baseDir);
+
         $this->configs = new ConfigManager(new ArrayRepository(['base_dir' => $baseDir]));
         $this->iniFilename = "$baseDir/giroapp.ini";
-        putenv("GIROAPP_INI={$this->iniFilename}");
-
-        $this->createIniFile(
-            file_get_contents(__DIR__ . '/../../giroapp.ini.dist')
-            . "\norg_bgc_nr = 111111\norg_bg = 58056201\norg_id = 835000-0892"
-        );
 
         $this->executable = realpath(getcwd() . '/' . $executable);
 
@@ -88,7 +83,11 @@ class ApplicationWrapper
                 2 => ["pipe", "w"]
             ],
             $pipes,
-            $this->cwd
+            $this->cwd,
+            [
+                'GIROAPP_INI' => $this->iniFilename,
+                'GIROAPP_INSTALL_PATH' => self::GIROAPP_INSTALL_PATH,
+            ]
         );
 
         $output = stream_get_contents($pipes[1]);

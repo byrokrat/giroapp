@@ -4,12 +4,12 @@ Feature: Initializing installation
   I need to be able to install app
 
   Scenario: I create a standard giroapp.ini
-    Given a fresh installation
+    Given an executable
     When I run "init"
     Then there is a file named "giroapp.ini"
 
   Scenario: I try to overwrite an existing giroapp.ini
-    Given a fresh installation
+    Given an executable
     And a file named "giroapp.ini":
         """
         """

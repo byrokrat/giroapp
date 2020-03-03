@@ -1,16 +1,20 @@
 ; References encolsed in % will be resolved by parser
 
 ; The name of the organization.
-org_name = "VALUE REQUIRED"
+; VALUE REQUIRED
+org_name = ""
 
 ; Organization state id number (organisationsnummer)
-org_id = "VALUE REQUIRED"
+; VALUE REQUIRED
+org_id = "111111-1116"
 
 ; BGC customer number of organization
-org_bgc_nr = "VALUE REQUIRED"
+; VALUE REQUIRED
+org_bgc_nr = "000000"
 
 ; Bankgiro account number of organization
-org_bg = "VALUE REQUIRED"
+; VALUE REQUIRED
+org_bg = "000-0000"
 
 ; The day of month when transactions are to be performed
 trans_day_of_month = 28

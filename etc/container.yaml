@@ -65,15 +65,21 @@ services:
 
     byrokrat\giroapp\Config\ConfigManager:
         class: ~
-        arguments: ['@base_dir_repository']
+        arguments: ['@defaults_repository', '@base_dir_repository']
         configurator: ['@byrokrat\giroapp\Config\IniFileLoader', 'loadIniFile']
+
+    defaults_repository:
+        class: byrokrat\giroapp\Config\IniRepository
+        arguments: ["@=service('byrokrat\\\\giroapp\\\\Config\\\\DefaultsReader').getRawDefaults()"]
+
+    byrokrat\giroapp\Config\DefaultsReader: ~
 
     base_dir_repository:
         class: byrokrat\giroapp\Config\ArrayRepository
-        arguments: [base_dir: "@=service('base_dir_reader').getBaseDir()"]
+        arguments: [base_dir: "@=service('byrokrat\\\\giroapp\\\\Config\\\\BaseDirReader').getBaseDir()"]
 
-    base_dir_reader:
-        class: byrokrat\giroapp\Config\BaseDirReader
+    byrokrat\giroapp\Config\BaseDirReader:
+        class: ~
         arguments: ['%env(GIROAPP_INI)%']
 
     byrokrat\giroapp\Config\IniFileLoader:

@@ -26,6 +26,7 @@ class IniFileLoaderSpec extends ObjectBehavior
 
         $fs->isFile('foobar')->willReturn(true);
         $fs->readFile('foobar')->willReturn($file);
+
         $file->getContent()->willReturn('foo=bar');
 
         $manager->loadRepository(new IniRepository('foo=bar'))->shouldBeCalled();
@@ -33,14 +34,14 @@ class IniFileLoaderSpec extends ObjectBehavior
         $this->loadIniFile($manager);
     }
 
-    function it_fails_on_missing_config_file(FilesystemInterface $fs, ConfigManager $manager)
+    function it_ignores_missing_config_file(FilesystemInterface $fs, ConfigManager $manager)
     {
         $this->beConstructedWith('foobar', $fs);
 
-        $fs->readFile('foobar')->willThrow(\Exception::class);
+        $fs->isFile('foobar')->willReturn(false);
 
         $manager->loadRepository(Argument::any())->shouldNotBeCalled();
 
-        $this->shouldThrow(\Exception::class)->during('loadIniFile', [$manager]);
+        $this->loadIniFile($manager);
     }
 }

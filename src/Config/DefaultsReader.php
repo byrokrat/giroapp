@@ -22,34 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Config;
 
-use byrokrat\giroapp\Filesystem\FilesystemInterface;
-
-final class IniFileLoader
+final class DefaultsReader
 {
-    /**
-     * @var string
-     */
-    private $iniFileName;
-
-    /**
-     * @var FilesystemInterface
-     */
-    private $filesystem;
-
-    public function __construct(string $iniFileName, FilesystemInterface $filesystem)
+    public function getRawDefaults(): string
     {
-        $this->iniFileName = $iniFileName;
-        $this->filesystem = $filesystem;
-    }
-
-    public function loadIniFile(ConfigManager $manager): void
-    {
-        if ($this->filesystem->isFile($this->iniFileName)) {
-            $manager->loadRepository(
-                new IniRepository(
-                    $this->filesystem->readFile($this->iniFileName)->getContent()
-                )
-            );
-        }
+        return (string)file_get_contents(__DIR__ . '/../../giroapp.ini.dist');
     }
 }
