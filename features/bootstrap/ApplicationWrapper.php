@@ -62,26 +62,27 @@ class ApplicationWrapper
 
     public function __call(string $command, array $arguments): Result
     {
-        return $this->execute("$command " . implode(' ', $arguments));
+        return $this->execute($command . ' ' . implode(' ', $arguments));
     }
 
     public function execute(string $command): Result
     {
-        return $this->executeRaw(self::EXECUTABLE_PLACEHOLDER . " $command -v");
+        return $this->executeRaw(self::EXECUTABLE_PLACEHOLDER . ' ' . $command);
     }
 
     public function executeRaw(string $command): Result
     {
+        $command = str_replace(self::EXECUTABLE_PLACEHOLDER, $this->executable, $command)
+            . ' -v --no-interaction --no-ansi';
+
         ($this->debugDump)($command, '$');
 
-        $command = str_replace(self::EXECUTABLE_PLACEHOLDER, $this->executable, $command);
-
-        $env = $_ENV;
+        $env = getenv();
         $env['GIROAPP_INI'] = $this->iniFilename;
         $env['GIROAPP_INSTALL_PATH'] = self::GIROAPP_INSTALL_PATH;
 
         $process = proc_open(
-            "$command -v --no-interaction --no-ansi",
+            $command,
             [
                 1 => ["pipe", "w"],
                 2 => ["pipe", "w"]

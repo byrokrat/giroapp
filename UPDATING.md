@@ -1,6 +1,6 @@
 # UPDATING
 
-## Unreleased changes
+## Beta-7
 
 * Added the `mailstr` formatter.
 * Fixed a fatal error when organization id was entered as a person id.
