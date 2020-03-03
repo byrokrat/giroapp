@@ -26,7 +26,6 @@ use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
 use byrokrat\id\IdFactoryInterface;
-use byrokrat\id\OrganizationId;
 use Money\Money;
 use PhpSpec\ObjectBehavior;
 
@@ -36,7 +35,7 @@ class XmlMandateProcessorSpec extends ObjectBehavior
     const PAYEE_BANKGIRO = '123-123';
 
     function let(
-        OrganizationId $payeeOrgNr,
+        IdInterface $payeeOrgNr,
         AccountNumber $payeeBankgiro,
         AccountFactoryInterface $accountFactory,
         IdFactoryInterface $idFactory,

@@ -38,7 +38,7 @@ use byrokrat\giroapp\Validator\PayerNumberValidator;
 use byrokrat\giroapp\Validator\PostalCodeValidator;
 use byrokrat\giroapp\Validator\StringValidator;
 use byrokrat\banking\AccountNumber;
-use byrokrat\id\OrganizationId;
+use byrokrat\id\IdInterface;
 use Money\Money;
 
 class XmlMandateProcessor
@@ -48,13 +48,13 @@ class XmlMandateProcessor
         DependencyInjection\DonorRepositoryProperty,
         DependencyInjection\IdFactoryProperty;
 
-    /** @var OrganizationId */
+    /** @var IdInterface */
     private $payeeOrgNr;
 
     /** @var AccountNumber */
     private $payeeBankgiro;
 
-    public function __construct(OrganizationId $payeeOrgNr, AccountNumber $payeeBankgiro)
+    public function __construct(IdInterface $payeeOrgNr, AccountNumber $payeeBankgiro)
     {
         $this->payeeOrgNr = $payeeOrgNr;
         $this->payeeBankgiro = $payeeBankgiro;
