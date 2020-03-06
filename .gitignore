@@ -7,4 +7,4 @@
 /.php_cs.cache
 /.php_cs
 /tools
-/phive.phar
+/phive.*

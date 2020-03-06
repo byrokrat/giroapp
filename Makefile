@@ -37,6 +37,7 @@ clean:
 	rm $(TARGET) --interactive=no -f
 	rm -rf vendor
 	rm -rf tools
+	rm -f phive.xml
 
 maintainer-clean: clean
 	@echo 'This command is intended for maintainers to use; it'
@@ -123,8 +124,7 @@ vendor/installed: composer.lock
 	$(COMPOSER_CMD) install
 	touch $@
 
-tools/installed: $(SECURITY_CHECKER_CMD)
-	$(PHIVE_CMD) install
+tools/installed: $(PHPSPEC_CMD) $(BEHAT_CMD) $(README_TESTER_CMD) $(PHPSTAN_CMD) $(PHPCS_CMD) $(BOX_CMD) $(SECURITY_CHECKER_CMD)
 	touch $@
 
 $(PHPSPEC_CMD):
@@ -137,7 +137,7 @@ $(README_TESTER_CMD):
 	$(PHIVE_CMD) install hanneskod/readme-tester:1 --force-accept-unsigned
 
 $(PHPSTAN_CMD):
-	$(PHIVE_CMD) install phpstan --force-accept-unsigned
+	$(PHIVE_CMD) install phpstan --trust-gpg-keys CF1A108D0E7AE720
 
 $(PHPCS_CMD):
 	$(PHIVE_CMD) install phpcs --trust-gpg-keys 31C7E470E2138192

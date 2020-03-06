@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<phive xmlns="https://phar.io/phive">
-  <phar name="phpspec/phpspec" version="6" installed="6.1.1" location="./tools/phpspec" copy="false"/>
-  <phar name="behat/behat" version="3" installed="3.3.0" location="./tools/behat" copy="false"/>
-  <phar name="hanneskod/readme-tester" version="1" installed="1.0.0-beta5" location="./tools/readme-tester" copy="false"/>
-  <phar name="phpstan" version="^0.12.14" installed="0.12.14" location="./tools/phpstan" copy="false"/>
-  <phar name="phpcs" version="^3.5.4" installed="3.5.4" location="./tools/phpcs" copy="false"/>
-  <phar name="humbug/box" version="3" installed="3.8.4" location="./tools/box" copy="false"/>
-</phive>
