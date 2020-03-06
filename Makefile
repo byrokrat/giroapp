@@ -1,12 +1,13 @@
-PHPSPEC=vendor/bin/phpspec
-BEHAT=vendor/bin/behat
-README_TESTER=vendor/bin/readme-tester
-PHPSTAN=vendor/bin/phpstan
-PHPCS=vendor/bin/phpcs
-BOX=vendor/bin/box
-SECURITY_CHECKER=vendor/bin/security-checker
-
 COMPOSER_CMD=composer
+PHIVE_CMD=phive
+
+PHPSPEC_CMD=tools/phpspec
+BEHAT_CMD=tools/behat
+README_TESTER_CMD=tools/readme-tester
+PHPSTAN_CMD=tools/phpstan
+PHPCS_CMD=tools/phpcs
+BOX_CMD=tools/box
+SECURITY_CHECKER_CMD=tools/security-checker
 
 TARGET=giroapp.phar
 DESTDIR=/usr/local/bin
@@ -24,9 +25,9 @@ all: test analyze docs build check
 
 build: preconds $(TARGET)
 
-$(TARGET): vendor-bin/installed $(CONTAINER) $(SRC_FILES) bin/giroapp box.json.dist composer.lock
+$(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) bin/giroapp box.json.dist composer.lock $(BOX_CMD)
 	$(COMPOSER_CMD) install --prefer-dist --no-dev
-	$(BOX) compile
+	$(BOX_CMD) compile
 	$(COMPOSER_CMD) install
 
 $(CONTAINER): vendor/installed $(ETC_FILES) $(SRC_FILES)
@@ -35,7 +36,7 @@ $(CONTAINER): vendor/installed $(ETC_FILES) $(SRC_FILES)
 clean:
 	rm $(TARGET) --interactive=no -f
 	rm -rf vendor
-	rm -rf vendor-bin
+	rm -rf tools
 
 maintainer-clean: clean
 	@echo 'This command is intended for maintainers to use; it'
@@ -67,8 +68,8 @@ preconds: dependency_check security_check
 dependency_check: vendor/installed
 	$(COMPOSER_CMD) validate --strict
 
-security_check: vendor/installed $(SECURITY_CHECKER)
-	$(SECURITY_CHECKER) security:check composer.lock
+security_check: composer.lock $(SECURITY_CHECKER_CMD)
+	$(SECURITY_CHECKER_CMD) security:check composer.lock
 
 #
 # Documentation
@@ -76,8 +77,8 @@ security_check: vendor/installed $(SECURITY_CHECKER)
 
 .PHONY: docs
 
-docs: vendor-bin/installed $(STATE_GRAPH)
-	$(README_TESTER) README.md docs
+docs: vendor/installed $(README_TESTER_CMD) $(STATE_GRAPH)
+	$(README_TESTER_CMD) README.md docs
 
 $(STATE_GRAPH): $(CONTAINER) $(ETC_FILES)
 	bin/build_state_graph | dot -Tsvg -o $@
@@ -92,24 +93,24 @@ test: phpspec behat
 
 analyze: phpstan phpcs
 
-phpspec: vendor-bin/installed
-	$(PHPSPEC) run
+phpspec: vendor/installed $(PHPSPEC_CMD)
+	$(PHPSPEC_CMD) run
 
-behat: vendor-bin/installed $(CONTAINER)
-	$(BEHAT) --stop-on-failure --suite=default
+behat: vendor/installed $(BEHAT_CMD) $(CONTAINER)
+	$(BEHAT_CMD) --stop-on-failure --suite=default
 
-debug: vendor-bin/installed $(CONTAINER)
-	$(BEHAT) --stop-on-failure --suite=debug
+debug: vvendor/installed $(BEHAT_CMD) $(CONTAINER)
+	$(BEHAT_CMD) --stop-on-failure --suite=debug
 
-check: vendor-bin/installed $(TARGET)
-	$(BEHAT) --stop-on-failure --suite=phar
+check: vendor/installed $(BEHAT_CMD) $(TARGET)
+	$(BEHAT_CMD) --stop-on-failure --suite=phar
 
-phpstan: vendor-bin/installed
-	$(PHPSTAN) analyze -c phpstan.neon -l 7 src
+phpstan: vendor/installed $(PHPSTAN_CMD)
+	$(PHPSTAN_CMD) analyze -c phpstan.neon -l 7 src
 
-phpcs: vendor-bin/installed
-	$(PHPCS) src --standard=PSR2 --ignore=$(CONTAINER)
-	$(PHPCS) spec --standard=spec/ruleset.xml
+phpcs: $(PHPCS_CMD)
+	$(PHPCS_CMD) src --standard=PSR2 --ignore=$(CONTAINER)
+	$(PHPCS_CMD) spec --standard=spec/ruleset.xml
 
 #
 # Dependencies
@@ -122,12 +123,30 @@ vendor/installed: composer.lock
 	$(COMPOSER_CMD) install
 	touch $@
 
-vendor-bin/installed: vendor/installed
-	$(COMPOSER_CMD) bin phpspec require phpspec/phpspec:">=5"
-	$(COMPOSER_CMD) bin behat require behat/behat:^3
-	$(COMPOSER_CMD) bin readme-tester require hanneskod/readme-tester:^1.0@beta
-	$(COMPOSER_CMD) bin phpstan require "phpstan/phpstan:<2"
-	$(COMPOSER_CMD) bin phpcs require squizlabs/php_codesniffer:^3
-	$(COMPOSER_CMD) bin box require humbug/box:^3
-	$(COMPOSER_CMD) bin security-checker require sensiolabs/security-checker
+tools/installed: $(SECURITY_CHECKER_CMD)
+	$(PHIVE_CMD) install
 	touch $@
+
+$(PHPSPEC_CMD):
+	$(PHIVE_CMD) install phpspec/phpspec:6 --force-accept-unsigned
+
+$(BEHAT_CMD):
+	$(PHIVE_CMD) install behat/behat:3 --force-accept-unsigned
+
+$(README_TESTER_CMD):
+	$(PHIVE_CMD) install hanneskod/readme-tester:1 --force-accept-unsigned
+
+$(PHPSTAN_CMD):
+	$(PHIVE_CMD) install phpstan --force-accept-unsigned
+
+$(PHPCS_CMD):
+	$(PHIVE_CMD) install phpcs --trust-gpg-keys 31C7E470E2138192
+
+$(BOX_CMD):
+	$(PHIVE_CMD) install humbug/box:3 --force-accept-unsigned
+
+$(SECURITY_CHECKER_CMD):
+	wget https://get.sensiolabs.org/security-checker.phar
+	chmod u+x security-checker.phar
+	mkdir -p tools
+	mv security-checker.phar $(SECURITY_CHECKER_CMD)

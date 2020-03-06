@@ -8,13 +8,15 @@ php:
     - 7.2
 
 install:
-    - make vendor-bin/installed
+    - make vendor/installed
+    - travis_retry wget -O phive.phar https://phar.io/releases/phive.phar
+    - travis_retry make tools/installed PHIVE_CMD="php phive.phar"
 
 script:
-    - vendor/bin/phpspec run --verbose
+    - tools/phpspec run --verbose
     - make build
-    - vendor/bin/behat --suite=debug
-    - vendor/bin/behat --suite=phar
+    - tools/behat --suite=debug
+    - tools/behat --suite=phar
 
 deploy:
     provider: releases

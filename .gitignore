@@ -1,5 +1,4 @@
 /vendor
-/vendor-bin
 /composer.phar
 /.giroapp
 /giroapp.phar
@@ -7,3 +6,5 @@
 /giroapp.ini
 /.php_cs.cache
 /.php_cs
+/tools
+/phive.phar
