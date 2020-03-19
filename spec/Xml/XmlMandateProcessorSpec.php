@@ -11,11 +11,13 @@ use byrokrat\giroapp\CommandBus\AddDonor;
 use byrokrat\giroapp\CommandBus\UpdateAttribute;
 use byrokrat\giroapp\CommandBus\UpdateName;
 use byrokrat\giroapp\CommandBus\UpdatePostalAddress;
+use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\Db\DonorRepositoryInterface;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\PostalAddress;
+use byrokrat\giroapp\Domain\State\NewMandate;
 use byrokrat\giroapp\Exception\InvalidDataException;
 use byrokrat\giroapp\Validator\AccountValidator;
 use byrokrat\giroapp\Validator\IdValidator;
@@ -120,6 +122,10 @@ class XmlMandateProcessorSpec extends ObjectBehavior
                 Money::SEK('0')
             )
         ))->shouldBeCalled();
+
+        $commandBus->handle(
+            new UpdateState($donor->getWrappedObject(), NewMandate::getStateId(), 'Mandate added from xml')
+        )->shouldBeCalled();
 
         $xmlMandate->readElement('/MedgivandeViaHemsida/Betalares_x0020_namn', new StringValidator)->willReturn('name');
 

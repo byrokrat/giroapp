@@ -20,6 +20,7 @@ services:
             - '@byrokrat\giroapp\Domain\State\AwaitingTransactionRegistration'
             - '@byrokrat\giroapp\Domain\State\AwaitingTransactionUpdate'
             - '@byrokrat\giroapp\Domain\State\Error'
+            - '@byrokrat\giroapp\Domain\State\MandateCreated'
             - '@byrokrat\giroapp\Domain\State\MandateSent'
             - '@byrokrat\giroapp\Domain\State\NewDigitalMandate'
             - '@byrokrat\giroapp\Domain\State\NewMandate'
@@ -37,6 +38,9 @@ services:
         class: ~
         arguments:
             -
+                - NEW_MANDATE: [MANDATE_CREATED, NEW_MANDATE]
+                - NEW_DIGITAL_MANDATE: [MANDATE_CREATED, NEW_DIGITAL_MANDATE]
+
                 - EXPORT: [NEW_MANDATE, MANDATE_SENT]
                 - EXPORT: [NEW_DIGITAL_MANDATE, MANDATE_SENT]
                 - IMPORT_MANDATE_REGISTERED: [MANDATE_SENT, AWAITING_TRANSACTION_REGISTRATION]

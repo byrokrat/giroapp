@@ -26,10 +26,12 @@ use byrokrat\giroapp\CommandBus\AddDonor;
 use byrokrat\giroapp\CommandBus\UpdateAttribute;
 use byrokrat\giroapp\CommandBus\UpdateName;
 use byrokrat\giroapp\CommandBus\UpdatePostalAddress;
+use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\PostalAddress;
+use byrokrat\giroapp\Domain\State\NewMandate;
 use byrokrat\giroapp\Exception\InvalidDataException;
 use byrokrat\giroapp\Exception\ValidatorException;
 use byrokrat\giroapp\Validator\AccountValidator;
@@ -123,6 +125,8 @@ class XmlMandateProcessor
             );
 
             $donor = $this->donorRepository->requireByPayerNumber($payerNumber);
+
+            $this->commandBus->handle(new UpdateState($donor, NewMandate::getStateId(), 'Mandate added from xml'));
 
             $this->commandBus->handle(
                 new UpdateName(

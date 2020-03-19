@@ -29,10 +29,12 @@ use byrokrat\giroapp\CommandBus\UpdateEmail;
 use byrokrat\giroapp\CommandBus\UpdateName;
 use byrokrat\giroapp\CommandBus\UpdatePhone;
 use byrokrat\giroapp\CommandBus\UpdatePostalAddress;
+use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\PostalAddress;
+use byrokrat\giroapp\Domain\State\NewMandate;
 use byrokrat\giroapp\Validator;
 use Money\Money;
 use Symfony\Component\Console\Command\Command;
@@ -246,6 +248,8 @@ final class AddConsole implements ConsoleInterface
         );
 
         $donor = $this->donorRepository->requireByPayerNumber($payerNumber);
+
+        $this->commandBus->handle(new UpdateState($donor, NewMandate::getStateId(), 'Mandate added manually'));
 
         $this->commandBus->handle(new UpdateName($donor, $name));
 

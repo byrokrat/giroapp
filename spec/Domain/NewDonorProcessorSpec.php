@@ -9,8 +9,7 @@ use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Domain\MandateSources;
-use byrokrat\giroapp\Domain\State\NewMandate;
-use byrokrat\giroapp\Domain\State\NewDigitalMandate;
+use byrokrat\giroapp\Domain\State\MandateCreated;
 use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Domain\State\StateCollection;
 use byrokrat\giroapp\Utils\SystemClock;
@@ -32,7 +31,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
     ) {
         $this->beConstructedWith($stateCollection, $systemClock);
         $systemClock->getNow()->willReturn(new \DateTimeImmutable);
-        $stateCollection->getState(Argument::any())->willReturn($state);
+        $stateCollection->getState(MandateCreated::getStateId())->willReturn($state);
         $state->getDescription()->willReturn('');
         $id->format('Ss')->willReturn('1');
         $account->get16()->willReturn('11');
@@ -48,17 +47,10 @@ class NewDonorProcessorSpec extends ObjectBehavior
         $this->shouldHaveType(NewDonorProcessor::class);
     }
 
-    function it_processes_new_donor(
-        $stateCollection,
-        $systemClock,
-        $state,
-        IdInterface $id,
-        AccountNumber $account
-    ) {
+    function it_processes_new_donor($systemClock, $state, IdInterface $id, AccountNumber $account)
+    {
         $now = new \DateTimeImmutable;
         $systemClock->getNow()->willReturn($now);
-
-        $stateCollection->getState(NewMandate::getStateId())->willReturn($state);
 
         $amount = Money::SEK('1');
 
@@ -88,33 +80,6 @@ class NewDonorProcessorSpec extends ObjectBehavior
             $now,
             []
         ));
-    }
-
-    function it_sets_new_state_on_source_paper($stateCollection, $state, $newDonor)
-    {
-        $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_PAPER);
-        $stateCollection->getState(NewMandate::getStateId())->shouldBeCalled()->willReturn($state);
-        $this->processNewDonor($newDonor);
-    }
-
-    function it_sets_new_state_on_source_online($stateCollection, $state, $newDonor)
-    {
-        $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_ONLINE_FORM);
-        $stateCollection->getState(NewMandate::getStateId())->shouldBeCalled()->willReturn($state);
-        $this->processNewDonor($newDonor);
-    }
-
-    function it_sets_new_digital_on_source_digital($stateCollection, $state, $newDonor)
-    {
-        $newDonor->getMandateSource()->willReturn(MandateSources::MANDATE_SOURCE_DIGITAL);
-        $stateCollection->getState(NewDigitalMandate::getStateId())->shouldBeCalled()->willReturn($state);
-        $this->processNewDonor($newDonor);
-    }
-
-    function it_throws_if_mandate_source_is_invalid($newDonor)
-    {
-        $newDonor->getMandateSource()->willReturn('not-a-valid-mandate-source');
-        $this->shouldThrow(\LogicException::class)->duringProcessNewDonor($newDonor);
     }
 
     function it_creates_keys_for_short_input($newDonor, $id, $account)
