@@ -107,7 +107,7 @@ final class AddConsole implements ConsoleInterface
             Helper\QuestionFactory::createChoiceQuestion(
                 $descs['source'],
                 $sources,
-                MandateSources::MANDATE_SOURCE_PAPER
+                MandateSources::MANDATE_SOURCE_ONLINE_FORM
             ),
             new Validator\ChoiceValidator($sources)
         );

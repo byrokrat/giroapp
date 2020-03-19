@@ -1,5 +1,9 @@
 # UPDATING
 
+## Beta-8
+
+* Make online form default source in add command
+
 ## Beta-7
 
 * Added the `mailstr` formatter.
