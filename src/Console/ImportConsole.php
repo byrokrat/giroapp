@@ -23,25 +23,35 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus\ImportAutogiroFile;
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use byrokrat\giroapp\CommandBus\Rollback;
+use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
+use byrokrat\giroapp\Event\Listener\ErrorListener;
+use byrokrat\giroapp\Event\LogEvent;
+use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Streamer\Stream;
 
 final class ImportConsole implements ConsoleInterface
 {
-    use CommandBusProperty;
+    use DependencyInjection\CommandBusProperty,
+        DependencyInjection\DispatcherProperty;
 
     /** @var FilesystemInterface */
     private $filesystem;
 
-    public function __construct(FilesystemInterface $filesystem)
+    /** @var ErrorListener */
+    private $errorListener;
+
+    public function __construct(FilesystemInterface $filesystem, ErrorListener $errorListener)
     {
         $this->filesystem = $filesystem;
+        $this->errorListener = $errorListener;
     }
 
     public function configure(Command $command): void
@@ -55,6 +65,7 @@ final class ImportConsole implements ConsoleInterface
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
                 'One or more paths to import'
             )
+            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import')
         ;
     }
 
@@ -81,6 +92,19 @@ final class ImportConsole implements ConsoleInterface
 
         foreach ($files as $file) {
             $this->commandBus->handle(new ImportAutogiroFile($file));
+        }
+
+        // Rollback on errors
+        if (!$input->getOption('force') && $this->errorListener->getErrors()) {
+            $this->dispatcher->dispatch(
+                new LogEvent(
+                    'Import failed as there were errors. Changes will be ignored. Use --force to override.',
+                    [],
+                    LogLevel::ERROR
+                )
+            );
+
+            $this->commandBus->handle(new Rollback);
         }
     }
 }

@@ -31,6 +31,7 @@ use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\Revoked;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Event\TransactionFailed;
 use byrokrat\giroapp\Event\TransactionPerformed;
 use byrokrat\giroapp\Workflow\Transitions;
@@ -38,6 +39,7 @@ use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
+use Psr\Log\LogLevel;
 
 class AutogiroVisitor extends Visitor
 {
@@ -66,6 +68,7 @@ class AutogiroVisitor extends Visitor
         $payeeBankgiro = $node->getChild('PayeeBankgiro')->getValueFrom('Object');
 
         if ($payeeBgcNr && $payeeBgcNr != $this->orgBgcNr->getValue()) {
+            // Hard failure, implicit rollback
             throw new InvalidAutogiroFileException(
                 sprintf(
                     'File contains invalid payee BGC customer number, found: %s, expexting: %s',
@@ -76,6 +79,7 @@ class AutogiroVisitor extends Visitor
         }
 
         if ($payeeBankgiro && !$payeeBankgiro->equals($this->orgBankgiro)) {
+            // Hard failure, implicit rollback
             throw new InvalidAutogiroFileException(
                 sprintf(
                     'File contains invalid payee bankgiro account number, found: %s, expexting: %s',
@@ -124,6 +128,7 @@ class AutogiroVisitor extends Visitor
             return;
         }
 
+        // Hard failure, implicit rollback
         throw new InvalidAutogiroFileException(
             sprintf(
                 '%s: invalid mandate status code: %s',
@@ -187,12 +192,17 @@ class AutogiroVisitor extends Visitor
     private function validateDonorAccountNumber(AccountNumber $nodeAccount, Donor $donor): void
     {
         if (!$nodeAccount->equals($donor->getAccount())) {
-            throw new InvalidAutogiroFileException(
-                sprintf(
-                    "Invalid mandate response for payer number '%s', found account '%s', expecting '%s'",
-                    $donor->getPayerNumber(),
-                    $nodeAccount->getNumber(),
-                    $donor->getAccount()->getNumber()
+            // Dispatching error means that failure can be picked up in an outer layer
+            $this->dispatcher->dispatch(
+                new LogEvent(
+                    sprintf(
+                        "Invalid mandate response for payer number '%s', found account '%s', expecting '%s'",
+                        $donor->getPayerNumber(),
+                        $nodeAccount->getNumber(),
+                        $donor->getAccount()->getNumber()
+                    ),
+                    ['payer_number' => $donor->getPayerNumber(), 'mandate_key' => $donor->getMandateKey()],
+                    LogLevel::ERROR
                 )
             );
         }
@@ -201,12 +211,17 @@ class AutogiroVisitor extends Visitor
     private function validateDonorId(IdInterface $nodeId, Donor $donor): void
     {
         if ($nodeId->format('S-sk') != $donor->getDonorId()->format('S-sk')) {
-            throw new InvalidAutogiroFileException(
-                sprintf(
-                    "Invalid mandate response for payer number '%s', found donor id '%s', expecting '%s'",
-                    $donor->getPayerNumber(),
-                    $nodeId->format('S-sk'),
-                    $donor->getDonorId()->format('S-sk')
+            // Dispatching error means that failure can be picked up in an outer layer
+            $this->dispatcher->dispatch(
+                new LogEvent(
+                    sprintf(
+                        "Invalid mandate response for payer number '%s', found donor id '%s', expecting '%s'",
+                        $donor->getPayerNumber(),
+                        $nodeId->format('S-sk'),
+                        $donor->getDonorId()->format('S-sk')
+                    ),
+                    ['payer_number' => $donor->getPayerNumber(), 'mandate_key' => $donor->getMandateKey()],
+                    LogLevel::ERROR
                 )
             );
         }

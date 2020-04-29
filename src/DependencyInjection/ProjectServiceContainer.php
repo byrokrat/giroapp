@@ -215,6 +215,7 @@ class ProjectServiceContainer extends Container
             'byrokrat\\giroapp\\Event\\Listener\\DonorEventNormalizer' => true,
             'byrokrat\\giroapp\\Event\\Listener\\DonorEventRecorder' => true,
             'byrokrat\\giroapp\\Event\\Listener\\DonorStateListener' => true,
+            'byrokrat\\giroapp\\Event\\Listener\\ErrorListener' => true,
             'byrokrat\\giroapp\\Event\\Listener\\FileDumpingListener' => true,
             'byrokrat\\giroapp\\Event\\Listener\\ImportHistoryListener' => true,
             'byrokrat\\giroapp\\Event\\Listener\\LoggingListener' => true,
@@ -410,8 +411,9 @@ class ProjectServiceContainer extends Container
         $q->setCommandBus($h);
         $r = ($this->privates['fs_cwd'] ?? $this->getFsCwdService());
 
-        $s = new \byrokrat\giroapp\Console\ImportConsole($r);
+        $s = new \byrokrat\giroapp\Console\ImportConsole($r, ($this->privates['byrokrat\\giroapp\\Event\\Listener\\ErrorListener'] ?? ($this->privates['byrokrat\\giroapp\\Event\\Listener\\ErrorListener'] = new \byrokrat\giroapp\Event\Listener\ErrorListener())));
         $s->setCommandBus($h);
+        $s->setEventDispatcher($b);
         $t = new \byrokrat\giroapp\Console\ImportXmlMandateConsole($r);
         $t->setCommandBus($h);
         $u = new \byrokrat\giroapp\Console\ListConsole($d, $e, $f);
@@ -496,6 +498,7 @@ class ProjectServiceContainer extends Container
         $j->setEventDispatcher($h);
 
         $instance->addListener(new \byrokrat\giroapp\Event\Listener\DonorEventRecorder(($this->privates['byrokrat\\giroapp\\Db\\DonorEventStoreInterface'] ?? $this->getDonorEventStoreInterfaceService()), $a, $b));
+        $instance->addListener(($this->privates['byrokrat\\giroapp\\Event\\Listener\\ErrorListener'] ?? ($this->privates['byrokrat\\giroapp\\Event\\Listener\\ErrorListener'] = new \byrokrat\giroapp\Event\Listener\ErrorListener())));
         $instance->addListener(new \byrokrat\giroapp\Event\Listener\ImportHistoryListener(($this->privates['byrokrat\\giroapp\\Db\\ImportHistoryInterface'] ?? $this->getImportHistoryInterfaceService())));
         $instance->addListener(new \byrokrat\giroapp\Event\Listener\LoggingListener(($this->privates['Psr\\Log\\LoggerInterface'] ?? $this->getLoggerInterfaceService())));
         $instance->addListener([0 => $g, 1 => 'onFileEvent'], 0, NULL, 'byrokrat\\giroapp\\Event\\FileImported');

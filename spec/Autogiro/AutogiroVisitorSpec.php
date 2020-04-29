@@ -17,6 +17,7 @@ use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Event\TransactionFailed;
 use byrokrat\giroapp\Event\TransactionPerformed;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Workflow\Transitions;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\autogiro\Visitor\Visitor;
@@ -97,35 +98,16 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $this->beforeOpening($node);
     }
 
-    function it_fails_on_mandate_response_if_node_contains_invalid_id(
+    function it_fails_on_mandate_response_if_node_contains_invalid_id_account(
         $donorQuery,
-        Node $parentNode,
-        Donor $donor,
-        Node $idNode,
-        IdInterface $nodeId,
-        IdInterface $donorId
-    ) {
-        $parentNode->getValueFrom('PayerNumber')->willReturn('payer-number');
-        $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
-
-        $parentNode->getChild('StateId')->willReturn($idNode);
-        $idNode->getValueFrom('Object')->willReturn($nodeId);
-
-        $donor->getDonorId()->willReturn($donorId);
-        $donor->getPayerNumber()->willReturn('');
-
-        $nodeId->format('S-sk')->willReturn('foo');
-        $donorId->format('S-sk')->willReturn('NOT-foo');
-
-        $this->shouldThrow(InvalidAutogiroFileException::class)->duringBeforeMandateResponse($parentNode);
-    }
-
-    function it_fails_on_mandate_response_if_node_contains_invalid_account(
-        $donorQuery,
+        $dispatcher,
         Node $parentNode,
         Donor $donor,
         Node $idNode,
         Node $accountNode,
+        Node $statusNode,
+        IdInterface $nodeId,
+        IdInterface $donorId,
         AccountNumber $nodeAccount,
         AccountNumber $donorAccount
     ) {
@@ -133,19 +115,31 @@ class AutogiroVisitorSpec extends ObjectBehavior
         $donorQuery->requireByPayerNumber('payer-number')->willReturn($donor);
 
         $parentNode->getChild('StateId')->willReturn($idNode);
-        $idNode->getValueFrom('Object')->willReturn(null);
+        $idNode->getValueFrom('Object')->willReturn($nodeId);
 
         $parentNode->getChild('Account')->willReturn($accountNode);
         $accountNode->getValueFrom('Object')->willReturn($nodeAccount);
 
+        $donor->getDonorId()->willReturn($donorId);
         $donor->getAccount()->willReturn($donorAccount);
         $donor->getPayerNumber()->willReturn('');
+        $donor->getMandateKey()->willReturn('');
+
+        $nodeId->format('S-sk')->willReturn('foo');
+        $donorId->format('S-sk')->willReturn('NOT-foo');
 
         $nodeAccount->getNumber()->willReturn('');
         $donorAccount->getNumber()->willReturn('');
         $nodeAccount->equals($donorAccount)->willReturn(false);
 
-        $this->shouldThrow(InvalidAutogiroFileException::class)->duringBeforeMandateResponse($parentNode);
+        $parentNode->getChild('Status')->willReturn($statusNode);
+        $statusNode->getValueFrom('Text')->willReturn('desc');
+
+        $parentNode->hasChild('CreatedFlag')->willReturn(true);
+
+        $dispatcher->dispatch(Argument::type(LogEvent::class))->shouldBeCalledTimes(2);
+
+        $this->beforeMandateResponse($parentNode);
     }
 
     function it_fails_on_mandate_response_if_unknown_response_code(

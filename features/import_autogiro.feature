@@ -84,6 +84,31 @@ Feature: Importing files
         """
     Then the database contains donor "12345" with "state" matching "ERROR"
 
+  Scenario: I import an autogiro file approving a mandate with incorrect account
+    Given there are donors:
+      | payer-number | account     | state        |
+      | 12345        | 51020158751 | MANDATE_SENT |
+    When I import:
+      """
+      01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
+      73005805620100000000000123455000000001111116198203232775     043220170817
+      092017081799000000001
+      """
+    Then the database contains donor "12345" with "state" matching "MANDATE_SENT"
+
+  Scenario: I forcefully import an autogiro file approving a mandate with incorrect account
+    Given there are donors:
+      | payer-number | account     | state        |
+      | 12345        | 51020158751 | MANDATE_SENT |
+    Given a file named "ag.txt":
+      """
+      01AUTOGIRO              20170817            AG-MEDAVI           1234560058056201
+      73005805620100000000000123455000000001111116198203232775     043220170817
+      092017081799000000001
+      """
+    When I run "import ag.txt --force"
+    Then the database contains donor "12345" with "state" matching "AWAITING_TRANSACTION_REGISTRATION"
+
   Scenario: I import an autogiro file with a succesfull transaction report
     Given there are donors:
       | payer-number | state                         |
