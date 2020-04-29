@@ -216,8 +216,15 @@ class FeatureContext implements Context
     {
         $this->theDatabaseContainsDonor($donor);
         $data = json_decode($this->result->getOutput(), true);
-        if (!isset($data[$field]) || $data[$field] != $expected) {
-            throw new \Exception("Unable to find $field: $expected in database");
+
+        if (!isset($data[$field])) {
+            throw new \Exception("Database field $field does not exist");
+        }
+
+        $current = str_replace("\n", '', print_r($data[$field] ?? '', true));
+
+        if ($current != $expected) {
+            throw new \Exception("Unable to find $field: $expected in database (found: $current)");
         }
     }
 

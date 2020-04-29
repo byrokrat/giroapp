@@ -11,6 +11,7 @@ use byrokrat\giroapp\Domain\State\StateInterface;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\DonorAdded;
 use byrokrat\giroapp\Event\DonorAmountUpdated;
+use byrokrat\giroapp\Event\DonorAttributeRemoved;
 use byrokrat\giroapp\Event\DonorAttributeUpdated;
 use byrokrat\giroapp\Event\DonorCommentUpdated;
 use byrokrat\giroapp\Event\DonorEmailUpdated;
@@ -113,6 +114,11 @@ class DonorEventNormalizerSpec extends ObjectBehavior
         $this->normalizeEvent(new DonorAmountUpdated($donor->getWrappedObject(), $money))->shouldReturn([
             'donation_amount' => '666'
         ]);
+    }
+
+    function it_normalizes_attribute_removed($donor)
+    {
+        $this->normalizeEvent(new DonorAttributeRemoved($donor->getWrappedObject(), 'foo'))->shouldReturn([]);
     }
 
     function it_normalizes_attribute_updated($donor)

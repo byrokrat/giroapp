@@ -100,7 +100,7 @@ phpspec: vendor/installed $(PHPSPEC_CMD)
 behat: vendor/installed $(BEHAT_CMD) $(CONTAINER)
 	$(BEHAT_CMD) --stop-on-failure --suite=default
 
-debug: vvendor/installed $(BEHAT_CMD) $(CONTAINER)
+debug: vendor/installed $(BEHAT_CMD) $(CONTAINER)
 	$(BEHAT_CMD) --stop-on-failure --suite=debug
 
 check: vendor/installed $(BEHAT_CMD) $(TARGET)

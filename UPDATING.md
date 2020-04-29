@@ -4,6 +4,8 @@
 
 * Made online form default source in add command.
 * Made it possible to listen to `NEW_MANDATE` and `NEW_DIGITAL_MANDATE` events.
+* Add support for setting donor values to an empty string in `edit`
+* Added `delete-attribute` command
 
 ## Beta-7
 

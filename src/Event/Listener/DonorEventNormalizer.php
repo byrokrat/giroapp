@@ -26,6 +26,7 @@ use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\DonorEvent;
 use byrokrat\giroapp\Event\DonorAdded;
 use byrokrat\giroapp\Event\DonorAmountUpdated;
+use byrokrat\giroapp\Event\DonorAttributeRemoved;
 use byrokrat\giroapp\Event\DonorAttributeUpdated;
 use byrokrat\giroapp\Event\DonorCommentUpdated;
 use byrokrat\giroapp\Event\DonorEmailUpdated;
@@ -74,6 +75,8 @@ class DonorEventNormalizer
                 return [
                     'donation_amount' => $this->moneyFormatter->format($event->getNewAmount()),
                 ];
+            case $event instanceof DonorAttributeRemoved:
+                return [];
             case $event instanceof DonorAttributeUpdated:
                 return [
                     'attributes' => [

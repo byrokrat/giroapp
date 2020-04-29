@@ -96,7 +96,7 @@ class ApplicationWrapper
         $errorOutput = stream_get_contents($pipes[2]);
 
         ($this->debugDump)($output, '>');
-        ($this->debugDump)($errorOutput, 'err:');
+        ($this->debugDump)($errorOutput, ':');
 
         fclose($pipes[1]);
         fclose($pipes[2]);

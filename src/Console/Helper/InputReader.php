@@ -26,6 +26,7 @@ use byrokrat\giroapp\Validator\ValidatorInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
 /**
@@ -71,6 +72,41 @@ class InputReader
             $this->input,
             $this->output,
             $question->setValidator(function ($answer) use ($key, $validator) {
+                return $validator->validate($key, (string)$answer);
+            })
+        );
+
+        return $this->input->isInteractive() ? $value : $validator->validate($key, $value);
+    }
+
+    public function readOptionalInput(string $key, string $default, ValidatorInterface $validator): string
+    {
+        $value = null;
+
+        if ($this->input->hasOption($key)) {
+            $value = $this->input->getOption($key);
+        }
+
+        if (is_string($value)) {
+            return $validator->validate($key, $value);
+        }
+
+        // Ask if user wants to edit
+        $requestEdit = $this->questionHelper->ask(
+            $this->input,
+            $this->output,
+            new ConfirmationQuestion("$key: <comment>$default</comment>\nEdit [<info>y/N</info>]? ", false)
+        );
+
+        // Return default if user does not want to edit
+        if (!$requestEdit) {
+            return $default;
+        }
+
+        $value = (string)$this->questionHelper->ask(
+            $this->input,
+            $this->output,
+            (new Question("New $key: "))->setValidator(function ($answer) use ($key, $validator) {
                 return $validator->validate($key, (string)$answer);
             })
         );
