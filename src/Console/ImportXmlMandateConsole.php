@@ -22,17 +22,18 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\CommandBus\ImportAutogiroFile;
+use byrokrat\giroapp\CommandBus\ImportXmlFile;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
+use byrokrat\giroapp\Xml\XmlObject;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Streamer\Stream;
 
-final class ImportConsole implements ConsoleInterface
+final class ImportXmlMandateConsole implements ConsoleInterface
 {
     use CommandBusProperty;
 
@@ -47,9 +48,9 @@ final class ImportConsole implements ConsoleInterface
     public function configure(Command $command): void
     {
         $command
-            ->setName('import')
-            ->setDescription('Import a file from autogirot')
-            ->setHelp('Import one or more files with data from autogirot')
+            ->setName('import-xml-mandate')
+            ->setDescription('Import an xml formatted mandate')
+            ->setHelp('Import one or more xml formatted mandates from autogirot')
             ->addArgument(
                 'path',
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
@@ -80,7 +81,9 @@ final class ImportConsole implements ConsoleInterface
         }
 
         foreach ($files as $file) {
-            $this->commandBus->handle(new ImportAutogiroFile($file));
+            $this->commandBus->handle(
+                new ImportXmlFile($file, XmlObject::fromString($file->getContent()))
+            );
         }
     }
 }

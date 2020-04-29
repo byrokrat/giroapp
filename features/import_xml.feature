@@ -1,7 +1,4 @@
-Feature: Importing files
-  In order to manage autogiro donors
-  As a user
-  I need to be able to import donors from online form xml format
+Feature: Importing xml mandate files
 
   Background:
     Given a fresh installation
@@ -12,7 +9,7 @@ Feature: Importing files
         """
 
   Scenario: I import an online autogiro form
-    When I import:
+    Given a file named "mandate.xml":
         """
         <?xml version="1.0" encoding="utf-8"?>
         <DocumentElement>
@@ -48,11 +45,12 @@ Feature: Importing files
           </MedgivandeViaHemsida>
         </DocumentElement>
         """
+    When I run "import-xml-mandate mandate.xml"
     Then there is no error
     And the database contains donor "12345" with "state" matching "NEW_MANDATE"
 
   Scenario: I import an online autogiro form with no payer number
-    When I import:
+    Given a file named "mandate.xml":
         """
         <?xml version="1.0" encoding="utf-8"?>
         <DocumentElement>
@@ -88,5 +86,6 @@ Feature: Importing files
           </MedgivandeViaHemsida>
         </DocumentElement>
         """
+    When I run "import-xml-mandate mandate.xml"
     Then there is no error
     And the database contains donor "8203232775"

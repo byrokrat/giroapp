@@ -6,6 +6,7 @@
 * Made it possible to listen to `NEW_MANDATE` and `NEW_DIGITAL_MANDATE` events.
 * Add support for setting donor values to an empty string in `edit`
 * Added `delete-attribute` command
+* Added the `import-xml-mandate` command, replaces import xml using `import`
 
 ## Beta-7
 
