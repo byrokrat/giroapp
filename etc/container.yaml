@@ -122,7 +122,7 @@ services:
         factory: ['@byrokrat\giroapp\Db\DriverInterface', 'getImportHistory']
         lazy: true
 
-    byrokrat\giroapp\Xml\XmlMandateProcessor:
+    byrokrat\giroapp\Xml\XmlMandateParser:
         class: ~
         arguments: ['@organization_id', '@organization_bg']
 

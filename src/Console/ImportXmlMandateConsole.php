@@ -22,27 +22,49 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\CommandBus\ImportXmlFile;
-use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use byrokrat\giroapp\CommandBus\AddDonor;
+use byrokrat\giroapp\CommandBus\UpdateAttribute;
+use byrokrat\giroapp\CommandBus\UpdateName;
+use byrokrat\giroapp\CommandBus\UpdatePostalAddress;
+use byrokrat\giroapp\CommandBus\UpdateState;
+use byrokrat\giroapp\DependencyInjection;
+use byrokrat\giroapp\Domain\MandateSources;
+use byrokrat\giroapp\Domain\NewDonor;
+use byrokrat\giroapp\Domain\PostalAddress;
+use byrokrat\giroapp\Domain\State\NewMandate;
+use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
+use byrokrat\giroapp\Validator;
+use byrokrat\giroapp\Xml\XmlMandate;
+use byrokrat\giroapp\Xml\XmlMandateParser;
 use byrokrat\giroapp\Xml\XmlObject;
+use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Streamer\Stream;
 
 final class ImportXmlMandateConsole implements ConsoleInterface
 {
-    use CommandBusProperty;
+    use DependencyInjection\AccountFactoryProperty,
+        DependencyInjection\CommandBusProperty,
+        DependencyInjection\DispatcherProperty,
+        DependencyInjection\DonorRepositoryProperty,
+        DependencyInjection\IdFactoryProperty;
 
     /** @var FilesystemInterface */
     private $filesystem;
 
-    public function __construct(FilesystemInterface $filesystem)
+    /** @var XmlMandateParser */
+    private $xmlMandateParser;
+
+    public function __construct(FilesystemInterface $filesystem, XmlMandateParser $xmlMandateParser)
     {
         $this->filesystem = $filesystem;
+        $this->xmlMandateParser = $xmlMandateParser;
     }
 
     public function configure(Command $command): void
@@ -80,10 +102,122 @@ final class ImportXmlMandateConsole implements ConsoleInterface
             }
         }
 
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+
         foreach ($files as $file) {
-            $this->commandBus->handle(
-                new ImportXmlFile($file, XmlObject::fromString($file->getContent()))
-            );
+            $this->dispatcher->dispatch(new LogEvent("Importing from XML file {$file->getFilename()}"));
+
+            $xmlObject = XmlObject::fromString($file->getContent());
+
+            foreach ($this->xmlMandateParser->parseXml($xmlObject) as $xmlMandate) {
+                $this->dispatcher->dispatch(new LogEvent("Importing new mandate"));
+                $this->processMandate($xmlMandate, $inputReader);
+            }
+        }
+    }
+
+    private function processMandate(XmlMandate $xmlMandate, Helper\InputReader $inputReader): void
+    {
+        $inputReader->readOptionalInput(
+            'donorId',
+            $xmlMandate->donorId->format('CS-sk'),
+            new Validator\ValidatorCollection(
+                new Validator\IdValidator,
+                new Validator\CallbackValidator(function (string $value) use (&$xmlMandate) {
+                    $xmlMandate->donorId = $this->idFactory->createId($value);
+                })
+            )
+        );
+
+        $xmlMandate->payerNumber = $inputReader->readOptionalInput(
+            'payer-number',
+            $xmlMandate->payerNumber ?: $xmlMandate->donorId->format('Ssk'),
+            new Validator\PayerNumberValidator
+        );
+
+        $inputReader->readOptionalInput(
+            'account',
+            $xmlMandate->account->prettyprint(),
+            new Validator\ValidatorCollection(
+                new Validator\AccountValidator,
+                new Validator\CallbackValidator(function (string $value) use (&$xmlMandate) {
+                    $xmlMandate->account = $this->accountFactory->createAccount($value);
+                })
+            )
+        );
+
+        $xmlMandate->name = $inputReader->readOptionalInput(
+            'name',
+            $xmlMandate->name,
+            new Validator\ValidatorCollection(
+                new Validator\StringValidator,
+                new Validator\NotEmptyValidator
+            )
+        );
+
+        $xmlMandate->address['line1'] = $inputReader->readOptionalInput(
+            'address1',
+            $xmlMandate->address['line1'],
+            new Validator\StringValidator
+        );
+
+        $xmlMandate->address['line2'] = $inputReader->readOptionalInput(
+            'address2',
+            $xmlMandate->address['line2'],
+            new Validator\StringValidator
+        );
+
+        $xmlMandate->address['line3'] = $inputReader->readOptionalInput(
+            'address3',
+            $xmlMandate->address['line3'],
+            new Validator\StringValidator
+        );
+
+        $xmlMandate->address['postalCode'] = $inputReader->readOptionalInput(
+            'postal-code',
+            $xmlMandate->address['postalCode'],
+            new Validator\PostalCodeValidator
+        );
+
+        $xmlMandate->address['postalCity'] = $inputReader->readOptionalInput(
+            'postal-city',
+            $xmlMandate->address['postalCity'],
+            new Validator\StringValidator
+        );
+
+        foreach ($xmlMandate->attributes as $attrKey => $attrValue) {
+            $xmlMandate->attributes[$attrKey] =
+                $inputReader->readOptionalInput("attribute.$attrKey", $attrValue, new Validator\StringValidator);
+        }
+
+        $this->commandBus->handle(
+            new AddDonor(
+                new NewDonor(
+                    MandateSources::MANDATE_SOURCE_ONLINE_FORM,
+                    $xmlMandate->payerNumber,
+                    $xmlMandate->account,
+                    $xmlMandate->donorId,
+                    Money::SEK('0')
+                )
+            )
+        );
+
+        $donor = $this->donorRepository->requireByPayerNumber($xmlMandate->payerNumber);
+
+        $this->commandBus->handle(new UpdateState($donor, NewMandate::getStateId(), 'Mandate added from xml'));
+
+        $this->commandBus->handle(new UpdateName($donor, $xmlMandate->name));
+
+        $this->commandBus->handle(new UpdatePostalAddress($donor, new PostalAddress(
+            $xmlMandate->address['line1'],
+            $xmlMandate->address['line2'],
+            $xmlMandate->address['line3'],
+            $xmlMandate->address['postalCode'],
+            $xmlMandate->address['postalCity'],
+        )));
+
+        foreach ($xmlMandate->attributes as $attrKey => $attrValue) {
+            $this->commandBus->handle(new UpdateAttribute($donor, $attrKey, $attrValue));
         }
     }
 }

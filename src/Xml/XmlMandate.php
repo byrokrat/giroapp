@@ -20,14 +20,37 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Event;
+namespace byrokrat\giroapp\Xml;
 
-use byrokrat\giroapp\Filesystem\FileInterface;
+use byrokrat\banking\AccountNumber;
+use byrokrat\id\IdInterface;
 
-final class XmlFileImported extends FileImported
+/**
+ * Data transfer object
+ */
+final class XmlMandate
 {
-    public function __construct(FileInterface $file)
-    {
-        parent::__construct("Imported xml file '{$file->getFilename()}'", $file);
-    }
+    /** @var string */
+    public $payerNumber = '';
+
+    /** @var AccountNumber */
+    public $account;
+
+    /** @var IdInterface */
+    public $donorId;
+
+    /** @var string */
+    public $name = '';
+
+    /** @var array<string, string> */
+    public $address = [
+        'line1' => '',
+        'line2' => '',
+        'line3' => '',
+        'postalCode' => '',
+        'postalCity' => '',
+    ];
+
+    /** @var array<string, string> */
+    public $attributes = [];
 }
