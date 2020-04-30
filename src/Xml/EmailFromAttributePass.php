@@ -22,53 +22,22 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Xml;
 
-use byrokrat\banking\AccountNumber;
-use byrokrat\id\IdInterface;
-use Money\Money;
-
-/**
- * Data transfer object
- */
-class XmlMandate
+final class EmailFromAttributePass implements CompilerPassInterface
 {
     /** @var string */
-    public $payerNumber = '';
+    private $attributeName;
 
-    /** @var AccountNumber */
-    public $account;
-
-    /** @var IdInterface */
-    public $donorId;
-
-    /** @var string */
-    public $name = '';
-
-    /** @var array<string, string> */
-    public $address = [
-        'line1' => '',
-        'line2' => '',
-        'line3' => '',
-        'postalCode' => '',
-        'postalCity' => '',
-    ];
-
-    /** @var array<string, string> */
-    public $attributes = [];
-
-    /** @var Money */
-    public $donationAmount;
-
-    /** @var string */
-    public $comment = '';
-
-    /** @var string */
-    public $email = '';
-
-    /** @var string */
-    public $phone = '';
-
-    public function __construct()
+    public function __construct(string $attributeName)
     {
-        $this->donationAmount = Money::SEK('0');
+        $this->attributeName = $attributeName;
+    }
+
+    public function processMandate(XmlMandate $xmlMandate): XmlMandate
+    {
+        if (isset($xmlMandate->attributes[$this->attributeName])) {
+            $xmlMandate->email = $xmlMandate->attributes[$this->attributeName];
+        }
+
+        return $xmlMandate;
     }
 }

@@ -12,6 +12,7 @@ Plugins may register
 * Donor formatters
 * Donor sorters
 * Database drivers
+* XML mandate compiler passes
 * Other plugins
 
 Here is an example plugin that sends notifications on application error:

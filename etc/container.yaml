@@ -122,6 +122,19 @@ services:
         factory: ['@byrokrat\giroapp\Db\DriverInterface', 'getImportHistory']
         lazy: true
 
+    byrokrat\giroapp\Xml\XmlMandateCompiler:
+        class: ~
+        configurator: ['@byrokrat\giroapp\Xml\CompilerConfigurator', 'loadCompilerPasses']
+
+    byrokrat\giroapp\Xml\CompilerConfigurator:
+        class: ~
+        arguments:
+            - "@=service('ini').getConfigValue('xml_mandate_payer_nr_strategy')"
+            - "@=service('ini').getConfigValue('xml_mandate_donation_amount_from_attribute')"
+            - "@=service('ini').getConfigValue('xml_mandate_phone_from_attribute')"
+            - "@=service('ini').getConfigValue('xml_mandate_email_from_attribute')"
+            - "@=service('ini').getConfigValue('xml_mandate_comment_from_attribute')"
+
     byrokrat\giroapp\Xml\XmlMandateParser:
         class: ~
         arguments: ['@organization_id', '@organization_bg']

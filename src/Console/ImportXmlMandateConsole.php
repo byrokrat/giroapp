@@ -22,11 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\CommandBus\AddDonor;
-use byrokrat\giroapp\CommandBus\UpdateAttribute;
-use byrokrat\giroapp\CommandBus\UpdateName;
-use byrokrat\giroapp\CommandBus\UpdatePostalAddress;
-use byrokrat\giroapp\CommandBus\UpdateState;
+use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\giroapp\Domain\NewDonor;
@@ -37,9 +33,8 @@ use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\giroapp\Validator;
 use byrokrat\giroapp\Xml\XmlMandate;
-use byrokrat\giroapp\Xml\XmlMandateParser;
+use byrokrat\giroapp\Xml\XmlMandateCompiler;
 use byrokrat\giroapp\Xml\XmlObject;
-use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -53,18 +48,20 @@ final class ImportXmlMandateConsole implements ConsoleInterface
         DependencyInjection\CommandBusProperty,
         DependencyInjection\DispatcherProperty,
         DependencyInjection\DonorRepositoryProperty,
+        DependencyInjection\MoneyFormatterProperty,
+        DependencyInjection\MoneyParserProperty,
         DependencyInjection\IdFactoryProperty;
 
     /** @var FilesystemInterface */
     private $filesystem;
 
-    /** @var XmlMandateParser */
-    private $xmlMandateParser;
+    /** @var XmlMandateCompiler */
+    private $xmlMandateCompiler;
 
-    public function __construct(FilesystemInterface $filesystem, XmlMandateParser $xmlMandateParser)
+    public function __construct(FilesystemInterface $filesystem, XmlMandateCompiler $xmlMandateCompiler)
     {
         $this->filesystem = $filesystem;
-        $this->xmlMandateParser = $xmlMandateParser;
+        $this->xmlMandateCompiler = $xmlMandateCompiler;
     }
 
     public function configure(Command $command): void
@@ -109,7 +106,7 @@ final class ImportXmlMandateConsole implements ConsoleInterface
 
             $xmlObject = XmlObject::fromString($file->getContent());
 
-            foreach ($this->xmlMandateParser->parseXml($xmlObject) as $xmlMandate) {
+            foreach ($this->xmlMandateCompiler->compileMandates($xmlObject) as $xmlMandate) {
                 $this->dispatcher->dispatch(new LogEvent("Importing new mandate"));
                 $this->processMandate($xmlMandate, $inputReader);
             }
@@ -144,6 +141,18 @@ final class ImportXmlMandateConsole implements ConsoleInterface
                     $xmlMandate->account = $this->accountFactory->createAccount($value);
                 })
             )
+        );
+
+        $xmlMandate->donationAmount = $this->moneyParser->parse(
+            $inputReader->readOptionalInput(
+                'amount',
+                $this->moneyFormatter->format($xmlMandate->donationAmount),
+                new Validator\ValidatorCollection(
+                    new Validator\NotEmptyValidator,
+                    new Validator\NumericValidator
+                )
+            ),
+            'SEK'
         );
 
         $xmlMandate->name = $inputReader->readOptionalInput(
@@ -185,30 +194,50 @@ final class ImportXmlMandateConsole implements ConsoleInterface
             new Validator\StringValidator
         );
 
+        $xmlMandate->email = $inputReader->readOptionalInput(
+            'email',
+            $xmlMandate->email,
+            new Validator\EmailValidator
+        );
+
+        $xmlMandate->phone = $inputReader->readOptionalInput(
+            'phone',
+            $xmlMandate->phone,
+            new Validator\PhoneValidator
+        );
+
+        $xmlMandate->comment = $inputReader->readOptionalInput(
+            'comment',
+            $xmlMandate->comment,
+            new Validator\StringValidator
+        );
+
         foreach ($xmlMandate->attributes as $attrKey => $attrValue) {
             $xmlMandate->attributes[$attrKey] =
                 $inputReader->readOptionalInput("attribute.$attrKey", $attrValue, new Validator\StringValidator);
         }
 
         $this->commandBus->handle(
-            new AddDonor(
+            new CommandBus\AddDonor(
                 new NewDonor(
                     MandateSources::MANDATE_SOURCE_ONLINE_FORM,
                     $xmlMandate->payerNumber,
                     $xmlMandate->account,
                     $xmlMandate->donorId,
-                    Money::SEK('0')
+                    $xmlMandate->donationAmount
                 )
             )
         );
 
         $donor = $this->donorRepository->requireByPayerNumber($xmlMandate->payerNumber);
 
-        $this->commandBus->handle(new UpdateState($donor, NewMandate::getStateId(), 'Mandate added from xml'));
+        $this->commandBus->handle(
+            new CommandBus\UpdateState($donor, NewMandate::getStateId(), 'Mandate added from xml')
+        );
 
-        $this->commandBus->handle(new UpdateName($donor, $xmlMandate->name));
+        $this->commandBus->handle(new CommandBus\UpdateName($donor, $xmlMandate->name));
 
-        $this->commandBus->handle(new UpdatePostalAddress($donor, new PostalAddress(
+        $this->commandBus->handle(new CommandBus\UpdatePostalAddress($donor, new PostalAddress(
             $xmlMandate->address['line1'],
             $xmlMandate->address['line2'],
             $xmlMandate->address['line3'],
@@ -216,8 +245,14 @@ final class ImportXmlMandateConsole implements ConsoleInterface
             $xmlMandate->address['postalCity']
         )));
 
+        $this->commandBus->handle(new CommandBus\UpdateEmail($donor, $xmlMandate->email));
+
+        $this->commandBus->handle(new CommandBus\UpdatePhone($donor, $xmlMandate->phone));
+
+        $this->commandBus->handle(new CommandBus\UpdateComment($donor, $xmlMandate->comment));
+
         foreach ($xmlMandate->attributes as $attrKey => $attrValue) {
-            $this->commandBus->handle(new UpdateAttribute($donor, $attrKey, $attrValue));
+            $this->commandBus->handle(new CommandBus\UpdateAttribute($donor, $attrKey, $attrValue));
         }
     }
 }

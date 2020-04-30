@@ -24,6 +24,8 @@ use byrokrat\giroapp\Formatter\FormatterCollection;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\Xml\CompilerPassInterface;
+use byrokrat\giroapp\Xml\XmlMandateCompiler;
 use Symfony\Component\Console\Application;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -45,7 +47,8 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         ConfigManager $configManager,
         EventDispatcherInterface $dispatcher,
         CommandBusInterface $commandBus,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        XmlMandateCompiler $xmlMandateCompiler
     ) {
         $this->beConstructedWith(
             $logger,
@@ -57,7 +60,8 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
             $filterCollection,
             $formatterCollection,
             $sorterCollection,
-            $configManager
+            $configManager,
+            $xmlMandateCompiler
         );
 
         $this->setEventDispatcher($dispatcher);
@@ -163,5 +167,11 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
     {
         $this->registerDonorSorter($sorter);
         $sorterCollection->addSorter($sorter)->shouldHaveBeenCalled();
+    }
+
+    function it_can_register_xml_compiler_passes($xmlMandateCompiler, CompilerPassInterface $compilerPass)
+    {
+        $this->registerXmlMandateCompilerPass($compilerPass);
+        $xmlMandateCompiler->addCompilerPass($compilerPass)->shouldHaveBeenCalled();
     }
 }

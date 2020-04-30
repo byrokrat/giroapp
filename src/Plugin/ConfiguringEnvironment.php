@@ -38,6 +38,8 @@ use byrokrat\giroapp\Formatter\FormatterCollection;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\Xml\CompilerPassInterface;
+use byrokrat\giroapp\Xml\XmlMandateCompiler;
 use Composer\Semver\Semver;
 use Symfony\Component\Console\Application;
 use Psr\EventDispatcher\ListenerProviderInterface;
@@ -82,6 +84,9 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     /** @var ConsoleInterface[] */
     private $consoleCommands = [];
 
+    /** @var XmlMandateCompiler */
+    private $xmlMandateCompiler;
+
     public function __construct(
         LoggerInterface $logger,
         ApiVersion $apiVersion,
@@ -92,7 +97,8 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
         SorterCollection $sorterCollection,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        XmlMandateCompiler $xmlMandateCompiler
     ) {
         $this->logger = $logger;
         $this->apiVersion = $apiVersion;
@@ -104,6 +110,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         $this->formatterCollection = $formatterCollection;
         $this->sorterCollection = $sorterCollection;
         $this->configManager = $configManager;
+        $this->xmlMandateCompiler = $xmlMandateCompiler;
     }
 
     public function assertApiVersion(ApiVersionConstraint $constraint): void
@@ -176,6 +183,11 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function registerDonorSorter(SorterInterface $donorSorter): void
     {
         $this->sorterCollection->addSorter($donorSorter);
+    }
+
+    public function registerXmlMandateCompilerPass(CompilerPassInterface $compilerPass): void
+    {
+        $this->xmlMandateCompiler->addCompilerPass($compilerPass);
     }
 
     public function configureApplication(Application $application): void

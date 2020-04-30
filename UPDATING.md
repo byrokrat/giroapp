@@ -8,6 +8,7 @@
 * Added `delete-attribute` command
 * Added the `import-xml-mandate` command, replaces import xml using `import`
 * Added support for inspecting and editing imported xml mandate data
+* Added support for configuring xml import using ini-settings and plugins
 
 ## Beta-7
 

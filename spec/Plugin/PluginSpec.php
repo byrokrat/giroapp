@@ -13,6 +13,7 @@ use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Event\Listener\ListenerInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\Xml\CompilerPassInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use PhpSpec\ObjectBehavior;
 
@@ -81,6 +82,13 @@ class PluginSpec extends ObjectBehavior
         $this->beConstructedWith($sorter);
         $this->loadPlugin($env);
         $env->registerDonorSorter($sorter)->shouldHaveBeenCalled();
+    }
+
+    function it_registers_xml_compiler_passes(CompilerPassInterface $compilerPass, EnvironmentInterface $env)
+    {
+        $this->beConstructedWith($compilerPass);
+        $this->loadPlugin($env);
+        $env->registerXmlMandateCompilerPass($compilerPass)->shouldHaveBeenCalled();
     }
 
     function it_asserts_version_constraints(EnvironmentInterface $env)
