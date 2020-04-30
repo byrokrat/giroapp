@@ -213,7 +213,7 @@ final class ImportXmlMandateConsole implements ConsoleInterface
             $xmlMandate->address['line2'],
             $xmlMandate->address['line3'],
             $xmlMandate->address['postalCode'],
-            $xmlMandate->address['postalCity'],
+            $xmlMandate->address['postalCity']
         )));
 
         foreach ($xmlMandate->attributes as $attrKey => $attrValue) {

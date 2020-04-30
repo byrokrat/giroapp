@@ -211,14 +211,14 @@ final class JsonDonorRepository implements DonorRepositoryInterface
 
     public function setDonorAttribute(Donor $donor, string $key, string $value): void
     {
-        $attributes = $this->createDoc($donor)['attributes'] ?? [];
+        $attributes = $this->createDoc($this->requireByMandateKey($donor->getMandateKey()))['attributes'];
         $attributes[$key] = $value;
         $this->updateDonor($donor, ['attributes' => $attributes]);
     }
 
     public function deleteDonorAttribute(Donor $donor, string $key): void
     {
-        $attributes = $this->createDoc($donor)['attributes'] ?? [];
+        $attributes = $this->createDoc($this->requireByMandateKey($donor->getMandateKey()))['attributes'];
         unset($attributes[$key]);
         $this->updateDonor($donor, ['attributes' => $attributes]);
     }

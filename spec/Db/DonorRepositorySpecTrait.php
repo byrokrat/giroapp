@@ -263,7 +263,6 @@ trait DonorRepositorySpecTrait
         $donor = $this->createDonor('m-key', Active::getStateId(), '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->setDonorAttribute($donor, 'foo', 'bar');
-        $donor = $this->requireByMandateKey('m-key')->getWrappedObject();
         $this->setDonorAttribute($donor, 'baz', 'qux');
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getAttributes', ['foo' => 'bar', 'baz' => 'qux']);
     }
@@ -281,9 +280,9 @@ trait DonorRepositorySpecTrait
         $donor = $this->createDonor('m-key', Active::getStateId(), '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
         $this->setDonorAttribute($donor, 'foo', 'bar');
-        $donor = $this->requireByMandateKey('m-key')->getWrappedObject();
-        $this->deleteDonorAttribute($donor, 'foo');
-        $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getAttributes', []);
+        $this->setDonorAttribute($donor, 'baz', 'qux');
+        $this->deleteDonorAttribute($donor, 'baz');
+        $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getAttributes', ['foo' => 'bar']);
     }
 
     function it_only_updates_requested_field()
