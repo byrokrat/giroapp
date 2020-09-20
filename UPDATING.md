@@ -1,5 +1,9 @@
 # UPDATING
 
+## Unreleased
+
+* Made it possible to revoke paused mandates.
+
 ## Beta-8
 
 * Made online form default source in add command.
