@@ -124,7 +124,7 @@ vendor/installed: composer.lock
 	touch $@
 
 tools/installed: $(SECURITY_CHECKER_CMD)
-	$(PHIVE_CMD) install
+	$(PHIVE_CMD) install --force-accept-unsigned
 	touch $@
 
 $(PHPSPEC_CMD): tools/installed
