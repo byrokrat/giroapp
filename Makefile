@@ -124,7 +124,7 @@ vendor/installed: composer.lock
 	touch $@
 
 tools/installed: $(SECURITY_CHECKER_CMD)
-	$(PHIVE_CMD) install --force-accept-unsigned --trust-gpg-keys CF1A108D0E7AE720 --trust-gpg-keys 31C7E470E2138192 --trust-gpg-keys 
+	$(PHIVE_CMD) install --force-accept-unsigned --trust-gpg-keys CF1A108D0E7AE720,31C7E470E2138192
 	touch $@
 
 $(PHPSPEC_CMD): tools/installed
