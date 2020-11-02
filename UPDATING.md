@@ -5,6 +5,7 @@
 * Renamed `import-xml-mandate` => `import-xml-mandates`
 * No longer required to review each field of an imported xml mandate separately
 * Added the `view-xml-mandates` command
+* Made it possible to revoke paused mandates.
 
 ## Beta-8
 

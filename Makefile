@@ -37,7 +37,6 @@ clean:
 	rm $(TARGET) --interactive=no -f
 	rm -rf vendor
 	rm -rf tools
-	rm -f phive.xml
 
 maintainer-clean: clean
 	@echo 'This command is intended for maintainers to use; it'
@@ -124,26 +123,21 @@ vendor/installed: composer.lock
 	$(COMPOSER_CMD) install
 	touch $@
 
-tools/installed: $(PHPSPEC_CMD) $(BEHAT_CMD) $(README_TESTER_CMD) $(PHPSTAN_CMD) $(PHPCS_CMD) $(BOX_CMD) $(SECURITY_CHECKER_CMD)
+tools/installed: $(SECURITY_CHECKER_CMD)
+	$(PHIVE_CMD) install --force-accept-unsigned --trust-gpg-keys CF1A108D0E7AE720,31C7E470E2138192
 	touch $@
 
-$(PHPSPEC_CMD):
-	$(PHIVE_CMD) install phpspec/phpspec:6 --force-accept-unsigned
+$(PHPSPEC_CMD): tools/installed
 
-$(BEHAT_CMD):
-	$(PHIVE_CMD) install behat/behat:3 --force-accept-unsigned
+$(BEHAT_CMD): tools/installed
 
-$(README_TESTER_CMD):
-	$(PHIVE_CMD) install hanneskod/readme-tester:1 --force-accept-unsigned
+$(README_TESTER_CMD): tools/installed
 
-$(PHPSTAN_CMD):
-	$(PHIVE_CMD) install phpstan --trust-gpg-keys CF1A108D0E7AE720
+$(PHPSTAN_CMD): tools/installed
 
-$(PHPCS_CMD):
-	$(PHIVE_CMD) install phpcs --trust-gpg-keys 31C7E470E2138192
+$(PHPCS_CMD): tools/installed
 
-$(BOX_CMD):
-	$(PHIVE_CMD) install humbug/box:3 --force-accept-unsigned
+$(BOX_CMD): tools/installed
 
 $(SECURITY_CHECKER_CMD):
 	wget https://get.sensiolabs.org/security-checker.phar

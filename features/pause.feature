@@ -46,7 +46,7 @@ Feature: Pause mandates
     When I run "pause 12345"
     Then I get a "INVALID_STATE_TRANSITION_EXCEPTION" error
 
-  Scenario: I restart a mandate
+  Scenario: I restart a paused mandate
     Given there are donors:
       | payer-number | state  |
       | 12345        | PAUSED |
@@ -54,9 +54,17 @@ Feature: Pause mandates
     Then there is no error
     And the database contains donor "12345" with "state" matching "AWAITING_TRANSACTION_REGISTRATION"
 
- Scenario: I try to restart a mandate that is not paused
-   Given there are donors:
-     | payer-number | state  |
-     | 12345        | ACTIVE |
-   When I run "pause 12345 --restart"
-   Then I get a "INVALID_STATE_TRANSITION_EXCEPTION" error
+  Scenario: I try to restart a mandate that is not paused
+    Given there are donors:
+      | payer-number | state  |
+      | 12345        | ACTIVE |
+    When I run "pause 12345 --restart"
+    Then I get a "INVALID_STATE_TRANSITION_EXCEPTION" error
+
+  Scenario: I revoke a paused mandate
+    Given there are donors:
+      | payer-number | state  |
+      | 12345        | PAUSED |
+    When I run "revoke 12345"
+    Then there is no error
+    And the database contains donor "12345" with "state" matching "AWAITING_REVOCATION"
