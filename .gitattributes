@@ -1,6 +1,7 @@
 /composer.lock binary
 ProjectServiceContainer.php binary
 /docs/states.svg binary
+/.phive export-ignore
 /bin/build_container export-ignore
 /bin/build_state_graph export-ignore
 /docs export-ignore

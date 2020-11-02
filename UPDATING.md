@@ -92,6 +92,9 @@ of beta-1. When updating from an alpha version se `Beta-1` below..
 Beta-1 contains some BC-breaking changes to the database schema. Update your raw
 json databse file using the `update_db.php` script.
 
+> NOTE: The `update_db.php` script has been dropped from master:head. Checkout
+> beta-1 to access.
+
 > NOTE: Backup the contents of your database before continuing!
 
 > NOTE: For this script to run it must be used DIRECTLY after updating. If the
