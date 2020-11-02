@@ -25,3 +25,24 @@ Feature: Plugins
         """
     When I run "ls"
     Then the output contains "my-cool-plugin-is-executed"
+
+  Scenario: I register a plugin that requires an unsupported API version
+    Given a fresh installation
+    And a plugin:
+        """
+        use byrokrat\giroapp\Plugin\PluginInterface;
+        use byrokrat\giroapp\Plugin\EnvironmentInterface;
+        use byrokrat\giroapp\Plugin\ApiVersionConstraint;
+
+        class UnsupportedApiPlugin implements PluginInterface
+        {
+            public function loadPlugin(EnvironmentInterface $environment): void
+            {
+                $environment->assertApiVersion(new ApiVersionConstraint('MyPlugin', '^99999999999999'));
+            }
+        }
+
+        return new UnsupportedApiPlugin;
+        """
+    When I run "ls"
+    Then I get an error

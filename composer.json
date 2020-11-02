@@ -37,7 +37,7 @@
         "byrokrat/autogiro": "^1",
         "byrokrat/banking": "^2.1",
         "byrokrat/id": "^2",
-        "composer/semver": "^1",
+        "composer/semver": "^3",
         "hanneskod/clean": "^2",
         "hanneskod/yaysondb": "^2.2",
         "hashids/hashids": "^4",
