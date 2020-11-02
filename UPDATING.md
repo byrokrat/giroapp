@@ -6,6 +6,7 @@
 * No longer required to review each field of an imported xml mandate separately
 * Added the `view-xml-mandates` command
 * Made it possible to revoke paused mandates.
+* Update db json schema versions to 1.0
 
 ## Beta-8
 

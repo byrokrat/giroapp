@@ -38,7 +38,7 @@ use Money\MoneyFormatter;
 
 final class JsonDonorRepository implements DonorRepositoryInterface
 {
-    const TYPE = 'giroapp/donor:alpha5';
+    const TYPE = 'giroapp/donor:1.0';
 
     /** @var CollectionInterface&iterable<array> */
     private $collection;

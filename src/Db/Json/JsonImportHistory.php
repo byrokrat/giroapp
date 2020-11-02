@@ -31,7 +31,7 @@ use hanneskod\yaysondb\CollectionInterface;
 
 final class JsonImportHistory implements ImportHistoryInterface
 {
-    const TYPE = 'giroapp/import_history:alpha5';
+    const TYPE = 'giroapp/import_history:1.0';
 
     /** @var CollectionInterface&iterable<array> */
     private $collection;
