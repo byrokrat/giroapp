@@ -1,5 +1,11 @@
 # UPDATING
 
+## Beta-9
+
+* Renamed `import-xml-mandate` => `import-xml-mandates`
+* No longer required to review each field of an imported xml mandate separately
+* Added the `view-xml-mandates` command
+
 ## Beta-8
 
 * Made online form default source in add command.

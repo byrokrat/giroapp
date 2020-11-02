@@ -57,10 +57,10 @@ final class EditStateConsole implements ConsoleInterface
         );
         $this->configureDonorArgument($command);
         $command->addOption(
-            'new-state',
+            self::OPTION_NEW_STATE,
             null,
             InputOption::VALUE_REQUIRED,
-            'New donor state identifier'
+            self::OPTION_DESCS[self::OPTION_NEW_STATE]
         );
         $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing state change');
     }
@@ -77,9 +77,9 @@ final class EditStateConsole implements ConsoleInterface
         );
 
         $newStateId = $inputReader->readInput(
-            'new-state',
+            self::OPTION_NEW_STATE,
             Helper\QuestionFactory::createChoiceQuestion(
-                'New donor state identifier',
+                self::OPTION_DESCS[self::OPTION_NEW_STATE],
                 $validStates,
                 $donor->getState()->getStateId()
             ),

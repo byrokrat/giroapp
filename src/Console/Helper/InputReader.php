@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console\Helper;
 
+use byrokrat\giroapp\Console\ConsoleInterface;
 use byrokrat\giroapp\Validator\ValidatorInterface;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -54,6 +55,15 @@ class InputReader
         $this->input = $input;
         $this->output = $output;
         $this->questionHelper = $questionHelper;
+    }
+
+    public function confirm(string $question, bool $default = true): bool
+    {
+        return !!$this->questionHelper->ask(
+            $this->input,
+            $this->output,
+            new ConfirmationQuestion($question, $default)
+        );
     }
 
     public function readInput(string $key, Question $question, ValidatorInterface $validator): string
@@ -91,22 +101,17 @@ class InputReader
             return $validator->validate($key, $value);
         }
 
-        // Ask if user wants to edit
-        $requestEdit = $this->questionHelper->ask(
-            $this->input,
-            $this->output,
-            new ConfirmationQuestion("$key: <comment>$default</comment>\nEdit [<info>y/N</info>]? ", false)
-        );
+        $desc = ConsoleInterface::OPTION_DESCS[$key] ?? $key;
 
-        // Return default if user does not want to edit
-        if (!$requestEdit) {
+        // Confirm if user wants to edit, return default if not
+        if (!$this->confirm("$desc: <comment>$default</comment>\nEdit [<info>y/N</info>]? ", false)) {
             return $default;
         }
 
         $value = (string)$this->questionHelper->ask(
             $this->input,
             $this->output,
-            (new Question("New $key: "))->setValidator(function ($answer) use ($key, $validator) {
+            (new Question("New $desc: "))->setValidator(function ($answer) use ($key, $validator) {
                 return $validator->validate($key, (string)$answer);
             })
         );

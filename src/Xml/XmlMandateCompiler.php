@@ -22,6 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Xml;
 
+use byrokrat\giroapp\Filesystem\FileInterface;
+
 /**
  * Compile XmlMandate objects using a parser and compiler passes
  */
@@ -41,6 +43,20 @@ class XmlMandateCompiler
     public function addCompilerPass(CompilerPassInterface $compilerPass): void
     {
         $this->compilerPasses[] = $compilerPass;
+    }
+
+    /**
+     * @return array<XmlMandate>
+     */
+    public function compileFile(FileInterface $file): array
+    {
+        $xmlObject = XmlObject::fromString($file->getContent());
+
+        if (!$xmlObject) {
+            throw new \RuntimeException("Unable to parse XML from file {$file->getFilename()}");
+        }
+
+        return $this->compileMandates($xmlObject);
     }
 
     /**

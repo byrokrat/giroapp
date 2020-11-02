@@ -36,19 +36,16 @@ final class EditConsole implements ConsoleInterface
 {
     use CommandBusProperty, Helper\DonorArgument;
 
-    /**
-     * Maps option names to free text descriptions
-     */
-    private const DESCS = [
-        'name' => 'Donor name',
-        'address1' => 'Donor address line 1',
-        'address2' => 'Donor address line 2',
-        'address3' => 'Donor address line 3',
-        'postal-code' => 'Donor postal code',
-        'postal-city' => 'Donor postal city',
-        'email' => 'Donor contact email address',
-        'phone' => 'Donor contact phone number',
-        'comment' => 'Comment'
+    private const OPTIONS = [
+        self::OPTION_NAME,
+        self::OPTION_ADDRESS1,
+        self::OPTION_ADDRESS2,
+        self::OPTION_ADDRESS3,
+        self::OPTION_POSTAL_CODE,
+        self::OPTION_POSTAL_CITY,
+        self::OPTION_EMAIL,
+        self::OPTION_PHONE,
+        self::OPTION_COMMENT,
     ];
 
     public function configure(Command $command): void
@@ -58,22 +55,22 @@ final class EditConsole implements ConsoleInterface
         $command->setDescription('Edit an existing donor');
         $command->setHelp('Edit a donor in the database.');
 
-        foreach (self::DESCS as $option => $desc) {
-            $command->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
+        foreach (self::OPTIONS as $option) {
+            $command->addOption($option, null, InputOption::VALUE_REQUIRED, self::OPTION_DESCS[$option]);
         }
 
         $command->addOption(
-            'attr-key',
+            self::OPTION_ATTR_KEY,
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-            'Attribute key'
+            self::OPTION_DESCS[self::OPTION_ATTR_KEY]
         );
 
         $command->addOption(
-            'attr-value',
+            self::OPTION_ATTR_VALUE,
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-            'Attribute value'
+            self::OPTION_DESCS[self::OPTION_ATTR_VALUE]
         );
     }
 
@@ -88,7 +85,7 @@ final class EditConsole implements ConsoleInterface
         $commandQueue[] = new CommandBus\UpdateName(
             $donor,
             $inputReader->readOptionalInput(
-                'name',
+                self::OPTION_NAME,
                 $donor->getName(),
                 new Validator\ValidatorCollection(
                     new Validator\StringValidator,
@@ -101,27 +98,27 @@ final class EditConsole implements ConsoleInterface
             $donor,
             new PostalAddress(
                 $inputReader->readOptionalInput(
-                    'address1',
+                    self::OPTION_ADDRESS1,
                     $donor->getPostalAddress()->getLine1(),
                     new Validator\StringValidator
                 ),
                 $inputReader->readOptionalInput(
-                    'address2',
+                    self::OPTION_ADDRESS2,
                     $donor->getPostalAddress()->getLine2(),
                     new Validator\StringValidator
                 ),
                 $inputReader->readOptionalInput(
-                    'address3',
+                    self::OPTION_ADDRESS3,
                     $donor->getPostalAddress()->getLine3(),
                     new Validator\StringValidator
                 ),
                 $inputReader->readOptionalInput(
-                    'postal-code',
+                    self::OPTION_POSTAL_CODE,
                     $donor->getPostalAddress()->getPostalCode(),
                     new Validator\PostalCodeValidator
                 ),
                 $inputReader->readOptionalInput(
-                    'postal-city',
+                    self::OPTION_POSTAL_CITY,
                     $donor->getPostalAddress()->getPostalCity(),
                     new Validator\StringValidator
                 )
@@ -130,17 +127,17 @@ final class EditConsole implements ConsoleInterface
 
         $commandQueue[] = new CommandBus\UpdateEmail(
             $donor,
-            $inputReader->readOptionalInput('email', $donor->getEmail(), new Validator\EmailValidator)
+            $inputReader->readOptionalInput(self::OPTION_EMAIL, $donor->getEmail(), new Validator\EmailValidator)
         );
 
         $commandQueue[] = new CommandBus\UpdatePhone(
             $donor,
-            $inputReader->readOptionalInput('phone', $donor->getPhone(), new Validator\PhoneValidator)
+            $inputReader->readOptionalInput(self::OPTION_PHONE, $donor->getPhone(), new Validator\PhoneValidator)
         );
 
         $commandQueue[] = new CommandBus\UpdateComment(
             $donor,
-            $inputReader->readOptionalInput('comment', $donor->getComment(), new Validator\StringValidator)
+            $inputReader->readOptionalInput(self::OPTION_COMMENT, $donor->getComment(), new Validator\StringValidator)
         );
 
         foreach ($donor->getAttributes() as $attrKey => $attrValue) {
@@ -152,10 +149,10 @@ final class EditConsole implements ConsoleInterface
         }
 
         /** @var array<string> */
-        $attrKeys = $input->getOption('attr-key');
+        $attrKeys = $input->getOption(self::OPTION_ATTR_KEY);
 
         /** @var array<string> */
-        $attrValues = $input->getOption('attr-value');
+        $attrValues = $input->getOption(self::OPTION_ATTR_VALUE);
 
         for ($count = 0;; $count++) {
             $attrKey = $inputReader->readInput(

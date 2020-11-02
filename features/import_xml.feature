@@ -1,15 +1,14 @@
 Feature: Importing xml mandate files
 
-  Background:
+  Scenario: I import an online autogiro form
     Given a fresh installation
     And a configuration file:
         """
         org_id = 835000-0892
         org_bg = 58056201
+        xml_mandate_payer_nr_strategy = ignore
         """
-
-  Scenario: I import an online autogiro form
-    Given a file named "mandate.xml":
+    And a file named "mandate.xml":
         """
         <?xml version="1.0" encoding="utf-8"?>
         <DocumentElement>
@@ -45,12 +44,19 @@ Feature: Importing xml mandate files
           </MedgivandeViaHemsida>
         </DocumentElement>
         """
-    When I run "import-xml-mandate mandate.xml"
+    When I run "import-xml-mandates mandate.xml"
     Then there is no error
     And the database contains donor "12345" with "state" matching "NEW_MANDATE"
 
   Scenario: I import an online autogiro form with no payer number
-    Given a file named "mandate.xml":
+    Given a fresh installation
+    And a configuration file:
+        """
+        org_id = 835000-0892
+        org_bg = 58056201
+        xml_mandate_payer_nr_strategy = personal-id
+        """
+    And a file named "mandate.xml":
         """
         <?xml version="1.0" encoding="utf-8"?>
         <DocumentElement>
@@ -86,6 +92,6 @@ Feature: Importing xml mandate files
           </MedgivandeViaHemsida>
         </DocumentElement>
         """
-    When I run "import-xml-mandate mandate.xml"
+    When I run "import-xml-mandates mandate.xml"
     Then there is no error
     And the database contains donor "8203232775"

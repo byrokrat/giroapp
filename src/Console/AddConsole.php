@@ -51,24 +51,21 @@ final class AddConsole implements ConsoleInterface
         DependencyInjection\MoneyParserProperty,
         DependencyInjection\IdFactoryProperty;
 
-    /**
-     * Maps option names to free text descriptions
-     */
-    private const DESCRIPTIONS = [
-        'source' => 'Mandate source',
-        'id' => 'Donor personal id',
-        'payer-number' => 'Payer number',
-        'account' => 'Donor account number',
-        'name' => 'Donor name',
-        'amount' => 'Monthly donation amount',
-        'address1' => 'Donor address line 1',
-        'address2' => 'Donor address line 2',
-        'address3' => 'Donor address line 3',
-        'postal-code' => 'Donor postal code',
-        'postal-city' => 'Donor postal city',
-        'email' => 'Donor contact email address',
-        'phone' => 'Donor contact phone number',
-        'comment' => 'Comment'
+    private const OPTIONS = [
+        self::OPTION_SOURCE,
+        self::OPTION_ID,
+        self::OPTION_PAYER_NUMBER,
+        self::OPTION_ACCOUNT,
+        self::OPTION_NAME,
+        self::OPTION_AMOUNT,
+        self::OPTION_ADDRESS1,
+        self::OPTION_ADDRESS2,
+        self::OPTION_ADDRESS3,
+        self::OPTION_POSTAL_CODE,
+        self::OPTION_POSTAL_CITY,
+        self::OPTION_EMAIL,
+        self::OPTION_PHONE,
+        self::OPTION_COMMENT,
     ];
 
     public function configure(Command $command): void
@@ -77,37 +74,35 @@ final class AddConsole implements ConsoleInterface
         $command->setDescription('Add a new donor');
         $command->setHelp('Register a new mandate in database');
 
-        foreach (self::DESCRIPTIONS as $option => $desc) {
-            $command->addOption($option, null, InputOption::VALUE_REQUIRED, $desc);
+        foreach (self::OPTIONS as $option) {
+            $command->addOption($option, null, InputOption::VALUE_REQUIRED, self::OPTION_DESCS[$option]);
         }
 
         $command->addOption(
-            'attr-key',
+            self::OPTION_ATTR_KEY,
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-            'Attribute key'
+            self::OPTION_DESCS[self::OPTION_ATTR_KEY]
         );
 
         $command->addOption(
-            'attr-value',
+            self::OPTION_ATTR_VALUE,
             null,
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
-            'Attribute value'
+            self::OPTION_DESCS[self::OPTION_ATTR_VALUE]
         );
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $descs = self::DESCRIPTIONS;
-
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 
         $sources = ['p' => MandateSources::MANDATE_SOURCE_PAPER, 'o' => MandateSources::MANDATE_SOURCE_ONLINE_FORM];
 
         $mandateSource = $inputReader->readInput(
-            'source',
+            self::OPTION_SOURCE,
             Helper\QuestionFactory::createChoiceQuestion(
-                $descs['source'],
+                self::OPTION_DESCS[self::OPTION_SOURCE],
                 $sources,
                 MandateSources::MANDATE_SOURCE_ONLINE_FORM
             ),
@@ -118,8 +113,8 @@ final class AddConsole implements ConsoleInterface
         $donorId = null;
 
         $inputReader->readInput(
-            'id',
-            Helper\QuestionFactory::createQuestion($descs['id']),
+            self::OPTION_ID,
+            Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_ID]),
             new Validator\ValidatorCollection(
                 new Validator\IdValidator,
                 new Validator\CallbackValidator(function (string $value) use (&$donorId) {
@@ -129,8 +124,11 @@ final class AddConsole implements ConsoleInterface
         );
 
         $payerNumber = $inputReader->readInput(
-            'payer-number',
-            Helper\QuestionFactory::createQuestion($descs['payer-number'], $donorId->format('Ssk')),
+            self::OPTION_PAYER_NUMBER,
+            Helper\QuestionFactory::createQuestion(
+                self::OPTION_DESCS[self::OPTION_PAYER_NUMBER],
+                $donorId->format('Ssk')
+            ),
             new Validator\PayerNumberValidator
         );
 
@@ -138,8 +136,8 @@ final class AddConsole implements ConsoleInterface
         $account = null;
 
         $inputReader->readInput(
-            'account',
-            Helper\QuestionFactory::createQuestion($descs['account'])->setAutocompleterValues(
+            self::OPTION_ACCOUNT,
+            Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_ACCOUNT])->setAutocompleterValues(
                 ["3300,{$donorId->format('Ssk')}"]
             ),
             new Validator\ValidatorCollection(
@@ -152,8 +150,8 @@ final class AddConsole implements ConsoleInterface
 
         $donationAmount = $this->moneyParser->parse(
             $inputReader->readInput(
-                'amount',
-                Helper\QuestionFactory::createQuestion($descs['amount']),
+                self::OPTION_AMOUNT,
+                Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_AMOUNT]),
                 new Validator\ValidatorCollection(
                     new Validator\NotEmptyValidator,
                     new Validator\NumericValidator
@@ -163,8 +161,8 @@ final class AddConsole implements ConsoleInterface
         );
 
         $name = $inputReader->readInput(
-            'name',
-            Helper\QuestionFactory::createQuestion($descs['name']),
+            self::OPTION_NAME,
+            Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_NAME]),
             new Validator\ValidatorCollection(
                 new Validator\StringValidator,
                 new Validator\NotEmptyValidator
@@ -173,57 +171,57 @@ final class AddConsole implements ConsoleInterface
 
         $postalAddress = new PostalAddress(
             $inputReader->readInput(
-                'address1',
-                Helper\QuestionFactory::createQuestion($descs['address1'], ''),
+                self::OPTION_ADDRESS1,
+                Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_ADDRESS1], ''),
                 new Validator\StringValidator
             ),
             $inputReader->readInput(
-                'address2',
-                Helper\QuestionFactory::createQuestion($descs['address2'], ''),
+                self::OPTION_ADDRESS2,
+                Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_ADDRESS2], ''),
                 new Validator\StringValidator
             ),
             $inputReader->readInput(
-                'address3',
-                Helper\QuestionFactory::createQuestion($descs['address3'], ''),
+                self::OPTION_ADDRESS3,
+                Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_ADDRESS3], ''),
                 new Validator\StringValidator
             ),
             $inputReader->readInput(
-                'postal-code',
-                Helper\QuestionFactory::createQuestion($descs['postal-code'], ''),
+                self::OPTION_POSTAL_CODE,
+                Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_POSTAL_CODE], ''),
                 new Validator\PostalCodeValidator
             ),
             $inputReader->readInput(
-                'postal-city',
-                Helper\QuestionFactory::createQuestion($descs['postal-city'], ''),
+                self::OPTION_POSTAL_CITY,
+                Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_POSTAL_CITY], ''),
                 new Validator\StringValidator
             )
         );
 
         $email = $inputReader->readInput(
-            'email',
-            Helper\QuestionFactory::createQuestion($descs['email'], ''),
+            self::OPTION_EMAIL,
+            Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_EMAIL], ''),
             new Validator\EmailValidator
         );
 
         $phone = $inputReader->readInput(
-            'phone',
-            Helper\QuestionFactory::createQuestion($descs['phone'], ''),
+            self::OPTION_PHONE,
+            Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_PHONE], ''),
             new Validator\PhoneValidator
         );
 
         $comment = $inputReader->readInput(
-            'comment',
-            Helper\QuestionFactory::createQuestion($descs['comment'], ''),
+            self::OPTION_COMMENT,
+            Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_COMMENT], ''),
             new Validator\StringValidator
         );
 
         $attributes = [];
 
         /** @var array<string> */
-        $attrKeys = $input->getOption('attr-key');
+        $attrKeys = $input->getOption(self::OPTION_ATTR_KEY);
 
         /** @var array<string> */
-        $attrValues = $input->getOption('attr-value');
+        $attrValues = $input->getOption(self::OPTION_ATTR_VALUE);
 
         for ($count = 0;; $count++) {
             $attrKey = $inputReader->readInput(

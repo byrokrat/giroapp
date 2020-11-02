@@ -46,10 +46,10 @@ final class EditAmountConsole implements ConsoleInterface
         $command->setDescription('Update donor donation amount');
         $command->setHelp('Update monthly donation amount for a donor.');
         $command->addOption(
-            'new-amount',
+            self::OPTION_NEW_AMOUNT,
             null,
             InputOption::VALUE_REQUIRED,
-            'New monthly donation amount'
+            self::OPTION_DESCS[self::OPTION_NEW_AMOUNT]
         );
         $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing amount change');
     }
@@ -62,9 +62,9 @@ final class EditAmountConsole implements ConsoleInterface
 
         $amount = $this->moneyParser->parse(
             $inputReader->readInput(
-                'new-amount',
+                self::OPTION_NEW_AMOUNT,
                 Helper\QuestionFactory::createQuestion(
-                    'New monthly donation amount',
+                    self::OPTION_DESCS[self::OPTION_NEW_AMOUNT],
                     $this->moneyFormatter->format($donor->getDonationAmount())
                 ),
                 new Validator\ValidatorCollection(

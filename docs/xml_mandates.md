@@ -1,7 +1,7 @@
 # Importing online mandates in the XML format
 
 Giroapp supports importing xml formatted mandates through the
-`import-xml-mandate` command. When you create an online mandate form you may
+`import-xml-mandates` command. When you create an online mandate form you may
 specify custom data fields, this data is saved as donor attributes on import.
 Teach giroapp the semantics of these attributes by using ini-directivies or
 plugins.

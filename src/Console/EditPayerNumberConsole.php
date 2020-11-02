@@ -42,10 +42,10 @@ final class EditPayerNumberConsole implements ConsoleInterface
         $command->setDescription('Update payer number');
         $command->setHelp('Update payer number for a donor.');
         $command->addOption(
-            'new-payer-number',
+            self::OPTION_NEW_PAYER_NUMBER,
             null,
             InputOption::VALUE_REQUIRED,
-            'New payer number'
+            self::OPTION_DESCS[self::OPTION_NEW_PAYER_NUMBER]
         );
         $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing payer number change');
     }
@@ -60,9 +60,9 @@ final class EditPayerNumberConsole implements ConsoleInterface
         $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
 
         $newPayerNumber = $inputReader->readInput(
-            'new-payer-number',
+            self::OPTION_NEW_PAYER_NUMBER,
             Helper\QuestionFactory::createQuestion(
-                'New payer number',
+                self::OPTION_DESCS[self::OPTION_NEW_PAYER_NUMBER],
                 $donor->getPayerNumber()
             ),
             new PayerNumberValidator
