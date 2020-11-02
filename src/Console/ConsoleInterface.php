@@ -50,6 +50,7 @@ interface ConsoleInterface
     public const OPTION_COMMENT = 'comment';
     public const OPTION_ATTR_KEY = 'attr-key';
     public const OPTION_ATTR_VALUE = 'attr-value';
+    public const OPTION_PATH = 'path';
 
     public const OPTION_DESCS = [
         self::OPTION_SOURCE => 'Mandate source',
@@ -73,6 +74,7 @@ interface ConsoleInterface
         self::OPTION_COMMENT => 'Comment',
         self::OPTION_ATTR_KEY => 'Attribute key',
         self::OPTION_ATTR_VALUE => 'Attribute value',
+        self::OPTION_PATH => 'One or more paths to import',
     ];
 
     public function configure(Command $command): void;

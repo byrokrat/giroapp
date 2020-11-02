@@ -35,7 +35,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
-use Streamer\Stream;
 
 final class ImportXmlMandatesConsole implements ConsoleInterface
 {
@@ -67,9 +66,9 @@ final class ImportXmlMandatesConsole implements ConsoleInterface
             ->setDescription('Import an xml formatted mandate')
             ->setHelp('Import one or more xml formatted mandates from autogirot')
             ->addArgument(
-                'path',
+                self::OPTION_PATH,
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
-                'One or more paths to import'
+                self::OPTION_DESCS[self::OPTION_PATH]
             )
         ;
     }

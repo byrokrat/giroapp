@@ -22,11 +22,8 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Console;
 
-use byrokrat\giroapp\CommandBus\ImportAutogiroFile;
-use byrokrat\giroapp\CommandBus\Rollback;
+use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Filesystem\FilesystemInterface;
-use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\giroapp\Event\Listener\ErrorListener;
 use byrokrat\giroapp\Event\LogEvent;
 use Psr\Log\LogLevel;
@@ -35,22 +32,21 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Streamer\Stream;
 
 final class ImportConsole implements ConsoleInterface
 {
     use DependencyInjection\CommandBusProperty,
         DependencyInjection\DispatcherProperty;
 
-    /** @var FilesystemInterface */
-    private $filesystem;
+    /** @var Helper\FileOrStdinInputLocator */
+    private $inputLocator;
 
     /** @var ErrorListener */
     private $errorListener;
 
-    public function __construct(FilesystemInterface $filesystem, ErrorListener $errorListener)
+    public function __construct(Helper\FileOrStdinInputLocator $inputLocator, ErrorListener $errorListener)
     {
-        $this->filesystem = $filesystem;
+        $this->inputLocator = $inputLocator;
         $this->errorListener = $errorListener;
     }
 
@@ -61,9 +57,9 @@ final class ImportConsole implements ConsoleInterface
             ->setDescription('Import a file from autogirot')
             ->setHelp('Import one or more files with data from autogirot')
             ->addArgument(
-                'path',
+                self::OPTION_PATH,
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
-                'One or more paths to import'
+                self::OPTION_DESCS[self::OPTION_PATH]
             )
             ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import')
         ;
@@ -71,27 +67,8 @@ final class ImportConsole implements ConsoleInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $files = [];
-
-        $paths = (array)$input->getArgument('path');
-
-        if (empty($paths) && defined('STDIN')) {
-            $files[] = new Sha256File('STDIN', (new Stream(STDIN))->getContent());
-        }
-
-        foreach ($paths as $path) {
-            if ($this->filesystem->isFile($path)) {
-                $files[] = $this->filesystem->readFile($path);
-                continue;
-            }
-
-            foreach ($this->filesystem->readDir($path) as $file) {
-                $files[] = $file;
-            }
-        }
-
-        foreach ($files as $file) {
-            $this->commandBus->handle(new ImportAutogiroFile($file));
+        foreach ($this->inputLocator->getFiles((array)$input->getArgument('path')) as $file) {
+            $this->commandBus->handle(new CommandBus\ImportAutogiroFile($file));
         }
 
         // Rollback on errors
@@ -104,7 +81,7 @@ final class ImportConsole implements ConsoleInterface
                 )
             );
 
-            $this->commandBus->handle(new Rollback);
+            $this->commandBus->handle(new CommandBus\Rollback);
         }
     }
 }
