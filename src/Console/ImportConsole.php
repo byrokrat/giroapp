@@ -25,8 +25,7 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Event\Listener\ErrorListener;
-use byrokrat\giroapp\Event\LogEvent;
-use Psr\Log\LogLevel;
+use byrokrat\giroapp\Event;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -74,10 +73,8 @@ final class ImportConsole implements ConsoleInterface
         // Rollback on errors
         if (!$input->getOption('force') && $this->errorListener->getErrors()) {
             $this->dispatcher->dispatch(
-                new LogEvent(
+                new Event\ErrorEvent(
                     'Import failed as there were errors. Changes will be ignored. Use --force to override.',
-                    [],
-                    LogLevel::ERROR
                 )
             );
 

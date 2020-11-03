@@ -20,35 +20,17 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Utils;
+namespace byrokrat\giroapp\Event;
 
-use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\Event\LogEvent;
-use Psr\Log\LoggerInterface;
-use Psr\Log\LoggerTrait;
+use Psr\Log\LogLevel;
 
-final class DispatchingLogger implements LoggerInterface
+class DebugEvent extends LogEvent
 {
-    use DispatcherProperty, LoggerTrait;
-
     /**
-     * @param mixed $level
-     * @param string $message
      * @param array<string> $context
-     * @return void
      */
-    public function log($level, $message, array $context = [])
+    public function __construct(string $message, array $context = [])
     {
-        if (!is_scalar($level)) {
-            throw new \InvalidArgumentException('$level must be a scalar value');
-        }
-
-        if (!is_scalar($message)) {
-            throw new \InvalidArgumentException('$message must be a scalar value');
-        }
-
-        $this->dispatcher->dispatch(
-            new LogEvent((string)$message, (string)$level, $context)
-        );
+        parent::__construct($message, LogLevel::DEBUG, $context);
     }
 }

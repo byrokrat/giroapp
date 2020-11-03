@@ -40,24 +40,24 @@ class LogEvent
     /** @var string */
     private $message;
 
-    /** @var string[] */
-    private $context;
-
     /** @var string */
     private $severity;
 
+    /** @var array<string> */
+    private $context;
+
     /**
-     * @param mixed[] $context
+     * @param array<string> $context
      */
-    public function __construct(string $message, array $context = [], string $severity = LogLevel::NOTICE)
+    public function __construct(string $message, string $severity, array $context = [])
     {
         if (!isset(self::LOG_LEVEL_MAP[$severity])) {
             throw new \LogicException("Invalid severity, use one of the psr3 LogLevel constants");
         }
 
         $this->message = $message;
-        $this->context = $context;
         $this->severity = $severity;
+        $this->context = $context;
     }
 
     public function getMessage(): string
@@ -65,16 +65,16 @@ class LogEvent
         return $this->message;
     }
 
+    public function getSeverity(): string
+    {
+        return $this->severity;
+    }
+
     /**
-     * @return mixed[]
+     * @return array<string>
      */
     public function getContext(): array
     {
         return $this->context;
-    }
-
-    public function getSeverity(): string
-    {
-        return $this->severity;
     }
 }

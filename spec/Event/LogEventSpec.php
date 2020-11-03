@@ -12,7 +12,7 @@ class LogEventSpec extends ObjectBehavior
 {
     function let()
     {
-        $this->beConstructedWith('');
+        $this->beConstructedWith('', LogLevel::DEBUG);
     }
 
     function it_is_initializable()
@@ -22,25 +22,25 @@ class LogEventSpec extends ObjectBehavior
 
     function it_contains_a_message()
     {
-        $this->beConstructedWith('message');
+        $this->beConstructedWith('message', LogLevel::DEBUG);
         $this->getMessage()->shouldBeLike('message');
     }
 
     function it_contains_a_context()
     {
-        $this->beConstructedWith('', ['key' => 'value']);
+        $this->beConstructedWith('', LogLevel::DEBUG, ['key' => 'value']);
         $this->getContext()->shouldBeLike(['key' => 'value']);
     }
 
     function it_contains_a_severity()
     {
-        $this->beConstructedWith('', [], LogLevel::DEBUG);
+        $this->beConstructedWith('', LogLevel::DEBUG);
         $this->getSeverity()->shouldReturn(LogLevel::DEBUG);
     }
 
     function it_throws_on_invalid_severity()
     {
-        $this->beConstructedWith('', [], 'not-a-valid-severity');
+        $this->beConstructedWith('', 'not-a-valid-severity');
         $this->shouldThrow(\LogicException::class)->duringInstantiation();
     }
 }

@@ -25,7 +25,6 @@ namespace byrokrat\giroapp\Event;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Utils\ClassIdExtractor;
 use Money\Money;
-use Psr\Log\LogLevel;
 
 abstract class TransactionEvent extends DonorEvent
 {
@@ -44,8 +43,7 @@ abstract class TransactionEvent extends DonorEvent
                 $donor->getMandateKey(),
                 $date->format('Y-m-d')
             ),
-            $donor,
-            LogLevel::INFO
+            $donor
         );
 
         $this->amount = $amount;

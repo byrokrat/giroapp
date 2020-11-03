@@ -23,9 +23,8 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus\Helper;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\Event;
 use League\Tactician\Middleware;
-use Psr\Log\LogLevel;
 
 final class LoggingMiddleware implements Middleware
 {
@@ -36,13 +35,13 @@ final class LoggingMiddleware implements Middleware
         $commandClass = get_class($command);
 
         $this->dispatcher->dispatch(
-            new LogEvent("Enter command $commandClass", [], LogLevel::DEBUG)
+            new Event\DebugEvent("Enter command $commandClass")
         );
 
         $returnValue = $next($command);
 
         $this->dispatcher->dispatch(
-            new LogEvent("Command $commandClass finished without errors", [], LogLevel::DEBUG)
+            new Event\DebugEvent("Command $commandClass finished without errors")
         );
 
         return $returnValue;

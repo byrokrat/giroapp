@@ -23,16 +23,15 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Filesystem\FileInterface;
-use Psr\Log\LogLevel;
 
-class FileEvent extends LogEvent
+class FileEvent extends InfoEvent
 {
     /** @var FileInterface */
     private $file;
 
-    public function __construct(string $message, FileInterface $file, string $severity = LogLevel::INFO)
+    public function __construct(string $message, FileInterface $file)
     {
-        parent::__construct($message, [], $severity);
+        parent::__construct($message);
         $this->file = $file;
     }
 

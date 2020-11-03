@@ -48,7 +48,7 @@ exports_dir = "%base_dir%/exports"
 log_file = "%base_dir%/giroapp.log"
 
 ; PSR-3 log level (error/warning/notice/info/debug)
-log_level = "notice"
+log_level = "info"
 
 ; Log entry format
 log_format = "[{date}] [{level}] {message} {context}"

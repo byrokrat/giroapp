@@ -26,11 +26,10 @@ use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
 use byrokrat\giroapp\Event\ChangesCommitted;
 use byrokrat\giroapp\Event\ChangesDiscarded;
 use byrokrat\giroapp\Event\FileEvent;
-use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\Event\DebugEvent;
 use byrokrat\giroapp\Filesystem\FileInterface;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
 use byrokrat\giroapp\Filesystem\FileProcessorInterface;
-use Psr\Log\LogLevel;
 
 final class FileDumpingListener
 {
@@ -68,7 +67,7 @@ final class FileDumpingListener
             $file = $this->fileProcessor->processFile($file);
 
             $this->dispatcher->dispatch(
-                new LogEvent("Dumping file '{$file->getFilename()}'", [], LogLevel::DEBUG)
+                new DebugEvent("Dumping file '{$file->getFilename()}'")
             );
 
             $this->filesystem->writeFile($file);

@@ -40,7 +40,7 @@ class DispatchingLoggerSpec extends ObjectBehavior
 
     function it_dispatches_log_events($dispatcher)
     {
-        $dispatcher->dispatch(new LogEvent('message', ['context'], LogLevel::DEBUG))->shouldBeCalled();
+        $dispatcher->dispatch(new LogEvent('message', LogLevel::DEBUG, ['context']))->shouldBeCalled();
         $this->log(LogLevel::DEBUG, 'message', ['context']);
     }
 }

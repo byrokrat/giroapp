@@ -24,13 +24,10 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus\Commit;
 use byrokrat\giroapp\CommandBus\Rollback;
-use byrokrat\giroapp\Event\ExecutionStarted;
-use byrokrat\giroapp\Event\ExecutionStopped;
-use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\Event;
 use byrokrat\giroapp\Exception as GiroappException;
 use byrokrat\giroapp\Event\Listener\OutputtingListener;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
-use Psr\Log\LogLevel;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\ConsoleOutputInterface;
@@ -75,18 +72,15 @@ final class SymfonyCommandAdapter extends Command
         $commandBus = $this->environment->getCommandBus();
 
         try {
-            $this->dispatcher->dispatch(new ExecutionStarted);
+            $this->dispatcher->dispatch(new Event\ExecutionStarted);
             $this->console->execute($input, $output);
             $commandBus->handle(new Commit);
-            $this->dispatcher->dispatch(new ExecutionStopped);
+            $this->dispatcher->dispatch(new Event\ExecutionStopped);
         } catch (GiroappException $e) {
             $this->dispatcher->dispatch(
-                new LogEvent(
+                new Event\ErrorEvent(
                     $e->getMessage(),
-                    [
-                        'code' => $e->getCode(),
-                    ],
-                    LogLevel::ERROR
+                    ['code' => $e->getCode()]
                 )
             );
 
@@ -95,15 +89,14 @@ final class SymfonyCommandAdapter extends Command
             return $e->getCode();
         } catch (\Exception $e) {
             $this->dispatcher->dispatch(
-                new LogEvent(
+                new Event\ErrorEvent(
                     $e->getMessage(),
                     [
                         'class' => get_class($e),
                         'file' => $e->getFile(),
-                        'line' => $e->getLine(),
+                        'line' => (string)$e->getLine(),
                         'trace' => $e->getTraceAsString(),
-                    ],
-                    LogLevel::ERROR
+                    ]
                 )
             );
 

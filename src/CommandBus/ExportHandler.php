@@ -23,13 +23,11 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Event\FileExported;
-use byrokrat\giroapp\Event\LogEvent;
+use byrokrat\giroapp\Event;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Filesystem\Sha256File;
 use byrokrat\giroapp\Workflow\Transitions;
 use byrokrat\autogiro\Writer\WriterInterface;
-use Psr\Log\LogLevel;
 
 final class ExportHandler
 {
@@ -61,7 +59,7 @@ final class ExportHandler
 
             if ($state instanceof ExportableStateInterface) {
                 $this->dispatcher->dispatch(
-                    new LogEvent("Exporting mandate '{$donor->getMandateKey()}'", [], LogLevel::DEBUG)
+                    new Event\DebugEvent("Exporting mandate '{$donor->getMandateKey()}'")
                 );
 
                 $state->exportToAutogiro($donor, $this->autogiroWriter);
@@ -79,7 +77,7 @@ final class ExportHandler
         $content = $this->autogiroWriter->getContent();
 
         $this->dispatcher->dispatch(
-            new FileExported(new Sha256File(self::DEFAULT_FILE_NAME, $content))
+            new Event\FileExported(new Sha256File(self::DEFAULT_FILE_NAME, $content))
         );
 
         return $content;

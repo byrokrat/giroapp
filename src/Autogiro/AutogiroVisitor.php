@@ -31,15 +31,12 @@ use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\Revoked;
-use byrokrat\giroapp\Event\LogEvent;
-use byrokrat\giroapp\Event\TransactionFailed;
-use byrokrat\giroapp\Event\TransactionPerformed;
+use byrokrat\giroapp\Event;
 use byrokrat\giroapp\Workflow\Transitions;
 use byrokrat\autogiro\Visitor\Visitor;
 use byrokrat\autogiro\Tree\Node;
 use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdInterface;
-use Psr\Log\LogLevel;
 
 class AutogiroVisitor extends Visitor
 {
@@ -184,7 +181,7 @@ class AutogiroVisitor extends Visitor
         /** @var \Money\Money $amount */
         $amount = $node->getChild('Amount')->getValueFrom('Object');
 
-        $eventClassName = $success ? TransactionPerformed::class : TransactionFailed::class;
+        $eventClassName = $success ? Event\TransactionPerformed::class : Event\TransactionFailed::class;
 
         $this->dispatcher->dispatch(new $eventClassName($donor, $amount, $date));
     }
@@ -194,15 +191,14 @@ class AutogiroVisitor extends Visitor
         if (!$nodeAccount->equals($donor->getAccount())) {
             // Dispatching error means that failure can be picked up in an outer layer
             $this->dispatcher->dispatch(
-                new LogEvent(
+                new Event\ErrorEvent(
                     sprintf(
                         "Invalid mandate response for payer number '%s', found account '%s', expecting '%s'",
                         $donor->getPayerNumber(),
                         $nodeAccount->getNumber(),
                         $donor->getAccount()->getNumber()
                     ),
-                    ['payer_number' => $donor->getPayerNumber(), 'mandate_key' => $donor->getMandateKey()],
-                    LogLevel::ERROR
+                    ['payer_number' => $donor->getPayerNumber(), 'mandate_key' => $donor->getMandateKey()]
                 )
             );
         }
@@ -213,15 +209,14 @@ class AutogiroVisitor extends Visitor
         if ($nodeId->format('S-sk') != $donor->getDonorId()->format('S-sk')) {
             // Dispatching error means that failure can be picked up in an outer layer
             $this->dispatcher->dispatch(
-                new LogEvent(
+                new Event\ErrorEvent(
                     sprintf(
                         "Invalid mandate response for payer number '%s', found donor id '%s', expecting '%s'",
                         $donor->getPayerNumber(),
                         $nodeId->format('S-sk'),
                         $donor->getDonorId()->format('S-sk')
                     ),
-                    ['payer_number' => $donor->getPayerNumber(), 'mandate_key' => $donor->getMandateKey()],
-                    LogLevel::ERROR
+                    ['payer_number' => $donor->getPayerNumber(), 'mandate_key' => $donor->getMandateKey()]
                 )
             );
         }

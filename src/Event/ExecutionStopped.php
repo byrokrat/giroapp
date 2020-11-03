@@ -22,12 +22,10 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Event;
 
-use Psr\Log\LogLevel;
-
-final class ExecutionStopped extends LogEvent implements TimingEvent
+final class ExecutionStopped extends DebugEvent implements TimingEvent
 {
     public function __construct()
     {
-        parent::__construct('Execution successful', [], LogLevel::DEBUG);
+        parent::__construct('Execution successful');
     }
 }

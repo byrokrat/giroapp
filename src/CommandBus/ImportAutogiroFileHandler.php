@@ -48,7 +48,7 @@ final class ImportAutogiroFileHandler
     public function handle(ImportAutogiroFile $command): void
     {
         $this->dispatcher->dispatch(
-            new Event\LogEvent(
+            new Event\InfoEvent(
                 "<info>Importing file {$command->getFile()->getFilename()}</info>",
                 ['filename' => $command->getFile()->getFilename()]
             )

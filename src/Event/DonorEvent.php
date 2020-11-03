@@ -23,21 +23,20 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Event;
 
 use byrokrat\giroapp\Domain\Donor;
-use Psr\Log\LogLevel;
 
-abstract class DonorEvent extends LogEvent
+abstract class DonorEvent extends InfoEvent
 {
     /** @var Donor */
     private $donor;
 
     /**
-     * @param mixed[] $context
+     * @param array<string> $context
      */
-    public function __construct(string $message, Donor $donor, string $severity = LogLevel::INFO, array $context = [])
+    public function __construct(string $message, Donor $donor, array $context = [])
     {
         $context['mandate_key'] = $donor->getMandateKey();
 
-        parent::__construct($message, $context, $severity);
+        parent::__construct($message, $context);
 
         $this->donor = $donor;
     }
