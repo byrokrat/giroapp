@@ -32,7 +32,9 @@ services:
                   - null
                   - byrokrat\giroapp\Event\FileImported
             - method: addListener
-              arguments: [['@import_dumper', 'onExecutionStopped']]
+              arguments: [['@import_dumper', 'onChangesCommitted']]
+            - method: addListener
+              arguments: [['@import_dumper', 'onChangesDiscarded']]
             - method: addListener
               arguments:
                   - ['@export_dumper', 'onFileEvent']
@@ -40,7 +42,9 @@ services:
                   - null
                   - byrokrat\giroapp\Event\FileExported
             - method: addListener
-              arguments: [['@export_dumper', 'onExecutionStopped']]
+              arguments: [['@export_dumper', 'onChangesCommitted']]
+            - method: addListener
+              arguments: [['@export_dumper', 'onChangesDiscarded']]
 
     import_dumper:
         class: byrokrat\giroapp\Event\Listener\FileDumpingListener

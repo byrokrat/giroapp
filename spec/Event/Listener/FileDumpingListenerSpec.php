@@ -5,7 +5,8 @@ declare(strict_types = 1);
 namespace spec\byrokrat\giroapp\Event\Listener;
 
 use byrokrat\giroapp\Event\Listener\FileDumpingListener;
-use byrokrat\giroapp\Event\ExecutionStopped;
+use byrokrat\giroapp\Event\ChangesCommitted;
+use byrokrat\giroapp\Event\ChangesDiscarded;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Filesystem\FilesystemInterface;
@@ -46,6 +47,17 @@ class FileDumpingListenerSpec extends ObjectBehavior
         $dispatcher->dispatch(Argument::type(LogEvent::class))->shouldBeCalled();
 
         $this->onFileEvent($event);
-        $this->onExecutionStopped(new ExecutionStopped);
+        $this->onChangesCommitted(new ChangesCommitted);
+    }
+
+    function it_discards_changes($fs, FileEvent $event, FileInterface $file)
+    {
+        $event->getFile()->willReturn($file);
+
+        $fs->writeFile(Argument::any())->shouldNotBeCalled();
+
+        $this->onFileEvent($event);
+        $this->onChangesDiscarded(new ChangesDiscarded);
+        $this->onChangesCommitted(new ChangesCommitted);
     }
 }

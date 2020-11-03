@@ -134,6 +134,26 @@ class ApplicationWrapper
         );
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getFilesInDir(string $configDirName): array
+    {
+        $dirname = $this->configs->getConfigValue($configDirName);
+
+        @mkdir($dirname);
+
+        $files = [];
+
+        foreach (new \DirectoryIterator($dirname) as $file) {
+            if ($file->isFile()) {
+                $files[] = $file->getFilename();
+            }
+        }
+
+        return $files;
+    }
+
     public function fileExists(string $filename): bool
     {
         return file_exists("{$this->cwd}/$filename");

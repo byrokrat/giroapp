@@ -26,6 +26,7 @@ Feature: Importing files
         092017081799000000000
         """
     Then I get a "INVALID_AUTOGIRO_FILE_EXCEPTION" error
+    And the "imports_dir" directory contains "0" files
 
   Scenario: I import an autogiro file with invalid payee bgc customer number
     When I import:
@@ -47,6 +48,7 @@ Feature: Importing files
         092017081799000000000
         """
     Then I get a "FILE_ALREADY_IMPORTED_EXCEPTION" error
+    And the "imports_dir" directory contains "1" files
 
   Scenario: I import an autogiro file approving a mandate register request
     Given there are donors:
@@ -95,6 +97,7 @@ Feature: Importing files
       092017081799000000001
       """
     Then the database contains donor "12345" with "state" matching "MANDATE_SENT"
+    And the "imports_dir" directory contains "0" files
 
   Scenario: I forcefully import an autogiro file approving a mandate with incorrect account
     Given there are donors:

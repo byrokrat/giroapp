@@ -23,7 +23,8 @@ declare(strict_types = 1);
 namespace byrokrat\giroapp\Event\Listener;
 
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\Event\ExecutionStopped;
+use byrokrat\giroapp\Event\ChangesCommitted;
+use byrokrat\giroapp\Event\ChangesDiscarded;
 use byrokrat\giroapp\Event\FileEvent;
 use byrokrat\giroapp\Event\LogEvent;
 use byrokrat\giroapp\Filesystem\FileInterface;
@@ -61,7 +62,7 @@ final class FileDumpingListener
         $this->files[] = $event->getFile();
     }
 
-    public function onExecutionStopped(ExecutionStopped $event): void
+    public function onChangesCommitted(ChangesCommitted $event): void
     {
         foreach ($this->files as $file) {
             $file = $this->fileProcessor->processFile($file);
@@ -72,5 +73,10 @@ final class FileDumpingListener
 
             $this->filesystem->writeFile($file);
         }
+    }
+
+    public function onChangesDiscarded(ChangesDiscarded $event): void
+    {
+        $this->files = [];
     }
 }

@@ -158,9 +158,21 @@ class FeatureContext implements Context
     /**
      * @When I import using STDIN:
      */
-    public function iImportUsingStdin(PyStringNode $content)
+    public function iImportUsingStdin(PyStringNode $content): void
     {
         $this->result = $this->app->executeRaw("echo '$content' | " . $this->app::EXECUTABLE_PLACEHOLDER . " import");
+    }
+
+    /**
+     * @Then the :configDirName directory contains :expectedCount files
+     */
+    public function theDirectoryContainsFiles($configDirName, $expectedCount): void
+    {
+        $count = count($this->app->getFilesInDir($configDirName));
+
+        if (intval($expectedCount) !== $count) {
+            throw new \Exception("Error: expected $expectedCount files in the $configDirName directory, found $count");
+        }
     }
 
     /**

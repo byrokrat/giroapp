@@ -7,6 +7,7 @@
 * Added the `view-xml-mandates` command
 * Made it possible to revoke paused mandates.
 * Update db json schema versions to 1.0
+* Fixed a bugg where imported files where stored when import failed
 
 ## Beta-8
 
