@@ -34,6 +34,7 @@ services:
                 byrokrat\giroapp\CommandBus\ForceRemoveDonor: '@byrokrat\giroapp\CommandBus\ForceRemoveDonorHandler'
                 byrokrat\giroapp\CommandBus\ForceState: '@byrokrat\giroapp\CommandBus\ForceStateHandler'
                 byrokrat\giroapp\CommandBus\ImportAutogiroFile: '@byrokrat\giroapp\CommandBus\ImportAutogiroFileHandler'
+                byrokrat\giroapp\CommandBus\ImportXmlMandateFile: '@byrokrat\giroapp\CommandBus\ImportXmlMandateFileHandler'
                 byrokrat\giroapp\CommandBus\RemoveAttribute: '@byrokrat\giroapp\CommandBus\RemoveAttributeHandler'
                 byrokrat\giroapp\CommandBus\RemoveDonor: '@byrokrat\giroapp\CommandBus\RemoveDonorHandler'
                 byrokrat\giroapp\CommandBus\Rollback: '@byrokrat\giroapp\CommandBus\RollbackHandler'

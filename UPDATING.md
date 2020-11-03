@@ -8,6 +8,7 @@
 * Made it possible to revoke paused mandates.
 * Update db json schema versions to 1.0
 * Fixed a bugg where imported files where stored when import failed
+* Imported xml mandate files are now stored in the `imports_dir` directory
 
 ## Beta-8
 

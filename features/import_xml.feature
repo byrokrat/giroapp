@@ -47,6 +47,7 @@ Feature: Importing xml mandate files
     When I run "import-xml-mandates mandate.xml"
     Then there is no error
     And the database contains donor "12345" with "state" matching "NEW_MANDATE"
+    And the "imports_dir" directory contains "1" files
 
   Scenario: I import an online autogiro form with no payer number
     Given a fresh installation

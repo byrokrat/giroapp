@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\CommandBus;
 
 use byrokrat\giroapp\Autogiro\AutogiroVisitor;
 use byrokrat\giroapp\DependencyInjection\DispatcherProperty;
-use byrokrat\giroapp\Event\AutogiroFileImported;
+use byrokrat\giroapp\Event;
 use byrokrat\giroapp\Exception\UnknownFileException;
 use byrokrat\autogiro\Parser\ParserInterface;
 use byrokrat\autogiro\Exception as AutogiroException;
@@ -47,6 +47,13 @@ final class ImportAutogiroFileHandler
 
     public function handle(ImportAutogiroFile $command): void
     {
+        $this->dispatcher->dispatch(
+            new Event\LogEvent(
+                "<info>Importing file {$command->getFile()->getFilename()}</info>",
+                ['filename' => $command->getFile()->getFilename()]
+            )
+        );
+
         try {
             $this->parser->parse($command->getFile()->getContent())->accept($this->visitor);
         } catch (AutogiroException $e) {
@@ -59,6 +66,6 @@ final class ImportAutogiroFileHandler
             );
         }
 
-        $this->dispatcher->dispatch(new AutogiroFileImported($command->getFile()));
+        $this->dispatcher->dispatch(new Event\AutogiroFileImported($command->getFile()));
     }
 }
