@@ -29,6 +29,7 @@ use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\ExportableStateInterface;
 use byrokrat\giroapp\Domain\State\Revoked;
 use byrokrat\giroapp\Domain\State\Paused;
+use byrokrat\giroapp\Status\StatisticsManager;
 use Money\Money;
 use Money\MoneyFormatter;
 use Symfony\Component\Console\Command\Command;
@@ -44,80 +45,47 @@ final class StatusConsole implements ConsoleInterface
     use DependencyInjection\DonorQueryProperty,
         DependencyInjection\MoneyFormatterProperty;
 
+    /** @var StatisticsManager */
+    private $statisticsManager;
+
+    public function __construct(StatisticsManager $statisticsManager)
+    {
+        $this->statisticsManager = $statisticsManager;
+    }
+
     public function configure(Command $command): void
     {
-        $command->setName('status');
-        $command->setDescription('Show current status');
-        $command->setHelp('Examine the status of the giroapp database');
-        $command->addOption('donor-count', null, InputOption::VALUE_NONE, 'Show only active donor count');
-        $command->addOption('monthly-amount', null, InputOption::VALUE_NONE, 'Show only monthly amount');
-        $command->addOption('exportable-count', null, InputOption::VALUE_NONE, 'Show only exportable count');
-        $command->addOption('waiting-count', null, InputOption::VALUE_NONE, 'Show only awaiting response count');
-        $command->addOption('error-count', null, InputOption::VALUE_NONE, 'Show only error count');
-        $command->addOption('revoked-count', null, InputOption::VALUE_NONE, 'Show only revoked count');
-        $command->addOption('paused-count', null, InputOption::VALUE_NONE, 'Show only paused count');
+        $command
+            ->setName('status')
+            ->setDescription('Show current status')
+            ->setHelp('Examine the status of the giroapp database')
+            ->addOption(
+                'show',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Show only named statistic (possible values include donor-count, '
+                . 'monthly-amount, exportable-count, waiting-count, error-count, revoked-count and paused-count)'
+            )
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Show all statistics, including 0 values')
+        ;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $counts = [
-            'donor-count' => 0,
-            'monthly-amount' => Money::SEK('0'),
-            'exportable-count' => 0,
-            'waiting-count' => 0,
-            'error-count' => 0,
-            'revoked-count' => 0,
-            'paused-count' => 0,
-        ];
+        /** @var string */
+        $showOnly = $input->getOption('show');
 
-        foreach ($this->donorQuery->findAll() as $donor) {
-            if ($donor->getState() instanceof Active) {
-                $counts['donor-count']++;
-                $counts['monthly-amount'] = $counts['monthly-amount']->add($donor->getDonationAmount());
-            }
-
-            if ($donor->getState() instanceof ExportableStateInterface) {
-                $counts['exportable-count']++;
-            }
-
-            if ($donor->getState() instanceof AwaitingResponseStateInterface) {
-                $counts['waiting-count']++;
-            }
-
-            if ($donor->getState() instanceof Error) {
-                $counts['error-count']++;
-            }
-
-            if ($donor->getState() instanceof Revoked) {
-                $counts['revoked-count']++;
-            }
-
-            if ($donor->getState() instanceof Paused) {
-                $counts['paused-count']++;
-            }
+        if ($showOnly) {
+            $output->writeln((string)$this->statisticsManager->getStatistic($showOnly)->getValue());
+            return;
         }
 
-        $counts['monthly-amount'] = $this->moneyFormatter->format($counts['monthly-amount']);
-
-        foreach (array_keys($counts) as $key) {
-            if ($input->getOption($key)) {
-                $output->writeln((string)$counts[$key]);
-                return;
+        foreach ($this->statisticsManager->getAllStatistics() as $statistic) {
+            if ($statistic->getValue() == 0 && !$input->getOption('all')) {
+                continue;
             }
+
+            $output->writeln("{$statistic->getDescription()}: <comment>{$statistic->getValue()}</comment>");
         }
-
-        $output->writeln("<comment>Donors: {$counts['donor-count']}</comment>");
-        $output->writeln("<comment>Monthly amount: {$counts['monthly-amount']} kr</comment>");
-        $output->writeln($this->format('Exportables', $counts['exportable-count']));
-        $output->writeln($this->format('Awaiting response', $counts['waiting-count']));
-        $output->writeln($this->format('Errors', $counts['error-count']));
-        $output->writeln($this->format('Revoked', $counts['revoked-count']));
-        $output->writeln($this->format('Paused', $counts['paused-count']));
-    }
-
-    private function format(string $desc, int $count): string
-    {
-        $tag = $count ? 'error' : 'info';
-        return "<$tag>$desc: $count</$tag>";
     }
 }

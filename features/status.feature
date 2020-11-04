@@ -14,13 +14,13 @@ Feature: Examine database status
       | 8            | AWAITING_REVOCATION               | 890121-5742 | 100    |
 
   Scenario: I check the donor count
-    When I run "status --donor-count"
+    When I run "status --show donor-count"
     Then the output contains a line like "/^1$/"
 
   Scenario: I check the amount count
-    When I run "status --monthly-amount"
-    Then the output contains a line like "/^100.00$/"
+    When I run "status --show monthly-amount"
+    Then the output contains a line like "/^100$/"
 
   Scenario: I check the exportable count
-    When I run "status --exportable-count"
+    When I run "status --show exportable-count"
     Then the output contains a line like "/^4$/"

@@ -37,5 +37,5 @@ Feature: Removing donors
         | 2            | REVOKED | 820828-6966 | 100    |
         | 3            | REVOKED | 550319-1016 | 100    |
       When I run "remove --all"
-      And I run "status --revoked-count"
+      And I run "status --show revoked-count"
       Then the output contains a line like "/^0$/"

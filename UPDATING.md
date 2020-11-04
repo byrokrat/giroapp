@@ -11,6 +11,9 @@
 * Imported xml mandate files are now stored in the `imports_dir` directory
 * Added support for the `--force` option in the `import-xml-mandates` command
 * Added `always_force_imports` setting
+* Added `--all` and `--show` options to the `status` command
+* Removed named stat options from `status` command (eg. `--donor-count`,
+  use `--show donor-count` instead)
 
 ## Beta-8
 

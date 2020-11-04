@@ -90,6 +90,10 @@ services:
         class: ~
         arguments: ["@=service('ini').getConfig('always_force_imports')"]
 
+    byrokrat\giroapp\Status\StatisticsManager:
+        class: ~
+        configurator: ['@byrokrat\giroapp\Status\StandardStatisticsConfigurator', 'loadStatistics']
+
     organization_id:
         class: byrokrat\id\IdInterface
         factory: ['@byrokrat\id\IdFactoryInterface', 'createId']
