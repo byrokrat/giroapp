@@ -74,7 +74,7 @@ final class ImportTransactionManager
 
         $this->dispatcher->dispatch(
             new Event\ErrorEvent(
-                'Import failed as there were errors. Changes will be ignored. Use --force to override.',
+                'Import failed as there were errors. Changes will be ignored. Use --force to override.'
             )
         );
 
