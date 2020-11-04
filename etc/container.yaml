@@ -86,6 +86,10 @@ services:
         class: ~
         arguments: ['%env(GIROAPP_INI)%']
 
+    byrokrat\giroapp\Console\ImportTransactionManager:
+        class: ~
+        arguments: ["@=service('ini').getConfig('always_force_imports')"]
+
     organization_id:
         class: byrokrat\id\IdInterface
         factory: ['@byrokrat\id\IdFactoryInterface', 'createId']

@@ -9,6 +9,8 @@
 * Update db json schema versions to 1.0
 * Fixed a bugg where imported files where stored when import failed
 * Imported xml mandate files are now stored in the `imports_dir` directory
+* Added support for the `--force` option in the `import-xml-mandates` command
+* Added `always_force_imports` setting
 
 ## Beta-8
 

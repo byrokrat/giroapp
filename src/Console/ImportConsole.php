@@ -24,29 +24,27 @@ namespace byrokrat\giroapp\Console;
 
 use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\DependencyInjection;
-use byrokrat\giroapp\Event\Listener\ErrorListener;
-use byrokrat\giroapp\Event;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 final class ImportConsole implements ConsoleInterface
 {
-    use DependencyInjection\CommandBusProperty,
-        DependencyInjection\DispatcherProperty;
+    use DependencyInjection\CommandBusProperty;
+
+    /** @var ImportTransactionManager */
+    private $importTransactionManager;
 
     /** @var Helper\FileOrStdinInputLocator */
     private $inputLocator;
 
-    /** @var ErrorListener */
-    private $errorListener;
-
-    public function __construct(Helper\FileOrStdinInputLocator $inputLocator, ErrorListener $errorListener)
-    {
+    public function __construct(
+        ImportTransactionManager $importTransactionManager,
+        Helper\FileOrStdinInputLocator $inputLocator
+    ) {
+        $this->importTransactionManager = $importTransactionManager;
         $this->inputLocator = $inputLocator;
-        $this->errorListener = $errorListener;
     }
 
     public function configure(Command $command): void
@@ -59,26 +57,18 @@ final class ImportConsole implements ConsoleInterface
                 self::OPTION_PATH,
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
                 self::OPTION_DESCS[self::OPTION_PATH]
-            )
-            ->addOption('force', 'f', InputOption::VALUE_NONE, 'Force import')
-        ;
+            );
+
+        $this->importTransactionManager->configure($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        foreach ($this->inputLocator->getFiles((array)$input->getArgument('path')) as $file) {
+        foreach ($this->inputLocator->getFiles((array)$input->getArgument(self::OPTION_PATH)) as $file) {
             $this->commandBus->handle(new CommandBus\ImportAutogiroFile($file));
         }
 
         // Rollback on errors
-        if (!$input->getOption('force') && $this->errorListener->getErrors()) {
-            $this->dispatcher->dispatch(
-                new Event\ErrorEvent(
-                    'Import failed as there were errors. Changes will be ignored. Use --force to override.',
-                )
-            );
-
-            $this->commandBus->handle(new CommandBus\Rollback);
-        }
+        $this->importTransactionManager->manageTransaction($input);
     }
 }

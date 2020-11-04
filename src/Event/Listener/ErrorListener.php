@@ -25,7 +25,7 @@ namespace byrokrat\giroapp\Event\Listener;
 use byrokrat\giroapp\Event\LogEvent;
 use Psr\Log\LogLevel;
 
-final class ErrorListener implements ListenerInterface
+class ErrorListener implements ListenerInterface
 {
     /** @var array<LogEvent> */
     private $errors = [];

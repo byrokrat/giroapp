@@ -40,6 +40,10 @@ plugins_dir = "%base_dir%/plugins"
 ; Empty value turns of saving imported files
 imports_dir = "%base_dir%/imports"
 
+; Implicitly use --force option on import
+; The --not-force option overrides this setting
+always_force_imports = false
+
 ; Directory where copies of exported files are stored
 ; Empty value turns of saving exported files
 exports_dir = "%base_dir%/exports"

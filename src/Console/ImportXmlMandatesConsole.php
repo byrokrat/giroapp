@@ -25,15 +25,14 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Validator;
-use byrokrat\giroapp\Xml\HumanDumper;
-use byrokrat\giroapp\Xml\XmlMandate;
+use byrokrat\giroapp\Xml;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
 
-final class ImportXmlMandatesConsole implements ConsoleInterface
+final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPassInterface
 {
     use DependencyInjection\AccountFactoryProperty,
         DependencyInjection\CommandBusProperty,
@@ -41,18 +40,29 @@ final class ImportXmlMandatesConsole implements ConsoleInterface
         DependencyInjection\MoneyParserProperty,
         DependencyInjection\IdFactoryProperty;
 
-    /** @var CommandBus\ImportXmlMandateFileHandler */
-    private $importXmlFileHandler;
+    /** @var ImportTransactionManager */
+    private $importTransactionManager;
 
     /** @var Helper\FileOrStdinInputLocator */
     private $inputLocator;
 
+    /** @var Xml\XmlMandateCompiler */
+    private $xmlMandateCompiler;
+
+    /** @var ?InputInterface */
+    private $input;
+
+    /** @var ?OutputInterface */
+    private $output;
+
     public function __construct(
-        CommandBus\ImportXmlMandateFileHandler $importXmlFileHandler,
-        Helper\FileOrStdinInputLocator $inputLocator
+        ImportTransactionManager $importTransactionManager,
+        Helper\FileOrStdinInputLocator $inputLocator,
+        Xml\XmlMandateCompiler $xmlMandateCompiler
     ) {
-        $this->importXmlFileHandler = $importXmlFileHandler;
+        $this->importTransactionManager = $importTransactionManager;
         $this->inputLocator = $inputLocator;
+        $this->xmlMandateCompiler = $xmlMandateCompiler;
     }
 
     public function configure(Command $command): void
@@ -65,134 +75,148 @@ final class ImportXmlMandatesConsole implements ConsoleInterface
                 self::OPTION_PATH,
                 InputArgument::OPTIONAL | InputArgument::IS_ARRAY,
                 self::OPTION_DESCS[self::OPTION_PATH]
-            )
-        ;
+            );
+
+        $this->importTransactionManager->configure($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $dumper = new HumanDumper($this->moneyFormatter);
-
-        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+        $this->input = $input;
+        $this->output = $output;
 
         // Register interactive mandate processor
-        $this->importXmlFileHandler->setProcessor(function ($xmlMandate) use ($dumper, $inputReader, $output) {
-            $output->writeln('<info>New mandate</info>');
-
-            $output->writeln($dumper->dump($xmlMandate));
-
-            if (!$inputReader->confirm("Edit [<info>y/N</info>]? ", false)) {
-                return $xmlMandate;
-            }
-
-            $inputReader->readOptionalInput(
-                self::OPTION_ID,
-                $xmlMandate->donorId->format('CS-sk'),
-                new Validator\ValidatorCollection(
-                    new Validator\IdValidator,
-                    new Validator\CallbackValidator(function (string $value) use (&$xmlMandate) {
-                        $xmlMandate->donorId = $this->idFactory->createId($value);
-                    })
-                )
-            );
-
-            $xmlMandate->payerNumber = $inputReader->readOptionalInput(
-                self::OPTION_PAYER_NUMBER,
-                $xmlMandate->payerNumber,
-                new Validator\PayerNumberValidator
-            );
-
-            $inputReader->readOptionalInput(
-                self::OPTION_ACCOUNT,
-                $xmlMandate->account->prettyprint(),
-                new Validator\ValidatorCollection(
-                    new Validator\AccountValidator,
-                    new Validator\CallbackValidator(function (string $value) use (&$xmlMandate) {
-                        $xmlMandate->account = $this->accountFactory->createAccount($value);
-                    })
-                )
-            );
-
-            $xmlMandate->donationAmount = $this->moneyParser->parse(
-                $inputReader->readOptionalInput(
-                    self::OPTION_AMOUNT,
-                    $this->moneyFormatter->format($xmlMandate->donationAmount),
-                    new Validator\ValidatorCollection(
-                        new Validator\NotEmptyValidator,
-                        new Validator\NumericValidator
-                    )
-                ),
-                'SEK'
-            );
-
-            $xmlMandate->name = $inputReader->readOptionalInput(
-                self::OPTION_NAME,
-                $xmlMandate->name,
-                new Validator\ValidatorCollection(
-                    new Validator\StringValidator,
-                    new Validator\NotEmptyValidator
-                )
-            );
-
-            $xmlMandate->address['line1'] = $inputReader->readOptionalInput(
-                self::OPTION_ADDRESS1,
-                $xmlMandate->address['line1'],
-                new Validator\StringValidator
-            );
-
-            $xmlMandate->address['line2'] = $inputReader->readOptionalInput(
-                self::OPTION_ADDRESS2,
-                $xmlMandate->address['line2'],
-                new Validator\StringValidator
-            );
-
-            $xmlMandate->address['line3'] = $inputReader->readOptionalInput(
-                self::OPTION_ADDRESS3,
-                $xmlMandate->address['line3'],
-                new Validator\StringValidator
-            );
-
-            $xmlMandate->address['postalCode'] = $inputReader->readOptionalInput(
-                self::OPTION_POSTAL_CODE,
-                $xmlMandate->address['postalCode'],
-                new Validator\PostalCodeValidator
-            );
-
-            $xmlMandate->address['postalCity'] = $inputReader->readOptionalInput(
-                self::OPTION_POSTAL_CITY,
-                $xmlMandate->address['postalCity'],
-                new Validator\StringValidator
-            );
-
-            $xmlMandate->email = $inputReader->readOptionalInput(
-                self::OPTION_EMAIL,
-                $xmlMandate->email,
-                new Validator\EmailValidator
-            );
-
-            $xmlMandate->phone = $inputReader->readOptionalInput(
-                self::OPTION_PHONE,
-                $xmlMandate->phone,
-                new Validator\PhoneValidator
-            );
-
-            $xmlMandate->comment = $inputReader->readOptionalInput(
-                self::OPTION_COMMENT,
-                $xmlMandate->comment,
-                new Validator\StringValidator
-            );
-
-            foreach ($xmlMandate->attributes as $attrKey => $attrValue) {
-                $xmlMandate->attributes[$attrKey] =
-                    $inputReader->readOptionalInput("attribute.$attrKey", $attrValue, new Validator\StringValidator);
-            }
-
-            return $xmlMandate;
-        });
+        $this->xmlMandateCompiler->addCompilerPass($this);
 
         // Execute command
-        foreach ($this->inputLocator->getFiles((array)$input->getArgument('path')) as $file) {
+        foreach ($this->inputLocator->getFiles((array)$input->getArgument(self::OPTION_PATH)) as $file) {
             $this->commandBus->handle(new CommandBus\ImportXmlMandateFile($file));
         }
+
+        // Rollback on errors
+        $this->importTransactionManager->manageTransaction($input);
+    }
+
+    public function processMandate(Xml\XmlMandate $xmlMandate): Xml\XmlMandate
+    {
+        if (!isset($this->input) || !isset($this->output)) {
+            throw new \LogicException("Input or output not set, did you call execute() prior to processMandate()?");
+        }
+
+        $this->output->writeln('<info>New mandate</info>');
+
+        $this->output->writeln(
+            (new Xml\HumanDumper($this->moneyFormatter))->dump($xmlMandate)
+        );
+
+        $inputReader = new Helper\InputReader($this->input, $this->output, new QuestionHelper);
+
+        if (!$inputReader->confirm("Edit [<info>y/N</info>]? ", false)) {
+            return $xmlMandate;
+        }
+
+        $inputReader->readOptionalInput(
+            self::OPTION_ID,
+            $xmlMandate->donorId->format('CS-sk'),
+            new Validator\ValidatorCollection(
+                new Validator\IdValidator,
+                new Validator\CallbackValidator(function (string $value) use (&$xmlMandate) {
+                    $xmlMandate->donorId = $this->idFactory->createId($value);
+                })
+            )
+        );
+
+        $xmlMandate->payerNumber = $inputReader->readOptionalInput(
+            self::OPTION_PAYER_NUMBER,
+            $xmlMandate->payerNumber,
+            new Validator\PayerNumberValidator
+        );
+
+        $inputReader->readOptionalInput(
+            self::OPTION_ACCOUNT,
+            $xmlMandate->account->prettyprint(),
+            new Validator\ValidatorCollection(
+                new Validator\AccountValidator,
+                new Validator\CallbackValidator(function (string $value) use (&$xmlMandate) {
+                    $xmlMandate->account = $this->accountFactory->createAccount($value);
+                })
+            )
+        );
+
+        $xmlMandate->donationAmount = $this->moneyParser->parse(
+            $inputReader->readOptionalInput(
+                self::OPTION_AMOUNT,
+                $this->moneyFormatter->format($xmlMandate->donationAmount),
+                new Validator\ValidatorCollection(
+                    new Validator\NotEmptyValidator,
+                    new Validator\NumericValidator
+                )
+            ),
+            'SEK'
+        );
+
+        $xmlMandate->name = $inputReader->readOptionalInput(
+            self::OPTION_NAME,
+            $xmlMandate->name,
+            new Validator\ValidatorCollection(
+                new Validator\StringValidator,
+                new Validator\NotEmptyValidator
+            )
+        );
+
+        $xmlMandate->address['line1'] = $inputReader->readOptionalInput(
+            self::OPTION_ADDRESS1,
+            $xmlMandate->address['line1'],
+            new Validator\StringValidator
+        );
+
+        $xmlMandate->address['line2'] = $inputReader->readOptionalInput(
+            self::OPTION_ADDRESS2,
+            $xmlMandate->address['line2'],
+            new Validator\StringValidator
+        );
+
+        $xmlMandate->address['line3'] = $inputReader->readOptionalInput(
+            self::OPTION_ADDRESS3,
+            $xmlMandate->address['line3'],
+            new Validator\StringValidator
+        );
+
+        $xmlMandate->address['postalCode'] = $inputReader->readOptionalInput(
+            self::OPTION_POSTAL_CODE,
+            $xmlMandate->address['postalCode'],
+            new Validator\PostalCodeValidator
+        );
+
+        $xmlMandate->address['postalCity'] = $inputReader->readOptionalInput(
+            self::OPTION_POSTAL_CITY,
+            $xmlMandate->address['postalCity'],
+            new Validator\StringValidator
+        );
+
+        $xmlMandate->email = $inputReader->readOptionalInput(
+            self::OPTION_EMAIL,
+            $xmlMandate->email,
+            new Validator\EmailValidator
+        );
+
+        $xmlMandate->phone = $inputReader->readOptionalInput(
+            self::OPTION_PHONE,
+            $xmlMandate->phone,
+            new Validator\PhoneValidator
+        );
+
+        $xmlMandate->comment = $inputReader->readOptionalInput(
+            self::OPTION_COMMENT,
+            $xmlMandate->comment,
+            new Validator\StringValidator
+        );
+
+        foreach ($xmlMandate->attributes as $attrKey => $attrValue) {
+            $xmlMandate->attributes[$attrKey] =
+                $inputReader->readOptionalInput("attribute.$attrKey", $attrValue, new Validator\StringValidator);
+        }
+
+        return $xmlMandate;
     }
 }

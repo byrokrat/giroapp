@@ -29,6 +29,7 @@ use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Domain\State\NewMandate;
 use byrokrat\giroapp\Event;
+use byrokrat\giroapp\Exception\DonorAlreadyExistsException;
 use byrokrat\giroapp\Xml\XmlMandateCompiler;
 
 final class ImportXmlMandateFileHandler
@@ -37,49 +38,50 @@ final class ImportXmlMandateFileHandler
         DependencyInjection\DispatcherProperty,
         DependencyInjection\DonorRepositoryProperty;
 
-    /** @var callable */
-    private $processor;
-
     /** @var XmlMandateCompiler */
     private $xmlMandateCompiler;
 
     public function __construct(XmlMandateCompiler $xmlMandateCompiler)
     {
         $this->xmlMandateCompiler = $xmlMandateCompiler;
-
-        $this->setProcessor(function ($xmlMandate) {
-            return $xmlMandate;
-        });
-    }
-
-    public function setProcessor(callable $processor): void
-    {
-        $this->processor = $processor;
     }
 
     public function handle(ImportXmlMandateFile $command): void
     {
         $this->dispatcher->dispatch(
-            new Event\LogEvent(
+            new Event\InfoEvent(
                 "<info>Importing mandates from {$command->getFile()->getFilename()}</info>",
                 ['filename' => $command->getFile()->getFilename()]
             )
         );
 
         foreach ($this->xmlMandateCompiler->compileFile($command->getFile()) as $xmlMandate) {
-            $xmlMandate = ($this->processor)($xmlMandate);
-
-            $this->commandBus->handle(
-                new CommandBus\AddDonor(
-                    new NewDonor(
-                        MandateSources::MANDATE_SOURCE_ONLINE_FORM,
-                        $xmlMandate->payerNumber,
-                        $xmlMandate->account,
-                        $xmlMandate->donorId,
-                        $xmlMandate->donationAmount
+            try {
+                $this->commandBus->handle(
+                    new CommandBus\AddDonor(
+                        new NewDonor(
+                            MandateSources::MANDATE_SOURCE_ONLINE_FORM,
+                            $xmlMandate->payerNumber,
+                            $xmlMandate->account,
+                            $xmlMandate->donorId,
+                            $xmlMandate->donationAmount
+                        )
                     )
-                )
-            );
+                );
+            } catch (DonorAlreadyExistsException $exception) {
+                // Dispatching error means that failure can be picked up in an outer layer
+                $this->dispatcher->dispatch(
+                    new Event\ErrorEvent(
+                        $exception->getMessage(),
+                        [
+                            'payer_number' => $xmlMandate->payerNumber,
+                            'donor_id' => $xmlMandate->donorId->format('CS-sk')
+                        ]
+                    )
+                );
+
+                continue;
+            }
 
             $donor = $this->donorRepository->requireByPayerNumber($xmlMandate->payerNumber);
 
