@@ -48,6 +48,9 @@ always_force_imports = false
 ; Empty value turns of saving exported files
 exports_dir = "%base_dir%/exports"
 
+; Automatically remove mandates that are revoked
+autoremove = false
+
 ; Internal log file
 log_file = "%base_dir%/giroapp.log"
 

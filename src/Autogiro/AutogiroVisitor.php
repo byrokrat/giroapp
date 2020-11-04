@@ -28,6 +28,7 @@ use byrokrat\giroapp\CommandBus\UpdateState;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Config\ConfigInterface;
 use byrokrat\giroapp\Exception\InvalidAutogiroFileException;
+use byrokrat\giroapp\Exception\DonorDoesNotExistException;
 use byrokrat\giroapp\Domain\Donor;
 use byrokrat\giroapp\Domain\State\Error;
 use byrokrat\giroapp\Domain\State\Revoked;
@@ -89,7 +90,11 @@ class AutogiroVisitor extends Visitor
 
     public function beforeMandateResponse(Node $node): void
     {
-        $donor = $this->donorQuery->requireByPayerNumber($node->getValueFrom('PayerNumber'));
+        $donor = $this->readDonor($node->getValueFrom('PayerNumber'));
+
+        if (!$donor) {
+            return;
+        }
 
         /** @var ?IdInterface $nodeId */
         $nodeId = $node->getChild('StateId')->getValueFrom('Object');
@@ -137,7 +142,11 @@ class AutogiroVisitor extends Visitor
 
     public function beforeSuccessfulIncomingAmendmentResponse(Node $node): void
     {
-        $donor = $this->donorQuery->requireByPayerNumber($node->getValueFrom('PayerNumber'));
+        $donor = $this->readDonor($node->getValueFrom('PayerNumber'));
+
+        if (!$donor) {
+            return;
+        }
 
         /** @var \DateTimeImmutable $date */
         $date = $node->getChild('Date')->getValueFrom('Object');
@@ -165,7 +174,11 @@ class AutogiroVisitor extends Visitor
 
     private function processIncomingPayment(Node $node, bool $success): void
     {
-        $donor = $this->donorQuery->requireByPayerNumber($node->getValueFrom('PayerNumber'));
+        $donor = $this->readDonor($node->getValueFrom('PayerNumber'));
+
+        if (!$donor) {
+            return;
+        }
 
         /** @var \DateTimeImmutable $date */
         $date = $node->getChild('Date')->getValueFrom('Object');
@@ -184,6 +197,23 @@ class AutogiroVisitor extends Visitor
         $eventClassName = $success ? Event\TransactionPerformed::class : Event\TransactionFailed::class;
 
         $this->dispatcher->dispatch(new $eventClassName($donor, $amount, $date));
+    }
+
+    private function readDonor(string $payerNumber): ?Donor
+    {
+        try {
+            return $this->donorQuery->requireByPayerNumber($payerNumber);
+        } catch (DonorDoesNotExistException $exception) {
+            // Dispatching error means that failure can be picked up in an outer layer
+            $this->dispatcher->dispatch(
+                new Event\ErrorEvent(
+                    "{$exception->getMessage()}",
+                    ['payer_number' => $payerNumber]
+                )
+            );
+        }
+
+        return null;
     }
 
     private function validateDonorAccountNumber(AccountNumber $nodeAccount, Donor $donor): void

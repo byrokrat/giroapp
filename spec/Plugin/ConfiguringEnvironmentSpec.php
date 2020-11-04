@@ -145,8 +145,8 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
     {
         $listener = function () {
         };
-        $orderedProvider->addListener($listener)->willReturn('')->shouldBeCalled();
-        $this->registerListener($listener);
+        $orderedProvider->addListener($listener, 666)->willReturn('')->shouldBeCalled();
+        $this->registerListener($listener, 666);
     }
 
     function it_can_register_listener_providers($aggregateProvider, ListenerProviderInterface $provider)

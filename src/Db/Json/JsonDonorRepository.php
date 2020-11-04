@@ -91,7 +91,7 @@ final class JsonDonorRepository implements DonorRepositoryInterface
             return $donor;
         }
 
-        throw new DonorDoesNotExistException("unknown donor key: $mandateKey");
+        throw new DonorDoesNotExistException("Unknown donor key $mandateKey");
     }
 
     public function findByPayerNumber(string $payerNumber): ?Donor
@@ -113,7 +113,7 @@ final class JsonDonorRepository implements DonorRepositoryInterface
             return $donor;
         }
 
-        throw new DonorDoesNotExistException("unknown payer number: $payerNumber");
+        throw new DonorDoesNotExistException("Unknown payer number $payerNumber");
     }
 
     public function addNewDonor(Donor $newDonor): void

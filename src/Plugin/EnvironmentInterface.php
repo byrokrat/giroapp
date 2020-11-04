@@ -78,7 +78,7 @@ interface EnvironmentInterface
     /**
      * Register an event listener
      */
-    public function registerListener(callable $listener): void;
+    public function registerListener(callable $listener, int $priority = 0): void;
 
     /**
      * Register an event listener provider

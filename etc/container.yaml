@@ -86,6 +86,10 @@ services:
         class: ~
         arguments: ['%env(GIROAPP_INI)%']
 
+    byrokrat\giroapp\Event\Listener\AutoremoveListener:
+        class: ~
+        arguments: ["@=service('ini').getConfig('autoremove')"]
+
     byrokrat\giroapp\Console\ImportTransactionManager:
         class: ~
         arguments: ["@=service('ini').getConfig('always_force_imports')"]

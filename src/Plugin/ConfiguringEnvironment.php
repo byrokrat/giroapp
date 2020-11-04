@@ -167,9 +167,9 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         $this->dbDriverFactoryCollection->addDriverFactory($driverFactory);
     }
 
-    public function registerListener(callable $listener): void
+    public function registerListener(callable $listener, int $priority = 0): void
     {
-        $this->orderedProvider->addListener($listener);
+        $this->orderedProvider->addListener($listener, $priority);
     }
 
     public function registerListenerProvider(ListenerProviderInterface $provider): void

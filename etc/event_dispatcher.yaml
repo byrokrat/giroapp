@@ -45,6 +45,8 @@ services:
               arguments: [['@export_dumper', 'onChangesCommitted']]
             - method: addListener
               arguments: [['@export_dumper', 'onChangesDiscarded']]
+            - method: addListener
+              arguments: ['@byrokrat\giroapp\Event\Listener\AutoremoveListener']
 
     import_dumper:
         class: byrokrat\giroapp\Event\Listener\FileDumpingListener

@@ -17,6 +17,7 @@
 * Removed console command aliases
 * Replaced `transactions` command with generic `history` command
 * Added `--dry` option to commands that perform persistent work
+* Added `autoremove` config
 
 ## Beta-8
 
