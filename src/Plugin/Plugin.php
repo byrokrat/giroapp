@@ -28,6 +28,7 @@ use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Event\Listener\ListenerInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\Status\StatisticInterface;
 use byrokrat\giroapp\Xml\CompilerPassInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 
@@ -81,6 +82,9 @@ class Plugin implements PluginInterface
                     break;
                 case $item instanceof SorterInterface:
                     $environment->registerDonorSorter($item);
+                    break;
+                case $item instanceof StatisticInterface:
+                    $environment->registerStatistic($item);
                     break;
                 case $item instanceof CompilerPassInterface:
                     $environment->registerXmlMandateCompilerPass($item);

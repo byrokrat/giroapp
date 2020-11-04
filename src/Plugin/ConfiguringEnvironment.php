@@ -38,6 +38,8 @@ use byrokrat\giroapp\Formatter\FormatterCollection;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\Status\StatisticInterface;
+use byrokrat\giroapp\Status\StatisticsManager;
 use byrokrat\giroapp\Xml\CompilerPassInterface;
 use byrokrat\giroapp\Xml\XmlMandateCompiler;
 use Composer\Semver\Semver;
@@ -78,6 +80,9 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     /** @var SorterCollection */
     private $sorterCollection;
 
+    /** @var StatisticsManager */
+    private $statisticsManager;
+
     /** @var ConfigManager */
     private $configManager;
 
@@ -97,6 +102,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
         SorterCollection $sorterCollection,
+        StatisticsManager $statisticsManager,
         ConfigManager $configManager,
         XmlMandateCompiler $xmlMandateCompiler
     ) {
@@ -109,6 +115,7 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         $this->filterCollection = $filterCollection;
         $this->formatterCollection = $formatterCollection;
         $this->sorterCollection = $sorterCollection;
+        $this->statisticsManager = $statisticsManager;
         $this->configManager = $configManager;
         $this->xmlMandateCompiler = $xmlMandateCompiler;
     }
@@ -183,6 +190,11 @@ final class ConfiguringEnvironment implements EnvironmentInterface
     public function registerDonorSorter(SorterInterface $donorSorter): void
     {
         $this->sorterCollection->addSorter($donorSorter);
+    }
+
+    public function registerStatistic(StatisticInterface $statistic): void
+    {
+        $this->statisticsManager->addStatistic($statistic);
     }
 
     public function registerXmlMandateCompilerPass(CompilerPassInterface $compilerPass): void

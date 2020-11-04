@@ -24,7 +24,7 @@ namespace byrokrat\giroapp\Status;
 
 use byrokrat\giroapp\Exception\InvalidStatisticException;
 
-final class StatisticsManager
+class StatisticsManager
 {
     /** @var array<string, StatisticInterface> */
     private $statistics = [];

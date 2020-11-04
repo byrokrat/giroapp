@@ -14,6 +14,7 @@
 * Added `--all` and `--show` options to the `status` command
 * Removed named stat options from `status` command (eg. `--donor-count`,
   use `--show donor-count` instead)
+* Added status hook for plugins
 
 ## Beta-8
 

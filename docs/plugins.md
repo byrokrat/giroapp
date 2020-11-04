@@ -11,6 +11,7 @@ Plugins may register
 * Donor filters
 * Donor formatters
 * Donor sorters
+* Status statistics
 * Database drivers
 * XML mandate compiler passes
 * Other plugins

@@ -28,6 +28,7 @@ use byrokrat\giroapp\Exception\UnsupportedVersionException;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\Status\StatisticInterface;
 use byrokrat\giroapp\Xml\CompilerPassInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\Log\LoggerInterface;
@@ -98,6 +99,11 @@ interface EnvironmentInterface
      * Register a custom donor sorter
      */
     public function registerDonorSorter(SorterInterface $donorSorter): void;
+
+    /**
+     * Register a status statistic
+     */
+    public function registerStatistic(StatisticInterface $statistic): void;
 
     /**
      * Register a custom XML mandate compiler pass

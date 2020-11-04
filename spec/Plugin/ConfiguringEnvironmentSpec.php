@@ -24,6 +24,8 @@ use byrokrat\giroapp\Formatter\FormatterCollection;
 use byrokrat\giroapp\Formatter\FormatterInterface;
 use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
+use byrokrat\giroapp\Status\StatisticInterface;
+use byrokrat\giroapp\Status\StatisticsManager;
 use byrokrat\giroapp\Xml\CompilerPassInterface;
 use byrokrat\giroapp\Xml\XmlMandateCompiler;
 use Symfony\Component\Console\Application;
@@ -44,6 +46,7 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
         FilterCollection $filterCollection,
         FormatterCollection $formatterCollection,
         SorterCollection $sorterCollection,
+        StatisticsManager $statisticsManager,
         ConfigManager $configManager,
         EventDispatcherInterface $dispatcher,
         CommandBusInterface $commandBus,
@@ -60,6 +63,7 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
             $filterCollection,
             $formatterCollection,
             $sorterCollection,
+            $statisticsManager,
             $configManager,
             $xmlMandateCompiler
         );
@@ -167,6 +171,12 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
     {
         $this->registerDonorSorter($sorter);
         $sorterCollection->addSorter($sorter)->shouldHaveBeenCalled();
+    }
+
+    function it_can_register_statistics($statisticsManager, StatisticInterface $statistic)
+    {
+        $this->registerStatistic($statistic);
+        $statisticsManager->addStatistic($statistic)->shouldHaveBeenCalled();
     }
 
     function it_can_register_xml_compiler_passes($xmlMandateCompiler, CompilerPassInterface $compilerPass)
