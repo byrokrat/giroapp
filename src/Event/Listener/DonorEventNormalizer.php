@@ -76,7 +76,7 @@ class DonorEventNormalizer
                     'donation_amount' => $this->moneyFormatter->format($event->getNewAmount()),
                 ];
             case $event instanceof DonorAttributeRemoved:
-                return [];
+                return ['attribute' => $event->getAttributeKey()];
             case $event instanceof DonorAttributeUpdated:
                 return [
                     'attributes' => [

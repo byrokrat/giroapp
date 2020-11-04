@@ -118,7 +118,9 @@ class DonorEventNormalizerSpec extends ObjectBehavior
 
     function it_normalizes_attribute_removed($donor)
     {
-        $this->normalizeEvent(new DonorAttributeRemoved($donor->getWrappedObject(), 'foo'))->shouldReturn([]);
+        $this->normalizeEvent(new DonorAttributeRemoved($donor->getWrappedObject(), 'foo'))->shouldReturn([
+            'attribute' => 'foo'
+        ]);
     }
 
     function it_normalizes_attribute_updated($donor)

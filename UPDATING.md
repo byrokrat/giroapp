@@ -16,6 +16,7 @@
   use `--show donor-count` instead)
 * Added status hook for plugins
 * Removed console command aliases
+* Replaced `transactions` command with generic `history` command
 
 ## Beta-8
 
