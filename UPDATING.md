@@ -4,7 +4,6 @@
 
 * Renamed `import-xml-mandate` => `import-xml-mandates`
 * No longer required to review each field of an imported xml mandate separately
-* Added the `view-xml-mandates` command
 * Made it possible to revoke paused mandates.
 * Update db json schema versions to 1.0
 * Fixed a bugg where imported files where stored when import failed
@@ -17,6 +16,7 @@
 * Added status hook for plugins
 * Removed console command aliases
 * Replaced `transactions` command with generic `history` command
+* Added `--dry` option to commands that perform persistent work
 
 ## Beta-8
 

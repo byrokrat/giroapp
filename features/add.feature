@@ -29,3 +29,8 @@ Feature: Adding new donors
       | 1            | foo  | 50001111116 | 8203232775 | ACTIVE | 100    |
     When I run "add --payer-number 1 --account 50001111116 --id 8203232775 --name foo --amount 100"
     Then I get a "DONOR_ALREADY_EXISTS_EXCEPTION" error
+
+  Scenario: I perform a dry run
+    Given a fresh installation
+    When I run "add --payer-number 1 --account 50001111116 --id 8203232775 --name foo --amount 10 --dry"
+    Then the database is empty

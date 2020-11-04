@@ -37,7 +37,8 @@ final class EditAmountConsole implements ConsoleInterface
     use DependencyInjection\CommandBusProperty,
         DependencyInjection\MoneyFormatterProperty,
         DependencyInjection\MoneyParserProperty,
-        Helper\DonorArgument;
+        Helper\DonorArgument,
+        Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -52,6 +53,7 @@ final class EditAmountConsole implements ConsoleInterface
             self::OPTION_DESCS[self::OPTION_NEW_AMOUNT]
         );
         $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing amount change');
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -79,5 +81,7 @@ final class EditAmountConsole implements ConsoleInterface
         $msg = $input->getOption('message') ?: 'Amount edited by user';
 
         $this->commandBus->handle(new UpdateDonationAmount($donor, $amount, $msg));
+
+        $this->evaluateDryRun($input);
     }
 }

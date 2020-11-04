@@ -34,7 +34,9 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class EditConsole implements ConsoleInterface
 {
-    use CommandBusProperty, Helper\DonorArgument;
+    use CommandBusProperty,
+        Helper\DonorArgument,
+        Helper\DryRun;
 
     private const OPTIONS = [
         self::OPTION_NAME,
@@ -72,6 +74,8 @@ final class EditConsole implements ConsoleInterface
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             self::OPTION_DESCS[self::OPTION_ATTR_VALUE]
         );
+
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -179,5 +183,7 @@ final class EditConsole implements ConsoleInterface
         foreach ($commandQueue as $command) {
             $this->commandBus->handle($command);
         }
+
+        $this->evaluateDryRun($input);
     }
 }

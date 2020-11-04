@@ -34,7 +34,9 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class EditStateConsole implements ConsoleInterface
 {
-    use CommandBusProperty, Helper\DonorArgument;
+    use CommandBusProperty,
+        Helper\DonorArgument,
+        Helper\DryRun;
 
     /**
      * @var StateCollection
@@ -63,6 +65,7 @@ final class EditStateConsole implements ConsoleInterface
             self::OPTION_DESCS[self::OPTION_NEW_STATE]
         );
         $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing state change');
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -90,5 +93,7 @@ final class EditStateConsole implements ConsoleInterface
         $msg = $input->getOption('message') ?: 'Edited by user';
 
         $this->commandBus->handle(new ForceState($donor, $newStateId, $msg));
+
+        $this->evaluateDryRun($input);
     }
 }

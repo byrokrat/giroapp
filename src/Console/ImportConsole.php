@@ -31,7 +31,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ImportConsole implements ConsoleInterface
 {
-    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\CommandBusProperty,
+        Helper\DryRun;
 
     /** @var ImportTransactionManager */
     private $importTransactionManager;
@@ -60,6 +61,8 @@ final class ImportConsole implements ConsoleInterface
             );
 
         $this->importTransactionManager->configure($command);
+
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -70,5 +73,8 @@ final class ImportConsole implements ConsoleInterface
 
         // Rollback on errors
         $this->importTransactionManager->manageTransaction($input);
+
+        // Rollback on dry run
+        $this->evaluateDryRun($input);
     }
 }

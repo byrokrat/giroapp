@@ -213,6 +213,19 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then the database is empty
+     */
+    public function theDatabaseIsEmpty()
+    {
+        $this->result = $this->app->list("--format=json");
+        $data = json_decode($this->result->getOutput(), true);
+
+        if ($data) {
+            throw new \Exception("Expected database to be empty but is it not");
+        }
+    }
+
+    /**
      * @Then the database contains donor :donor
      */
     public function theDatabaseContainsDonor($donor)

@@ -38,7 +38,8 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
         DependencyInjection\CommandBusProperty,
         DependencyInjection\MoneyFormatterProperty,
         DependencyInjection\MoneyParserProperty,
-        DependencyInjection\IdFactoryProperty;
+        DependencyInjection\IdFactoryProperty,
+        Helper\DryRun;
 
     /** @var ImportTransactionManager */
     private $importTransactionManager;
@@ -78,6 +79,8 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
             );
 
         $this->importTransactionManager->configure($command);
+
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -95,6 +98,9 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
 
         // Rollback on errors
         $this->importTransactionManager->manageTransaction($input);
+
+        // Rollback on dry run
+        $this->evaluateDryRun($input);
     }
 
     public function processMandate(Xml\XmlMandate $xmlMandate): Xml\XmlMandate

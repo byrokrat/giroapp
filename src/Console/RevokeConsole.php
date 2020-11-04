@@ -32,7 +32,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class RevokeConsole implements ConsoleInterface
 {
-    use CommandBusProperty, Helper\DonorArgument;
+    use CommandBusProperty,
+        Helper\DonorArgument,
+        Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -41,6 +43,7 @@ final class RevokeConsole implements ConsoleInterface
         $command->setHelp('Revoke a mandate and stop receiving donations from donor');
         $this->configureDonorArgument($command);
         $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing state change');
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -51,5 +54,7 @@ final class RevokeConsole implements ConsoleInterface
         $this->commandBus->handle(
             new UpdateState($this->readDonor($input), Transitions::INITIATE_REVOCATION, $msg)
         );
+
+        $this->evaluateDryRun($input);
     }
 }

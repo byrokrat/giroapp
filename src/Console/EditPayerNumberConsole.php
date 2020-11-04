@@ -33,7 +33,9 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class EditPayerNumberConsole implements ConsoleInterface
 {
-    use CommandBusProperty, Helper\DonorArgument;
+    use CommandBusProperty,
+        Helper\DonorArgument,
+        Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -48,6 +50,7 @@ final class EditPayerNumberConsole implements ConsoleInterface
             self::OPTION_DESCS[self::OPTION_NEW_PAYER_NUMBER]
         );
         $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing payer number change');
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -72,5 +75,7 @@ final class EditPayerNumberConsole implements ConsoleInterface
         $msg = $input->getOption('message') ?: 'Payer number changed by user';
 
         $this->commandBus->handle(new UpdatePayerNumber($donor, $newPayerNumber, $msg));
+
+        $this->evaluateDryRun($input);
     }
 }

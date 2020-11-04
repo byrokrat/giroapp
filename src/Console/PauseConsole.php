@@ -32,7 +32,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class PauseConsole implements ConsoleInterface
 {
-    use CommandBusProperty, Helper\DonorArgument;
+    use CommandBusProperty,
+        Helper\DonorArgument,
+        Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -42,6 +44,7 @@ final class PauseConsole implements ConsoleInterface
         $this->configureDonorArgument($command);
         $command->addOption('restart', null, InputOption::VALUE_NONE, 'Restart a previously paused donor');
         $command->addOption('message', 'm', InputOption::VALUE_REQUIRED, 'Message describing state change');
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -54,5 +57,7 @@ final class PauseConsole implements ConsoleInterface
         $transitionId = $input->getOption('restart') ? Transitions::INITIATE_RESTART : Transitions::INITIATE_PAUSE;
 
         $this->commandBus->handle(new UpdateState($donor, $transitionId, $msg));
+
+        $this->evaluateDryRun($input);
     }
 }

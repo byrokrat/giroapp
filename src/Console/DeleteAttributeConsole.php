@@ -33,7 +33,9 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 final class DeleteAttributeConsole implements ConsoleInterface
 {
-    use CommandBusProperty, Helper\DonorArgument;
+    use CommandBusProperty,
+        Helper\DonorArgument,
+        Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -48,6 +50,8 @@ final class DeleteAttributeConsole implements ConsoleInterface
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             'Attribute key'
         );
+
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -80,5 +84,7 @@ final class DeleteAttributeConsole implements ConsoleInterface
         foreach ($commandQueue as $command) {
             $this->commandBus->handle($command);
         }
+
+        $this->evaluateDryRun($input);
     }
 }

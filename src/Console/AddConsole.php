@@ -49,7 +49,8 @@ final class AddConsole implements ConsoleInterface
         DependencyInjection\CommandBusProperty,
         DependencyInjection\DonorRepositoryProperty,
         DependencyInjection\MoneyParserProperty,
-        DependencyInjection\IdFactoryProperty;
+        DependencyInjection\IdFactoryProperty,
+        Helper\DryRun;
 
     private const OPTIONS = [
         self::OPTION_SOURCE,
@@ -91,6 +92,8 @@ final class AddConsole implements ConsoleInterface
             InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY,
             self::OPTION_DESCS[self::OPTION_ATTR_VALUE]
         );
+
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -262,5 +265,7 @@ final class AddConsole implements ConsoleInterface
         foreach ($attributes as $attrKey => $attrValue) {
             $this->commandBus->handle(new UpdateAttribute($donor, $attrKey, $attrValue));
         }
+
+        $this->evaluateDryRun($input);
     }
 }

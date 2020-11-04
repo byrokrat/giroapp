@@ -33,7 +33,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class RemoveConsole implements ConsoleInterface
 {
-    use CommandBusProperty, Helper\DonorArgument;
+    use CommandBusProperty,
+        Helper\DonorArgument,
+        Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -43,6 +45,7 @@ final class RemoveConsole implements ConsoleInterface
         $this->configureDonorArgument($command, false);
         $command->addOption('all', 'a', InputOption::VALUE_NONE, 'Remove all revoked mandates');
         $command->addOption('force', 'f', InputOption::VALUE_NONE, 'Force removal (ignored if -a is used)');
+        $this->configureDryRun($command);
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
@@ -54,6 +57,7 @@ final class RemoveConsole implements ConsoleInterface
                 }
             }
 
+            $this->evaluateDryRun($input);
             return;
         }
 
@@ -62,5 +66,7 @@ final class RemoveConsole implements ConsoleInterface
             : new RemoveDonor($this->readDonor($input));
 
         $this->commandBus->handle($command);
+
+        $this->evaluateDryRun($input);
     }
 }

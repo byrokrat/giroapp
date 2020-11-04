@@ -49,7 +49,6 @@ final class CorePlugin extends Plugin
         Console\RevokeConsole $revokeConsole,
         Console\ShowConsole $showConsole,
         Console\StatusConsole $statusConsole,
-        Console\ViewXmlMandatesConsole $viewXmlMandatesConsole,
         Db\Json\JsonDriverFactory $jsonDriverFactory,
         Filter\ActiveFilter $activeFilter,
         Filter\RevokedFilter $revokedFilter,

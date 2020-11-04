@@ -20,46 +20,32 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Console;
+namespace byrokrat\giroapp\Console\Helper;
 
-use byrokrat\giroapp\CommandBus\Export;
 use byrokrat\giroapp\DependencyInjection\CommandBusProperty;
+use byrokrat\giroapp\CommandBus\Rollback;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
-final class ExportConsole implements ConsoleInterface
+trait DryRun
 {
-    use CommandBusProperty,
-        Helper\DryRun;
+    use CommandBusProperty;
 
-    public function configure(Command $command): void
+    protected function configureDryRun(Command $command): void
     {
-        $command->setName('export');
-        $command->setDescription('Export a file to autogirot');
-        $command->setHelp('Create a file with new set of autogiro instructions');
         $command->addOption(
-            'filename',
-            null,
-            InputOption::VALUE_REQUIRED,
-            'Name of exported file'
+            'dry',
+            'd',
+            InputOption::VALUE_NONE,
+            'Automatically discard changes to persistent storage'
         );
-        $this->configureDryRun($command);
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): void
+    protected function evaluateDryRun(InputInterface $input): void
     {
-        /** @var string */
-        $content = $this->commandBus->handle(new Export);
-
-        /** @var string */
-        $filename = $input->getOption('filename');
-
-        $filename
-            ? file_put_contents($filename, $content)
-            : $output->write($content);
-
-        $this->evaluateDryRun($input);
+        if ($input->getOption('dry')) {
+            $this->commandBus->handle(new Rollback);
+        }
     }
 }
