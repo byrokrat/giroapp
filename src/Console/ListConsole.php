@@ -59,7 +59,6 @@ final class ListConsole implements ConsoleInterface
     public function configure(Command $command): void
     {
         $command->setName('list');
-        $command->setAliases(['ls']);
         $command->setDescription('List donors');
         $command->setHelp('List donors in database');
 

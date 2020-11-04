@@ -26,5 +26,5 @@ Feature: Listing donors in database
     And there are donors:
       | payer-number | name | state       |
       | 11111        | foo  | NEW_MANDATE |
-    When I run "ls --filter-not active"
+    When I run "list --filter-not active"
     Then the output contains "11111"

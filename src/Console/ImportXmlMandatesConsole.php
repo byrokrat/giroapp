@@ -69,7 +69,7 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
     {
         $command
             ->setName('import-xml-mandates')
-            ->setDescription('Import an xml formatted mandate')
+            ->setDescription('Import xml formatted mandates')
             ->setHelp('Import one or more xml formatted mandates from autogirot')
             ->addArgument(
                 self::OPTION_PATH,

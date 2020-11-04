@@ -23,7 +23,7 @@ Feature: Plugins
 
         return new TestPlugin;
         """
-    When I run "ls"
+    When I run "list"
     Then the output contains "my-cool-plugin-is-executed"
 
   Scenario: I register a plugin that requires an unsupported API version
@@ -44,5 +44,5 @@ Feature: Plugins
 
         return new UnsupportedApiPlugin;
         """
-    When I run "ls"
+    When I run "list"
     Then I get an error

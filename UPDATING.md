@@ -15,6 +15,7 @@
 * Removed named stat options from `status` command (eg. `--donor-count`,
   use `--show donor-count` instead)
 * Added status hook for plugins
+* Removed console command aliases
 
 ## Beta-8
 
