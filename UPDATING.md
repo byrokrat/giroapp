@@ -2,6 +2,7 @@
 
 ## Beta-9
 
+* Requires php >= `7.4`
 * Renamed `import-xml-mandate` => `import-xml-mandates`
 * No longer required to review each field of an imported xml mandate separately
 * Made it possible to revoke paused mandates.

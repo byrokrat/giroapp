@@ -4,8 +4,6 @@ language: php
 
 php:
     - 7.4
-    - 7.3
-    - 7.2
 
 env:
   global:
@@ -31,4 +29,4 @@ deploy:
     on:
         tags: true
         repo: byrokrat/giroapp
-        condition: ${TRAVIS_PHP_VERSION:0:3} == "7.2"
+        condition: ${TRAVIS_PHP_VERSION:0:3} == "7.4"
