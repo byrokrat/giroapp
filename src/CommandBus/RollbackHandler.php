@@ -38,7 +38,7 @@ final class RollbackHandler
         $this->dbDriver = $dbDriver;
     }
 
-    public function handle(Rollback $rollback): void
+    public function handle(): void
     {
         if ($this->dbDriver->rollback()) {
             $this->dispatcher->dispatch(new ChangesDiscarded);

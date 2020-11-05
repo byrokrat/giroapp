@@ -50,7 +50,7 @@ final class ExportHandler
     /**
      * @return string The generated autogiro file
      */
-    public function handle(Export $command): string
+    public function handle(): string
     {
         $exported = false;
 

@@ -22,7 +22,6 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\CommandBus;
 
-use byrokrat\giroapp\CommandBus;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\Domain\MandateSources;
 use byrokrat\giroapp\Domain\NewDonor;
@@ -58,7 +57,7 @@ final class ImportXmlMandateFileHandler
         foreach ($this->xmlMandateCompiler->compileFile($command->getFile()) as $xmlMandate) {
             try {
                 $this->commandBus->handle(
-                    new CommandBus\AddDonor(
+                    new AddDonor(
                         new NewDonor(
                             MandateSources::MANDATE_SOURCE_ONLINE_FORM,
                             $xmlMandate->payerNumber,
@@ -86,12 +85,12 @@ final class ImportXmlMandateFileHandler
             $donor = $this->donorRepository->requireByPayerNumber($xmlMandate->payerNumber);
 
             $this->commandBus->handle(
-                new CommandBus\UpdateState($donor, NewMandate::getStateId(), 'Mandate added from xml')
+                new UpdateState($donor, NewMandate::getStateId(), 'Mandate added from xml')
             );
 
-            $this->commandBus->handle(new CommandBus\UpdateName($donor, $xmlMandate->name));
+            $this->commandBus->handle(new UpdateName($donor, $xmlMandate->name));
 
-            $this->commandBus->handle(new CommandBus\UpdatePostalAddress($donor, new PostalAddress(
+            $this->commandBus->handle(new UpdatePostalAddress($donor, new PostalAddress(
                 $xmlMandate->address['line1'],
                 $xmlMandate->address['line2'],
                 $xmlMandate->address['line3'],
@@ -99,14 +98,14 @@ final class ImportXmlMandateFileHandler
                 $xmlMandate->address['postalCity']
             )));
 
-            $this->commandBus->handle(new CommandBus\UpdateEmail($donor, $xmlMandate->email));
+            $this->commandBus->handle(new UpdateEmail($donor, $xmlMandate->email));
 
-            $this->commandBus->handle(new CommandBus\UpdatePhone($donor, $xmlMandate->phone));
+            $this->commandBus->handle(new UpdatePhone($donor, $xmlMandate->phone));
 
-            $this->commandBus->handle(new CommandBus\UpdateComment($donor, $xmlMandate->comment));
+            $this->commandBus->handle(new UpdateComment($donor, $xmlMandate->comment));
 
             foreach ($xmlMandate->attributes as $attrKey => $attrValue) {
-                $this->commandBus->handle(new CommandBus\UpdateAttribute($donor, $attrKey, $attrValue));
+                $this->commandBus->handle(new UpdateAttribute($donor, $attrKey, $attrValue));
             }
         }
 

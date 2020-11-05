@@ -106,7 +106,7 @@ check: vendor/installed $(BEHAT_CMD) $(TARGET)
 	$(BEHAT_CMD) --stop-on-failure --suite=phar
 
 phpstan: vendor/installed $(PHPSTAN_CMD)
-	$(PHPSTAN_CMD) analyze -c phpstan.neon -l 7 src
+	$(PHPSTAN_CMD) analyze -c phpstan.neon -l 8 src
 
 phpcs: $(PHPCS_CMD)
 	$(PHPCS_CMD) src --standard=PSR2 --ignore=$(CONTAINER)

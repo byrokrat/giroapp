@@ -79,6 +79,7 @@ trait DonorArgument
 
         $regexp = '/'. preg_quote($donorId, '/') . '/i';
 
+        /** @var ?Donor */
         $matchedDonor = null;
 
         foreach ($this->donorQuery->findAll() as $donor) {

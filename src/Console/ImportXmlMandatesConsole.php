@@ -51,10 +51,10 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
     private $xmlMandateCompiler;
 
     /** @var ?InputInterface */
-    private $input;
+    private $input = null;
 
     /** @var ?OutputInterface */
-    private $output;
+    private $output = null;
 
     public function __construct(
         ImportTransactionManager $importTransactionManager,
@@ -105,7 +105,7 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
 
     public function processMandate(Xml\XmlMandate $xmlMandate): Xml\XmlMandate
     {
-        if (!isset($this->input) || !isset($this->output)) {
+        if (is_null($this->input) || is_null($this->output)) {
             throw new \LogicException("Input or output not set, did you call execute() prior to processMandate()?");
         }
 
