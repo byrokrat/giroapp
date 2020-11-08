@@ -21,16 +21,14 @@
 
 declare(strict_types = 1);
 
-require __DIR__ . '/../vendor/autoload.php';
-
 use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
 use Symfony\Component\Console\Application;
 
-$container = new ProjectServiceContainer;
+require __DIR__ . '/../vendor/autoload.php';
 
 try {
-    $container->get(Application::CLASS)->run();
-} catch (\Exception $e) {
-    echo "ERROR: {$e->getMessage()} \n";
-    exit($e->getCode() ?: 1);
+    (new ProjectServiceContainer)->get(Application::class)->run();
+} catch (\Exception $exception) {
+    echo "ERROR: {$exception->getMessage()} \n";
+    exit($exception->getCode() ?: 1);
 }

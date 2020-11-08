@@ -13,6 +13,7 @@ TARGET=giroapp.phar
 DESTDIR=/usr/local/bin
 CONTAINER=src/DependencyInjection/ProjectServiceContainer.php
 STATE_GRAPH=docs/states.svg
+VERSION=VERSION
 
 ETC_FILES:=$(shell find etc/ -type f -name '*')
 SRC_FILES:=$(shell find src/ -type f -name '*.php' ! -path $(CONTAINER))
@@ -25,7 +26,7 @@ all: test analyze docs build check
 
 build: preconds $(TARGET)
 
-$(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) bin/giroapp box.json.dist composer.lock $(BOX_CMD)
+$(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) $(VERSION) bin/giroapp box.json.dist composer.lock $(BOX_CMD)
 	$(COMPOSER_CMD) install --prefer-dist --no-dev
 	$(BOX_CMD) compile
 	$(COMPOSER_CMD) install
@@ -33,8 +34,12 @@ $(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) bin/giroapp box.json.dist 
 $(CONTAINER): vendor/installed $(ETC_FILES) $(SRC_FILES)
 	bin/build_container > $@
 
+$(VERSION): $(SRC_FILES)
+	git describe > $@
+
 clean:
 	rm $(TARGET) --interactive=no -f
+	rm $(VERSION) --interactive=no -f
 	rm -rf vendor
 	rm -rf tools
 

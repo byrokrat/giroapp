@@ -40,6 +40,7 @@ use byrokrat\giroapp\Sorter\SorterCollection;
 use byrokrat\giroapp\Sorter\SorterInterface;
 use byrokrat\giroapp\Status\StatisticInterface;
 use byrokrat\giroapp\Status\StatisticsManager;
+use byrokrat\giroapp\Version;
 use byrokrat\giroapp\Xml\CompilerPassInterface;
 use byrokrat\giroapp\Xml\XmlMandateCompiler;
 use Composer\Semver\Semver;
@@ -55,9 +56,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
 
     /** @var LoggerInterface */
     private $logger;
-
-    /** @var ApiVersion */
-    private $apiVersion;
 
     /** @var DonorQueryInterface */
     private $donorQuery;
@@ -94,7 +92,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
 
     public function __construct(
         LoggerInterface $logger,
-        ApiVersion $apiVersion,
         DonorQueryInterface $donorQuery,
         AggregateProvider $aggregateProvider,
         OrderedProviderInterface $orderedProvider,
@@ -107,7 +104,6 @@ final class ConfiguringEnvironment implements EnvironmentInterface
         XmlMandateCompiler $xmlMandateCompiler
     ) {
         $this->logger = $logger;
-        $this->apiVersion = $apiVersion;
         $this->donorQuery = $donorQuery;
         $this->aggregateProvider = $aggregateProvider;
         $this->orderedProvider = $orderedProvider;
@@ -122,10 +118,10 @@ final class ConfiguringEnvironment implements EnvironmentInterface
 
     public function assertApiVersion(ApiVersionConstraint $constraint): void
     {
-        if (!Semver::satisfies($this->apiVersion->getVersion(), $constraint->getConstraint())) {
+        if (!Semver::satisfies(Version::getVersion(), $constraint->getConstraint())) {
             throw new UnsupportedVersionException(sprintf(
                 'API version %s does not satisfy constraint %s in %s',
-                $this->apiVersion->getVersion(),
+                Version::getVersion(),
                 $constraint->getConstraint(),
                 $constraint->getName()
             ));

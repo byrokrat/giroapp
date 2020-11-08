@@ -20,7 +20,7 @@ services:
 
     Symfony\Component\Console\Application:
         class: ~
-        arguments: ['GiroApp', '@byrokrat\giroapp\Plugin\ApiVersion']
+        arguments: ['GiroApp', "@=service('byrokrat\\\\giroapp\\\\Version').getVersion()"]
         public: true
         configurator: ['@byrokrat\giroapp\Plugin\ConfiguringEnvironment', 'configureApplication']
         calls:
@@ -36,9 +36,6 @@ services:
               arguments: ['default_command']
             - method: 'setHidden'
               arguments: [true]
-
-    byrokrat\giroapp\Plugin\ApiVersion:
-        arguments: ['$app_version$']
 
     byrokrat\giroapp\Plugin\EnvironmentInterface:
         alias: byrokrat\giroapp\Plugin\ConfiguringEnvironment

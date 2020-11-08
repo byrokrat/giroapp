@@ -20,40 +20,29 @@
 
 declare(strict_types = 1);
 
-namespace byrokrat\giroapp\Plugin;
+namespace byrokrat\giroapp;
 
-final class ApiVersion
+final class Version
 {
-    /**
-     * @var string
-     */
-    private $version;
+    private const VERSION_FILE = __DIR__ . '/../VERSION';
 
-    public function __construct(string $version = '$app_version$')
-    {
-        $this->version = $this->parseVersion($version);
-    }
+    private static string $version;
 
-    public function getVersion(): string
+    public static function getVersion(): string
     {
-        return $this->version;
-    }
-
-    public function __toString(): string
-    {
-        return $this->getVersion();
-    }
-
-    private function parseVersion(string $version): string
-    {
-        if ('$'.'app_version'.'$' == $version) {
-            return 'dev-master';
+        if (!isset(self::$version)) {
+            self::$version = self::readVersion();
         }
 
-        if (preg_match('/^([\d.]+)(-[a-zA-Z0-9]+)(@.+)?/', $version, $matches)) {
-            return isset($matches[3]) ? $matches[1] . '-dev' :  $matches[1] . $matches[2];
+        return self::$version;
+    }
+
+    private static function readVersion(): string
+    {
+        if (is_readable(self::VERSION_FILE)) {
+            return trim((string)file_get_contents(self::VERSION_FILE));
         }
 
-        return $version;
+        return 'dev-master';
     }
 }

@@ -6,7 +6,6 @@ namespace spec\byrokrat\giroapp\Plugin;
 
 use byrokrat\giroapp\Plugin\ConfiguringEnvironment;
 use byrokrat\giroapp\Plugin\EnvironmentInterface;
-use byrokrat\giroapp\Plugin\ApiVersion;
 use byrokrat\giroapp\Plugin\ApiVersionConstraint;
 use byrokrat\giroapp\Plugin\PluginInterface;
 use byrokrat\giroapp\CommandBus\CommandBusInterface;
@@ -55,7 +54,6 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
     ) {
         $this->beConstructedWith(
             $logger,
-            new ApiVersion('1.0'),
             $donorQuery,
             $aggregateProvider,
             $orderedProvider,
@@ -84,13 +82,13 @@ class ConfiguringEnvironmentSpec extends ObjectBehavior
 
     function it_can_validate_version_constraints()
     {
-        $this->assertApiVersion(new ApiVersionConstraint('', '^1'));
+        $this->assertApiVersion(new ApiVersionConstraint('', '*'));
     }
 
     function it_fails_if_version_is_not_supported()
     {
         $this->shouldThrow(UnsupportedVersionException::class)
-            ->duringAssertApiVersion(new ApiVersionConstraint('', '^2'));
+            ->duringAssertApiVersion(new ApiVersionConstraint('', '^9999999999999999'));
     }
 
     function it_can_read_configs($configManager, ConfigInterface $config)
