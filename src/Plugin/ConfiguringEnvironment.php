@@ -118,10 +118,10 @@ final class ConfiguringEnvironment implements EnvironmentInterface
 
     public function assertApiVersion(ApiVersionConstraint $constraint): void
     {
-        if (!Semver::satisfies(Version::getVersion(), $constraint->getConstraint())) {
+        if (!Semver::satisfies(Version::getSemverVersion(), $constraint->getConstraint())) {
             throw new UnsupportedVersionException(sprintf(
                 'API version %s does not satisfy constraint %s in %s',
-                Version::getVersion(),
+                Version::getSemverVersion(),
                 $constraint->getConstraint(),
                 $constraint->getName()
             ));

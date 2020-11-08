@@ -34,7 +34,8 @@ $(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) $(VERSION) bin/giroapp box
 $(CONTAINER): vendor/installed $(ETC_FILES) $(SRC_FILES)
 	bin/build_container > $@
 
-$(VERSION): $(SRC_FILES)
+.PHONY: $(VERSION)
+$(VERSION):
 	git describe > $@
 
 clean:

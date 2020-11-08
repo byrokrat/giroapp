@@ -37,6 +37,18 @@ final class Version
         return self::$version;
     }
 
+    public static function getSemverVersion(): string
+    {
+        $version = self::getVersion();
+
+        // drop -X-XXXXXXX from version if present
+        if (preg_match('/^(.*)\-\d+\-[0-9a-z]+$/', $version, $matches)) {
+            return $matches[1];
+        }
+
+        return $version;
+    }
+
     private static function readVersion(): string
     {
         if (is_readable(self::VERSION_FILE)) {
