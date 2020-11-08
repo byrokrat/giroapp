@@ -2,4 +2,3 @@ parameters:
 	excludes_analyse:
 		- src/DependencyInjection/ProjectServiceContainer.php
 		- src/Plugin/CorePlugin.php
-	checkGenericClassInNonGenericObjectType: false

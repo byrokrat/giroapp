@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Domain;
 use byrokrat\giroapp\Filter\FilterInterface;
 use byrokrat\giroapp\Sorter\SorterInterface;
 
+/** @implements \IteratorAggregate<Donor> */
 class DonorCollection implements \IteratorAggregate
 {
     /**
