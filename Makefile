@@ -34,13 +34,11 @@ $(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) $(VERSION) bin/giroapp box
 $(CONTAINER): vendor/installed $(ETC_FILES) $(SRC_FILES)
 	bin/build_container > $@
 
-.PHONY: $(VERSION)
 $(VERSION):
 	git describe > $@
 
-clean:
+clean: clean_version
 	rm $(TARGET) --interactive=no -f
-	rm $(VERSION) --interactive=no -f
 	rm -rf vendor
 	rm -rf tools
 
@@ -67,15 +65,18 @@ uninstall:
 # Build preconditions
 #
 
-.PHONY: preconds dependency_check security_check
+.PHONY: preconds dependency_check security_check clean_version
 
-preconds: dependency_check security_check
+preconds: dependency_check security_check clean_version
 
 dependency_check: vendor/installed
 	$(COMPOSER_CMD) validate --strict
 
 security_check: composer.lock $(SECURITY_CHECKER_CMD)
 	$(SECURITY_CHECKER_CMD) security:check composer.lock
+
+clean_version:
+	rm $(VERSION) --interactive=no -f
 
 #
 # Documentation
