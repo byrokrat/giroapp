@@ -24,7 +24,16 @@ declare(strict_types = 1);
 use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
 use Symfony\Component\Console\Application;
 
-require __DIR__ . '/../vendor/autoload.php';
+foreach ([__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php'] as $file) {
+    if (file_exists($file)) {
+        require $file;
+        break;
+    }
+}
+
+if (!class_exists(ProjectServiceContainer::class)) {
+    die("Unable to find autoloader. Did you install dependencies using composer install?\n");
+}
 
 try {
     (new ProjectServiceContainer)->get(Application::class)->run();
