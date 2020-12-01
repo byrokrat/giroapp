@@ -10,8 +10,7 @@ Command line app for managing autogiro donations.
 
 ### As a phar archive (recommended)
 
-Download the latest phar archive from the
-[releases](https://github.com/byrokrat/giroapp/releases) tab.
+Download the latest phar archive from the [releases][1] tab.
 
 Optionally rename `giroapp.phar` to `giroapp` for a smoother experience.
 
@@ -32,10 +31,12 @@ make
 sudo make install
 ```
 
-If composer is not installed as `composer` you can use something like
+The build script uses [composer][2] to handle dependencies and [phive][3] to
+handle build tools. If they are not installed as `composer` or `phive`
+respectivly you can use something like
 
 ```shell
-make COMPOSER_CMD=./composer.phar
+make COMPOSER_CMD=./composer.phar PHIVE_CMD=./phive.phar
 ```
 
 ## Getting started
@@ -53,5 +54,11 @@ Simply run `giroapp` to se the list of avaliable commands.
 
 Giroapp supports dynamic [plugins](docs/plugins.md). Officially supported plugins:
 
-* [giroapp-completion-plugin](https://github.com/byrokrat/giroapp-completion-plugin): shell completion.
-* [giroapp-mailer-plugin](https://github.com/byrokrat/giroapp-mailer-plugin): send mails on giroapp events.
+* [giroapp-completion-plugin][4]: shell completion.
+* [giroapp-mailer-plugin][5]: send mails on giroapp events.
+
+[1]: <https://github.com/byrokrat/giroapp/releases>
+[2]: <https://getcomposer.org/>
+[3]: <https://phar.io/>
+[4]: <https://github.com/byrokrat/giroapp-completion-plugin>
+[5]: <https://github.com/byrokrat/giroapp-mailer-plugin>
