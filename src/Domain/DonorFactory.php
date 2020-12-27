@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Domain;
 use byrokrat\giroapp\Domain\State\StateCollection;
 use byrokrat\banking\AccountFactoryInterface;
 use byrokrat\id\IdFactoryInterface;
+use Money\Currency;
 use Money\MoneyParser;
 
 class DonorFactory
@@ -85,7 +86,7 @@ class DonorFactory
             new PostalAddress(...$address),
             $email,
             $phone,
-            $this->moneyParser->parse($donationAmount, 'SEK'),
+            $this->moneyParser->parse($donationAmount, new Currency('SEK')),
             $comment,
             new \DateTimeImmutable($created),
             new \DateTimeImmutable($updated),

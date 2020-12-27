@@ -25,6 +25,7 @@ namespace byrokrat\giroapp\Console;
 use byrokrat\giroapp\DependencyInjection;
 use byrokrat\giroapp\CommandBus\UpdateDonationAmount;
 use byrokrat\giroapp\Validator;
+use Money\Currency;
 use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -74,7 +75,7 @@ final class EditAmountConsole implements ConsoleInterface
                     new Validator\NumericValidator
                 )
             ),
-            'SEK'
+            new Currency('SEK')
         );
 
         /** @var string $msg */

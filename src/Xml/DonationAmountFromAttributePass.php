@@ -22,6 +22,7 @@ declare(strict_types = 1);
 
 namespace byrokrat\giroapp\Xml;
 
+use Money\Currency;
 use Money\MoneyParser;
 
 final class DonationAmountFromAttributePass implements CompilerPassInterface
@@ -43,7 +44,7 @@ final class DonationAmountFromAttributePass implements CompilerPassInterface
         if (isset($xmlMandate->attributes[$this->attributeName])) {
             $xmlMandate->donationAmount = $this->moneyParser->parse(
                 $xmlMandate->attributes[$this->attributeName],
-                'SEK'
+                new Currency('SEK')
             );
         }
 

@@ -8,6 +8,7 @@ use byrokrat\giroapp\Xml\DonationAmountFromAttributePass;
 use byrokrat\giroapp\Xml\XmlMandate;
 use PhpSpec\ObjectBehavior;
 use Money\Money;
+use Money\Currency;
 use Money\MoneyParser;
 
 class DonationAmountFromAttributePassSpec extends ObjectBehavior
@@ -35,7 +36,7 @@ class DonationAmountFromAttributePassSpec extends ObjectBehavior
 
         $money = Money::SEK('100');
 
-        $moneyParser->parse('foobar', 'SEK')->willReturn($money);
+        $moneyParser->parse('foobar', new Currency('SEK'))->willReturn($money);
 
         $expected = clone $input;
         $expected->donationAmount = $money;

@@ -31,6 +31,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Helper\QuestionHelper;
+use Money\Currency;
 
 final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPassInterface
 {
@@ -158,7 +159,7 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
                     new Validator\NumericValidator
                 )
             ),
-            'SEK'
+            new Currency('SEK')
         );
 
         $xmlMandate->name = $inputReader->readOptionalInput(

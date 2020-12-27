@@ -36,6 +36,7 @@ use byrokrat\giroapp\Domain\NewDonor;
 use byrokrat\giroapp\Domain\PostalAddress;
 use byrokrat\giroapp\Domain\State\NewMandate;
 use byrokrat\giroapp\Validator;
+use Money\Currency;
 use Money\Money;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
@@ -160,7 +161,7 @@ final class AddConsole implements ConsoleInterface
                     new Validator\NumericValidator
                 )
             ),
-            'SEK'
+            new Currency('SEK')
         );
 
         $name = $inputReader->readInput(

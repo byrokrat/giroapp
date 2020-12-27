@@ -14,6 +14,7 @@ use byrokrat\banking\AccountNumber;
 use byrokrat\id\IdFactoryInterface;
 use byrokrat\id\IdInterface;
 use Money\Money;
+use Money\Currency;
 use Money\MoneyParser;
 use PhpSpec\ObjectBehavior;
 
@@ -45,7 +46,7 @@ class DonorFactorySpec extends ObjectBehavior
         $stateCollection->getState('')->willReturn($state);
         $accountFactory->createAccount('')->willReturn($account);
         $idFactory->createId('')->willReturn($id);
-        $moneyParser->parse('0', 'SEK')->willReturn(Money::SEK('0'));
+        $moneyParser->parse('0', new Currency('SEK'))->willReturn(Money::SEK('0'));
         $this->createDonor()->shouldHaveType(Donor::class);
     }
 
@@ -62,7 +63,7 @@ class DonorFactorySpec extends ObjectBehavior
         $accountFactory->createAccount('account')->willReturn($account);
         $idFactory->createId('id')->willReturn($id);
         $money = Money::SEK('100');
-        $moneyParser->parse('100', 'SEK')->willReturn($money);
+        $moneyParser->parse('100', new Currency('SEK'))->willReturn($money);
 
         $this->createDonor(
             'key',
