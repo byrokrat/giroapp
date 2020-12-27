@@ -7,7 +7,6 @@ README_TESTER_CMD=tools/readme-tester
 PHPSTAN_CMD=tools/phpstan
 PHPCS_CMD=tools/phpcs
 BOX_CMD=tools/box
-SECURITY_CHECKER_CMD=tools/security-checker
 
 TARGET=giroapp.phar
 DESTDIR=/usr/local/bin
@@ -65,15 +64,9 @@ uninstall:
 # Build preconditions
 #
 
-.PHONY: preconds dependency_check security_check clean_version
+.PHONY: preconds clean_version
 
-preconds: dependency_check security_check clean_version
-
-dependency_check: vendor/installed
-	$(COMPOSER_CMD) validate --strict
-
-security_check: composer.lock $(SECURITY_CHECKER_CMD)
-	$(SECURITY_CHECKER_CMD) security:check composer.lock
+preconds: clean_version
 
 clean_version:
 	rm $(VERSION) --interactive=no -f
@@ -130,24 +123,13 @@ vendor/installed: composer.lock
 	$(COMPOSER_CMD) install
 	touch $@
 
-tools/installed: $(SECURITY_CHECKER_CMD)
+tools/installed:
 	$(PHIVE_CMD) install --force-accept-unsigned --trust-gpg-keys CF1A108D0E7AE720,31C7E470E2138192
 	touch $@
 
 $(PHPSPEC_CMD): tools/installed
-
 $(BEHAT_CMD): tools/installed
-
 $(README_TESTER_CMD): tools/installed
-
 $(PHPSTAN_CMD): tools/installed
-
 $(PHPCS_CMD): tools/installed
-
 $(BOX_CMD): tools/installed
-
-$(SECURITY_CHECKER_CMD):
-	wget https://get.sensiolabs.org/security-checker.phar
-	chmod u+x security-checker.phar
-	mkdir -p tools
-	mv security-checker.phar $(SECURITY_CHECKER_CMD)
