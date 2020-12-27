@@ -8,13 +8,23 @@ Command line app for managing autogiro donations.
 
 ## Installation
 
-### As a phar archive (recommended)
+### Using phive (recommended)
+
+Install using [phive][3]
+
+```shell
+phive install byrokrat/giroapp
+```
+
+### As a phar archive
 
 Download the latest phar archive from the [releases][1] tab.
 
 Optionally rename `giroapp.phar` to `giroapp` for a smoother experience.
 
-### Through composer
+### Using composer
+
+Install as a [composer][2] dependency
 
 ```shell
 composer require byrokrat/giroapp

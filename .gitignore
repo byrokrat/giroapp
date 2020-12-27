@@ -2,6 +2,7 @@
 /composer.phar
 /.giroapp
 /giroapp.phar
+/giroapp.phar.asc
 /*.local*
 /giroapp.ini
 /.php_cs.cache

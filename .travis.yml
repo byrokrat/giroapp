@@ -17,6 +17,6 @@ install:
 
 script:
     - tools/phpspec run --verbose
-    - make build
     - tools/behat --suite=debug
+    - make build
     - tools/behat --suite=phar

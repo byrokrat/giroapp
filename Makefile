@@ -1,5 +1,7 @@
 COMPOSER_CMD=composer
 PHIVE_CMD=phive
+GPG_CMD=gpg
+GIT_CMD=git
 
 PHPSPEC_CMD=tools/phpspec
 BEHAT_CMD=tools/behat
@@ -13,17 +15,42 @@ DESTDIR=/usr/local/bin
 CONTAINER=src/DependencyInjection/ProjectServiceContainer.php
 STATE_GRAPH=docs/states.svg
 VERSION=VERSION
+SIGNATURE=${TARGET}.asc
+SIGNATURE_ID=hannes.forsgard@fripost.org
 
 ETC_FILES:=$(shell find etc/ -type f -name '*')
 SRC_FILES:=$(shell find src/ -type f -name '*.php' ! -path $(CONTAINER))
 
 .DEFAULT_GOAL=all
 
-.PHONY: all build clean maintainer-clean
+.PHONY: all clean maintainer-clean
 
 all: test analyze docs build check
 
-build: preconds $(TARGET)
+clean:
+	rm $(TARGET) --interactive=no -f
+	rm $(VERSION) --interactive=no -f
+	rm $(SIGNATURE) --interactive=no -f
+	rm -rf vendor
+	rm -rf tools
+
+maintainer-clean: clean
+	@echo 'This command is intended for maintainers to use; it'
+	@echo 'deletes files that may need special tools to rebuild.'
+	rm $(CONTAINER) -f
+	rm $(STATE_GRAPH) -f
+
+#
+# Build and sign
+#
+
+.PHONY: build build_release sign
+
+build:
+	rm -rf $(VERSION)
+	make $(TARGET)
+
+build_release: all sign
 
 $(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) $(VERSION) bin/giroapp box.json.dist composer.lock $(BOX_CMD)
 	$(COMPOSER_CMD) install --prefer-dist --no-dev
@@ -33,19 +60,14 @@ $(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) $(VERSION) bin/giroapp box
 $(CONTAINER): vendor/installed $(ETC_FILES) $(SRC_FILES)
 	bin/build_container > $@
 
+sign: $(SIGNATURE)
+
+$(SIGNATURE): $(TARGET)
+	rm -rf $@
+	$(GPG_CMD) -u $(SIGNATURE_ID) --detach-sign --output $@ $<
+
 $(VERSION):
-	git describe > $@
-
-clean: clean_version
-	rm $(TARGET) --interactive=no -f
-	rm -rf vendor
-	rm -rf tools
-
-maintainer-clean: clean
-	@echo 'This command is intended for maintainers to use; it'
-	@echo 'deletes files that may need special tools to rebuild.'
-	rm $(CONTAINER) -f
-	rm $(STATE_GRAPH) -f
+	-$(GIT_CMD) describe > $@
 
 #
 # Install/uninstall
@@ -59,17 +81,6 @@ install: $(TARGET)
 
 uninstall:
 	rm -f $(DESTDIR)/giroapp
-
-#
-# Build preconditions
-#
-
-.PHONY: preconds clean_version
-
-preconds: clean_version
-
-clean_version:
-	rm $(VERSION) --interactive=no -f
 
 #
 # Documentation

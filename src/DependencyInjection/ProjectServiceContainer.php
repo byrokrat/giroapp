@@ -949,40 +949,40 @@ class DonorEventStoreInterface_beb126f implements \ProxyManager\Proxy\VirtualPro
     /**
      * @var \byrokrat\giroapp\Db\DonorEventStoreInterface|null wrapped object, if the proxy is initialized
      */
-    private $valueHolder55d21 = null;
+    private $valueHolderce8c5 = null;
 
     /**
      * @var \Closure|null initializer responsible for generating the wrapped object
      */
-    private $initializerd6f82 = null;
+    private $initializer93697 = null;
 
     /**
      * @var bool[] map of public properties of the parent class
      */
-    private static $publicPropertiesfdc3d = [
+    private static $publicPropertiesa1059 = [
         
     ];
 
     public function addDonorEventEntry(\byrokrat\giroapp\Db\DonorEventEntry $entry) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'addDonorEventEntry', array('entry' => $entry), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'addDonorEventEntry', array('entry' => $entry), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->addDonorEventEntry($entry);
+        $this->valueHolderce8c5->addDonorEventEntry($entry);
 return;
     }
 
     public function readEntriesForMandateKey(string $mandateKey) : iterable
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'readEntriesForMandateKey', array('mandateKey' => $mandateKey), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'readEntriesForMandateKey', array('mandateKey' => $mandateKey), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->readEntriesForMandateKey($mandateKey);
+        return $this->valueHolderce8c5->readEntriesForMandateKey($mandateKey);
     }
 
     public function readAllEntries() : iterable
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'readAllEntries', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'readAllEntries', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->readAllEntries();
+        return $this->valueHolderce8c5->readAllEntries();
     }
 
     /**
@@ -997,7 +997,7 @@ return;
         $reflection = $reflection ?? new \ReflectionClass(__CLASS__);
         $instance   = $reflection->newInstanceWithoutConstructor();
 
-        $instance->initializerd6f82 = $initializer;
+        $instance->initializer93697 = $initializer;
 
         return $instance;
     }
@@ -1006,21 +1006,21 @@ return;
     {
         static $reflection;
 
-        if (! $this->valueHolder55d21) {
+        if (! $this->valueHolderce8c5) {
             $reflection = $reflection ?? new \ReflectionClass('byrokrat\\giroapp\\Db\\DonorEventStoreInterface');
-            $this->valueHolder55d21 = $reflection->newInstanceWithoutConstructor();
+            $this->valueHolderce8c5 = $reflection->newInstanceWithoutConstructor();
         }
     }
 
     public function & __get($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__get', ['name' => $name], $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__get', ['name' => $name], $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        if (isset(self::$publicPropertiesfdc3d[$name])) {
-            return $this->valueHolder55d21->$name;
+        if (isset(self::$publicPropertiesa1059[$name])) {
+            return $this->valueHolderce8c5->$name;
         }
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         $backtrace = debug_backtrace(false);
         trigger_error(
@@ -1038,27 +1038,27 @@ return;
 
     public function __set($name, $value)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__set', array('name' => $name, 'value' => $value), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__set', array('name' => $name, 'value' => $value), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         return $targetObject->$name = $value;
     }
 
     public function __isset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__isset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__isset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         return isset($targetObject->$name);
     }
 
     public function __unset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__unset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__unset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         unset($targetObject->$name);
 return;
@@ -1066,16 +1066,16 @@ return;
 
     public function __clone()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__clone', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__clone', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21 = clone $this->valueHolder55d21;
+        $this->valueHolderce8c5 = clone $this->valueHolderce8c5;
     }
 
     public function __sleep()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__sleep', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__sleep', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return array('valueHolder55d21');
+        return array('valueHolderce8c5');
     }
 
     public function __wakeup()
@@ -1084,27 +1084,27 @@ return;
 
     public function setProxyInitializer(\Closure $initializer = null) : void
     {
-        $this->initializerd6f82 = $initializer;
+        $this->initializer93697 = $initializer;
     }
 
     public function getProxyInitializer() : ?\Closure
     {
-        return $this->initializerd6f82;
+        return $this->initializer93697;
     }
 
     public function initializeProxy() : bool
     {
-        return $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'initializeProxy', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        return $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'initializeProxy', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
     }
 
     public function isProxyInitialized() : bool
     {
-        return null !== $this->valueHolder55d21;
+        return null !== $this->valueHolderce8c5;
     }
 
     public function getWrappedValueHolderValue() : ?object
     {
-        return $this->valueHolder55d21;
+        return $this->valueHolderce8c5;
     }
 
 
@@ -1120,53 +1120,53 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
     /**
      * @var \byrokrat\giroapp\Db\DonorQueryDecorator|null wrapped object, if the proxy is initialized
      */
-    private $valueHolder55d21 = null;
+    private $valueHolderce8c5 = null;
 
     /**
      * @var \Closure|null initializer responsible for generating the wrapped object
      */
-    private $initializerd6f82 = null;
+    private $initializer93697 = null;
 
     /**
      * @var bool[] map of public properties of the parent class
      */
-    private static $publicPropertiesfdc3d = [
+    private static $publicPropertiesa1059 = [
         
     ];
 
     public function findAll() : \byrokrat\giroapp\Domain\DonorCollection
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'findAll', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'findAll', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->findAll();
+        return $this->valueHolderce8c5->findAll();
     }
 
     public function findByMandateKey(string $mandateKey) : ?\byrokrat\giroapp\Domain\Donor
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'findByMandateKey', array('mandateKey' => $mandateKey), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'findByMandateKey', array('mandateKey' => $mandateKey), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->findByMandateKey($mandateKey);
+        return $this->valueHolderce8c5->findByMandateKey($mandateKey);
     }
 
     public function requireByMandateKey(string $mandateKey) : \byrokrat\giroapp\Domain\Donor
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'requireByMandateKey', array('mandateKey' => $mandateKey), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'requireByMandateKey', array('mandateKey' => $mandateKey), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->requireByMandateKey($mandateKey);
+        return $this->valueHolderce8c5->requireByMandateKey($mandateKey);
     }
 
     public function findByPayerNumber(string $payerNumber) : ?\byrokrat\giroapp\Domain\Donor
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'findByPayerNumber', array('payerNumber' => $payerNumber), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'findByPayerNumber', array('payerNumber' => $payerNumber), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->findByPayerNumber($payerNumber);
+        return $this->valueHolderce8c5->findByPayerNumber($payerNumber);
     }
 
     public function requireByPayerNumber(string $payerNumber) : \byrokrat\giroapp\Domain\Donor
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'requireByPayerNumber', array('payerNumber' => $payerNumber), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'requireByPayerNumber', array('payerNumber' => $payerNumber), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->requireByPayerNumber($payerNumber);
+        return $this->valueHolderce8c5->requireByPayerNumber($payerNumber);
     }
 
     /**
@@ -1185,7 +1185,7 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
             unset($instance->decorated);
         }, $instance, 'byrokrat\\giroapp\\Db\\DonorQueryDecorator')->__invoke($instance);
 
-        $instance->initializerd6f82 = $initializer;
+        $instance->initializer93697 = $initializer;
 
         return $instance;
     }
@@ -1194,30 +1194,30 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
     {
         static $reflection;
 
-        if (! $this->valueHolder55d21) {
+        if (! $this->valueHolderce8c5) {
             $reflection = $reflection ?? new \ReflectionClass('byrokrat\\giroapp\\Db\\DonorQueryDecorator');
-            $this->valueHolder55d21 = $reflection->newInstanceWithoutConstructor();
+            $this->valueHolderce8c5 = $reflection->newInstanceWithoutConstructor();
         \Closure::bind(function (\byrokrat\giroapp\Db\DonorQueryDecorator $instance) {
             unset($instance->decorated);
         }, $this, 'byrokrat\\giroapp\\Db\\DonorQueryDecorator')->__invoke($this);
 
         }
 
-        $this->valueHolder55d21->__construct($decorated);
+        $this->valueHolderce8c5->__construct($decorated);
     }
 
     public function & __get($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__get', ['name' => $name], $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__get', ['name' => $name], $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        if (isset(self::$publicPropertiesfdc3d[$name])) {
-            return $this->valueHolder55d21->$name;
+        if (isset(self::$publicPropertiesa1059[$name])) {
+            return $this->valueHolderce8c5->$name;
         }
 
         $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
 
         if (! $realInstanceReflection->hasProperty($name)) {
-            $targetObject = $this->valueHolder55d21;
+            $targetObject = $this->valueHolderce8c5;
 
             $backtrace = debug_backtrace(false);
             trigger_error(
@@ -1234,7 +1234,7 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
             return;
         }
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
         $accessor = function & () use ($targetObject, $name) {
             return $targetObject->$name;
         };
@@ -1248,18 +1248,18 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
 
     public function __set($name, $value)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__set', array('name' => $name, 'value' => $value), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__set', array('name' => $name, 'value' => $value), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
         $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
 
         if (! $realInstanceReflection->hasProperty($name)) {
-            $targetObject = $this->valueHolder55d21;
+            $targetObject = $this->valueHolderce8c5;
 
             return $targetObject->$name = $value;
             return;
         }
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
         $accessor = function & () use ($targetObject, $name, $value) {
             return $targetObject->$name = $value;
         };
@@ -1273,18 +1273,18 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
 
     public function __isset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__isset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__isset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
         $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
 
         if (! $realInstanceReflection->hasProperty($name)) {
-            $targetObject = $this->valueHolder55d21;
+            $targetObject = $this->valueHolderce8c5;
 
             return isset($targetObject->$name);
             return;
         }
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
         $accessor = function () use ($targetObject, $name) {
             return isset($targetObject->$name);
         };
@@ -1298,18 +1298,18 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
 
     public function __unset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__unset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__unset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
         $realInstanceReflection = new \ReflectionClass(get_parent_class($this));
 
         if (! $realInstanceReflection->hasProperty($name)) {
-            $targetObject = $this->valueHolder55d21;
+            $targetObject = $this->valueHolderce8c5;
 
             unset($targetObject->$name);
             return;
         }
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
         $accessor = function () use ($targetObject, $name) {
             unset($targetObject->$name);
         };
@@ -1323,16 +1323,16 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
 
     public function __clone()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__clone', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__clone', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21 = clone $this->valueHolder55d21;
+        $this->valueHolderce8c5 = clone $this->valueHolderce8c5;
     }
 
     public function __sleep()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__sleep', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__sleep', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return array('valueHolder55d21');
+        return array('valueHolderce8c5');
     }
 
     public function __wakeup()
@@ -1344,27 +1344,27 @@ class DonorQueryDecorator_48491f1 extends \byrokrat\giroapp\Db\DonorQueryDecorat
 
     public function setProxyInitializer(\Closure $initializer = null) : void
     {
-        $this->initializerd6f82 = $initializer;
+        $this->initializer93697 = $initializer;
     }
 
     public function getProxyInitializer() : ?\Closure
     {
-        return $this->initializerd6f82;
+        return $this->initializer93697;
     }
 
     public function initializeProxy() : bool
     {
-        return $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'initializeProxy', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        return $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'initializeProxy', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
     }
 
     public function isProxyInitialized() : bool
     {
-        return null !== $this->valueHolder55d21;
+        return null !== $this->valueHolderce8c5;
     }
 
     public function getWrappedValueHolderValue() : ?object
     {
-        return $this->valueHolder55d21;
+        return $this->valueHolderce8c5;
     }
 
 
@@ -1380,149 +1380,149 @@ class DonorRepositoryInterface_13c774f implements \ProxyManager\Proxy\VirtualPro
     /**
      * @var \byrokrat\giroapp\Db\DonorRepositoryInterface|null wrapped object, if the proxy is initialized
      */
-    private $valueHolder55d21 = null;
+    private $valueHolderce8c5 = null;
 
     /**
      * @var \Closure|null initializer responsible for generating the wrapped object
      */
-    private $initializerd6f82 = null;
+    private $initializer93697 = null;
 
     /**
      * @var bool[] map of public properties of the parent class
      */
-    private static $publicPropertiesfdc3d = [
+    private static $publicPropertiesa1059 = [
         
     ];
 
     public function addNewDonor(\byrokrat\giroapp\Domain\Donor $newDonor) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'addNewDonor', array('newDonor' => $newDonor), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'addNewDonor', array('newDonor' => $newDonor), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->addNewDonor($newDonor);
+        $this->valueHolderce8c5->addNewDonor($newDonor);
 return;
     }
 
     public function deleteDonor(\byrokrat\giroapp\Domain\Donor $donor) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'deleteDonor', array('donor' => $donor), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'deleteDonor', array('donor' => $donor), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->deleteDonor($donor);
+        $this->valueHolderce8c5->deleteDonor($donor);
 return;
     }
 
     public function updateDonorName(\byrokrat\giroapp\Domain\Donor $donor, string $newName) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'updateDonorName', array('donor' => $donor, 'newName' => $newName), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'updateDonorName', array('donor' => $donor, 'newName' => $newName), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->updateDonorName($donor, $newName);
+        $this->valueHolderce8c5->updateDonorName($donor, $newName);
 return;
     }
 
     public function updateDonorState(\byrokrat\giroapp\Domain\Donor $donor, \byrokrat\giroapp\Domain\State\StateInterface $newState) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'updateDonorState', array('donor' => $donor, 'newState' => $newState), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'updateDonorState', array('donor' => $donor, 'newState' => $newState), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->updateDonorState($donor, $newState);
+        $this->valueHolderce8c5->updateDonorState($donor, $newState);
 return;
     }
 
     public function updateDonorPayerNumber(\byrokrat\giroapp\Domain\Donor $donor, string $newPayerNumber) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'updateDonorPayerNumber', array('donor' => $donor, 'newPayerNumber' => $newPayerNumber), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'updateDonorPayerNumber', array('donor' => $donor, 'newPayerNumber' => $newPayerNumber), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->updateDonorPayerNumber($donor, $newPayerNumber);
+        $this->valueHolderce8c5->updateDonorPayerNumber($donor, $newPayerNumber);
 return;
     }
 
     public function updateDonorAmount(\byrokrat\giroapp\Domain\Donor $donor, \Money\Money $newAmount) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'updateDonorAmount', array('donor' => $donor, 'newAmount' => $newAmount), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'updateDonorAmount', array('donor' => $donor, 'newAmount' => $newAmount), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->updateDonorAmount($donor, $newAmount);
+        $this->valueHolderce8c5->updateDonorAmount($donor, $newAmount);
 return;
     }
 
     public function updateDonorAddress(\byrokrat\giroapp\Domain\Donor $donor, \byrokrat\giroapp\Domain\PostalAddress $newAddress) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'updateDonorAddress', array('donor' => $donor, 'newAddress' => $newAddress), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'updateDonorAddress', array('donor' => $donor, 'newAddress' => $newAddress), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->updateDonorAddress($donor, $newAddress);
+        $this->valueHolderce8c5->updateDonorAddress($donor, $newAddress);
 return;
     }
 
     public function updateDonorEmail(\byrokrat\giroapp\Domain\Donor $donor, string $newEmail) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'updateDonorEmail', array('donor' => $donor, 'newEmail' => $newEmail), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'updateDonorEmail', array('donor' => $donor, 'newEmail' => $newEmail), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->updateDonorEmail($donor, $newEmail);
+        $this->valueHolderce8c5->updateDonorEmail($donor, $newEmail);
 return;
     }
 
     public function updateDonorPhone(\byrokrat\giroapp\Domain\Donor $donor, string $newPhone) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'updateDonorPhone', array('donor' => $donor, 'newPhone' => $newPhone), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'updateDonorPhone', array('donor' => $donor, 'newPhone' => $newPhone), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->updateDonorPhone($donor, $newPhone);
+        $this->valueHolderce8c5->updateDonorPhone($donor, $newPhone);
 return;
     }
 
     public function updateDonorComment(\byrokrat\giroapp\Domain\Donor $donor, string $newComment) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'updateDonorComment', array('donor' => $donor, 'newComment' => $newComment), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'updateDonorComment', array('donor' => $donor, 'newComment' => $newComment), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->updateDonorComment($donor, $newComment);
+        $this->valueHolderce8c5->updateDonorComment($donor, $newComment);
 return;
     }
 
     public function setDonorAttribute(\byrokrat\giroapp\Domain\Donor $donor, string $key, string $value) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'setDonorAttribute', array('donor' => $donor, 'key' => $key, 'value' => $value), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'setDonorAttribute', array('donor' => $donor, 'key' => $key, 'value' => $value), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->setDonorAttribute($donor, $key, $value);
+        $this->valueHolderce8c5->setDonorAttribute($donor, $key, $value);
 return;
     }
 
     public function deleteDonorAttribute(\byrokrat\giroapp\Domain\Donor $donor, string $key) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'deleteDonorAttribute', array('donor' => $donor, 'key' => $key), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'deleteDonorAttribute', array('donor' => $donor, 'key' => $key), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->deleteDonorAttribute($donor, $key);
+        $this->valueHolderce8c5->deleteDonorAttribute($donor, $key);
 return;
     }
 
     public function findAll() : \byrokrat\giroapp\Domain\DonorCollection
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'findAll', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'findAll', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->findAll();
+        return $this->valueHolderce8c5->findAll();
     }
 
     public function findByMandateKey(string $mandateKey) : ?\byrokrat\giroapp\Domain\Donor
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'findByMandateKey', array('mandateKey' => $mandateKey), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'findByMandateKey', array('mandateKey' => $mandateKey), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->findByMandateKey($mandateKey);
+        return $this->valueHolderce8c5->findByMandateKey($mandateKey);
     }
 
     public function requireByMandateKey(string $mandateKey) : \byrokrat\giroapp\Domain\Donor
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'requireByMandateKey', array('mandateKey' => $mandateKey), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'requireByMandateKey', array('mandateKey' => $mandateKey), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->requireByMandateKey($mandateKey);
+        return $this->valueHolderce8c5->requireByMandateKey($mandateKey);
     }
 
     public function findByPayerNumber(string $payerNumber) : ?\byrokrat\giroapp\Domain\Donor
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'findByPayerNumber', array('payerNumber' => $payerNumber), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'findByPayerNumber', array('payerNumber' => $payerNumber), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->findByPayerNumber($payerNumber);
+        return $this->valueHolderce8c5->findByPayerNumber($payerNumber);
     }
 
     public function requireByPayerNumber(string $payerNumber) : \byrokrat\giroapp\Domain\Donor
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'requireByPayerNumber', array('payerNumber' => $payerNumber), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'requireByPayerNumber', array('payerNumber' => $payerNumber), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->requireByPayerNumber($payerNumber);
+        return $this->valueHolderce8c5->requireByPayerNumber($payerNumber);
     }
 
     /**
@@ -1537,7 +1537,7 @@ return;
         $reflection = $reflection ?? new \ReflectionClass(__CLASS__);
         $instance   = $reflection->newInstanceWithoutConstructor();
 
-        $instance->initializerd6f82 = $initializer;
+        $instance->initializer93697 = $initializer;
 
         return $instance;
     }
@@ -1546,21 +1546,21 @@ return;
     {
         static $reflection;
 
-        if (! $this->valueHolder55d21) {
+        if (! $this->valueHolderce8c5) {
             $reflection = $reflection ?? new \ReflectionClass('byrokrat\\giroapp\\Db\\DonorRepositoryInterface');
-            $this->valueHolder55d21 = $reflection->newInstanceWithoutConstructor();
+            $this->valueHolderce8c5 = $reflection->newInstanceWithoutConstructor();
         }
     }
 
     public function & __get($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__get', ['name' => $name], $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__get', ['name' => $name], $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        if (isset(self::$publicPropertiesfdc3d[$name])) {
-            return $this->valueHolder55d21->$name;
+        if (isset(self::$publicPropertiesa1059[$name])) {
+            return $this->valueHolderce8c5->$name;
         }
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         $backtrace = debug_backtrace(false);
         trigger_error(
@@ -1578,27 +1578,27 @@ return;
 
     public function __set($name, $value)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__set', array('name' => $name, 'value' => $value), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__set', array('name' => $name, 'value' => $value), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         return $targetObject->$name = $value;
     }
 
     public function __isset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__isset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__isset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         return isset($targetObject->$name);
     }
 
     public function __unset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__unset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__unset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         unset($targetObject->$name);
 return;
@@ -1606,16 +1606,16 @@ return;
 
     public function __clone()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__clone', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__clone', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21 = clone $this->valueHolder55d21;
+        $this->valueHolderce8c5 = clone $this->valueHolderce8c5;
     }
 
     public function __sleep()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__sleep', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__sleep', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return array('valueHolder55d21');
+        return array('valueHolderce8c5');
     }
 
     public function __wakeup()
@@ -1624,27 +1624,27 @@ return;
 
     public function setProxyInitializer(\Closure $initializer = null) : void
     {
-        $this->initializerd6f82 = $initializer;
+        $this->initializer93697 = $initializer;
     }
 
     public function getProxyInitializer() : ?\Closure
     {
-        return $this->initializerd6f82;
+        return $this->initializer93697;
     }
 
     public function initializeProxy() : bool
     {
-        return $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'initializeProxy', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        return $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'initializeProxy', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
     }
 
     public function isProxyInitialized() : bool
     {
-        return null !== $this->valueHolder55d21;
+        return null !== $this->valueHolderce8c5;
     }
 
     public function getWrappedValueHolderValue() : ?object
     {
-        return $this->valueHolder55d21;
+        return $this->valueHolderce8c5;
     }
 
 
@@ -1660,53 +1660,53 @@ class DriverInterface_5855917 implements \ProxyManager\Proxy\VirtualProxyInterfa
     /**
      * @var \byrokrat\giroapp\Db\DriverInterface|null wrapped object, if the proxy is initialized
      */
-    private $valueHolder55d21 = null;
+    private $valueHolderce8c5 = null;
 
     /**
      * @var \Closure|null initializer responsible for generating the wrapped object
      */
-    private $initializerd6f82 = null;
+    private $initializer93697 = null;
 
     /**
      * @var bool[] map of public properties of the parent class
      */
-    private static $publicPropertiesfdc3d = [
+    private static $publicPropertiesa1059 = [
         
     ];
 
     public function getDonorEventStore(\byrokrat\giroapp\Db\DriverEnvironment $environment) : \byrokrat\giroapp\Db\DonorEventStoreInterface
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'getDonorEventStore', array('environment' => $environment), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'getDonorEventStore', array('environment' => $environment), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->getDonorEventStore($environment);
+        return $this->valueHolderce8c5->getDonorEventStore($environment);
     }
 
     public function getDonorRepository(\byrokrat\giroapp\Db\DriverEnvironment $environment) : \byrokrat\giroapp\Db\DonorRepositoryInterface
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'getDonorRepository', array('environment' => $environment), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'getDonorRepository', array('environment' => $environment), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->getDonorRepository($environment);
+        return $this->valueHolderce8c5->getDonorRepository($environment);
     }
 
     public function getImportHistory(\byrokrat\giroapp\Db\DriverEnvironment $environment) : \byrokrat\giroapp\Db\ImportHistoryInterface
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'getImportHistory', array('environment' => $environment), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'getImportHistory', array('environment' => $environment), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->getImportHistory($environment);
+        return $this->valueHolderce8c5->getImportHistory($environment);
     }
 
     public function commit() : bool
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'commit', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'commit', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->commit();
+        return $this->valueHolderce8c5->commit();
     }
 
     public function rollback() : bool
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'rollback', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'rollback', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->rollback();
+        return $this->valueHolderce8c5->rollback();
     }
 
     /**
@@ -1721,7 +1721,7 @@ class DriverInterface_5855917 implements \ProxyManager\Proxy\VirtualProxyInterfa
         $reflection = $reflection ?? new \ReflectionClass(__CLASS__);
         $instance   = $reflection->newInstanceWithoutConstructor();
 
-        $instance->initializerd6f82 = $initializer;
+        $instance->initializer93697 = $initializer;
 
         return $instance;
     }
@@ -1730,21 +1730,21 @@ class DriverInterface_5855917 implements \ProxyManager\Proxy\VirtualProxyInterfa
     {
         static $reflection;
 
-        if (! $this->valueHolder55d21) {
+        if (! $this->valueHolderce8c5) {
             $reflection = $reflection ?? new \ReflectionClass('byrokrat\\giroapp\\Db\\DriverInterface');
-            $this->valueHolder55d21 = $reflection->newInstanceWithoutConstructor();
+            $this->valueHolderce8c5 = $reflection->newInstanceWithoutConstructor();
         }
     }
 
     public function & __get($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__get', ['name' => $name], $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__get', ['name' => $name], $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        if (isset(self::$publicPropertiesfdc3d[$name])) {
-            return $this->valueHolder55d21->$name;
+        if (isset(self::$publicPropertiesa1059[$name])) {
+            return $this->valueHolderce8c5->$name;
         }
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         $backtrace = debug_backtrace(false);
         trigger_error(
@@ -1762,27 +1762,27 @@ class DriverInterface_5855917 implements \ProxyManager\Proxy\VirtualProxyInterfa
 
     public function __set($name, $value)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__set', array('name' => $name, 'value' => $value), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__set', array('name' => $name, 'value' => $value), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         return $targetObject->$name = $value;
     }
 
     public function __isset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__isset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__isset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         return isset($targetObject->$name);
     }
 
     public function __unset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__unset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__unset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         unset($targetObject->$name);
 return;
@@ -1790,16 +1790,16 @@ return;
 
     public function __clone()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__clone', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__clone', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21 = clone $this->valueHolder55d21;
+        $this->valueHolderce8c5 = clone $this->valueHolderce8c5;
     }
 
     public function __sleep()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__sleep', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__sleep', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return array('valueHolder55d21');
+        return array('valueHolderce8c5');
     }
 
     public function __wakeup()
@@ -1808,27 +1808,27 @@ return;
 
     public function setProxyInitializer(\Closure $initializer = null) : void
     {
-        $this->initializerd6f82 = $initializer;
+        $this->initializer93697 = $initializer;
     }
 
     public function getProxyInitializer() : ?\Closure
     {
-        return $this->initializerd6f82;
+        return $this->initializer93697;
     }
 
     public function initializeProxy() : bool
     {
-        return $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'initializeProxy', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        return $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'initializeProxy', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
     }
 
     public function isProxyInitialized() : bool
     {
-        return null !== $this->valueHolder55d21;
+        return null !== $this->valueHolderce8c5;
     }
 
     public function getWrappedValueHolderValue() : ?object
     {
-        return $this->valueHolder55d21;
+        return $this->valueHolderce8c5;
     }
 
 
@@ -1844,33 +1844,33 @@ class ImportHistoryInterface_32011a6 implements \ProxyManager\Proxy\VirtualProxy
     /**
      * @var \byrokrat\giroapp\Db\ImportHistoryInterface|null wrapped object, if the proxy is initialized
      */
-    private $valueHolder55d21 = null;
+    private $valueHolderce8c5 = null;
 
     /**
      * @var \Closure|null initializer responsible for generating the wrapped object
      */
-    private $initializerd6f82 = null;
+    private $initializer93697 = null;
 
     /**
      * @var bool[] map of public properties of the parent class
      */
-    private static $publicPropertiesfdc3d = [
+    private static $publicPropertiesa1059 = [
         
     ];
 
     public function addToImportHistory(\byrokrat\giroapp\Filesystem\FileInterface $file) : void
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'addToImportHistory', array('file' => $file), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'addToImportHistory', array('file' => $file), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21->addToImportHistory($file);
+        $this->valueHolderce8c5->addToImportHistory($file);
 return;
     }
 
     public function fileWasImported(\byrokrat\giroapp\Filesystem\FileInterface $file) : ?\byrokrat\giroapp\Domain\FileThatWasImported
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'fileWasImported', array('file' => $file), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'fileWasImported', array('file' => $file), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return $this->valueHolder55d21->fileWasImported($file);
+        return $this->valueHolderce8c5->fileWasImported($file);
     }
 
     /**
@@ -1885,7 +1885,7 @@ return;
         $reflection = $reflection ?? new \ReflectionClass(__CLASS__);
         $instance   = $reflection->newInstanceWithoutConstructor();
 
-        $instance->initializerd6f82 = $initializer;
+        $instance->initializer93697 = $initializer;
 
         return $instance;
     }
@@ -1894,21 +1894,21 @@ return;
     {
         static $reflection;
 
-        if (! $this->valueHolder55d21) {
+        if (! $this->valueHolderce8c5) {
             $reflection = $reflection ?? new \ReflectionClass('byrokrat\\giroapp\\Db\\ImportHistoryInterface');
-            $this->valueHolder55d21 = $reflection->newInstanceWithoutConstructor();
+            $this->valueHolderce8c5 = $reflection->newInstanceWithoutConstructor();
         }
     }
 
     public function & __get($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__get', ['name' => $name], $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__get', ['name' => $name], $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        if (isset(self::$publicPropertiesfdc3d[$name])) {
-            return $this->valueHolder55d21->$name;
+        if (isset(self::$publicPropertiesa1059[$name])) {
+            return $this->valueHolderce8c5->$name;
         }
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         $backtrace = debug_backtrace(false);
         trigger_error(
@@ -1926,27 +1926,27 @@ return;
 
     public function __set($name, $value)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__set', array('name' => $name, 'value' => $value), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__set', array('name' => $name, 'value' => $value), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         return $targetObject->$name = $value;
     }
 
     public function __isset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__isset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__isset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         return isset($targetObject->$name);
     }
 
     public function __unset($name)
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__unset', array('name' => $name), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__unset', array('name' => $name), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $targetObject = $this->valueHolder55d21;
+        $targetObject = $this->valueHolderce8c5;
 
         unset($targetObject->$name);
 return;
@@ -1954,16 +1954,16 @@ return;
 
     public function __clone()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__clone', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__clone', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        $this->valueHolder55d21 = clone $this->valueHolder55d21;
+        $this->valueHolderce8c5 = clone $this->valueHolderce8c5;
     }
 
     public function __sleep()
     {
-        $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, '__sleep', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, '__sleep', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
 
-        return array('valueHolder55d21');
+        return array('valueHolderce8c5');
     }
 
     public function __wakeup()
@@ -1972,27 +1972,27 @@ return;
 
     public function setProxyInitializer(\Closure $initializer = null) : void
     {
-        $this->initializerd6f82 = $initializer;
+        $this->initializer93697 = $initializer;
     }
 
     public function getProxyInitializer() : ?\Closure
     {
-        return $this->initializerd6f82;
+        return $this->initializer93697;
     }
 
     public function initializeProxy() : bool
     {
-        return $this->initializerd6f82 && ($this->initializerd6f82->__invoke($valueHolder55d21, $this, 'initializeProxy', array(), $this->initializerd6f82) || 1) && $this->valueHolder55d21 = $valueHolder55d21;
+        return $this->initializer93697 && ($this->initializer93697->__invoke($valueHolderce8c5, $this, 'initializeProxy', array(), $this->initializer93697) || 1) && $this->valueHolderce8c5 = $valueHolderce8c5;
     }
 
     public function isProxyInitialized() : bool
     {
-        return null !== $this->valueHolder55d21;
+        return null !== $this->valueHolderce8c5;
     }
 
     public function getWrappedValueHolderValue() : ?object
     {
-        return $this->valueHolder55d21;
+        return $this->valueHolderce8c5;
     }
 
 
