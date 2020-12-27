@@ -33,7 +33,11 @@ final class IniRepository implements RepositoryInterface
 
     public function __construct(string $ini)
     {
-        $configs = @parse_ini_string($ini);
+        try {
+            $configs = @parse_ini_string($ini);
+        } catch (\Throwable $exception) {
+            throw new InvalidConfigException('Unable to parse ini file');
+        }
 
         if (false === $configs) {
             throw new InvalidConfigException('Unable to parse ini file');
