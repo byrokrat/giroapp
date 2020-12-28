@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Event\Listener;
 
@@ -19,7 +19,7 @@ class DonorStateListenerSpec extends ObjectBehavior
 
     function it_ignores_unknown_states(DonorStateUpdated $event)
     {
-        $state = new class() implements StateInterface {
+        $state = new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'foo';
@@ -46,7 +46,7 @@ class DonorStateListenerSpec extends ObjectBehavior
 
     function it_calls_listener_on_id_match(DonorStateUpdated $event)
     {
-        $state = new class() implements StateInterface {
+        $state = new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'foo';
@@ -73,7 +73,7 @@ class DonorStateListenerSpec extends ObjectBehavior
 
     function it_calls_listener_on_implements_match(DonorStateUpdated $event)
     {
-        $state = new class() implements StateInterface {
+        $state = new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'foo';

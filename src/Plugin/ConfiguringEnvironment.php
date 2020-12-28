@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Plugin;
 
@@ -52,7 +53,8 @@ use Psr\Log\LoggerInterface;
 
 final class ConfiguringEnvironment implements EnvironmentInterface
 {
-    use CommandBusProperty, DispatcherProperty;
+    use CommandBusProperty;
+    use DispatcherProperty;
 
     /** @var LoggerInterface */
     private $logger;

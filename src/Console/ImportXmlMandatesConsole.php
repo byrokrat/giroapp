@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -35,12 +36,12 @@ use Money\Currency;
 
 final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPassInterface
 {
-    use DependencyInjection\AccountFactoryProperty,
-        DependencyInjection\CommandBusProperty,
-        DependencyInjection\MoneyFormatterProperty,
-        DependencyInjection\MoneyParserProperty,
-        DependencyInjection\IdFactoryProperty,
-        Helper\DryRun;
+    use DependencyInjection\AccountFactoryProperty;
+    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\MoneyFormatterProperty;
+    use DependencyInjection\MoneyParserProperty;
+    use DependencyInjection\IdFactoryProperty;
+    use Helper\DryRun;
 
     /** @var ImportTransactionManager */
     private $importTransactionManager;
@@ -116,7 +117,7 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
             (new Xml\HumanDumper($this->moneyFormatter))->dump($xmlMandate)
         );
 
-        $inputReader = new Helper\InputReader($this->input, $this->output, new QuestionHelper);
+        $inputReader = new Helper\InputReader($this->input, $this->output, new QuestionHelper());
 
         if (!$inputReader->confirm("Edit [<info>y/N</info>]? ", false)) {
             return $xmlMandate;
@@ -126,7 +127,7 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
             self::OPTION_ID,
             $xmlMandate->donorId->format('CS-sk'),
             new Validator\ValidatorCollection(
-                new Validator\IdValidator,
+                new Validator\IdValidator(),
                 new Validator\CallbackValidator(function (string $value) use (&$xmlMandate) {
                     $xmlMandate->donorId = $this->idFactory->createId($value);
                 })
@@ -136,14 +137,14 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
         $xmlMandate->payerNumber = $inputReader->readOptionalInput(
             self::OPTION_PAYER_NUMBER,
             $xmlMandate->payerNumber,
-            new Validator\PayerNumberValidator
+            new Validator\PayerNumberValidator()
         );
 
         $inputReader->readOptionalInput(
             self::OPTION_ACCOUNT,
             $xmlMandate->account->prettyprint(),
             new Validator\ValidatorCollection(
-                new Validator\AccountValidator,
+                new Validator\AccountValidator(),
                 new Validator\CallbackValidator(function (string $value) use (&$xmlMandate) {
                     $xmlMandate->account = $this->accountFactory->createAccount($value);
                 })
@@ -155,8 +156,8 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
                 self::OPTION_AMOUNT,
                 $this->moneyFormatter->format($xmlMandate->donationAmount),
                 new Validator\ValidatorCollection(
-                    new Validator\NotEmptyValidator,
-                    new Validator\NumericValidator
+                    new Validator\NotEmptyValidator(),
+                    new Validator\NumericValidator()
                 )
             ),
             new Currency('SEK')
@@ -166,62 +167,62 @@ final class ImportXmlMandatesConsole implements ConsoleInterface, Xml\CompilerPa
             self::OPTION_NAME,
             $xmlMandate->name,
             new Validator\ValidatorCollection(
-                new Validator\StringValidator,
-                new Validator\NotEmptyValidator
+                new Validator\StringValidator(),
+                new Validator\NotEmptyValidator()
             )
         );
 
         $xmlMandate->address['line1'] = $inputReader->readOptionalInput(
             self::OPTION_ADDRESS1,
             $xmlMandate->address['line1'],
-            new Validator\StringValidator
+            new Validator\StringValidator()
         );
 
         $xmlMandate->address['line2'] = $inputReader->readOptionalInput(
             self::OPTION_ADDRESS2,
             $xmlMandate->address['line2'],
-            new Validator\StringValidator
+            new Validator\StringValidator()
         );
 
         $xmlMandate->address['line3'] = $inputReader->readOptionalInput(
             self::OPTION_ADDRESS3,
             $xmlMandate->address['line3'],
-            new Validator\StringValidator
+            new Validator\StringValidator()
         );
 
         $xmlMandate->address['postalCode'] = $inputReader->readOptionalInput(
             self::OPTION_POSTAL_CODE,
             $xmlMandate->address['postalCode'],
-            new Validator\PostalCodeValidator
+            new Validator\PostalCodeValidator()
         );
 
         $xmlMandate->address['postalCity'] = $inputReader->readOptionalInput(
             self::OPTION_POSTAL_CITY,
             $xmlMandate->address['postalCity'],
-            new Validator\StringValidator
+            new Validator\StringValidator()
         );
 
         $xmlMandate->email = $inputReader->readOptionalInput(
             self::OPTION_EMAIL,
             $xmlMandate->email,
-            new Validator\EmailValidator
+            new Validator\EmailValidator()
         );
 
         $xmlMandate->phone = $inputReader->readOptionalInput(
             self::OPTION_PHONE,
             $xmlMandate->phone,
-            new Validator\PhoneValidator
+            new Validator\PhoneValidator()
         );
 
         $xmlMandate->comment = $inputReader->readOptionalInput(
             self::OPTION_COMMENT,
             $xmlMandate->comment,
-            new Validator\StringValidator
+            new Validator\StringValidator()
         );
 
         foreach ($xmlMandate->attributes as $attrKey => $attrValue) {
             $xmlMandate->attributes[$attrKey] =
-                $inputReader->readOptionalInput("attribute.$attrKey", $attrValue, new Validator\StringValidator);
+                $inputReader->readOptionalInput("attribute.$attrKey", $attrValue, new Validator\StringValidator());
         }
 
         return $xmlMandate;

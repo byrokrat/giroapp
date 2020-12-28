@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -25,23 +26,23 @@ namespace byrokrat\giroapp;
  */
 interface Exception
 {
-    const GENERIC_ERROR = 1;
-    const DONOR_DOES_NOT_EXIST_EXCEPTION = 111;
-    const DONOR_ALREADY_EXISTS_EXCEPTION = 112;
-    const FILE_ALREADY_IMPORTED_EXCEPTION = 120;
-    const INVALID_AUTOGIRO_FILE_EXCEPTION = 131;
-    const INVALID_CONFIG_EXCEPTION = 132;
-    const INVALID_DATA_EXCEPTION = 133;
-    const INVALID_PLUGIN_EXCEPTION = 134;
-    const INVALID_STATE_TRANSITION_EXCEPTION = 135;
-    const INVALID_STATISTIC_EXCEPTION = 141;
-    const INVALID_XML_EXCEPTION = 136;
-    const RUNTIME_EXCEPTION = 10;
-    const UNABLE_TO_READ_FILE_EXCEPTION = 137;
-    const UNKNOWN_FILE_EXCEPTION = 138;
-    const UNKNOWN_IDENTIFIER_EXCEPTION = 139;
-    const UNSUPPORTED_VERSION_EXCEPTION = 140;
-    const VALIDATOR_EXCEPTION = 101;
+    public const GENERIC_ERROR = 1;
+    public const DONOR_DOES_NOT_EXIST_EXCEPTION = 111;
+    public const DONOR_ALREADY_EXISTS_EXCEPTION = 112;
+    public const FILE_ALREADY_IMPORTED_EXCEPTION = 120;
+    public const INVALID_AUTOGIRO_FILE_EXCEPTION = 131;
+    public const INVALID_CONFIG_EXCEPTION = 132;
+    public const INVALID_DATA_EXCEPTION = 133;
+    public const INVALID_PLUGIN_EXCEPTION = 134;
+    public const INVALID_STATE_TRANSITION_EXCEPTION = 135;
+    public const INVALID_STATISTIC_EXCEPTION = 141;
+    public const INVALID_XML_EXCEPTION = 136;
+    public const RUNTIME_EXCEPTION = 10;
+    public const UNABLE_TO_READ_FILE_EXCEPTION = 137;
+    public const UNKNOWN_FILE_EXCEPTION = 138;
+    public const UNKNOWN_IDENTIFIER_EXCEPTION = 139;
+    public const UNSUPPORTED_VERSION_EXCEPTION = 140;
+    public const VALIDATOR_EXCEPTION = 101;
 
     /** @return string */
     public function getMessage();

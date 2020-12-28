@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\CommandBus;
 
@@ -27,14 +28,15 @@ use byrokrat\giroapp\Event\DonorAttributeUpdated;
 
 final class UpdateAttributeHandler
 {
-    use DependencyInjection\DispatcherProperty,
-        DependencyInjection\DonorRepositoryProperty;
+    use DependencyInjection\DispatcherProperty;
+    use DependencyInjection\DonorRepositoryProperty;
 
     public function handle(UpdateAttribute $command): void
     {
         $donor = $command->getDonor();
 
-        if ($donor->hasAttribute($command->getAttributeKey())
+        if (
+            $donor->hasAttribute($command->getAttributeKey())
             && $command->getAttributeValue() == $donor->getAttribute($command->getAttributeKey())
         ) {
             return;

@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -19,7 +20,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use byrokrat\giroapp\DependencyInjection\ProjectServiceContainer;
 use Symfony\Component\Console\Application;

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Xml;
 
@@ -29,8 +30,8 @@ use Money\MoneyParser;
  */
 final class CompilerConfigurator
 {
-    const PAYER_NR_STRATEGY_PERSONAL_ID = 'personal-id';
-    const PAYER_NR_STRATEGY_IGNORE = 'ignore';
+    public const PAYER_NR_STRATEGY_PERSONAL_ID = 'personal-id';
+    public const PAYER_NR_STRATEGY_IGNORE = 'ignore';
 
     /** @var array<CompilerPassInterface> */
     private $compilerPasses = [];
@@ -45,7 +46,7 @@ final class CompilerConfigurator
     ) {
         switch ($payerNrStrategy) {
             case self::PAYER_NR_STRATEGY_PERSONAL_ID:
-                $this->compilerPasses[] = new PayerNrFromPersonalIdPass;
+                $this->compilerPasses[] = new PayerNrFromPersonalIdPass();
                 break;
             case self::PAYER_NR_STRATEGY_IGNORE:
             default:

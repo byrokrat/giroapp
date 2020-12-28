@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\CommandBus;
 
@@ -41,7 +42,7 @@ final class CommitHandler
     public function handle(): void
     {
         if ($this->dbDriver->commit()) {
-            $this->dispatcher->dispatch(new ChangesCommitted);
+            $this->dispatcher->dispatch(new ChangesCommitted());
         }
     }
 }

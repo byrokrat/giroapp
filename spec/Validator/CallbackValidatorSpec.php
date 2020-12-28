@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Validator;
 
@@ -43,7 +43,7 @@ class CallbackValidatorSpec extends ObjectBehavior
     function it_throws_when_validator_throws()
     {
         $this->beConstructedWith(function (string $value) {
-            throw new \Exception;
+            throw new \Exception();
         });
         $this->shouldThrow(ValidatorException::class)->duringValidate('', '');
     }

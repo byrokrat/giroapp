@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Event\Listener;
 
@@ -51,7 +51,7 @@ class DonorEventNormalizerSpec extends ObjectBehavior
         $donor->getMandateKey()->willReturn('mandate_key');
         $donor->getPayerNumber()->willReturn('payer_number');
 
-        $donor->getState()->willReturn(new class() implements StateInterface {
+        $donor->getState()->willReturn(new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'state';
@@ -179,7 +179,7 @@ class DonorEventNormalizerSpec extends ObjectBehavior
 
     function it_normalizes_state_updated($donor)
     {
-        $state = new class() implements StateInterface {
+        $state = new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'FOO';

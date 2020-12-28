@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console\Helper;
 
@@ -45,7 +46,7 @@ trait DryRun
     protected function evaluateDryRun(InputInterface $input): void
     {
         if ($input->getOption('dry')) {
-            $this->commandBus->handle(new Rollback);
+            $this->commandBus->handle(new Rollback());
         }
     }
 }

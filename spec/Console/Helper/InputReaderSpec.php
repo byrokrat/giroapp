@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Console\Helper;
 
@@ -16,7 +16,7 @@ class InputReaderSpec extends ObjectBehavior
 {
     function let(InputInterface $input, OutputInterface $output)
     {
-        $this->beConstructedWith($input, $output, new QuestionHelper);
+        $this->beConstructedWith($input, $output, new QuestionHelper());
     }
 
     function it_is_initializable()

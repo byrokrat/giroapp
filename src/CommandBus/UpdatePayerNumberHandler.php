@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\CommandBus;
 
@@ -28,9 +29,9 @@ use byrokrat\giroapp\Workflow\Transitions;
 
 final class UpdatePayerNumberHandler
 {
-    use DependencyInjection\CommandBusProperty,
-        DependencyInjection\DispatcherProperty,
-        DependencyInjection\DonorRepositoryProperty;
+    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\DispatcherProperty;
+    use DependencyInjection\DonorRepositoryProperty;
 
     public function handle(UpdatePayerNumber $command): void
     {

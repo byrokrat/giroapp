@@ -1,15 +1,15 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use byrokrat\giroapp\Domain\MandateSources;
 
-class FeatureContext implements Context
+final class FeatureContext implements Context
 {
-    const DEFAULT_DONOR_ROW = [
+    public const DEFAULT_DONOR_ROW = [
         'source' => MandateSources::MANDATE_SOURCE_PAPER,
         'payer-number' => '1',
         'state' => 'ACTIVE',
@@ -89,18 +89,18 @@ class FeatureContext implements Context
         foreach ($table->getHash() as $row) {
             $row = array_merge(self::DEFAULT_DONOR_ROW, $row);
 
-            $this->iRun(sprintf(
-                'add --source %s --payer-number %s --account %s --id %s --name %s --email %s --phone %s --amount %s --comment %s',
-                $row['source'],
-                $row['payer-number'],
-                $row['account'],
-                $row['id'],
-                $row['name'],
-                $row['email'],
-                $row['phone'],
-                $row['amount'],
-                $row['comment']
-            ));
+            $this->iRun(
+                'add'
+                . " --source {$row['source']}"
+                . " --payer-number {$row['payer-number']}"
+                . " --account {$row['account']}"
+                . " --id {$row['id']}"
+                . " --name {$row['name']}"
+                . " --email {$row['email']}"
+                . " --phone {$row['phone']}"
+                . " --amount {$row['amount']}"
+                . " --comment {$row['comment']}"
+            );
 
             $this->thereIsNoError();
 

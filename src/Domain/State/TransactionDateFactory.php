@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Domain\State;
 
@@ -30,12 +31,12 @@ class TransactionDateFactory
     /**
      * Default day of month of created date
      */
-    const DEFAULT_DAY_OF_MONTH = 28;
+    public const DEFAULT_DAY_OF_MONTH = 28;
 
     /**
      * Default value for minimal number of days in the future
      */
-    const DEFAULT_MIN_DAYS_IN_FUTURE = 4;
+    public const DEFAULT_MIN_DAYS_IN_FUTURE = 4;
 
     /**
      * @var SystemClock

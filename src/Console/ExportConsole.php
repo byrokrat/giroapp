@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -31,8 +32,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ExportConsole implements ConsoleInterface
 {
-    use CommandBusProperty,
-        Helper\DryRun;
+    use CommandBusProperty;
+    use Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -51,7 +52,7 @@ final class ExportConsole implements ConsoleInterface
     public function execute(InputInterface $input, OutputInterface $output): void
     {
         /** @var string */
-        $content = $this->commandBus->handle(new Export);
+        $content = $this->commandBus->handle(new Export());
 
         /** @var string */
         $filename = $input->getOption('filename');

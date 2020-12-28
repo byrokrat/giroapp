@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -31,8 +32,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class ImportConsole implements ConsoleInterface
 {
-    use DependencyInjection\CommandBusProperty,
-        Helper\DryRun;
+    use DependencyInjection\CommandBusProperty;
+    use Helper\DryRun;
 
     /** @var ImportTransactionManager */
     private $importTransactionManager;

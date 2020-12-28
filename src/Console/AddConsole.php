@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -46,12 +47,12 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class AddConsole implements ConsoleInterface
 {
-    use DependencyInjection\AccountFactoryProperty,
-        DependencyInjection\CommandBusProperty,
-        DependencyInjection\DonorRepositoryProperty,
-        DependencyInjection\MoneyParserProperty,
-        DependencyInjection\IdFactoryProperty,
-        Helper\DryRun;
+    use DependencyInjection\AccountFactoryProperty;
+    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\DonorRepositoryProperty;
+    use DependencyInjection\MoneyParserProperty;
+    use DependencyInjection\IdFactoryProperty;
+    use Helper\DryRun;
 
     private const OPTIONS = [
         self::OPTION_SOURCE,
@@ -99,7 +100,7 @@ final class AddConsole implements ConsoleInterface
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper());
 
         $sources = ['p' => MandateSources::MANDATE_SOURCE_PAPER, 'o' => MandateSources::MANDATE_SOURCE_ONLINE_FORM];
 
@@ -120,7 +121,7 @@ final class AddConsole implements ConsoleInterface
             self::OPTION_ID,
             Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_ID]),
             new Validator\ValidatorCollection(
-                new Validator\IdValidator,
+                new Validator\IdValidator(),
                 new Validator\CallbackValidator(function (string $value) use (&$donorId) {
                     $donorId = $this->idFactory->createId($value);
                 })
@@ -133,7 +134,7 @@ final class AddConsole implements ConsoleInterface
                 self::OPTION_DESCS[self::OPTION_PAYER_NUMBER],
                 $donorId->format('Ssk')
             ),
-            new Validator\PayerNumberValidator
+            new Validator\PayerNumberValidator()
         );
 
         /** @var \byrokrat\banking\AccountNumber */
@@ -145,7 +146,7 @@ final class AddConsole implements ConsoleInterface
                 ["3300,{$donorId->format('Ssk')}"]
             ),
             new Validator\ValidatorCollection(
-                new Validator\AccountValidator,
+                new Validator\AccountValidator(),
                 new Validator\CallbackValidator(function (string $value) use (&$account) {
                     $account = $this->accountFactory->createAccount($value);
                 })
@@ -157,8 +158,8 @@ final class AddConsole implements ConsoleInterface
                 self::OPTION_AMOUNT,
                 Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_AMOUNT]),
                 new Validator\ValidatorCollection(
-                    new Validator\NotEmptyValidator,
-                    new Validator\NumericValidator
+                    new Validator\NotEmptyValidator(),
+                    new Validator\NumericValidator()
                 )
             ),
             new Currency('SEK')
@@ -168,8 +169,8 @@ final class AddConsole implements ConsoleInterface
             self::OPTION_NAME,
             Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_NAME]),
             new Validator\ValidatorCollection(
-                new Validator\StringValidator,
-                new Validator\NotEmptyValidator
+                new Validator\StringValidator(),
+                new Validator\NotEmptyValidator()
             )
         );
 
@@ -177,46 +178,46 @@ final class AddConsole implements ConsoleInterface
             $inputReader->readInput(
                 self::OPTION_ADDRESS1,
                 Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_ADDRESS1], ''),
-                new Validator\StringValidator
+                new Validator\StringValidator()
             ),
             $inputReader->readInput(
                 self::OPTION_ADDRESS2,
                 Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_ADDRESS2], ''),
-                new Validator\StringValidator
+                new Validator\StringValidator()
             ),
             $inputReader->readInput(
                 self::OPTION_ADDRESS3,
                 Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_ADDRESS3], ''),
-                new Validator\StringValidator
+                new Validator\StringValidator()
             ),
             $inputReader->readInput(
                 self::OPTION_POSTAL_CODE,
                 Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_POSTAL_CODE], ''),
-                new Validator\PostalCodeValidator
+                new Validator\PostalCodeValidator()
             ),
             $inputReader->readInput(
                 self::OPTION_POSTAL_CITY,
                 Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_POSTAL_CITY], ''),
-                new Validator\StringValidator
+                new Validator\StringValidator()
             )
         );
 
         $email = $inputReader->readInput(
             self::OPTION_EMAIL,
             Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_EMAIL], ''),
-            new Validator\EmailValidator
+            new Validator\EmailValidator()
         );
 
         $phone = $inputReader->readInput(
             self::OPTION_PHONE,
             Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_PHONE], ''),
-            new Validator\PhoneValidator
+            new Validator\PhoneValidator()
         );
 
         $comment = $inputReader->readInput(
             self::OPTION_COMMENT,
             Helper\QuestionFactory::createQuestion(self::OPTION_DESCS[self::OPTION_COMMENT], ''),
-            new Validator\StringValidator
+            new Validator\StringValidator()
         );
 
         $attributes = [];
@@ -231,7 +232,7 @@ final class AddConsole implements ConsoleInterface
             $attrKey = $inputReader->readInput(
                 '',
                 Helper\QuestionFactory::createQuestion('Add an attribute (empty to skip)', $attrKeys[$count] ?? ''),
-                new Validator\StringValidator
+                new Validator\StringValidator()
             );
 
             if (!$attrKey) {
@@ -241,7 +242,7 @@ final class AddConsole implements ConsoleInterface
             $attributes[$attrKey] = $inputReader->readInput(
                 '',
                 Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
-                new Validator\StringValidator
+                new Validator\StringValidator()
             );
         }
 

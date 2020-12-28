@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Filesystem;
 
@@ -10,9 +10,9 @@ use PhpSpec\ObjectBehavior;
 
 class HashedFileSpec extends ObjectBehavior
 {
-    const FILENAME = 'filename';
-    const CONTENT = 'content';
-    const HASH = 'hash';
+    public const FILENAME = 'filename';
+    public const CONTENT = 'content';
+    public const HASH = 'hash';
 
     function let()
     {

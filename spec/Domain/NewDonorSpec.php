@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Domain;
 
@@ -13,8 +13,8 @@ use PhpSpec\ObjectBehavior;
 
 class NewDonorSpec extends ObjectBehavior
 {
-    const PAYER_NUMBER = 'payer-number';
-    const DONATION_AMOUNT = 100;
+    public const PAYER_NUMBER = 'payer-number';
+    public const DONATION_AMOUNT = 100;
 
     function let(AccountNumber $account, PersonalId $donorId)
     {

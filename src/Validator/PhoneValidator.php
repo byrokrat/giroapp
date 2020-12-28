@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Validator;
 
@@ -30,7 +31,7 @@ final class PhoneValidator implements ValidatorInterface
 
     protected function getRule(): Rule
     {
-        return (new Rule)->msg('must be a valid phone number')->match(function (string $val) {
+        return (new Rule())->msg('must be a valid phone number')->match(function (string $val) {
             return !!preg_match('/^\+?[0-9()., -]*$/', $val);
         });
     }

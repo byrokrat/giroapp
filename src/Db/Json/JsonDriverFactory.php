@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Db\Json;
 
@@ -54,7 +55,7 @@ final class JsonDriverFactory implements DriverFactoryInterface
 
         return new JsonDriver(
             new Yaysondb([
-                'donor_events' => new LogEngine($dsn . '/' . self::DONOR_EVENTS_FILE, new FlatJsonDecoder),
+                'donor_events' => new LogEngine($dsn . '/' . self::DONOR_EVENTS_FILE, new FlatJsonDecoder()),
                 'donors' => new FlysystemEngine(self::DONORS_FILE, $filesystem),
                 'imports' => new FlysystemEngine(self::IMPORTS_FILE, $filesystem),
             ])

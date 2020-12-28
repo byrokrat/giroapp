@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -32,9 +33,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class PauseConsole implements ConsoleInterface
 {
-    use CommandBusProperty,
-        Helper\DonorArgument,
-        Helper\DryRun;
+    use CommandBusProperty;
+    use Helper\DonorArgument;
+    use Helper\DryRun;
 
     public function configure(Command $command): void
     {

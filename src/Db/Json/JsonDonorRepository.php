@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Db\Json;
 
@@ -38,7 +39,7 @@ use Money\MoneyFormatter;
 
 final class JsonDonorRepository implements DonorRepositoryInterface
 {
-    const TYPE = 'giroapp/donor:1.0';
+    public const TYPE = 'giroapp/donor:1.0';
 
     /** @var CollectionInterface&iterable<array> */
     private $collection;

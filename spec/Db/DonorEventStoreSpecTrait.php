@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Db;
 
@@ -23,7 +23,7 @@ trait DonorEventStoreSpecTrait
 
     function it_returns_file_entries()
     {
-        $entry = new DonorEventEntry('key', 'type', new \DateTimeImmutable, ['data']);
+        $entry = new DonorEventEntry('key', 'type', new \DateTimeImmutable(), ['data']);
         $this->addDonorEventEntry($entry);
         $this->addDonorEventEntry($entry);
         $this->readEntriesForMandateKey('key')->shouldYieldEntries($entry, $entry);
@@ -31,16 +31,16 @@ trait DonorEventStoreSpecTrait
 
     function it_ignores_other_entries()
     {
-        $entry = new DonorEventEntry('foo', '', new \DateTimeImmutable, ['']);
+        $entry = new DonorEventEntry('foo', '', new \DateTimeImmutable(), ['']);
         $this->addDonorEventEntry($entry);
-        $this->addDonorEventEntry(new DonorEventEntry('bar', '', new \DateTimeImmutable, ['']));
+        $this->addDonorEventEntry(new DonorEventEntry('bar', '', new \DateTimeImmutable(), ['']));
         $this->readEntriesForMandateKey('foo')->shouldYieldEntries($entry);
     }
 
     function it_can_read_all_entries()
     {
-        $foo = new DonorEventEntry('foo', '', new \DateTimeImmutable, ['']);
-        $bar = new DonorEventEntry('bar', '', new \DateTimeImmutable, ['']);
+        $foo = new DonorEventEntry('foo', '', new \DateTimeImmutable(), ['']);
+        $bar = new DonorEventEntry('bar', '', new \DateTimeImmutable(), ['']);
         $this->addDonorEventEntry($foo);
         $this->addDonorEventEntry($bar);
         $this->readAllEntries()->shouldYieldEntries($foo, $bar);

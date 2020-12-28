@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Filter;
 
@@ -29,7 +29,7 @@ class ErrorFilterSpec extends ObjectBehavior
 
     function it_filters_donors(Donor $donor)
     {
-        $donor->getState()->willReturn(new Error);
+        $donor->getState()->willReturn(new Error());
         $this->filterDonor($donor)->shouldReturn(true);
     }
 }

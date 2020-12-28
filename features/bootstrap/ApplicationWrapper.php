@@ -1,15 +1,15 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use byrokrat\giroapp\Config\ArrayRepository;
 use byrokrat\giroapp\Config\ConfigManager;
 use byrokrat\giroapp\Config\IniRepository;
 
-class ApplicationWrapper
+final class ApplicationWrapper
 {
-    const EXECUTABLE_PLACEHOLDER = '@giroapp@';
-    const GIROAPP_INSTALL_PATH =  __DIR__ . '/../../';
+    public const EXECUTABLE_PLACEHOLDER = '@giroapp@';
+    public const GIROAPP_INSTALL_PATH =  __DIR__ . '/../../';
 
     /** @var string */
     private $cwd;

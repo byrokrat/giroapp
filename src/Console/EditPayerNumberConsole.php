@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -33,9 +34,9 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class EditPayerNumberConsole implements ConsoleInterface
 {
-    use CommandBusProperty,
-        Helper\DonorArgument,
-        Helper\DryRun;
+    use CommandBusProperty;
+    use Helper\DonorArgument;
+    use Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -60,7 +61,7 @@ final class EditPayerNumberConsole implements ConsoleInterface
 
         $donor = $this->readDonor($input);
 
-        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper());
 
         $newPayerNumber = $inputReader->readInput(
             self::OPTION_NEW_PAYER_NUMBER,
@@ -68,7 +69,7 @@ final class EditPayerNumberConsole implements ConsoleInterface
                 self::OPTION_DESCS[self::OPTION_NEW_PAYER_NUMBER],
                 $donor->getPayerNumber()
             ),
-            new PayerNumberValidator
+            new PayerNumberValidator()
         );
 
         /** @var string $msg */

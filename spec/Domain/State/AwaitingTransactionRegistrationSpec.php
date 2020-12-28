@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Domain\State;
 
@@ -62,7 +62,7 @@ class AwaitingTransactionRegistrationSpec extends ObjectBehavior
         $donor->getPayerNumber()->willReturn('payer_number');
         $donor->getMandateKey()->willReturn('mandate_key');
 
-        $date = new \DateTimeImmutable;
+        $date = new \DateTimeImmutable();
         $dateFactory->createNextTransactionDate()->willReturn($date);
 
         $this->exportToAutogiro($donor, $writer);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\CommandBus;
 
@@ -31,11 +32,11 @@ use byrokrat\autogiro\Writer\WriterInterface;
 
 final class ExportHandler
 {
-    use DependencyInjection\CommandBusProperty,
-        DependencyInjection\DispatcherProperty,
-        DependencyInjection\DonorQueryProperty;
+    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\DispatcherProperty;
+    use DependencyInjection\DonorQueryProperty;
 
-    const DEFAULT_FILE_NAME = 'giroapp-export';
+    public const DEFAULT_FILE_NAME = 'giroapp-export';
 
     /**
      * @var WriterInterface

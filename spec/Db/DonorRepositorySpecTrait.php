@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Db;
 
@@ -120,7 +120,7 @@ trait DonorRepositorySpecTrait
     {
         $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorState(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
-            new Error,
+            new Error(),
             ''
         );
     }
@@ -129,7 +129,7 @@ trait DonorRepositorySpecTrait
     {
         $donor = $this->createDonor('m-key', Active::getStateId(), '', '', '50001111116', '820323-2775');
         $this->addNewDonor($donor);
-        $error = new Error;
+        $error = new Error();
         $this->updateDonorState($donor, $error);
         $this->requireByMandateKey('m-key')->shouldReturnDonorWith('getState', $error);
     }
@@ -180,7 +180,7 @@ trait DonorRepositorySpecTrait
     {
         $this->shouldThrow(DonorDoesNotExistException::class)->duringUpdateDonorAddress(
             $this->createDonor('m-key', Active::getStateId(), '', 'p-nr', '50001111116', '820323-2775'),
-            new PostalAddress
+            new PostalAddress()
         );
     }
 

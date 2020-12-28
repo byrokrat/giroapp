@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -35,11 +36,11 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class EditAmountConsole implements ConsoleInterface
 {
-    use DependencyInjection\CommandBusProperty,
-        DependencyInjection\MoneyFormatterProperty,
-        DependencyInjection\MoneyParserProperty,
-        Helper\DonorArgument,
-        Helper\DryRun;
+    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\MoneyFormatterProperty;
+    use DependencyInjection\MoneyParserProperty;
+    use Helper\DonorArgument;
+    use Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -61,7 +62,7 @@ final class EditAmountConsole implements ConsoleInterface
     {
         $donor = $this->readDonor($input);
 
-        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper());
 
         $amount = $this->moneyParser->parse(
             $inputReader->readInput(
@@ -71,8 +72,8 @@ final class EditAmountConsole implements ConsoleInterface
                     $this->moneyFormatter->format($donor->getDonationAmount())
                 ),
                 new Validator\ValidatorCollection(
-                    new Validator\NotEmptyValidator,
-                    new Validator\NumericValidator
+                    new Validator\NotEmptyValidator(),
+                    new Validator\NumericValidator()
                 )
             ),
             new Currency('SEK')

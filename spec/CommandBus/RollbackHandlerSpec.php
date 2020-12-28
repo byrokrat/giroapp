@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\CommandBus;
 
@@ -28,14 +28,14 @@ class RollbackHandlerSpec extends ObjectBehavior
     function it_dispatches_on_database_rollback($dbDriver, $dispatcher)
     {
         $dbDriver->rollback()->willReturn(true)->shouldBeCalled();
-        $dispatcher->dispatch(new ChangesDiscarded)->shouldBeCalled();
-        $this->handle(new Rollback);
+        $dispatcher->dispatch(new ChangesDiscarded())->shouldBeCalled();
+        $this->handle(new Rollback());
     }
 
     function it_does_not_dispatch_on_no_rollback($dbDriver, $dispatcher)
     {
         $dbDriver->rollback()->willReturn(false)->shouldBeCalled();
         $dispatcher->dispatch(Argument::any())->shouldNotBeCalled();
-        $this->handle(new Rollback);
+        $this->handle(new Rollback());
     }
 }

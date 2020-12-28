@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Db\Json;
 
@@ -20,7 +20,7 @@ class JsonImportHistorySpec extends ObjectBehavior
         $this->testDirectory = sys_get_temp_dir() . '/giroapp_JsonImportHistorySpec_' . microtime();
 
         $this->beConstructedThrough(function () {
-            return (new JsonDriverFactory)->createDriver($this->testDirectory)->getImportHistory(
+            return (new JsonDriverFactory())->createDriver($this->testDirectory)->getImportHistory(
                 $this->getDriverEnvironment()
             );
         });

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Filesystem;
 
@@ -75,7 +76,7 @@ final class StdFilesystem implements FilesystemInterface
 
     public function readDir(string $path): iterable
     {
-        foreach ((new Finder)->in($this->getAbsolutePath($path))->files() as $fileInfo) {
+        foreach ((new Finder())->in($this->getAbsolutePath($path))->files() as $fileInfo) {
             yield $fileInfo->getRealPath() => new Sha256File($fileInfo->getFilename(), $fileInfo->getContents());
         }
     }

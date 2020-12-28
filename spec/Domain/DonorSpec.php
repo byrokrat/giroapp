@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Domain;
 
@@ -16,15 +16,15 @@ use PhpSpec\ObjectBehavior;
 
 class DonorSpec extends ObjectBehavior
 {
-    const MANDATE_KEY = 'mandate-key';
-    const PAYER_NUMBER = 'payer-number';
-    const NAME = 'name';
-    const EMAIL = 'email';
-    const PHONE = 'phone';
-    const COMMENT = 'comment';
-    const ATTR_KEY = 'ATTR_KEY';
-    const ATTR_VALUE = 'ATTR_VALUE';
-    const DONATION_AMOUNT = 100;
+    public const MANDATE_KEY = 'mandate-key';
+    public const PAYER_NUMBER = 'payer-number';
+    public const NAME = 'name';
+    public const EMAIL = 'email';
+    public const PHONE = 'phone';
+    public const COMMENT = 'comment';
+    public const ATTR_KEY = 'ATTR_KEY';
+    public const ATTR_VALUE = 'ATTR_VALUE';
+    public const DONATION_AMOUNT = 100;
 
     function let(
         StateInterface $state,

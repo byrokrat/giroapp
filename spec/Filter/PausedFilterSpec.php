@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Filter;
 
@@ -29,7 +29,7 @@ class PausedFilterSpec extends ObjectBehavior
 
     function it_filters_donors(Donor $donor)
     {
-        $donor->getState()->willReturn(new Paused);
+        $donor->getState()->willReturn(new Paused());
         $this->filterDonor($donor)->shouldReturn(true);
     }
 }

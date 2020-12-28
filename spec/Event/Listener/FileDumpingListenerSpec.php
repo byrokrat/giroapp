@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Event\Listener;
 
@@ -47,7 +47,7 @@ class FileDumpingListenerSpec extends ObjectBehavior
         $dispatcher->dispatch(Argument::type(LogEvent::class))->shouldBeCalled();
 
         $this->onFileEvent($event);
-        $this->onChangesCommitted(new ChangesCommitted);
+        $this->onChangesCommitted(new ChangesCommitted());
     }
 
     function it_discards_changes($fs, FileEvent $event, FileInterface $file)
@@ -57,7 +57,7 @@ class FileDumpingListenerSpec extends ObjectBehavior
         $fs->writeFile(Argument::any())->shouldNotBeCalled();
 
         $this->onFileEvent($event);
-        $this->onChangesDiscarded(new ChangesDiscarded);
-        $this->onChangesCommitted(new ChangesCommitted);
+        $this->onChangesDiscarded(new ChangesDiscarded());
+        $this->onChangesCommitted(new ChangesCommitted());
     }
 }

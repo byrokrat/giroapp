@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\CommandBus;
 
@@ -41,7 +42,7 @@ final class RollbackHandler
     public function handle(): void
     {
         if ($this->dbDriver->rollback()) {
-            $this->dispatcher->dispatch(new ChangesDiscarded);
+            $this->dispatcher->dispatch(new ChangesDiscarded());
         }
     }
 }

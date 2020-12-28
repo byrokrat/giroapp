@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Filesystem;
 
@@ -24,7 +24,7 @@ class FilesystemFactorySpec extends ObjectBehavior
 
     function it_can_create_null_filesystems()
     {
-        $this->createFilesystem('')->shouldBeLike(new NullFilesystem);
+        $this->createFilesystem('')->shouldBeLike(new NullFilesystem());
     }
 
     function it_can_create_std_filesystems($fs)

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -33,9 +34,9 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 final class DeleteAttributeConsole implements ConsoleInterface
 {
-    use CommandBusProperty,
-        Helper\DonorArgument,
-        Helper\DryRun;
+    use CommandBusProperty;
+    use Helper\DonorArgument;
+    use Helper\DryRun;
 
     public function configure(Command $command): void
     {
@@ -67,7 +68,7 @@ final class DeleteAttributeConsole implements ConsoleInterface
             $commandQueue[] = new CommandBus\RemoveAttribute($donor, $attrKey);
         }
 
-        $questionHelper = new QuestionHelper;
+        $questionHelper = new QuestionHelper();
 
         foreach ($donor->getAttributes() as $attrKey => $attrValue) {
             $requestRemove = $questionHelper->ask(

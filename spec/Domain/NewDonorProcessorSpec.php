@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Domain;
 
@@ -30,7 +30,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
         AccountNumber $account
     ) {
         $this->beConstructedWith($stateCollection, $systemClock);
-        $systemClock->getNow()->willReturn(new \DateTimeImmutable);
+        $systemClock->getNow()->willReturn(new \DateTimeImmutable());
         $stateCollection->getState(MandateCreated::getStateId())->willReturn($state);
         $state->getDescription()->willReturn('');
         $id->format('Ss')->willReturn('1');
@@ -49,7 +49,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
 
     function it_processes_new_donor($systemClock, $state, IdInterface $id, AccountNumber $account)
     {
-        $now = new \DateTimeImmutable;
+        $now = new \DateTimeImmutable();
         $systemClock->getNow()->willReturn($now);
 
         $amount = Money::SEK('1');
@@ -71,7 +71,7 @@ class NewDonorProcessorSpec extends ObjectBehavior
             $account->getWrappedObject(),
             $id->getWrappedObject(),
             '',
-            new PostalAddress,
+            new PostalAddress(),
             '',
             '',
             $amount,

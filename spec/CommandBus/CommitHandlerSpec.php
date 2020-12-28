@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\CommandBus;
 
@@ -28,14 +28,14 @@ class CommitHandlerSpec extends ObjectBehavior
     function it_dispatches_on_database_commit($dbDriver, $dispatcher)
     {
         $dbDriver->commit()->willReturn(true)->shouldBeCalled();
-        $dispatcher->dispatch(new ChangesCommitted)->shouldBeCalled();
-        $this->handle(new Commit);
+        $dispatcher->dispatch(new ChangesCommitted())->shouldBeCalled();
+        $this->handle(new Commit());
     }
 
     function it_does_not_dispatch_on_no_commit($dbDriver, $dispatcher)
     {
         $dbDriver->commit()->willReturn(false)->shouldBeCalled();
         $dispatcher->dispatch(Argument::any())->shouldNotBeCalled();
-        $this->handle(new Commit);
+        $this->handle(new Commit());
     }
 }

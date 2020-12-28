@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Db\Json;
 
@@ -20,7 +20,7 @@ class JsonDonorRepositorySpec extends ObjectBehavior
         $this->testDirectory = sys_get_temp_dir() . '/giroapp_JsonDonorRepositorySpec_' . microtime();
 
         $this->beConstructedThrough(function () {
-            return (new JsonDriverFactory)->createDriver($this->testDirectory)->getDonorRepository(
+            return (new JsonDriverFactory())->createDriver($this->testDirectory)->getDonorRepository(
                 $this->getDriverEnvironment()
             );
         });

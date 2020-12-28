@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Event\Listener;
 
@@ -43,7 +44,8 @@ final class DonorStateListener implements ListenerInterface
 
     public function __invoke(DonorStateUpdated $event): void
     {
-        if ($event->getNewState()::getStateId() == $this->stateId
+        if (
+            $event->getNewState()::getStateId() == $this->stateId
             || $event->getNewState() instanceof $this->stateId
         ) {
             ($this->listener)($event);

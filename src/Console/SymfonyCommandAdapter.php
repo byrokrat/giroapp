@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -72,10 +73,10 @@ final class SymfonyCommandAdapter extends Command
         $commandBus = $this->environment->getCommandBus();
 
         try {
-            $this->dispatcher->dispatch(new Event\ExecutionStarted);
+            $this->dispatcher->dispatch(new Event\ExecutionStarted());
             $this->console->execute($input, $output);
-            $commandBus->handle(new Commit);
-            $this->dispatcher->dispatch(new Event\ExecutionStopped);
+            $commandBus->handle(new Commit());
+            $this->dispatcher->dispatch(new Event\ExecutionStopped());
         } catch (GiroappException $e) {
             $this->dispatcher->dispatch(
                 new Event\ErrorEvent(
@@ -84,7 +85,7 @@ final class SymfonyCommandAdapter extends Command
                 )
             );
 
-            $commandBus->handle(new Rollback);
+            $commandBus->handle(new Rollback());
 
             return $e->getCode();
         } catch (\Exception $e) {
@@ -104,7 +105,7 @@ final class SymfonyCommandAdapter extends Command
                 $output->writeln($e->getTraceAsString());
             }
 
-            $commandBus->handle(new Rollback);
+            $commandBus->handle(new Rollback());
 
             return $e->getCode() ?: GiroappException::GENERIC_ERROR;
         }

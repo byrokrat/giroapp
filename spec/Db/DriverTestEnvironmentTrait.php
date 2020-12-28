@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Db;
 
@@ -24,18 +24,18 @@ trait DriverTestEnvironmentTrait
     protected function getDriverEnvironment(): DriverEnvironment
     {
         if (!isset($this->driverEnvironment)) {
-            $stateCollection = new StateCollection;
-            $stateCollection->addState(new Active);
-            $stateCollection->addState(new Error);
+            $stateCollection = new StateCollection();
+            $stateCollection->addState(new Active());
+            $stateCollection->addState(new Error());
 
-            $currencies = new ISOCurrencies;
+            $currencies = new ISOCurrencies();
 
             $this->driverEnvironment = new DriverEnvironment(
-                new SystemClock,
+                new SystemClock(),
                 new DonorFactory(
                     $stateCollection,
-                    new AccountFactory,
-                    new PersonalIdFactory,
+                    new AccountFactory(),
+                    new PersonalIdFactory(),
                     new DecimalMoneyParser($currencies)
                 ),
                 new DecimalMoneyFormatter($currencies)

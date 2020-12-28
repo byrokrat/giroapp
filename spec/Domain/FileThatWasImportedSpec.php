@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Domain;
 
@@ -9,8 +9,8 @@ use PhpSpec\ObjectBehavior;
 
 class FileThatWasImportedSpec extends ObjectBehavior
 {
-    const FILENAME = 'fname';
-    const CHECKSUM = 'check';
+    public const FILENAME = 'fname';
+    public const CHECKSUM = 'check';
 
     function let(\DateTimeImmutable $date)
     {

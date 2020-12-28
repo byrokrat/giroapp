@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Db\Json;
 
@@ -20,7 +20,7 @@ class JsonDonorEventStoreSpec extends ObjectBehavior
         $this->testDirectory = sys_get_temp_dir() . '/giroapp_JsonDonorEventStoreSpec_' . microtime();
 
         $this->beConstructedThrough(function () {
-            return (new JsonDriverFactory)->createDriver($this->testDirectory)->getDonorEventStore(
+            return (new JsonDriverFactory())->createDriver($this->testDirectory)->getDonorEventStore(
                 $this->getDriverEnvironment()
             );
         });

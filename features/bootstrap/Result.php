@@ -1,11 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Wrapps the result of a shell execution
  */
-class Result
+final class Result
 {
     /**
      * @var int

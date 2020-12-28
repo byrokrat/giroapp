@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Validator;
 
@@ -43,7 +44,7 @@ final class ChoiceValidator implements ValidatorInterface
 
     protected function getRule(): Rule
     {
-        return (new Rule)
+        return (new Rule())
             ->msg("value must be one of '" . implode("'/'", array_keys($this->choices)) . "'")
             ->match(function (string $val) {
                 $lower = strtolower((string)$val);

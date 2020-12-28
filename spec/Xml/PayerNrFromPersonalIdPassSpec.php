@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Xml;
 
@@ -20,7 +20,7 @@ class PayerNrFromPersonalIdPassSpec extends ObjectBehavior
     {
         $donorId->format('Ssk')->willReturn('foobar');
 
-        $input = new XmlMandate;
+        $input = new XmlMandate();
         $input->donorId = $donorId->getWrappedObject();
 
         $expected = clone $input;

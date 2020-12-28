@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Plugin;
 
@@ -47,7 +47,7 @@ class PluginSpec extends ObjectBehavior
 
     function it_registers_listeners(EnvironmentInterface $env)
     {
-        $listener = new class() implements ListenerInterface {
+        $listener = new class () implements ListenerInterface {
             public function __invoke()
             {
             }

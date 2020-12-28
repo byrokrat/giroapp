@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -34,9 +35,9 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class EditConsole implements ConsoleInterface
 {
-    use CommandBusProperty,
-        Helper\DonorArgument,
-        Helper\DryRun;
+    use CommandBusProperty;
+    use Helper\DonorArgument;
+    use Helper\DryRun;
 
     private const OPTIONS = [
         self::OPTION_NAME,
@@ -84,7 +85,7 @@ final class EditConsole implements ConsoleInterface
 
         $donor = $this->readDonor($input);
 
-        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper());
 
         $commandQueue[] = new CommandBus\UpdateName(
             $donor,
@@ -92,8 +93,8 @@ final class EditConsole implements ConsoleInterface
                 self::OPTION_NAME,
                 $donor->getName(),
                 new Validator\ValidatorCollection(
-                    new Validator\StringValidator,
-                    new Validator\NotEmptyValidator
+                    new Validator\StringValidator(),
+                    new Validator\NotEmptyValidator()
                 )
             )
         );
@@ -104,51 +105,55 @@ final class EditConsole implements ConsoleInterface
                 $inputReader->readOptionalInput(
                     self::OPTION_ADDRESS1,
                     $donor->getPostalAddress()->getLine1(),
-                    new Validator\StringValidator
+                    new Validator\StringValidator()
                 ),
                 $inputReader->readOptionalInput(
                     self::OPTION_ADDRESS2,
                     $donor->getPostalAddress()->getLine2(),
-                    new Validator\StringValidator
+                    new Validator\StringValidator()
                 ),
                 $inputReader->readOptionalInput(
                     self::OPTION_ADDRESS3,
                     $donor->getPostalAddress()->getLine3(),
-                    new Validator\StringValidator
+                    new Validator\StringValidator()
                 ),
                 $inputReader->readOptionalInput(
                     self::OPTION_POSTAL_CODE,
                     $donor->getPostalAddress()->getPostalCode(),
-                    new Validator\PostalCodeValidator
+                    new Validator\PostalCodeValidator()
                 ),
                 $inputReader->readOptionalInput(
                     self::OPTION_POSTAL_CITY,
                     $donor->getPostalAddress()->getPostalCity(),
-                    new Validator\StringValidator
+                    new Validator\StringValidator()
                 )
             )
         );
 
         $commandQueue[] = new CommandBus\UpdateEmail(
             $donor,
-            $inputReader->readOptionalInput(self::OPTION_EMAIL, $donor->getEmail(), new Validator\EmailValidator)
+            $inputReader->readOptionalInput(self::OPTION_EMAIL, $donor->getEmail(), new Validator\EmailValidator())
         );
 
         $commandQueue[] = new CommandBus\UpdatePhone(
             $donor,
-            $inputReader->readOptionalInput(self::OPTION_PHONE, $donor->getPhone(), new Validator\PhoneValidator)
+            $inputReader->readOptionalInput(self::OPTION_PHONE, $donor->getPhone(), new Validator\PhoneValidator())
         );
 
         $commandQueue[] = new CommandBus\UpdateComment(
             $donor,
-            $inputReader->readOptionalInput(self::OPTION_COMMENT, $donor->getComment(), new Validator\StringValidator)
+            $inputReader->readOptionalInput(
+                self::OPTION_COMMENT,
+                $donor->getComment(),
+                new Validator\StringValidator()
+            )
         );
 
         foreach ($donor->getAttributes() as $attrKey => $attrValue) {
             $commandQueue[] = new CommandBus\UpdateAttribute(
                 $donor,
                 $attrKey,
-                $inputReader->readOptionalInput("attribute.$attrKey", $attrValue, new Validator\StringValidator)
+                $inputReader->readOptionalInput("attribute.$attrKey", $attrValue, new Validator\StringValidator())
             );
         }
 
@@ -162,7 +167,7 @@ final class EditConsole implements ConsoleInterface
             $attrKey = $inputReader->readInput(
                 '',
                 Helper\QuestionFactory::createQuestion('Add an attribute (empty to skip)', $attrKeys[$count] ?? ''),
-                new Validator\StringValidator
+                new Validator\StringValidator()
             );
 
             if (!$attrKey) {
@@ -175,7 +180,7 @@ final class EditConsole implements ConsoleInterface
                 $inputReader->readInput(
                     '',
                     Helper\QuestionFactory::createQuestion('Value', $attrValues[$count] ?? ''),
-                    new Validator\StringValidator
+                    new Validator\StringValidator()
                 )
             );
         }

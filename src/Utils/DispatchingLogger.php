@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Utils;
 
@@ -29,7 +30,8 @@ use Psr\Log\LoggerTrait;
 
 final class DispatchingLogger implements LoggerInterface
 {
-    use DispatcherProperty, LoggerTrait;
+    use DispatcherProperty;
+    use LoggerTrait;
 
     /**
      * @param mixed $level

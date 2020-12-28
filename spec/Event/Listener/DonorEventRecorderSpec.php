@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Event\Listener;
 
@@ -39,7 +39,7 @@ class DonorEventRecorderSpec extends ObjectBehavior
         $event->getDonor()->willReturn($donor);
         $donor->getMandateKey()->willReturn('key');
 
-        $datetime = new \DateTimeImmutable;
+        $datetime = new \DateTimeImmutable();
         $clock->getNow()->willReturn($datetime);
 
         $normalizer->normalizeEvent($event)->willReturn(['data']);

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Validator;
 
@@ -30,7 +31,7 @@ final class PayerNumberValidator implements ValidatorInterface
 
     protected function getRule(): Rule
     {
-        return (new Rule)
+        return (new Rule())
             ->msg('must be numeric and contain max 16 digits')
             ->match('ctype_digit')
             ->match(function (string $val) {

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Event\Listener;
 
@@ -42,7 +43,8 @@ final class AutoremoveListener implements ListenerInterface
 
     public function __invoke(DonorStateUpdated $event): void
     {
-        if ($event->getNewState()::getStateId() == Revoked::getStateId()
+        if (
+            $event->getNewState()::getStateId() == Revoked::getStateId()
             && !!$this->autoremoveConfig->getValue()
         ) {
             $this->commandBus->handle(new CommandBus\ForceRemoveDonor($event->getDonor()));

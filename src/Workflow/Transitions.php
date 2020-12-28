@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -25,55 +26,55 @@ interface Transitions
     /**
      * Export mandate to BGC
      */
-    const EXPORT = 'EXPORT';
+    public const EXPORT = 'EXPORT';
 
     /**
      * Start the cycle of pausing a mandate
      */
-    const INITIATE_PAUSE = 'INITIATE_PAUSE';
+    public const INITIATE_PAUSE = 'INITIATE_PAUSE';
 
     /**
      * Start the cycle of a payer number change
      */
-    const INITIATE_PAYER_NUMBER_CHANGE = 'INITIATE_PAYER_NUMBER_CHANGE';
+    public const INITIATE_PAYER_NUMBER_CHANGE = 'INITIATE_PAYER_NUMBER_CHANGE';
 
     /**
      * Start the cycle of restarting a paused mandate
      */
-    const INITIATE_RESTART = 'INITIATE_RESTART';
+    public const INITIATE_RESTART = 'INITIATE_RESTART';
 
     /**
      * Start the cycle of mandate revocation
      */
-    const INITIATE_REVOCATION = 'INITIATE_REVOCATION';
+    public const INITIATE_REVOCATION = 'INITIATE_REVOCATION';
 
     /**
      * Start the cycle of a transaction update (new amount)
      */
-    const INITIATE_TRANSACTION_UPDATE = 'INITIATE_TRANSACTION_UPDATE';
+    public const INITIATE_TRANSACTION_UPDATE = 'INITIATE_TRANSACTION_UPDATE';
 
     /**
      * Mark mandate as registered with the bank
      */
-    const IMPORT_MANDATE_REGISTERED = 'IMPORT_MANDATE_REGISTERED';
+    public const IMPORT_MANDATE_REGISTERED = 'IMPORT_MANDATE_REGISTERED';
 
     /**
      * Mark mandate as revoked
      */
-    const IMPORT_MANDATE_REVOKED = 'IMPORT_MANDATE_REVOKED';
+    public const IMPORT_MANDATE_REVOKED = 'IMPORT_MANDATE_REVOKED';
 
     /**
      * Mark transaction as active
      */
-    const IMPORT_TRANSACTION_ACTIVE = 'IMPORT_TRANSACTION_ACTIVE';
+    public const IMPORT_TRANSACTION_ACTIVE = 'IMPORT_TRANSACTION_ACTIVE';
 
     /**
      * Mark transaction as removed
      */
-    const IMPORT_TRANSACTION_REMOVED = 'IMPORT_TRANSACTION_REMOVED';
+    public const IMPORT_TRANSACTION_REMOVED = 'IMPORT_TRANSACTION_REMOVED';
 
     /**
      * Mark mandate as removed
      */
-    const REMOVE = 'REMOVE';
+    public const REMOVE = 'REMOVE';
 }

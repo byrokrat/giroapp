@@ -120,8 +120,7 @@ phpstan: vendor/installed $(PHPSTAN_CMD)
 	$(PHPSTAN_CMD) analyze -c phpstan.neon -l 8 src
 
 phpcs: $(PHPCS_CMD)
-	$(PHPCS_CMD) src --standard=PSR2 --ignore=$(CONTAINER)
-	$(PHPCS_CMD) spec --standard=spec/ruleset.xml
+	$(PHPCS_CMD)
 
 #
 # Dependencies

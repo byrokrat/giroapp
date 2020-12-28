@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -34,9 +35,9 @@ use Symfony\Component\Console\Helper\QuestionHelper;
 
 final class EditStateConsole implements ConsoleInterface
 {
-    use CommandBusProperty,
-        Helper\DonorArgument,
-        Helper\DryRun;
+    use CommandBusProperty;
+    use Helper\DonorArgument;
+    use Helper\DryRun;
 
     /**
      * @var StateCollection
@@ -72,7 +73,7 @@ final class EditStateConsole implements ConsoleInterface
     {
         $donor = $this->readDonor($input);
 
-        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper);
+        $inputReader = new Helper\InputReader($input, $output, new QuestionHelper());
 
         $validStates = array_change_key_case(
             (array)array_combine($this->stateCollection->getItemKeys(), $this->stateCollection->getItemKeys()),

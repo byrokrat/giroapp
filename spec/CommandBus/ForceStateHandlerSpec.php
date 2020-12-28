@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\CommandBus;
 
@@ -34,7 +34,7 @@ class ForceStateHandlerSpec extends ObjectBehavior
 
     function it_can_change_donor_state($stateCollection, $donorRepository, $dispatcher, Donor $donor)
     {
-        $oldState = new class() implements StateInterface {
+        $oldState = new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'old-state';
@@ -45,7 +45,7 @@ class ForceStateHandlerSpec extends ObjectBehavior
             }
         };
 
-        $newState = new class() implements StateInterface {
+        $newState = new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'new-state';
@@ -69,7 +69,7 @@ class ForceStateHandlerSpec extends ObjectBehavior
 
     function it_ignores_unchanged_states($stateCollection, $donorRepository, Donor $donor)
     {
-        $state = new class() implements StateInterface {
+        $state = new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'old-state';

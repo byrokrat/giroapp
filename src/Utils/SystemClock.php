@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Utils;
 
@@ -29,6 +30,6 @@ class SystemClock
 {
     public function getNow(): \DateTimeImmutable
     {
-        return new \DateTimeImmutable;
+        return new \DateTimeImmutable();
     }
 }

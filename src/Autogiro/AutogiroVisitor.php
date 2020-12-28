@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Autogiro;
 
@@ -41,9 +42,9 @@ use byrokrat\id\IdInterface;
 
 class AutogiroVisitor extends Visitor
 {
-    use DependencyInjection\CommandBusProperty,
-        DependencyInjection\DispatcherProperty,
-        DependencyInjection\DonorQueryProperty;
+    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\DispatcherProperty;
+    use DependencyInjection\DonorQueryProperty;
 
     /** @var ConfigInterface */
     private $orgBgcNr;

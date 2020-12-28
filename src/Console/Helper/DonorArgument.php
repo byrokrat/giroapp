@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console\Helper;
 
@@ -55,7 +56,7 @@ trait DonorArgument
             throw new \LogicException('Donor key must be string');
         }
 
-        $donorId = (new StringValidator)->validate('donor', $taintedId);
+        $donorId = (new StringValidator())->validate('donor', $taintedId);
 
         if ($input->getOption('id-payer-number') && $input->getOption('id-mandate-key')) {
             throw new RuntimeException("Illegal to use the 'id-payer-number' and 'id-mandate-key' flags toghether.");
@@ -77,7 +78,7 @@ trait DonorArgument
             return $donor;
         }
 
-        $regexp = '/'. preg_quote($donorId, '/') . '/i';
+        $regexp = '/' . preg_quote($donorId, '/') . '/i';
 
         /** @var ?Donor */
         $matchedDonor = null;

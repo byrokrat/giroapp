@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Sorter;
 
@@ -29,7 +29,7 @@ class StateSorterSpec extends ObjectBehavior
 
     function it_sorts_donors(Donor $left, Donor $right)
     {
-        $left->getState()->willReturn(new class() implements StateInterface {
+        $left->getState()->willReturn(new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'A';
@@ -40,7 +40,7 @@ class StateSorterSpec extends ObjectBehavior
             }
         });
 
-        $right->getState()->willReturn(new class() implements StateInterface {
+        $right->getState()->willReturn(new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'B';

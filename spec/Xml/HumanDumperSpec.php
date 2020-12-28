@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Xml;
 
@@ -32,7 +32,7 @@ class HumanDumperSpec extends ObjectBehavior
 
     function it_dumps($moneyFormatter, AccountNumber $account, IdInterface $id)
     {
-        $mandate = new XmlMandate;
+        $mandate = new XmlMandate();
 
         $account->prettyprint()->willReturn('')->shouldBeCalled();
         $id->format('CS-sk')->willReturn('')->shouldBeCalled();

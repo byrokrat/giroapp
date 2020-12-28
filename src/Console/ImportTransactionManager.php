@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This file is part of byrokrat\giroapp.
  *
@@ -18,7 +19,7 @@
  * Copyright 2016-20 Hannes Forsgård
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace byrokrat\giroapp\Console;
 
@@ -33,8 +34,8 @@ use Symfony\Component\Console\Input\InputOption;
 
 final class ImportTransactionManager
 {
-    use DependencyInjection\CommandBusProperty,
-        DependencyInjection\DispatcherProperty;
+    use DependencyInjection\CommandBusProperty;
+    use DependencyInjection\DispatcherProperty;
 
     /** @var ConfigInterface */
     private $alwaysForceImportsConfig;
@@ -78,6 +79,6 @@ final class ImportTransactionManager
             )
         );
 
-        $this->commandBus->handle(new CommandBus\Rollback);
+        $this->commandBus->handle(new CommandBus\Rollback());
     }
 }

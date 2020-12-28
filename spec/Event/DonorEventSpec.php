@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Event;
 
@@ -14,7 +14,7 @@ class DonorEventSpec extends ObjectBehavior
     {
         $donor->getMandateKey()->willReturn('');
         $this->beConstructedThrough(function () use ($donor) {
-            return new class('message', $donor->getWrappedObject()) extends DonorEvent {
+            return new class ('message', $donor->getWrappedObject()) extends DonorEvent {
             };
         });
     }

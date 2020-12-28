@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Xml;
 
@@ -25,13 +25,13 @@ class DonationAmountFromAttributePassSpec extends ObjectBehavior
 
     function it_ignore_unknown_attr()
     {
-        $input = new XmlMandate;
+        $input = new XmlMandate();
         $this->processMandate($input)->shouldBeLike($input);
     }
 
     function it_sets_value_from_attr($moneyParser)
     {
-        $input = new XmlMandate;
+        $input = new XmlMandate();
         $input->attributes['attr-key'] = 'foobar';
 
         $money = Money::SEK('100');

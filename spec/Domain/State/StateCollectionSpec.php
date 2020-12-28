@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Domain\State;
 
@@ -17,7 +17,7 @@ class StateCollectionSpec extends ObjectBehavior
 
     function it_can_store_states()
     {
-        $state = new class() implements StateInterface {
+        $state = new class () implements StateInterface {
             public static function getStateId(): string
             {
                 return 'foobar';

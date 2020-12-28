@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace spec\byrokrat\giroapp\Filesystem;
 
@@ -10,8 +10,8 @@ use PhpSpec\ObjectBehavior;
 
 class Sha256FileSpec extends ObjectBehavior
 {
-    const FILENAME = 'filename';
-    const CONTENT = 'content';
+    public const FILENAME = 'filename';
+    public const CONTENT = 'content';
 
     function let()
     {
