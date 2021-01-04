@@ -1,3 +1,5 @@
+![byrokrat](res/logo.svg)
+
 # Giroapp
 
 [![Packagist Version](https://img.shields.io/packagist/v/byrokrat/giroapp.svg?style=flat-square)](https://packagist.org/packages/byrokrat/giroapp)
