@@ -9,7 +9,7 @@
 
     <exclude-pattern>*/ProjectServiceContainer.php</exclude-pattern>
 
-    <rule ref="PSR1.Classes.ClassDeclaration">
+    <rule ref="PSR1.Classes.ClassDeclaration.MissingNamespace">
        <exclude-pattern>./features</exclude-pattern>
     </rule>
 

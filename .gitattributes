@@ -14,7 +14,7 @@ ProjectServiceContainer.php binary
 /.travis.yml export-ignore
 /behat.yml export-ignore
 /CHANGELOG.md export-ignore
-/box.json.dist export-ignore
+/box.json export-ignore
 /dev_giroapp export-ignore
 /phpspec.yml export-ignore
 /phpstan.neon export-ignore

@@ -52,7 +52,7 @@ build:
 
 build_release: all sign
 
-$(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) $(VERSION) bin/giroapp box.json.dist composer.lock $(BOX_CMD)
+$(TARGET): vendor/installed $(CONTAINER) $(SRC_FILES) $(VERSION) bin/giroapp box.json composer.lock $(BOX_CMD)
 	$(COMPOSER_CMD) install --prefer-dist --no-dev
 	$(BOX_CMD) compile
 	$(COMPOSER_CMD) install
